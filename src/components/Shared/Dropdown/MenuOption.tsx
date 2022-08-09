@@ -38,10 +38,16 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
     >
       <FlexBetween>
         <TextB3R>{option.name}</TextB3R>
-        {option.personalMaximum && (
-          <TextH7B color={theme.black}>{`구매 수량 제한 :${option.personalMaximum}개`}</TextH7B>
-        )}
-        {option.isSold && <TextH7B color={theme.greyScale25}>품절</TextH7B>}
+        <FlexRow>
+          {option.personalMaximum && (
+            <TextH7B color={theme.black}>{`구매 수량 제한 :${option.personalMaximum}개`}</TextH7B>
+          )}
+          {option.isSold && (
+            <TextH7B padding="0 0 0 4px" color={theme.greyScale25}>
+              품절
+            </TextH7B>
+          )}
+        </FlexRow>
       </FlexBetween>
       <FlexRowStart padding="0 0 4px 0"></FlexRowStart>
       <FlexRow>

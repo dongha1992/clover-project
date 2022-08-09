@@ -1053,6 +1053,7 @@ export interface IAccessMethod {
   text: string;
   value: string;
 }
+
 export interface IUserInputObj {
   receiverName: string;
   receiverTel: string;
@@ -1209,6 +1210,14 @@ export interface IOrderDeliveriesInSpotPickUp {
   name: string;
   createdAt: string;
 }
+
+export interface IOrderOptionsInOrderDeliveries {
+  id: number;
+  optionId: number;
+  optionName: string;
+  optionPrice: number;
+  optionQuantity: number;
+}
 export interface IOrderDetailInOrderDeliveries {
   id: number;
   delivery: TDeliveryType;
@@ -1217,6 +1226,8 @@ export interface IOrderDetailInOrderDeliveries {
   deliveryEndTime: string;
   deliveryStartTime: string;
   receiverName: string;
+  invoiceNumber: number;
+  invocied: boolean;
   receiverTel: string;
   location: ILocation;
   deliveryMessageType?: string;
@@ -1230,6 +1241,7 @@ export interface IOrderDetailInOrderDeliveries {
   type: string;
   name?: string;
   subOrderDelivery: ISubOrderDelivery;
+  orderOptions: IOrderOptionsInOrderDeliveries[];
 }
 
 export interface IEditOrderDestination {
@@ -1263,6 +1275,7 @@ export interface IGetOrderInImage {
 export interface IOrderMenusInOrderList {
   menuDetailId: number;
   menuQuantity: number;
+  menuId?: number;
 }
 
 export interface IOrderOptions {
@@ -1433,6 +1446,7 @@ export interface IOrderDetail {
   optionAmount: number;
   optionQuantity: number;
   point: number;
+  payMethod: string;
   refundCoupon: number;
   refundDeliveryFee: number;
   refundDeliveryFeeDiscount: number;

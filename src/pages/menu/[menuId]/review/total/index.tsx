@@ -89,7 +89,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
 
   const handleObserver = useCallback((entries) => {
     const target = entries[0];
-
+    console.log(target, 'target');
     if (target.isIntersecting) {
       setPage((prev) => prev + 1);
     }
@@ -165,18 +165,16 @@ const TotalReviewPage = ({ menuId }: IProps) => {
         {data?.pages[0]?.result?.length !== 0 ? (
           data?.pages?.map((page: any, index: number) => {
             return (
-              <>
-                <List key={index}>
-                  {page.result?.map((review: ISearchReviews, index: number) => {
-                    return (
-                      <div key={index}>
-                        <ReviewDetailItem review={review} clickImgViewHandler={clickImgViewHandler} />
-                        <BorderLine margin="24px 0 24px 0" height={1} />
-                      </div>
-                    );
-                  })}
-                </List>
-              </>
+              <List key={index}>
+                {page.result?.map((review: ISearchReviews, index: number) => {
+                  return (
+                    <div key={index}>
+                      <ReviewDetailItem review={review} clickImgViewHandler={clickImgViewHandler} />
+                      <BorderLine margin="24px 0 24px 0" height={1} />
+                    </div>
+                  );
+                })}
+              </List>
             );
           })
         ) : (

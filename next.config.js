@@ -1,7 +1,7 @@
 module.exports = () => {
   return {
     // images: {
-    //   domains: ['s3.ap-northeast-2.amazonaws.com'],
+    //   domains: ['s3.ap-northeast-2.amazonaws.com', 'image-dev.freshcode.me'],
     // },
     env: {
       NEXT_PUBLIC_KAKAO_KEY: process.env.NEXT_PUBLIC_KAKAO_KEY,
