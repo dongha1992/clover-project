@@ -113,7 +113,7 @@ const GeneralMenusPriceBox = ({
           <TextB2R>{getFormatPrice(String(userInputObj.point))}원</TextB2R>
         </FlexBetween>
       )}
-      <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
+      {userInputObj.point > 0 && <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />}
       <FlexBetween>
         <TextH4B>최종 결제금액</TextH4B>
         <TextH5B>{getFormatPrice(String(total))}원</TextH5B>
