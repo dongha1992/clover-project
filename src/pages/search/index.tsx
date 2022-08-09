@@ -8,7 +8,7 @@ import { homePadding, textBody2, theme, FlexBetween } from '@styles/theme';
 import Link from 'next/link';
 import { SVGIcon } from '@utils/common';
 import { useQuery } from 'react-query';
-import { getRecommendMenusApi } from '@api/menu';
+import { getExhibitionMdRecommendApi } from '@api/promotion';
 import { useDispatch, useSelector } from 'react-redux';
 import { filterSelector, INIT_CATEGORY_FILTER } from '@store/filter';
 import { INIT_MENU_KEYWORD } from '@store/menu';
@@ -22,14 +22,14 @@ const SearchPage = () => {
   const [keyword, setKeyword] = useState<string>('');
 
   const {
-    data: menus,
+    data: mdMenus,
     error: mdMenuError,
     isLoading: mdIsLoading,
   } = useQuery(
     'getRecommendMenus',
     async () => {
-      const { data } = await getRecommendMenusApi();
-      return checkIsSold(data.data);
+      const { data } = await getExhibitionMdRecommendApi();
+      return checkIsSold(data.data.menus);
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -139,10 +139,10 @@ const SearchPage = () => {
               더보기
             </TextH6B>
           </FlexBetween>
-          {menus?.length! > 0 ? (
+          {mdMenus?.length! > 0 ? (
             <ItemListRowWrapper>
               <ItemListRow>
-                {menus?.map((item, index) => {
+                {mdMenus?.map((item, index) => {
                   return <Item item={item} key={index} isHorizontal />;
                 })}
               </ItemListRow>
