@@ -15,6 +15,7 @@ import { IPointHistories } from '@model/index';
 import { getCustomDate } from '@utils/destination';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
+import { getFormatPrice } from '@utils/common';
 
 const TAB_LIST = [
   { id: 1, text: '적립', value: 'save', link: '/save' },
@@ -131,18 +132,18 @@ const PointPage = () => {
           <FlexCol width="50%">
             <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
             <TextH5B color={theme.brandColor} padding="6px 0 0 0">
-              {points?.availablePoint} P
+              {getFormatPrice(String(points?.availablePoint))} P
             </TextH5B>
           </FlexCol>
           <FlexCol width="50%">
             <TextH6B color={theme.greyScale65}>7일 이내 소멸 예정 포인트</TextH6B>
-            <TextH5B padding="6px 0 0 0"> {points?.expirePoint} P</TextH5B>
+            <TextH5B padding="6px 0 0 0"> {getFormatPrice(String(points?.expirePoint))} P</TextH5B>
           </FlexCol>
         </FlexBetweenStart>
-        <PaddingWrapper>
+        <PaddingWrapper onClick={() => setIsShow(!isShow)}>
           <FlexBetween>
             <TextH6B color={theme.greyScale65}>포인트 이용 안내</TextH6B>
-            <div onClick={() => setIsShow(!isShow)}>
+            <div>
               <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
             </div>
           </FlexBetween>
@@ -208,7 +209,10 @@ const PointItem = React.forwardRef(
       <FlexCol padding="0 0 24px 0" ref={ref}>
         <FlexBetween padding="0 0 6px 0">
           <TextH5B>{content}</TextH5B>
-          <TextH5B>{value}</TextH5B>
+          <TextH5B>
+            {value > 0 ? '+' : null}
+            {getFormatPrice(String(value))} P
+          </TextH5B>
         </FlexBetween>
         <FlexBetween>
           <TextB2R>{formatCreatedAt}</TextB2R>
@@ -251,6 +255,7 @@ const PaddingWrapper = styled.div`
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 `;
 
 const ScrollView = styled.div`

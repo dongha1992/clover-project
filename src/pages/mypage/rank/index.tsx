@@ -19,13 +19,12 @@ const RankPage = () => {
           <FlexCol padding="24px 0 32px 0">
             <TextH2B>{me?.nickname}님은</TextH2B>
             <FlexRow>
-              <TextH2B color={theme.brandColor}>프코팡</TextH2B>
+              <TextH2B color={theme.brandColor}>{me?.grade.name}</TextH2B>
               <TextH2B padding="0 0 0 4px">회원입니다.</TextH2B>
             </FlexRow>
           </FlexCol>
           <FlexCol>
-            <UserRankInfo title="적립금" count={1} id={1} />
-            <UserRankInfo title="할인 쿠폰" count={7} id={2} />
+            <UserRankInfo title="적립금" count={me?.grade.benefit.accumulationRate} id={1} />
           </FlexCol>
           <BorderLine height={1} margin="24px 0" />
           <FlexCol padding="0 0 48px 0">
@@ -64,9 +63,8 @@ const RankPage = () => {
         <Wrapper>
           <TextH3B padding="32px 0 29px 0">프레시코드 회원 등급 혜택</TextH3B>
           <FlexCol>
-            <Card title="적립금" brandText="최대 3% 적립" desc="(등급별 구매 금액의 최대 3% 적립)" />
-            <Card title="할인 쿠폰" brandText="최대 5천원 할인 쿠폰" desc="(매달 기준)" />
-            <Card title="생일축하 쿠폰" brandText="최대 3% 적립" desc="(생일 꼭 입력해서 받아가세요)" />
+            <Card title="적립금" brandText="최대 1.5% 적립" desc="(등급별 구매 금액의 최대 2% 적립)" />
+            <Card title="혜택" brandText="생일축하 쿠폰" desc="(단, 마케팅 정보 수신 동의 필수)" />
           </FlexCol>
         </Wrapper>
       </BrandColor5>
