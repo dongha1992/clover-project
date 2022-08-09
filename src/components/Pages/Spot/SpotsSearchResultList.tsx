@@ -36,7 +36,7 @@ const now = dayjs();
 
 // 스팟 검색 - 검색 결과
 // 추천 스팟, 스팟 검색 결과, 스팟 검색 결과 지도뷰 리스트
-const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IProps): ReactElement => {
+const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const {
@@ -87,12 +87,16 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
     });
   }, []);
 
-  const isSubsSpot = useSubsSpotOpenCheck({
-    placeOpenDays: item?.placeOpenDays! ?? null,
-    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
-    dayOfWeek: dayOfWeek(deliveryDate) ?? null,
-    isAll: applyAll ?? null,
-  });
+  // const isSubsSpot = useSubsSpotOpenCheck({
+  //   placeOpenDays: item?.placeOpenDays! ?? null,
+  //   pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
+  //   dayOfWeek: dayOfWeek(deliveryDate) ?? null,
+  //   isAll: applyAll ?? null,
+  // });
+
+  // temp TO YOUNG
+
+  const isSubsSpot = false;
 
   const renderSpotMsg = () => {
     switch (true) {
@@ -163,18 +167,20 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
         if (data.code === 200) {
           const response = data.data;
           const destinationId = response.id;
-          if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
+          if (orderId) {
+            // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
             dispatch(
               SET_TEMP_EDIT_SPOT({
                 spotPickupId: pickupInfo.id,
                 name: item.name,
                 spotPickup: pickupInfo.name,
+                location: response.location,
               })
             );
             router.push({
               pathname: '/mypage/order-detail/edit/[orderId]',
               query: { orderId, destinationId },
-            });  
+            });
           } else {
             dispatch(
               SET_DESTINATION({
@@ -200,7 +206,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
             router.push({
               pathname: '/cart',
               query: { isClosed: !!closedDate },
-            });  
+            });
           }
         }
       } catch (e) {
@@ -269,7 +275,8 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
     }
     if (isLoginSuccess) {
       //로그인 o
-      if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경일 경우
+      if (orderId) {
+        // 마이페이지 - 배송정보 - 스팟 배송지 변경일 경우
         if (
           closedDate &&
           ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
@@ -290,10 +297,10 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
               onSubmit: () => {},
             })
           );
-        } else {        
-          <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={getDesticationInfo} />
-        };
-      };
+        } else {
+          <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={getDesticationInfo} />;
+        }
+      }
       if (hasCart) {
         // 로그인o and 장바구니 o
         if (isDelivery) {
@@ -378,60 +385,70 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
     }
   };
 
-  const goToDetail = useCallback((id: number | undefined, e: React.SyntheticEvent) => {
-    if (dragging) {
-      e.stopPropagation();
-      return;
-    };
+  const goToDetail = useCallback(
+    (id: number | undefined, e: React.SyntheticEvent) => {
+      if (dragging) {
+        e.stopPropagation();
+        return;
+      }
 
-    if (
-      orderId &&
-      closedDate &&
-      ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
-        (!applyAll && dateN(deliveryDate) > dateN(closedDate)))
-    ) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: `운영 종료 예정인 프코스팟으로는\n변경할 수 없어요.`,
-          submitBtnText: '확인',
-          onSubmit: () => {},
-        })
-      );
-    } else if (orderId && !isSubsSpot && isSubs) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: `현재 구독의 배송 일정과 운영일이\n일치하지 않아 변경할 수 없어요.`,
-          submitBtnText: '확인',
-          onSubmit: () => {},
-        })
-      );
-    } else {
-      if (isDelivery && !isSubs) {
-        router.push({
-          pathname: `/spot/detail/${id}`,
-          query: {
-            isSpot: true,
-            isDelivery: true,
-          },
-        });
-      } else if (isDelivery && isSubs) {
-        router.push({
-          pathname: `/spot/detail/${id}`,
-          query: { isSpot: true, destinationId: item?.id, isSubscription, isDelivery: true, subsDeliveryType, menuId },
-        });
+      if (
+        orderId &&
+        closedDate &&
+        ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
+          (!applyAll && dateN(deliveryDate) > dateN(closedDate)))
+      ) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `운영 종료 예정인 프코스팟으로는\n변경할 수 없어요.`,
+            submitBtnText: '확인',
+            onSubmit: () => {},
+          })
+        );
+      } else if (orderId && !isSubsSpot && isSubs) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `현재 구독의 배송 일정과 운영일이\n일치하지 않아 변경할 수 없어요.`,
+            submitBtnText: '확인',
+            onSubmit: () => {},
+          })
+        );
       } else {
-        router.push({
-          pathname: `/spot/detail/${id}`,
-          query: {
-            isSpot: true,
-            orderId,
-            destinationId,
-          },
-        });
-      };
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dragging]);
+        if (isDelivery && !isSubs) {
+          router.push({
+            pathname: `/spot/detail/${id}`,
+            query: {
+              isSpot: true,
+              isDelivery: true,
+            },
+          });
+        } else if (isDelivery && isSubs) {
+          router.push({
+            pathname: `/spot/detail/${id}`,
+            query: {
+              isSpot: true,
+              destinationId: item?.id,
+              isSubscription,
+              isDelivery: true,
+              subsDeliveryType,
+              menuId,
+            },
+          });
+        } else {
+          router.push({
+            pathname: `/spot/detail/${id}`,
+            query: {
+              isSpot: true,
+              orderId,
+              destinationId,
+            },
+          });
+        }
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [dragging]
+  );
 
   return (
     <Container
