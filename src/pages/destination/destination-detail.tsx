@@ -107,11 +107,11 @@ const DestinationDetailPage = () => {
         main: !hasDefaultDestination ? true : isDefaultDestination,
       };
 
-      console.log(hasDefaultDestination, 'hasDefaultDestination');
+      // 마이페이지 - 주문상세 - 배송지 변경에서 진입
       if (orderId) {
         const reqBody = {
           name,
-          delivery: destinationDeliveryType?.toUpperCase(),
+          delivery: userDeliveryType?.toUpperCase(),
           deliveryMessage: '',
           main: false,
           receiverName: '',
@@ -153,9 +153,9 @@ const DestinationDetailPage = () => {
                 pathname: '/subscription/set-info',
                 query: { subsDeliveryType: subsDeliveryType, menuId },
               });
-            } else {
-              router.push('/cart');
             }
+          } else {
+            router.push('/cart');
           }
         } catch (error) {
           if (isSubscription) {
