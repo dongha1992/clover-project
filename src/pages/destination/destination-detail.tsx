@@ -9,7 +9,7 @@ import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
 import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
-import { getMainDestinationsApi } from '@api/destination';
+import { getMainDestinationsApi, postDestinationApi } from '@api/destination';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -20,6 +20,7 @@ import {
   SET_USER_DELIVERY_TYPE,
   INIT_DESTINATION_TYPE,
   INIT_AVAILABLE_DESTINATION,
+  SET_DESTINATION,
 } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { checkDestinationHelper } from '@utils/destination';
@@ -96,13 +97,63 @@ const DestinationDetailPage = () => {
       };
 
       if (orderId) {
-        dispatch(SET_TEMP_EDIT_DESTINATION(userDestinationInfo));
-        dispatch(INIT_DESTINATION_TYPE());
-        dispatch(INIT_AVAILABLE_DESTINATION());
-        router.replace({
-          pathname: '/mypage/order-detail/edit/[orderId]',
-          query: { orderId, destinationId },
-        });
+        const reqBody = {
+          name,
+          delivery: destinationDeliveryType?.toUpperCase(),
+          deliveryMessage: '',
+          main: false,
+          receiverName: '',
+          receiverTel: '',
+          location: {
+            addressDetail,
+            address: tempLocation.roadAddrPart1!,
+            zipCode: tempLocation.zipNo!,
+            dong: tempLocation.emdNm!,
+          },
+          spotPickupId: null,
+        };
+        try {
+          const { data } = await postDestinationApi(reqBody);
+          if (data.code === 200) {
+            const response = data.data;
+            dispatch(
+              SET_TEMP_EDIT_DESTINATION({
+                name: response.name,
+                location: {
+                  addressDetail: response.location.addressDetail,
+                  address: response.location.address,
+                  dong: response.location.dong,
+                  zipCode: response.location.zipCode,
+                },
+                main: false,
+              })
+            );
+            dispatch(INIT_LOCATION_TEMP());
+            dispatch(INIT_DESTINATION_TYPE());
+            dispatch(INIT_AVAILABLE_DESTINATION());
+            router.replace({
+              pathname: '/mypage/order-detail/edit/[orderId]',
+              query: { orderId, destinationId },
+            });
+
+            if (isSubscription) {
+              router.push({
+                pathname: '/subscription/set-info',
+                query: { subsDeliveryType: subsDeliveryType, menuId },
+              });
+            } else {
+              router.push('/cart');
+            }
+          }
+        } catch (error) {
+          if (isSubscription) {
+            router.push({
+              pathname: '/subscription/set-info',
+              query: { subsDeliveryType: subsDeliveryType, menuId },
+            });
+          }
+          console.log('error', error);
+        }
       } else {
         dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
         dispatch(SET_DESTINATION_TYPE(destinationDeliveryType));

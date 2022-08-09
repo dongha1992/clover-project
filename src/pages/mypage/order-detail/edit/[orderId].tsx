@@ -56,6 +56,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
     deliveryMessage: '',
     receiverTel: '',
     receiverName: '',
+    name: '',
   });
   const [deliveryRound, setDeliveryRound] = useState();
   const [isSub, setIsSub] = useState(false);
@@ -109,6 +110,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
         receiverName: tempOrderInfo?.receiverName ? tempOrderInfo?.receiverName : orderDetail?.receiverName!,
         receiverTel: tempOrderInfo?.receiverTel ? tempOrderInfo?.receiverTel : orderDetail?.receiverTel!,
         location: tempEditDestination?.location ? tempEditDestination.location : orderDetail?.location,
+        name: tempEditDestination?.name ? tempEditDestination.name : orderDetail?.name,
       });
     },
     refetchOnMount: true,
@@ -131,7 +133,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
         const { selectedMethod, ...rest } = reqBody;
         const { data } = await editDeliveryDestinationApi({
           data: { ...rest, applyAll },
-          deliveryId: destinationId ?? deliveryId,
+          deliveryId,
         });
       } else {
         const { data } = await editSpotDestinationApi({
@@ -141,15 +143,16 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
             receiverTel: deliveryEditObj.receiverTel,
             spotPickupId: tempEditSpot?.spotPickupId ? +tempEditSpot?.spotPickupId : orderDetail?.spotPickupId!,
           },
-          deliveryId: destinationId ?? deliveryId,
+          deliveryId,
         });
       }
     },
     {
       onSuccess: async () => {
         // TODO : 일반 주문도 배송지 변경후 이동 action이 있어야 할듯
-        if (isSubscription && destinationId) {
+        if (data.type === 'SUBSCRIPTION' && destinationId) {
           router.push({ pathname: `/subscription/${orderId}` });
+          return;
         }
         router.push(`/mypage/order-detail/${orderId}`);
         await queryClient.refetchQueries(['getOrderDetail', orderId]);
@@ -235,8 +238,8 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
 
   const checkBeforeEdit = (): boolean => {
     if (orderDetail?.delivery === 'MORNING') {
-      const noAccessMethod = !deliveryEditObj.deliveryMessageType;
-      const noMsg = !deliveryEditObj.deliveryMessage.length;
+      const noAccessMethod = !deliveryEditObj?.deliveryMessageType;
+      const noMsg = !deliveryEditObj?.deliveryMessage?.length;
       const isFreeAccess =
         deliveryEditObj.deliveryMessageType === 'FREE' ||
         deliveryEditObj.deliveryMessageType === 'DELIVERY_SECURITY_OFFICE';
@@ -382,7 +385,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
             <TextInput
               placeholder="이름"
               name="receiverName"
-              value={deliveryEditObj.receiverName}
+              value={deliveryEditObj.receiverName || ''}
               eventHandler={changeInputHandler}
               onBlur={onBlur}
             />
@@ -392,7 +395,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
             <TextInput
               placeholder="휴대폰 번호"
               name="receiverTel"
-              value={deliveryEditObj.receiverTel}
+              value={deliveryEditObj.receiverTel || ''}
               eventHandler={changeInputHandler}
               onBlur={onBlur}
             />
@@ -440,8 +443,11 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
               <FlexBetweenStart padding="16px 0 0 0">
                 <TextH5B>배송지</TextH5B>
                 <FlexColEnd>
-                  <TextB2R>{deliveryEditObj?.location?.address}</TextB2R>
-                  <TextB2R>{deliveryEditObj?.location?.addressDetail}</TextB2R>
+                  <TextB2R>{deliveryEditObj.name}</TextB2R>
+                  <FlexColEnd>
+                    <TextB2R>{deliveryEditObj?.location?.address}</TextB2R>
+                    <TextB2R> {deliveryEditObj?.location?.addressDetail}</TextB2R>
+                  </FlexColEnd>
                 </FlexColEnd>
               </FlexBetweenStart>
               <BorderLine height={8} margin="24px 0 0 0" />
@@ -495,7 +501,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
                 name="deliveryMessage"
                 placeholder="요청사항 입력"
                 margin="8px 0 0 0"
-                value={deliveryEditObj?.deliveryMessage}
+                value={deliveryEditObj?.deliveryMessage || ''}
                 eventHandler={changeInputHandler}
               />
             </FlexCol>

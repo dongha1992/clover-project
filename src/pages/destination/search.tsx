@@ -69,6 +69,7 @@ const DestinationSearchPage = () => {
   };
 
   const selectDestinationByList = (destination: IDestinationsResponse): void => {
+    console.log(destination, 'destination');
     if (orderId) {
       router.push({
         pathname: '/mypage/order-detail/edit/[orderId]',
