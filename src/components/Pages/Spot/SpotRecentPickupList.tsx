@@ -82,12 +82,16 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     }
   }, [item?.spotPickup?.type]);
 
-  const isSubsSpot = useSubsSpotOpenCheck({
-    placeOpenDays: item?.spotPickup?.spot.placeOpenDays! ?? null,
-    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
-    dayOfWeek: dayOfWeek(deliveryDate) ?? null,
-    isAll: applyAll ?? null,
-  });
+  // const isSubsSpot = useSubsSpotOpenCheck({
+  //   placeOpenDays: item?.spotPickup?.spot.placeOpenDays! ?? null,
+  //   pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
+  //   dayOfWeek: dayOfWeek(deliveryDate) ?? null,
+  //   isAll: applyAll ?? null,
+  // });
+
+  // temp TO YOUNG
+
+  const isSubsSpot = false;
 
   const renderSpotMsg = useCallback(() => {
     switch (true) {
@@ -208,7 +212,8 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     }
 
     if (isLoginSuccess) {
-      if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
+      if (orderId) {
+        // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
         if (
           closedDate &&
           ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
@@ -338,21 +343,21 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       } else if (isDelivery && isSubs) {
         router.push({
           pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
-          query: { 
-            isSpot: true, 
-            isSubscription, 
-            subsDeliveryType, 
-            menuId, 
-            isDelivery: true 
+          query: {
+            isSpot: true,
+            isSubscription,
+            subsDeliveryType,
+            menuId,
+            isDelivery: true,
           },
         });
       } else {
         router.push({
           pathname: `/spot/detail/${id}`,
-          query: { 
-            isSpot: true, 
-            orderId, 
-            destinationId, 
+          query: {
+            isSpot: true,
+            orderId,
+            destinationId,
           },
         });
       }

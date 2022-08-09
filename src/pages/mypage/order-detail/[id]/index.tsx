@@ -33,6 +33,7 @@ import { INIT_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION } from '@store/mypage'
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 import { getTotalPayment } from '@utils/getTotalPayment';
 import { AxiosError } from 'axios';
+import { INIT_ACCESS_METHOD } from '@store/common';
 // temp
 
 const disabledDates: any = [];
@@ -310,6 +311,7 @@ const OrderDetailPage = () => {
   useEffect(() => {
     dispatch(INIT_TEMP_ORDER_INFO());
     dispatch(INIT_TEMP_EDIT_DESTINATION());
+    dispatch(INIT_ACCESS_METHOD());
   }, []);
 
   if (!orderDetail) {
@@ -360,12 +362,12 @@ const OrderDetailPage = () => {
 
   const totalDiscount =
     menuDiscount + eventDiscount + coupon > 0
-      ? `-${getFormatPrice(String(menuDiscount + eventDiscount + coupon))}}원`
+      ? `-${getFormatPrice(String(menuDiscount + eventDiscount + coupon))}원`
       : '0원';
 
   const totalRefundDiscount =
     refundMenuDiscount + refundEventDiscount + refundCoupon > 0
-      ? `-${getFormatPrice(String(refundMenuDiscount + refundEventDiscount + refundCoupon))}}원`
+      ? `-${getFormatPrice(String(refundMenuDiscount + refundEventDiscount + refundCoupon))}원`
       : '0원';
 
   return (

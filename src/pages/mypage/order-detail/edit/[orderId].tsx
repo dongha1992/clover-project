@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { dateN, SVGIcon } from '@utils/common';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import { mypageSelector, INIT_TEMP_ORDER_INFO, SET_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION } from '@store/mypage';
@@ -32,17 +32,16 @@ import { useGetOrderDetail } from 'src/queries/order';
 import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { toUnicode } from 'punycode';
 
 /* TODO: 서버/store 값 state에서 통일되게 관리, spot 주소쪽 */
 interface IProps {
   orderId: number;
   destinationId: number;
-  isSubscription: string;
+  isSubs: boolean;
   deliveryDate: string;
 }
 
-const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, deliveryDate }: IProps) => {
+const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDate }: IProps) => {
   const router = useRouter();
 
   const { userAccessMethod } = useSelector(commonSelector);
@@ -57,7 +56,6 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
     deliveryMessage: '',
     receiverTel: '',
     receiverName: '',
-    name: '',
   });
   const [deliveryRound, setDeliveryRound] = useState();
   const [isSub, setIsSub] = useState(false);
@@ -69,35 +67,32 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
 
   const { data } = useGetOrderDetail(['getOrderDetail', orderId], orderId, {
     onSuccess: (data) => {
-      console.log('data', data);
-      console.log('data', dateN(deliveryDate));
-
       let orderDetail;
       let pickupDaysObj = new Set();
 
-      for (const o of data.orderDeliveries) {
-        if (o.type === 'SUB') {
-          setIsSub(true);
-        }
-        if (o.id === destinationId) {
-          setDeliveryRound(o.deliveryRound);
-        }
-        if (o.id === destinationId) {
-          orderDetail = o;
-        }
+      if (isSubs) {
+        for (const o of data.orderDeliveries) {
+          if (o.type === 'SUB') {
+            setIsSub(true);
+          }
+          if (o.id === destinationId) {
+            setDeliveryRound(o.deliveryRound);
+          }
+          if (o.id === destinationId) {
+            orderDetail = o;
+          }
 
-        // 구독에서 배송지 변경할려는 날짜부터 마지막까지 검증
-        if (dateN(o.deliveryDate) >= dateN(deliveryDate)) {
-          pickupDaysObj.add(dayjs(o.deliveryDate).format('dd'));
+          // 구독에서 배송지 변경할려는 날짜부터 마지막까지 검증
+          if (dateN(o.deliveryDate) >= dateN(deliveryDate)) {
+            pickupDaysObj.add(dayjs(o.deliveryDate).format('dd'));
+          }
         }
+        pickupDays.current = encodeURIComponent(JSON.stringify(Array.from(pickupDaysObj)));
       }
 
-      pickupDays.current = encodeURIComponent(JSON.stringify(Array.from(pickupDaysObj)));
-
-      if (!destinationId) {
+      if (!destinationId || !isSubs) {
         orderDetail = data?.orderDeliveries[0];
       }
-      console.log(orderDetail, 'orderDetail');
 
       const userAccessMethodMap = pipe(
         ACCESS_METHOD,
@@ -111,7 +106,6 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
         receiverName: tempOrderInfo?.receiverName ? tempOrderInfo?.receiverName : orderDetail?.receiverName!,
         receiverTel: tempOrderInfo?.receiverTel ? tempOrderInfo?.receiverTel : orderDetail?.receiverTel!,
         location: tempEditDestination?.location ? tempEditDestination.location : orderDetail?.location,
-        name: tempEditDestination?.name ? tempEditDestination.name : orderDetail?.name,
       });
     },
     refetchOnMount: true,
@@ -307,13 +301,12 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
   // TODO : lastdeliverydate 추가 전체 회차 변경하는부분 체크
   const goToDeliverySearch = () => {
     if (isSpot) {
-      const IsSubs = isSubscription === 'true';
       router.push({
         pathname: '/spot/search/result',
         query: {
           orderId,
           destinationId,
-          isSubscription: IsSubs,
+          isSubscription: isSubs,
           deliveryDate,
           lastDeliveryDate: data.lastDeliveryDate,
           pickupDays: pickupDays.current,
@@ -364,9 +357,9 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, de
     }
   }, [isSamePerson, orderDetail]);
 
-  useEffect(() => {
-    dispatch(INIT_ACCESS_METHOD());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(INIT_ACCESS_METHOD());
+  // }, []);
 
   return (
     <Container>
@@ -555,12 +548,12 @@ const BtnWrapper = styled.div`
 
 export async function getServerSideProps(context: any) {
   const { orderId, destinationId, isSubscription, deliveryDate } = context.query;
-
+  const isSubs = isSubscription === 'true';
   return {
     props: {
       orderId: Number(orderId),
       destinationId: Number(destinationId),
-      isSubscription: String(isSubscription),
+      isSubscription: isSubs,
       deliveryDate: String(deliveryDate),
     },
   };
