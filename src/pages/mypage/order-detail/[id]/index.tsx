@@ -257,6 +257,7 @@ const OrderDetailPage = () => {
   };
 
   const changeDevlieryDateHandler = () => {
+    console.log(canChangeDelivery);
     if (!canChangeDelivery || isSubOrder) {
       return;
     }
