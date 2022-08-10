@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { Button } from '@components/Shared/Button';
 import { spotSelector } from '@store/spot';
 import { useSelector } from 'react-redux';
-import { IMAGE_S3_DEV_URL } from '@constants/mock';
+import NextImage from 'next/image';
 
 const FinishPage = () => {
   const router = useRouter();
@@ -54,12 +54,26 @@ const FinishPage = () => {
         <TextB3R color={theme.greyScale65}>{msgMapper()?.subTitle}</TextB3R>
       </TopWrapper>
       <FinishImgWrapper>
-        <FinishImg src={`${IMAGE_S3_DEV_URL}/img_fco_add_main.png`} />
+        <NextImage 
+          src='/images/img_fcospot_add_main.png'
+          width={'512px'}
+          height={'203px'}
+          alt="프코스팟 신청 완료 페이지 이미지"   
+          className='finish-img'
+          layout="responsive"
+        />
       </FinishImgWrapper>
       {
         type !== 'PUBLIC' && (
           <SpotNoticeWrapper onClick={goToSpotNotice}>
-            <SpotNoticeImg src={`${IMAGE_S3_DEV_URL}/img_banner_fco_info_360_96.png`} />
+            <NextImage 
+              src='/images/img_banner_fco_info_360_96.png'
+              width={'512px'}
+              height={'110px'}
+              alt="프코스팟 신청 완료 페이지 이미지"
+              className='banner-img'
+              layout="responsive"
+            />
           </SpotNoticeWrapper>
         )
       }
@@ -95,22 +109,18 @@ const FinishImgWrapper = styled.div`
   width: 100%;
   height: 100%;
   padding: 48px 0;
-`;
-
-const FinishImg = styled.img`
-  width: 100%;
-  height: 100%;
+  .finish-img{
+    height:auto !important;
+  }
 `;
 
 const SpotNoticeWrapper = styled.div`
   width: 100%;
   height: 100%;
   cursor: pointer;
-`;
-
-const SpotNoticeImg = styled.img`
-  width: 100%;
-  height: 100%;
+  .banner-img{
+    height:auto !important;
+  }
 `;
 
 const ChannelIokWrapper = styled.div`

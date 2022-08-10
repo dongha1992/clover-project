@@ -1,11 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
-import { IMAGE_S3_DEV_URL } from '@constants/mock';
+import NextImage from 'next/image';
 
 const SpotNoticePage = () => {
   return (
     <Container>
-      <Img src={`${IMAGE_S3_DEV_URL}/img_detail_fco_info.png`} />
+      <NextImage 
+        src='/images/img_fcospot_detail_info.png'
+        width={'512px'}
+        height={'1720px'}
+        alt="프코스팟 안내 이미지"
+        className='main-img'
+        layout="responsive"
+      />
     </Container>
   )
 };
@@ -13,11 +20,9 @@ const SpotNoticePage = () => {
 const Container = styled.main`
   width: 100%;
   height: 100%;
-`;
-
-const Img = styled.img`
-  width: 100%;
-  height: 100%;
+  .main-img {
+    height: auto !important;
+  }
 `;
 
 export default SpotNoticePage;

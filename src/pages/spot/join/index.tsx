@@ -11,9 +11,9 @@ import { userForm } from '@store/user';
 import { SET_ALERT } from '@store/alert';
 import { getSpotInfo } from '@api/spot';
 import { ISpotsInfo } from '@model/index';
-import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { Button } from '@components/Shared/Button';
-import Image from '@components/Shared/Image';
+import NextImage from 'next/image';
+
 
 const RegistrationsListPage = () => {
   const router = useRouter();
@@ -91,7 +91,14 @@ const RegistrationsListPage = () => {
   return (
     <Container>
       <ImgWrapper>
-        <Image src="/img_detail_fco_add.png"></Image>
+        <NextImage 
+          src='/images/img_fcospot_join_main.png'
+          width={'512px'}
+          height={'935px'}
+          alt="프코스팟 신청 메인 페이지 이미지"
+          className='main-img'
+          layout="responsive"
+        />
       </ImgWrapper>
       <BtnWrapper onClick={() =>goToRegistration('PRIVATE')}>
         <Button margin="24px 0 24px 0" border color={theme.black} backgroundColor={theme.white}>
@@ -119,11 +126,9 @@ const Container = styled.main`
 const ImgWrapper = styled.div`
   width: 100%;
   height: 100%;
-`;
-
-const BacngroundImg = styled.img`
-  width: 100%;
-  height: 100%;
+  .main-img {
+    height: auto !important;
+  }
 `;
 
 const BtnWrapper = styled.div`

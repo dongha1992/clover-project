@@ -402,6 +402,8 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
               alt="프코스팟 매장이미지"
               width='60px'
               height='60px'
+              className='fcospot-img'
+              layout="responsive"
             />
           ) : item?.spotPickup?.spot?.images?.length! > 0 ? (
             <Image 
@@ -410,6 +412,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
               width={60}
               layout="responsive"
               alt="프코스팟 매장이미지"
+              className='fcospot-img'
             />
           ) : (
             <NextImage 
@@ -417,6 +420,8 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
               alt="프코스팟 매장이미지"
               width='60px'
               height='60px'
+              className='fcospot-img'
+              layout="responsive"
             />
           )}
         </ImageWrapper>
@@ -493,13 +498,15 @@ const ImageWrapper = styled.div`
   margin-left: 15px;
   border-radius: 8px;
   margin-bottom: 10px;
-`;
 
-const SpotImg = styled.img`
-  width: 100%;
   border: 1px solid ${theme.greyScale6};
   border-radius: 8px;
+
+  .fcospot-img {
+    border-radius: 8px;
+  }
 `;
+
 
 const TagWrapper = styled.div``;
 

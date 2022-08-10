@@ -214,6 +214,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                     alt="프코스팟 매장이미지"
                     width={132}
                     height={132}
+                    layout="responsive"
                   />
                 ) : (
                   <Image 
@@ -222,6 +223,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                     width={132}
                     height={132}
                     className='fcospot-img'
+                    layout="responsive"
                   />
                 )}
               </ImageWrapper>
@@ -260,6 +262,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                     alt="프코스팟 매장이미지"
                     width={132}
                     height={132}
+                    layout="responsive"
                   />
                 ) : (
                   <Image 
@@ -268,6 +271,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                     width={132}
                     height={132}
                     className='fcospot-img'
+                    layout="responsive"
                   />
                 )}
               </ImageWrapper>
@@ -398,14 +402,16 @@ const Tag = styled.span`
   border-radius: 4px;
   padding: 4px 8px;
   opacity: 90%;
+  z-index: 999;
 `;
 
 const ImageWrapper = styled.div`
   width: 132px;
-  heigth: 132px;  
+  heigth: 132px; 
+  border: 1px solid ${theme.greyScale6};
+  border-radius: 8px;
   .fcospot-img {
     width: 100%;
-    border: 1px solid ${theme.greyScale6};
     border-radius: 8px;
   }
 `;
