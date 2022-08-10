@@ -16,6 +16,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { postCartsApi } from '@api/cart';
 import { useToast } from '@hooks/useToast';
 import { SET_ALERT } from '@store/alert';
+import useIntersectionObserver from '@hooks/useIntersectionObserver';
 
 const OrderDateFilter = dynamic(() => import('@components/Filter/OrderDateFilter'));
 
@@ -37,17 +38,10 @@ const DEFAULT_SIZE = 10;
 const OrderDeliveryHistoryPage = () => {
   const dispatch = useDispatch();
   const [withInDays, setWithInDays] = useState<string>('90');
-  const [page, setPage] = useState<number>(0);
-  const ref = useRef<HTMLDivElement>(null);
+  const childRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { showToast } = useToast();
-
-  const option = {
-    root: parentRef?.current!, // 관찰대상의 부모요소를 지정
-    rootMargin: '0px', // 관찰하는 뷰포트의 마진 지정
-    threshold: 1.0,
-  };
 
   const queryClient = useQueryClient();
 
@@ -56,7 +50,7 @@ const OrderDeliveryHistoryPage = () => {
       withInDays,
       orderType: 'GENERAL',
       size: DEFAULT_SIZE,
-      page,
+      page: 1,
     });
 
   const clickFilterHandler = () => {
@@ -92,6 +86,15 @@ const OrderDeliveryHistoryPage = () => {
     }
   );
 
+  const { page } = useIntersectionObserver({
+    fetchNextPage,
+    totalPage: data?.pages[0]?.totalPage!,
+    currentPage: data?.pages.length!,
+    childRef,
+    parentRef,
+    isFetching,
+  });
+
   const buttonHandler = ({ menus, isDelivering }: { menus: IOrderMenusInOrderList[]; isDelivering: boolean }) => {
     if (isDelivering) {
       // 배송조회
@@ -105,31 +108,9 @@ const OrderDeliveryHistoryPage = () => {
     router.push('/');
   };
 
-  const handleObserver = useCallback((entries) => {
-    const target = entries[0];
-
-    if (target.isIntersecting) {
-      setPage((prev) => prev + 1);
-    }
-  }, []);
-
   const initQueries = async () => {
     await queryClient.resetQueries('infiniteOrderList', { exact: true });
   };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(handleObserver, option);
-    if (ref?.current) {
-      observer.observe(ref?.current);
-    }
-    return () => observer && observer.disconnect();
-  }, [handleObserver]);
-
-  useEffect(() => {
-    if (page <= data?.pages[0]?.totalPage!) {
-      fetchNextPage();
-    }
-  }, [page]);
 
   useEffect(() => {
     // TODO: 의존성 때문에 처음에 두번 호출
@@ -171,7 +152,7 @@ const OrderDeliveryHistoryPage = () => {
           </FlexCol>
         </NoSubsBox>
       )}
-      <div className="last" ref={ref}></div>
+      <div className="last" ref={childRef}></div>
     </Container>
   );
 };
