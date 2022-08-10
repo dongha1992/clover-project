@@ -92,7 +92,7 @@ const RegistrationsListPage = () => {
     <Container>
       <ImgWrapper>
         <NextImage 
-          src='/images/img_fcospot_join_main.png'
+          src='/images/fcospot/img_fcospot_join_main.png'
           width={'512px'}
           height={'935px'}
           alt="프코스팟 신청 메인 페이지 이미지"

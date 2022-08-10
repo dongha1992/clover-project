@@ -126,7 +126,7 @@ const SpotReqPage = () => {
         { type === 'PRIVATE' ? 
           (
             <NextImage 
-              src='/images/img_fcospot_add_private.png'
+              src='/images/fcospot/img_fcospot_add_private.png'
               width={'512px'}
               height={'272px'}
               alt="프라이빗 신청 페이지 이미지"
@@ -135,7 +135,7 @@ const SpotReqPage = () => {
             />
           ) : (
             <NextImage 
-              src='/images/img_fcospot_add_public.png'
+              src='/images/fcospot/img_fcospot_add_public.png'
               width={'512px'}
               height={'272px'}
               alt="단골가게 또는 우리가게 신청 페이지 이미지"
