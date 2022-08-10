@@ -127,6 +127,7 @@ const BtnGroup = styled.div`
   align-items: center;
   justify-content: center;
   width: 30%;
+  cursor: pointer;
 
   > svg {
   }

@@ -13,7 +13,6 @@ import {
   FlexColCenter,
 } from '@styles/theme';
 import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/Text';
-import Script from 'next/script';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
 import { getCookie, getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
@@ -191,6 +190,11 @@ const OrderPage = () => {
           // 정기구독은 카드결제만 가능
           setSelectedOrderMethod('NICE_BILLING');
         }
+        setUserInputObj({
+          ...userInputObj,
+          receiverName: data?.order.userName!,
+          receiverTel: data?.order.userTel!,
+        });
       },
       onError: (error: any) => {
         if (error?.code === 5005) {
@@ -405,6 +409,9 @@ const OrderPage = () => {
   };
 
   const checkFormHanlder = (name: string) => {
+    if (tempOrder?.isSubOrderDelivery && name === 'samePerson') {
+      return;
+    }
     setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
   };
 
@@ -416,7 +423,7 @@ const OrderPage = () => {
     const limitPoint = Math.min(payAmount, point) - (userInputObj.coupon! || 0);
 
     if (uncommaValue >= limitPoint) {
-      uncommaValue = limitPoint;
+      uncommaValue = limitPoint > 0 ? limitPoint : 0;
     }
 
     setUserInputObj({ ...userInputObj, point: uncommaValue });
@@ -807,9 +814,23 @@ const OrderPage = () => {
   };
 
   useEffect(() => {
+    const { isSelected } = checkForm.samePerson;
+
+    if (previewOrder?.order && isSelected) {
+      const { userName, userTel } = previewOrder?.order;
+
+      setUserInputObj({
+        ...userInputObj,
+        receiverName: userName,
+        receiverTel: userTel,
+      });
+    }
+  }, [checkForm.samePerson.isSelected]);
+
+  useEffect(() => {
     if (previewOrder) {
       const isParcelAndMorning = ['MORNING', 'PARCEL'].includes(previewOrder?.order?.delivery!);
-      const { userName, userTel } = previewOrder?.order!;
+      const { userName, userTel, receiverName, receiverTel } = previewOrder?.order!;
       const { deliveryMessage, deliveryMessageType } = previewOrder?.destination;
 
       if (recentPayment) {
@@ -840,6 +861,7 @@ const OrderPage = () => {
             receiverTel: userTel,
           });
         }
+        return;
       } else {
         setUserInputObj({
           ...userInputObj,
@@ -851,6 +873,8 @@ const OrderPage = () => {
       }
     }
   }, [previewOrder, userAccessMethod?.value]);
+
+  console.log(userInputObj, 'userInputObj');
 
   useEffect(() => {
     const card = selectedCard
@@ -867,23 +891,9 @@ const OrderPage = () => {
   useEffect(() => {
     if (previewOrder) {
       const { coupon, value } = checkCouponHandler();
-      console.log(coupon, 'coupon');
       setUserInputObj({ ...userInputObj, coupon, point: value });
     }
   }, [selectedCoupon, previewOrder]);
-
-  useEffect(() => {
-    const { isSelected } = checkForm.samePerson;
-
-    if (previewOrder?.order && isSelected) {
-      const { userName, userTel } = previewOrder?.order;
-      setUserInputObj({
-        ...userInputObj,
-        receiverName: userName,
-        receiverTel: userTel,
-      });
-    }
-  }, [checkForm.samePerson.isSelected]);
 
   useEffect(() => {
     if (router.isReady && message) {
@@ -927,28 +937,6 @@ const OrderPage = () => {
 
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
-  }
-
-  if (isError) {
-    /*TODO: 에러페이지 만들기 or alert으로 띄우기? */
-    const { code } = error;
-    if (code === 5005) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '선택하신 배송일의 주문이 마감됐어요. 배송일 변경 후 다시 시도해 주세요.',
-          onSubmit: () => router.push('/cart'),
-        })
-      );
-      return;
-    } else {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '알 수 없는 에러발생',
-          onSubmit: () => router.push('/cart'),
-        })
-      );
-      return;
-    }
   }
 
   const {
@@ -1077,7 +1065,7 @@ const OrderPage = () => {
               className="checkBox"
               onChange={() => checkFormHanlder('samePerson')}
               isSelected={checkForm.samePerson.isSelected}
-              disabled={tempOrder?.isSubOrderDelivery}
+              // disabled={tempOrder?.isSubOrderDelivery}
             />
             <TextB2R padding="0 0 0 8px" color={tempOrder?.isSubOrderDelivery ? theme.greyScale45 : theme.black}>
               주문자와 동일
