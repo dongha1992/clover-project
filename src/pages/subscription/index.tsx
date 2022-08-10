@@ -116,9 +116,10 @@ const SubscriptiopPage = () => {
   // isMenusLoading && isOrdersLoading && 수정
   if (loading) {
     return (
-      <Loading>
-        <Lottie options={defaultOptions} height={500} width={500} />
-      </Loading>
+      <div>...로딩중</div>
+      // <Loading>
+      //   <Lottie options={defaultOptions} height={500} width={500} />
+      // </Loading>
     );
   }
 
