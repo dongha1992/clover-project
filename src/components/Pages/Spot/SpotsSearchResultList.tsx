@@ -5,7 +5,6 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { IMAGE_S3_URL, IMAGE_S3_DEV_URL } from '@constants/mock';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { ISpotsDetail, ISpotPickupInfoInDestination } from '@model/index';
 import { useRouter } from 'next/router';
@@ -24,6 +23,8 @@ import { postDestinationApi } from '@api/destination';
 import { weeks } from '@constants/delivery-info';
 import { dayOfWeek } from '@utils/common/getFormatDate';
 import useSubsSpotOpenCheck from '@hooks/subscription/useSubsSpotOpenCheck';
+import Image from '@components/Shared/Image';
+import NextImage from 'next/image';
 
 interface IProps {
   item: ISpotsDetail | any;
@@ -474,12 +475,21 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
       </FlexColStart>
       <FlexCol>
         <ImageWrapper>
-          {item.isTrial ? (
-            <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
-          ) : item.images?.length! > 0 ? (
-            <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`} />
+          {item.isTrial || item.images?.length! < 0 ? (
+            <NextImage 
+              src='/images/img_fcospot_empty.png'
+              alt="프코스팟 매장이미지"
+              width={60}
+              height={60}
+            />
           ) : (
-            <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+            <Image 
+              src={item?.images[0].url} 
+              height={60}
+              width={60}
+              alt="프코스팟 매장이미지"
+              className='fcospot-img'
+            />
           )}
         </ImageWrapper>
         {!recommand &&
@@ -561,9 +571,14 @@ const MeterAndTime = styled.div`
 const TagWrapper = styled.div``;
 
 const ImageWrapper = styled.div<{ map?: boolean }>`
+  width: 60px;
   margin-left: 15px;
-  border-radius: 8px;
   margin-bottom: 10px;
+  .fcospot-img{
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid ${theme.greyScale6};  
+  }
   ${({ map }) => {
     if (map) {
       return css`

@@ -27,8 +27,11 @@ const SpotStatusPage = () => {
   const [items, setItems] = useState<boolean>(false);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [statusList, setStatusList] = useState<IGetRegistrationStatus[]>([]);
-  const latLen = spotsPosition.latitude?.length > 0;
-  const lonLen = spotsPosition.longitude?.length > 0;
+
+  const latLen = spotsPosition?.latitude !== null;
+  const latitude = latLen ? Number(spotsPosition?.latitude) : null;
+  const lonLen = spotsPosition?.longitude !== null;
+  const longitude = lonLen ? Number(spotsPosition?.longitude) : null;
 
   const isScroll = useScrollCheck();
 
@@ -52,32 +55,36 @@ const SpotStatusPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusList.length > 0]);
 
+  useEffect(()=> {
+    window.scrollTo(0, 0);
+  }, [selectedTab]);
+  
   useEffect(() => {
     getSpotRegistrationList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
-
-  // 찜한 스팟 api
-  const { data: wishList } = useQuery(
-    ['spotList'],
-    async () => {
-      const params: IParamsSpots = {
-        latitude: latLen ? Number(spotsPosition.latitude) : null,
-        longitude: lonLen ? Number(spotsPosition.longitude) : null,
-        size: 10,
-        page: 1,
-      };
-      const response = await getSpotsWishList(params);
-      return response.data.data;
-    },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
-  );
 
   // 스팟 정보 조회 api
   const { data: getInfo } = useQuery(
     ['spotList'],
     async () => {
       const response = await getSpotInfo();
+      return response.data.data;
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+  
+  // 찜한 스팟 api
+  const { data: wishList } = useQuery(
+    ['spotList', spotsPosition],
+    async () => {
+      const params: IParamsSpots = {
+        latitude: latitude,
+        longitude: longitude,
+        size: 10,
+        page: 1,
+      };
+      const response = await getSpotsWishList(params);
       return response.data.data;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
