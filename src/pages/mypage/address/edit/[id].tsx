@@ -53,7 +53,7 @@ interface IDeliveryEditObj {
 const AddressEditPage = ({ id, spotPickupId }: IProps) => {
   const [selectedAddress, setSelectedAddress] = useState<IDestinationsResponse>();
   const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod>();
-  const [isSamePerson, setIsSamePerson] = useState(false);
+  const [isSamePerson, setIsSamePerson] = useState(true);
   const [isDefaultSpot, setIsDefaultSpot] = useState(false);
   const [deliveryEditObj, setDeliveryEditObj] = useState<IDeliveryEditObj>({
     deliveryName: '',
@@ -172,7 +172,9 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
     }
   );
 
-  const checkSamePerson = () => {};
+  const checkSamePerson = () => {
+    setIsSamePerson((prev) => !prev);
+  };
 
   const checkDefaultSpot = () => {
     setIsDefaultSpot(!isDefaultSpot);
@@ -217,16 +219,6 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
         }
       }
 
-      // case isParcel: {
-      //   const noMsg = !deliveryEditObj.deliveryMessage.length;
-      //   if (noMsg) {
-      //     dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
-      //     return false;
-      //   } else {
-      //     return true;
-      //   }
-      // }
-
       default: {
         return true;
       }
@@ -235,6 +227,10 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
 
   const changeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
+    if (isSamePerson) {
+      setIsSamePerson(false);
+    }
+
     setDeliveryEditObj({ ...deliveryEditObj, [name]: value });
   };
 
@@ -257,10 +253,9 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
   };
 
   const editAddressHandler = () => {
-    // if (cheekBeforeEdit()) {
-    //   mutationEditAddress();
-    // }
-    mutationEditAddress();
+    if (cheekBeforeEdit()) {
+      mutationEditAddress();
+    }
   };
 
   useEffect(() => {
@@ -273,6 +268,18 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
       spotPickupId: selectedSpotPickupId,
     });
   }, [selectedSpotPickupId]);
+
+  useEffect(() => {
+    if (data) {
+      const { receiverName, receiverTel } = data!;
+
+      setDeliveryEditObj({
+        ...deliveryEditObj,
+        receiverName,
+        receiverTel,
+      });
+    }
+  }, [isSamePerson]);
 
   if (isLoading) {
     return <div>로딩중</div>;
@@ -343,7 +350,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
                 <TextH5B>베송지</TextH5B>
                 <FlexColEnd>
                   <TextB2R>{selectedAddress?.location?.address}</TextB2R>
-                  <TextB3R color={theme.greyScale65}> {selectedAddress?.location?.addressDetail}</TextB3R>
+                  <TextB2R>{selectedAddress?.location?.addressDetail}</TextB2R>
                 </FlexColEnd>
               </FlexBetweenStart>
             </FlexCol>

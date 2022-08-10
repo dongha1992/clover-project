@@ -457,11 +457,8 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
               <FlexBetweenStart padding="16px 0 0 0">
                 <TextH5B>배송지</TextH5B>
                 <FlexColEnd>
-                  <TextB2R>{deliveryEditObj.name}</TextB2R>
-                  <FlexRow>
-                    <TextB3R color={theme.greyScale65}>{deliveryEditObj?.location?.address}</TextB3R>
-                    <TextB3R color={theme.greyScale65}> {deliveryEditObj?.location?.addressDetail}</TextB3R>
-                  </FlexRow>
+                  <TextB2R>{deliveryEditObj?.location?.address}</TextB2R>
+                  <TextB2R>{deliveryEditObj?.location?.addressDetail}</TextB2R>
                 </FlexColEnd>
               </FlexBetweenStart>
               <BorderLine height={8} margin="24px 0 0 0" />
