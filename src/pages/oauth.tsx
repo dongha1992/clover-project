@@ -62,7 +62,6 @@ const Oauth = () => {
             dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
           }
         } else {
-          console.log(recommendCode, 'recommendCode');
           recommendCode ? router.push(`/mypage/friend`) : router.push('/');
         }
       }

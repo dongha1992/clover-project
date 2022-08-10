@@ -182,14 +182,14 @@ const MypagePage = () => {
           <>
             <UserInfoWrapper>
               <FlexRow>
-                <TextH2B padding="0 6px 0 0">{me?.name}님은</TextH2B>
+                <TextH2B padding="0 6px 0 0">{me?.nickname}님은</TextH2B>
                 <IconBox onClick={() => goToEditUserInfo()}>
                   <SVGIcon name="arrowRight" />
                 </IconBox>
               </FlexRow>
               <FlexBetween padding="8px 0 0 0">
                 <FlexRow>
-                  <Tag color={theme.brandColor} margin="0 8px 0 0">
+                  <Tag backgroundColor={theme.brandColor5} color={theme.brandColor} margin="0 8px 0 0">
                     {me.grade.name}
                   </Tag>
                   <TextB3R color={theme.brandColor} padding="2px 0 0 0">
