@@ -346,11 +346,11 @@ const ProfilePage = () => {
       const { name, value } = e.target;
       const isBirthDate = ['year', 'month', 'day'].includes(name);
 
-      // if (name === 'name') {
-      //   checkNameValid(value);
-      // } else if (name === 'nickname') {
-      //   checkNickNameValid(value);
-      // }
+      if (name === 'name') {
+        checkNameValid(value);
+      } else if (name === 'nickname') {
+        checkNickNameValid(value);
+      }
       setUserInfo({ ...userInfo, [name]: isBirthDate ? Number(value) : value });
     },
     [userInfo]
@@ -453,10 +453,6 @@ const ProfilePage = () => {
     const birthObj = { year: userInfo.year, month: userInfo.month, day: userInfo.day };
     setIsValidBirthDay(getValidBirthday(birthObj));
   }, [userInfo.day, userInfo.month, userInfo.year]);
-
-  useEffect(() => {
-    checkNickNameValid(userInfo.nickname);
-  }, [userInfo.nickname]);
 
   const isKakao = me?.joinType === 'KAKAO';
   const isNotEmail = me?.joinType !== 'EMAIL';
