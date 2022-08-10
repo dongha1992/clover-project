@@ -28,7 +28,7 @@ const SubscriptionManagementPage = () => {
 
   const handleObserver = useCallback((entries) => {
     const target = entries[0];
-
+    console.log(target, 'target');
     if (target.isIntersecting) {
       setPage((prev) => prev + 1);
     }
@@ -54,6 +54,8 @@ const SubscriptionManagementPage = () => {
   const goToSubscription = () => {
     router.push('/subscription');
   };
+
+  console.log(page);
 
   return (
     <Container ref={parentRef}>

@@ -9,6 +9,7 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query';
+import { useInfinite } from '@queries/useInfinite';
 
 export const useGetOrders = (key: QueryKey, params: IGetOrderRequest, options?: UseQueryOptions<any>) =>
   useQuery(
@@ -71,21 +72,5 @@ export const useInfiniteOrders = ({ days, size, type }: { days: number; size: nu
     };
   };
 
-  const query = useInfiniteQuery('orders', fetchDatas, {
-    getNextPageParam: (lastPage, pages) => {
-      if (lastPage.totalPage >= lastPage.nextPage) {
-        return lastPage.nextPage;
-      } else {
-        return null;
-      }
-    },
-    refetchOnMount: true,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: true,
-    cacheTime: 0,
-    staleTime: 0,
-    retry: 1,
-  });
-
-  return query;
+  return useInfinite('orders', fetchDatas);
 };

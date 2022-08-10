@@ -32,7 +32,7 @@ export const deliveryDetailMap: Obj = {
   DINNER: '저녁',
 };
 
-const DEFAULT_SIZE = 100;
+const DEFAULT_SIZE = 10;
 
 const OrderDeliveryHistoryPage = () => {
   const dispatch = useDispatch();
@@ -51,38 +51,12 @@ const OrderDeliveryHistoryPage = () => {
 
   const queryClient = useQueryClient();
 
-  // const { data, isLoading } = useQuery(
-  //   ['getOrderLists', withInDays],
-  //   async () => {
-  //     const params = {
-  //       days: Number(withInDays),
-  //       page: 1,
-  //       size: 10,
-  //       orderType: 'GENERAL',
-  //     };
-
-  //     const { data } = await getOrderListsApi(params);
-
-  //     /*TODO: 정기구독이랑 묶일 경우 type="SUB" */
-
-  //     return data.data.orderDeliveries;
-  //   },
-  //   {
-  //     onSuccess: (data) => {},
-
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
-
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status, isLoading } = useInfiniteOrderList({
     withInDays,
     orderType: 'GENERAL',
     size: DEFAULT_SIZE,
     page,
   });
-
-  console.log(page, 'page');
 
   const clickFilterHandler = () => {
     dispatch(
@@ -110,7 +84,7 @@ const OrderDeliveryHistoryPage = () => {
         dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
       },
       onSuccess: async () => {
-        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+        showToast({ message: '상품을 장바구니에 담았어요! 😭' });
         await queryClient.refetchQueries('getCartList');
         await queryClient.refetchQueries('getCartCount');
       },
@@ -153,15 +127,13 @@ const OrderDeliveryHistoryPage = () => {
     }
   }, [page]);
 
-  if (isLoading) {
-    return <div>로딩</div>;
-  }
-
   return (
     <Container ref={parentRef}>
       <FlexEnd onClick={clickFilterHandler} padding="16px 0">
         <SVGIcon name="filter" />
-        <TextH6B padding="0 0 0 4px">정렬</TextH6B>
+        <TextH6B pointer padding="0 0 0 4px">
+          정렬
+        </TextH6B>
       </FlexEnd>
       {data?.pages[0]?.result?.length !== 0 ? (
         data?.pages.map((page: any, index: number) => {
@@ -182,7 +154,7 @@ const OrderDeliveryHistoryPage = () => {
         <NoSubsBox>
           <FlexCol width="100%">
             <TextB2R padding="0 0 24px" color={theme.greyScale65} center>
-              주문/배송 내역이 없어요 😭
+              주문/배송 내역이 없어요 :울음:
             </TextB2R>
             <Button backgroundColor="#fff" color="#242424" width="100%" border onClick={goToShop}>
               상품 보러가기
