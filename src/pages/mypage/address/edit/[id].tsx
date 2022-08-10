@@ -350,7 +350,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
                 <TextH5B>베송지</TextH5B>
                 <FlexColEnd>
                   <TextB2R>{selectedAddress?.location?.address}</TextB2R>
-                  <TextB3R color={theme.greyScale65}> {selectedAddress?.location?.addressDetail}</TextB3R>
+                  <TextB2R>{selectedAddress?.location?.addressDetail}</TextB2R>
                 </FlexColEnd>
               </FlexBetweenStart>
             </FlexCol>

@@ -524,7 +524,7 @@ const OrderDetailPage = () => {
         <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
         <FlexBetween>
           <TextH4B>최종 결제금액</TextH4B>
-          <TextH4B>{getFormatPrice(String(payAmount + point))}원</TextH4B>
+          <TextH4B>{getFormatPrice(String(payAmount))}원</TextH4B>
         </FlexBetween>
         <FlexEnd padding="11px 0 0 0">
           <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
@@ -581,34 +581,31 @@ const OrderDetailPage = () => {
               <TextH5B>배송비</TextH5B>
               <TextB2R>{getFormatPrice(String(refundDeliveryFee))}원</TextB2R>
             </FlexBetween>
-            <BorderLine height={1} margin="16px 0" />
-            <FlexBetween>
-              <TextH4B>총 결제 금액</TextH4B>
-              <TextB2R>{getFormatPrice(String(refundCoupon + refundPoint + refundPayAmount))}원</TextB2R>
-            </FlexBetween>
-            {refundPayAmount > 0 && (
-              <FlexBetween padding="8px 0 0 0">
-                <TextB2R>환불 금액</TextB2R>
-                <TextB2R>{getFormatPrice(String(refundPayAmount))}원</TextB2R>
-              </FlexBetween>
-            )}
-            {refundCoupon > 0 && coupon > 0 && (
-              <FlexBetween padding="8px 0 0 0">
-                <TextB2R>환불 쿠폰</TextB2R>
-                <TextB2R>1개</TextB2R>
-              </FlexBetween>
-            )}
-            {refundPoint > 0 && (
-              <FlexBetween padding="8px 0 0 0">
-                <TextB2R>환불 포인트</TextB2R>
-                <TextB2R>{getFormatPrice(String(refundPoint))}원</TextB2R>
-              </FlexBetween>
-            )}
             <BorderLine height={1} margin="16px 0" backgroundColor={theme.black} />
             <FlexBetween>
-              <TextH4B>최종 환불금액</TextH4B>
+              <TextH4B>최종 환불합계</TextH4B>
               <TextH4B>{getFormatPrice(String(refundCoupon + refundPoint + refundPayAmount))}원</TextH4B>
             </FlexBetween>
+            <RefundContainer>
+              {refundPayAmount > 0 && (
+                <FlexBetween padding="8px 0 0 0">
+                  <TextB2R>환불 금액</TextB2R>
+                  <TextB2R>{getFormatPrice(String(refundPayAmount))}원</TextB2R>
+                </FlexBetween>
+              )}
+              {refundCoupon > 0 && coupon > 0 && (
+                <FlexBetween padding="8px 0 0 0">
+                  <TextB2R>환불 쿠폰</TextB2R>
+                  <TextB2R>1개</TextB2R>
+                </FlexBetween>
+              )}
+              {refundPoint > 0 && (
+                <FlexBetween padding="8px 0 0 0">
+                  <TextB2R>환불 포인트</TextB2R>
+                  <TextB2R>{getFormatPrice(String(refundPoint))}원</TextB2R>
+                </FlexBetween>
+              )}
+            </RefundContainer>
             <FlexEnd padding="11px 0 0 0">
               <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
                 {me?.grade?.name!}
@@ -674,25 +671,10 @@ const RefundInfoWrapper = styled.div`
   padding: 24px;
 `;
 
-/* TODO: getServerSideProps아니라 static인 거 같은데  */
-
-// export async function getServerSideProps(context: any) {
-//   const { orderId } = context.query;
-
-//   if (!orderId) {
-//     return {
-//       props: {
-//         notFound: true,
-//         redirect: {
-//           destinaion: '/',
-//         },
-//       },
-//     };
-//   }
-
-//   return {
-//     props: { orderId },
-//   };
-// }
+const RefundContainer = styled.div`
+  padding: 16px;
+  margin-top: 16px;
+  background: ${theme.greyScale3};
+`;
 
 export default OrderDetailPage;
