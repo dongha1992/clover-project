@@ -423,7 +423,7 @@ const OrderPage = () => {
     const limitPoint = Math.min(payAmount, point) - (userInputObj.coupon! || 0);
 
     if (uncommaValue >= limitPoint) {
-      uncommaValue = limitPoint;
+      uncommaValue = limitPoint > 0 ? limitPoint : 0;
     }
 
     setUserInputObj({ ...userInputObj, point: uncommaValue });
@@ -937,28 +937,6 @@ const OrderPage = () => {
 
   if (preveiwOrderLoading) {
     return <div>로딩</div>;
-  }
-
-  if (isError) {
-    /*TODO: 에러페이지 만들기 or alert으로 띄우기? */
-    const { code } = error;
-    if (code === 5005) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '선택하신 배송일의 주문이 마감됐어요. 배송일 변경 후 다시 시도해 주세요.',
-          onSubmit: () => router.push('/cart'),
-        })
-      );
-      return;
-    } else {
-      dispatch(
-        SET_ALERT({
-          alertMessage: '알 수 없는 에러발생',
-          onSubmit: () => router.push('/cart'),
-        })
-      );
-      return;
-    }
   }
 
   const {

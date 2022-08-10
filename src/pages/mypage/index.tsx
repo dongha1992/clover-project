@@ -39,6 +39,7 @@ const MypagePage = () => {
   const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
   const [subsCloseOrders, setSubsCloseOrders] = useState([]);
   const [showBoard, setShowBoard] = useState<string>('');
+
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
     async () => {
