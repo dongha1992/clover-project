@@ -210,7 +210,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <ImageWrapper>
                 {list.isTrial || list.images.length < 0  ? (
                   <NextImage 
-                    src='/images/img_fcospot_empty.png'
+                    src='/images/fcospot/img_fcospot_empty.png'
                     alt="프코스팟 매장이미지"
                     width={132}
                     height={132}
@@ -258,7 +258,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <ImageWrapper>
                 {list.isTrial || list.images.length < 0  ? (
                   <NextImage 
-                    src='/images/img_fcospot_empty.png'
+                    src='/images/fcospot/img_fcospot_empty.png'
                     alt="프코스팟 매장이미지"
                     width={132}
                     height={132}

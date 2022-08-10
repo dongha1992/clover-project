@@ -29,6 +29,7 @@ import { SET_ALERT } from '@store/alert';
 import { Button } from '@components/Shared/Button';
 import { commonSelector } from '@store/common';
 import NextImage from 'next/image';
+import Image from '@components/Shared/Image';
 
 const FCO_SPOT_BANNER = [
   {
@@ -397,7 +398,7 @@ const SpotPage = () => {
             <TextH2B padding="10px 24px 0 24px">오픈 진행 중인 프코스팟</TextH2B>
             <SpotOpenBannerWrapper>
               <NextImage 
-                src='/images/img_fcospot_banner_open.png'
+                src='/images/fcospot/img_fcospot_banner_open.png'
                 width={'512px'}
                 height={'287px'}
                 alt="프코스팟 신청 완료 페이지 이미지"
@@ -433,7 +434,7 @@ const SpotPage = () => {
             </Wrapper>
             <StoryContentsWrapper onClick={goToSpotNotice}>
               <NextImage 
-                src='/images/img_fcospot_banner_info.jpg'
+                src='/images/fcospot/img_fcospot_banner_info.jpg'
                 width={'512px'}
                 height={'444px'}
                 alt="프코스팟 신청 완료 페이지 이미지"
@@ -456,7 +457,7 @@ const SpotPage = () => {
         ) : (
           <StoryContentsWrapper>
             <NextImage 
-              src='/images/img_fcospot_banner_info.jpg'
+              src='/images/fcospot/img_fcospot_banner_info.jpg'
               width={'512px'}
               height={'444px'}
               alt="프코스팟 신청 완료 페이지 이미지"

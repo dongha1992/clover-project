@@ -6,7 +6,7 @@ const SpotNoticePage = () => {
   return (
     <Container>
       <NextImage 
-        src='/images/img_fcospot_detail_info.png'
+        src='/images/fcospot/img_fcospot_detail_info.png'
         width={'512px'}
         height={'1720px'}
         alt="프코스팟 안내 이미지"

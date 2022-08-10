@@ -398,7 +398,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
         <ImageWrapper>
           {item?.spotPickup?.spot.isTrial ? (
             <NextImage 
-              src='/images/img_fcospot_empty.png'
+              src='/images/fcospot/img_fcospot_empty.png'
               alt="프코스팟 매장이미지"
               width='60px'
               height='60px'
@@ -416,7 +416,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
             />
           ) : (
             <NextImage 
-              src='/images/img_fcospot_empty.png'
+              src='/images/fcospot/img_fcospot_empty.png'
               alt="프코스팟 매장이미지"
               width='60px'
               height='60px'

@@ -215,7 +215,7 @@ const SpotDetailPage = (): ReactElement => {
       {
         spotItem?.isTrial ? (
           <NextImage 
-            src='/images/img_fcospot_default.png'
+            src='/images/fcospot/img_fcospot_default.png'
             width={512}
             height={383}
             alt="트라이얼 프코스팟 인 경우 또는 등록된 이미지가 없는 경우의 이미지"
@@ -351,7 +351,7 @@ const SpotDetailPage = (): ReactElement => {
       </PickupWrapper>
       <SpotEventBannerWrapper onClick={goToSpotNotice}>
         <NextImage 
-          src='/images/img_banner_fco_info_360_96.png'
+          src='/images/fcospot/img_banner_fco_info_360_96.png'
           width={512}
           height={110}
           alt="프코스팟 상세 페이지 중간 배너"

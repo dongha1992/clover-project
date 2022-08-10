@@ -477,7 +477,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
         <ImageWrapper>
           {item.isTrial || item.images?.length! < 0 ? (
             <NextImage 
-              src='/images/img_fcospot_empty.png'
+              src='/images/fcospot/img_fcospot_empty.png'
               alt="트라이얼 프코스팟 인 경우 또는 등록된 이미지가 없는 경우의 이미지"
               width={60}
               height={60}

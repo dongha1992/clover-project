@@ -119,7 +119,7 @@ const OpenInfo = ({type}: IParams) => {
             <ContentTextWrapper key={idx}>
               <ImageWrapper>
                 <Image 
-                  src={`/images/${i.url}`}
+                  src={`/images/fcospot-status/${i.url}`}
                   width={312}
                   height={174}
                   layout="responsive"

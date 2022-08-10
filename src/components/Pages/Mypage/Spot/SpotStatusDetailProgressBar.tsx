@@ -213,7 +213,7 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
                           !item.rejected &&
                           selectedStep?.id === idx &&
                           <Image 
-                            src={`/images/${progressStepType()?.icon}`}
+                            src={`/images/fcospot-status/${progressStepType()?.icon}`}
                             height="100%"
                             width="100%"
                             layout="responsive"
