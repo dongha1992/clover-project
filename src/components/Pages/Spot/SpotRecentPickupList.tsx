@@ -5,7 +5,6 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { IMAGE_S3_URL, IMAGE_S3_DEV_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import { IDestinationsResponse } from '@model/index';
 import { useRouter } from 'next/router';
@@ -21,6 +20,8 @@ import { getSpotDistanceUnit } from '@utils/spot';
 import { weeks } from '@constants/delivery-info';
 import { dayOfWeek } from '@utils/common/getFormatDate';
 import useSubsSpotOpenCheck from '@hooks/subscription/useSubsSpotOpenCheck';
+import Image from '@components/Shared/Image';
+import NextImage from 'next/image';
 
 interface IProps {
   item: IDestinationsResponse | undefined;
@@ -402,11 +403,32 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       <FlexCol>
         <ImageWrapper>
           {item?.spotPickup?.spot.isTrial ? (
-            <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+            <NextImage 
+              src='/images/fcospot/img_fcospot_empty.png'
+              alt="프코스팟 매장이미지"
+              width='60px'
+              height='60px'
+              className='fcospot-img'
+              layout="responsive"
+            />
           ) : item?.spotPickup?.spot?.images?.length! > 0 ? (
-            <SpotImg src={`${IMAGE_S3_URL}${item?.spotPickup?.spot.images[0].url}`} />
+            <Image 
+              src={item?.spotPickup?.spot.images[0].url!} 
+              height={60}
+              width={60}
+              layout="responsive"
+              alt="프코스팟 매장이미지"
+              className='fcospot-img'
+            />
           ) : (
-            <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+            <NextImage 
+              src='/images/fcospot/img_fcospot_empty.png'
+              alt="프코스팟 매장이미지"
+              width='60px'
+              height='60px'
+              className='fcospot-img'
+              layout="responsive"
+            />
           )}
         </ImageWrapper>
         {isOpened && !isClosed ? (
@@ -482,13 +504,15 @@ const ImageWrapper = styled.div`
   margin-left: 15px;
   border-radius: 8px;
   margin-bottom: 10px;
-`;
 
-const SpotImg = styled.img`
-  width: 100%;
   border: 1px solid ${theme.greyScale6};
   border-radius: 8px;
+
+  .fcospot-img {
+    border-radius: 8px;
+  }
 `;
+
 
 const TagWrapper = styled.div``;
 
