@@ -55,8 +55,6 @@ const SubscriptionManagementPage = () => {
     router.push('/subscription');
   };
 
-  console.log(page);
-
   return (
     <Container ref={parentRef}>
       {data?.pages[0]?.result.length !== 0 ? (
