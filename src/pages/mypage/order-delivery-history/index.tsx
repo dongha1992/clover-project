@@ -46,17 +46,18 @@ const OrderDeliveryHistoryPage = () => {
   const option = {
     root: parentRef?.current!, // 관찰대상의 부모요소를 지정
     rootMargin: '0px', // 관찰하는 뷰포트의 마진 지정
-    threshold: 1.0,
+    threshold: 0.5,
   };
 
   const queryClient = useQueryClient();
 
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status, isLoading } = useInfiniteOrderList({
-    withInDays,
-    orderType: 'GENERAL',
-    size: DEFAULT_SIZE,
-    page,
-  });
+  const { data, fetchNextPage, refetch, hasNextPage, isFetching, isFetchingNextPage, status, isLoading } =
+    useInfiniteOrderList({
+      withInDays,
+      orderType: 'GENERAL',
+      size: DEFAULT_SIZE,
+      page,
+    });
 
   const clickFilterHandler = () => {
     dispatch(
@@ -127,6 +128,10 @@ const OrderDeliveryHistoryPage = () => {
     }
   }, [page]);
 
+  // useEffect(() => {
+  //   refetch();
+  // }, [withInDays]);
+
   return (
     <Container ref={parentRef}>
       <FlexEnd onClick={clickFilterHandler} padding="16px 0">
@@ -169,9 +174,17 @@ const OrderDeliveryHistoryPage = () => {
 
 const Container = styled.div`
   ${homePadding}
+  .last {
+  }
 `;
 
-const List = styled.div``;
+const List = styled.div`
+  &:last-of-type {
+    > div:last-of-type {
+      border-bottom: none;
+    }
+  }
+`;
 const NoSubsBox = styled.div`
   height: calc(100vh - 104px);
   display: flex;
