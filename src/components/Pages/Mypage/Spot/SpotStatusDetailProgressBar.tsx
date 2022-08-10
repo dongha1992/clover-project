@@ -9,6 +9,9 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
 import { SpotStatusRejectedSheet } from '@components/BottomSheet/SpotStatusRejectedSheet';
 import { IGetRegistrationStatus } from '@model/index';
+import IcConfirm from '@public/images/ic_fcospot_confirm.png';
+import welcomeImg from '@public/images/welcome.png';
+import Image from 'next/image';
 
 interface IParams {
   item: IGetRegistrationStatus;
@@ -46,28 +49,28 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
           return {
             title: 'STEP 1.\n프코매니저가 스팟을 검토 중이에요.', 
             subtitle: '제출한 신청서를 프코 매니저가 검토 중이에요\n조금만 기다려주세요!',
-            icon: '/ic_confirm.png',
+            icon: 'ic_fcospot_confirm.png',
           }
         } else if(item?.step === 'TRIAL') {
           // 트라이얼
           return {
             title: 'STEP 2.\n트라이얼 기간 동안 5명을 모집해 주세요!', 
             subtitle: '까지 5명 이상이 해당 스팟으로\n주문을 완료해야 정식 오픈 돼요!',
-            icon: '/ic_trial.png'
+            icon: 'ic_fcospot_trial.png'
           }
         } else if(item?.trialUserCount! >= item?.trialTargetUserCount!) {
           // 오픈 검토중
           return {
             title: 'STEP 3.\n오픈 전 마지막 검토 중이에요', 
             subtitle: '성공적인 프코스팟 오픈을 위해 마지막 검토를 진행 중이에요!\n오픈 여부는 2~3일 정도 소요될 예정이니 조금만 기다려주세요.',
-            icon: '/ic_open_confirm.png'
+            icon: 'ic_fcospot_open_confirm.png'
           }
         } else if(item?.step === 'OPEN') {
           // 오픈
           return {
             title: 'STEP 4.\n프코스팟이 정식 오픈됐어요!', 
             subtitle: '트라이얼 진행 후 프코스팟을 정식 오픈했습니다\n많은 이용 부탁드려요~',
-            icon: '/ic_open.png'
+            icon: 'ic_fcospot_open.png'
           }
         } 
       }
@@ -78,21 +81,21 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
           return {
             title: 'STEP 1.\n신청한 스팟으로 100명을 모집해 주세요!', 
             subtitle: '단골가게를 오픈하려면 100명의 오픈 참여가 필요해요!\n주변 프코회원들에게 스팟을 공유해보세요',
-            icon: '/ic_trial.png'
+            icon: 'ic_fcospot_trial.png'
           }
         } else if(item?.step === 'CONFIRM') {
           // 오픈 검토 중
           return {
             title: 'STEP 2.\n프코매니저가 스팟을 검토 중이에요.', 
             subtitle: '스팟 오픈 관련 인터뷰 진행을 위해 프코매니저가 \n신청 가게로 방문 예정이에요.',
-            icon: '/ic_open_confirm.png'
+            icon: 'ic_fcospot_open_confirm.png'
           }
         } else if(item?.step === 'OPEN') {
           // 오픈
           return {
             title: 'STEP 3.\n프코스팟이 정식 오픈됐어요!', 
             subtitle: '프코스팟을 오픈했습니다\n많은 이용 부탁드려요~',
-            icon: '/ic_open.png'
+            icon: 'ic_fcospot_open.png'
           }
         } 
       }
@@ -103,14 +106,14 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
           return {
             title: 'STEP 1.\n프코매니저가 스팟을 검토 중이에요.', 
             subtitle: '스팟 오픈 관련 인터뷰 진행을 위해 프코매니저가\n신청 가게로 방문 예정이에요.',
-            icon: '/ic_open_confirm.png'
+            icon: 'ic_fcospot_open_confirm.png'
           }
         } else if(item?.step === 'OPEN') {
           // 오픈
           return {
             title: 'STEP 2.\n프코스팟이 오픈됐어요!', 
             subtitle: '프코스팟을 오픈했습니다\n많은 이용 부탁드려요~',
-            icon: '/ic_open.png',
+            icon: 'ic_fcospot_open.png',
           }
         } 
       }
@@ -213,7 +216,13 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
                         {
                           !item.rejected &&
                           selectedStep?.id === idx &&
-                          <Img src={`${IMAGE_S3_DEV_URL}${progressStepType()?.icon}`} />
+                          <Image 
+                            src={`/images/${progressStepType()?.icon}`}
+                            height="100%"
+                            width="100%"
+                            layout="responsive"
+                            alt="프코스팟 신청 현재 단계 아이콘"        
+                          />
                         }
                       </ImgWrapper>
                       <Text isSelected={!item.rejected && selectedStep?.id === idx}>{i?.text}</Text>
