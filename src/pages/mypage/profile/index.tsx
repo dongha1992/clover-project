@@ -13,9 +13,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { userAuthTel, userConfirmTel } from '@api/user';
-import { removeCookie } from '@utils/common/cookie';
-import { SET_LOGIN_SUCCESS } from '@store/user';
-import { commonSelector } from '@store/common';
 import { userForm, INIT_USER, SET_USER } from '@store/user';
 import { availabilityEmail, userChangeInfo, userProfile } from '@api/user';
 import Validation from '@components/Pages/User/Validation';
@@ -26,8 +23,6 @@ import { NAME_REGX } from '@constants/regex';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { IChangeMe } from '@model/index';
 import { getValidBirthday } from '@utils/common';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 
 interface IVaildation {
   message: string;
@@ -351,11 +346,11 @@ const ProfilePage = () => {
       const { name, value } = e.target;
       const isBirthDate = ['year', 'month', 'day'].includes(name);
 
-      if (name === 'name') {
-        checkNameValid(value);
-      } else if (name === 'nickname') {
-        checkNickNameValid(value);
-      }
+      // if (name === 'name') {
+      //   checkNameValid(value);
+      // } else if (name === 'nickname') {
+      //   checkNickNameValid(value);
+      // }
       setUserInfo({ ...userInfo, [name]: isBirthDate ? Number(value) : value });
     },
     [userInfo]
@@ -414,7 +409,7 @@ const ProfilePage = () => {
     }
   };
 
-  const checkPhontValid = () => {
+  const checkPhoneValid = () => {
     if (PHONE_REGX.test(userInfo.tel)) {
       setPhoneValidation(true);
     } else {
@@ -451,7 +446,7 @@ const ProfilePage = () => {
       month: hasBirthDate ? Number(month) : 0,
       day: hasBirthDate ? Number(day) : 0,
     });
-    checkPhontValid();
+    checkPhoneValid();
   }, [me]);
 
   useEffect(() => {
@@ -459,8 +454,14 @@ const ProfilePage = () => {
     setIsValidBirthDay(getValidBirthday(birthObj));
   }, [userInfo.day, userInfo.month, userInfo.year]);
 
+  useEffect(() => {
+    checkNickNameValid(userInfo.nickname);
+  }, [userInfo.nickname]);
+
   const isKakao = me?.joinType === 'KAKAO';
   const isNotEmail = me?.joinType !== 'EMAIL';
+
+  console.log(isValidNickname, 'isValidNickname');
 
   return (
     <Container>
