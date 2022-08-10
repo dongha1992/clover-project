@@ -478,9 +478,10 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
           {item.isTrial || item.images?.length! < 0 ? (
             <NextImage 
               src='/images/img_fcospot_empty.png'
-              alt="프코스팟 매장이미지"
+              alt="트라이얼 프코스팟 인 경우 또는 등록된 이미지가 없는 경우의 이미지"
               width={60}
               height={60}
+              layout="responsive"
             />
           ) : (
             <Image 
@@ -489,6 +490,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
               width={60}
               alt="프코스팟 매장이미지"
               className='fcospot-img'
+              layout="responsive"
             />
           )}
         </ImageWrapper>
@@ -574,10 +576,11 @@ const ImageWrapper = styled.div<{ map?: boolean }>`
   width: 60px;
   margin-left: 15px;
   margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid ${theme.greyScale6};  
   .fcospot-img{
     width: 100%;
     border-radius: 8px;
-    border: 1px solid ${theme.greyScale6};  
   }
   ${({ map }) => {
     if (map) {

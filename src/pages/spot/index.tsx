@@ -26,11 +26,9 @@ import { userForm } from '@store/user';
 import { spotSelector, SET_SPOT_INFO } from '@store/spot';
 import { destinationForm } from '@store/destination';
 import { SET_ALERT } from '@store/alert';
-import { getAddressFromLonLat } from '@api/location';
-import { getComputeDistance } from '@utils/spot';
-import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { Button } from '@components/Shared/Button';
 import { commonSelector } from '@store/common';
+import NextImage from 'next/image';
 
 const FCO_SPOT_BANNER = [
   {
@@ -398,7 +396,14 @@ const SpotPage = () => {
           <>
             <TextH2B padding="10px 24px 0 24px">오픈 진행 중인 프코스팟</TextH2B>
             <SpotOpenBannerWrapper>
-              <ImgBanner src={`${IMAGE_S3_DEV_URL}/img_banner_fco_open.png`} />
+              <NextImage 
+                src='/images/img_fcospot_banner_open.png'
+                width={'512px'}
+                height={'287px'}
+                alt="프코스팟 신청 완료 페이지 이미지"
+                className='banner-open-img'
+                layout="responsive"
+              />
             </SpotOpenBannerWrapper>
             <TrialSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
               {trialSpotList?.spotRegistrations.map((list, idx) => {
@@ -427,7 +432,14 @@ const SpotPage = () => {
               </SpotRegistration>
             </Wrapper>
             <StoryContentsWrapper onClick={goToSpotNotice}>
-              <ImgStory src={`${IMAGE_S3_DEV_URL}/img_banner_fco_info.jpg`} />
+              <NextImage 
+                src='/images/img_fcospot_banner_info.jpg'
+                width={'512px'}
+                height={'444px'}
+                alt="프코스팟 신청 완료 페이지 이미지"
+                className='benner-info-img'
+                layout="responsive"
+              />
             </StoryContentsWrapper>
             {/* 우리가게 스팟 신청 CTA */}
             <Wrapper>
@@ -443,7 +455,14 @@ const SpotPage = () => {
           </>
         ) : (
           <StoryContentsWrapper>
-            <EmptyImg src={`${IMAGE_S3_DEV_URL}/img_banner_fco_info.jpg`} />
+            <NextImage 
+              src='/images/img_fcospot_banner_info.jpg'
+              width={'512px'}
+              height={'444px'}
+              alt="프코스팟 신청 완료 페이지 이미지"
+              className='benner-info-img'
+              layout="responsive"
+            />
           </StoryContentsWrapper>
         )
       }
@@ -549,23 +568,18 @@ const SpotOpenBannerWrapper = styled.div`
   width: 100%;
   height: 100%;
   padding: 24px 0;
-`;
-
-const ImgBanner = styled.img`
-  width: 100%;
-  height: 100%;
+  .banner-open-img {
+    height: auto !important;
+  }
 `;
 
 const StoryContentsWrapper = styled.div`
   width: 100%;
   height: 100%;
   cursor: pointer;
-`;
-
-const ImgStory = styled.img`
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
+  .benner-info-img {
+    height: auto !important;
+  }
 `;
 
 const EmptyImg = styled.img`

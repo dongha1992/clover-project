@@ -1,16 +1,12 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { TextB3R, TextH4B, TextB2R } from '@components/Shared/Text';
-import { SVGIcon } from '@utils/common';
-import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { theme, FlexBetween, textH6 } from '@styles/theme';
 import { EventTooltip } from '@components/Shared/Tooltip';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch } from 'react-redux';
 import { SpotStatusRejectedSheet } from '@components/BottomSheet/SpotStatusRejectedSheet';
 import { IGetRegistrationStatus } from '@model/index';
-import IcConfirm from '@public/images/ic_fcospot_confirm.png';
-import welcomeImg from '@public/images/welcome.png';
 import Image from 'next/image';
 
 interface IParams {
