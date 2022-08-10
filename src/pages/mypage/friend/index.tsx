@@ -103,8 +103,10 @@ const InviteFriendPaage = () => {
   };
 
   const goToShare = () => {
-    // const recommendCodeUrl = `${process.env.SERVICE_URL}/onboarding?recommendCode=${me?.promotionCode}`;
-    const recommendCodeUrl = `http://localhost:9009/onboarding?recommendCode=${me?.promotionCode}`;
+    // 임시
+    const url = location.hostname === 'localhost' ? 'http://localhost:9009' : `${process.env.SERVICE_URL}`;
+    const recommendCodeUrl = `${url}/onboarding?recommendCode=${me?.promotionCode}`;
+
     dispatch(SET_BOTTOM_SHEET({ content: <ShareSheet customUrl={recommendCodeUrl} /> }));
   };
 

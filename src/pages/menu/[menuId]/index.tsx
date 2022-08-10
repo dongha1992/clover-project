@@ -2,16 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import router from 'next/router';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
-import {
-  TextH2B,
-  TextB2R,
-  TextH6B,
-  TextH3B,
-  TextH7B,
-  TextB3R,
-  TextH4B,
-  TextH5B,
-} from '@components/Shared/Text';
+import { TextH2B, TextB2R, TextH6B, TextH3B, TextH7B, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
@@ -27,12 +18,7 @@ import { DetailBottomInfo } from '@components/Pages/Detail';
 import Carousel, { ICarouselImageProps } from '@components/Shared/Carousel';
 import Image from '@components/Shared/Image';
 import { useQuery } from 'react-query';
-import {
-  getMenuDetailApi,
-  getMenuDetailReviewApi,
-  getMenuDetailReviewImageApi,
-  getBestReviewApi,
-} from '@api/menu';
+import { getMenuDetailApi, getMenuDetailReviewApi, getMenuDetailReviewImageApi, getBestReviewApi } from '@api/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import axios from 'axios';
@@ -66,7 +52,7 @@ interface IProps {
 const MenuDetailPage = ({ menuId }: IProps) => {
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
-  const [thumbnailList, setThumbnailList] = useState<ICarouselImageProps[]>([])
+  const [thumbnailList, setThumbnailList] = useState<ICarouselImageProps[]>([]);
   const tabRef = useRef<HTMLDivElement>(null);
 
   const HEADER_HEIGHT = 56;
@@ -86,7 +72,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
     'getMenuDetail',
     async () => {
       const { data } = await getMenuDetailApi(Number(menuId)!);
-      setThumbnailList(data.data.thumbnail.map(image =>({src: image.url})));
+      setThumbnailList(data.data.thumbnail.map((image) => ({ src: image.url })));
       return data?.data;
     },
 
@@ -342,7 +328,7 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   return (
     <Container>
       <ImgWrapper>
-        <Carousel images={thumbnailList}/>
+        <Carousel images={thumbnailList} />
         <DailySaleNumber>{badgeRenderer()}</DailySaleNumber>
       </ImgWrapper>
       <Top>
