@@ -89,7 +89,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
 
   const handleObserver = useCallback((entries) => {
     const target = entries[0];
-    console.log(target, 'target');
+
     if (target.isIntersecting) {
       setPage((prev) => prev + 1);
     }
