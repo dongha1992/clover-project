@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlexBetween, homePadding, theme } from '@styles/theme';
 import styled from 'styled-components';
 import { TextH4B, TextB2R, TextB3R } from '@components/Shared/Text';
@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
+import useIsApp from '@hooks/useIsApp';
 
 dayjs.locale('ko');
 
@@ -30,6 +31,7 @@ const SettingPage = () => {
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
+  const isApp = useIsApp();
 
   const checkHandler = (value: any, value2?: any) => {
     if (
@@ -74,30 +76,37 @@ const SettingPage = () => {
     <Container>
       <Wrapper>
         <ListBox>
-          <ListItem>
-            <FlexBetween>
-              <TextH4B>중요 푸시 알림</TextH4B>
-              <ToggleButton onChange={() => checkHandler('primePushReceived')} status={me?.primePushReceived} />
-            </FlexBetween>
-            <TextB2R color={theme.greyScale65} padding="2px 0 0 0">
-              주문/배송/픽업/구독 알림
-            </TextB2R>
-          </ListItem>
-          <ListItem>
-            <FlexBetween>
-              <TextH4B>활동 푸시 알림</TextH4B>
-              <ToggleButton onChange={() => checkHandler('notiPushReceived')} status={me?.notiPushReceived} />
-            </FlexBetween>
-            <TextB2R color={theme.greyScale65} padding="2px 0 0 0">
-              후기/프코스팟/쿠폰/포인트 알림
-            </TextB2R>
-          </ListItem>
-          <ListItem>
-            <FlexBetween>
-              <TextH4B>광고성 푸시 알림</TextH4B>
-              <ToggleButton onChange={() => checkHandler('marketingPushReceived')} status={me?.marketingPushReceived} />
-            </FlexBetween>
-          </ListItem>
+          {isApp && (
+            <>
+              <ListItem>
+                <FlexBetween>
+                  <TextH4B>중요 푸시 알림</TextH4B>
+                  <ToggleButton onChange={() => checkHandler('primePushReceived')} status={me?.primePushReceived} />
+                </FlexBetween>
+                <TextB2R color={theme.greyScale65} padding="2px 0 0 0">
+                  주문/배송/픽업/구독 알림
+                </TextB2R>
+              </ListItem>
+              <ListItem>
+                <FlexBetween>
+                  <TextH4B>활동 푸시 알림</TextH4B>
+                  <ToggleButton onChange={() => checkHandler('notiPushReceived')} status={me?.notiPushReceived} />
+                </FlexBetween>
+                <TextB2R color={theme.greyScale65} padding="2px 0 0 0">
+                  후기/프코스팟/쿠폰/포인트 알림
+                </TextB2R>
+              </ListItem>
+              <ListItem>
+                <FlexBetween>
+                  <TextH4B>광고성 푸시 알림</TextH4B>
+                  <ToggleButton
+                    onChange={() => checkHandler('marketingPushReceived')}
+                    status={me?.marketingPushReceived}
+                  />
+                </FlexBetween>
+              </ListItem>
+            </>
+          )}
           <ListItem>
             <FlexBetween>
               <TextH4B>마케팅/이벤트 알림</TextH4B>
