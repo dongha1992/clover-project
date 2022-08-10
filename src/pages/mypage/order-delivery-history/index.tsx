@@ -46,7 +46,7 @@ const OrderDeliveryHistoryPage = () => {
   const option = {
     root: parentRef?.current!, // 관찰대상의 부모요소를 지정
     rootMargin: '0px', // 관찰하는 뷰포트의 마진 지정
-    threshold: 0.5,
+    threshold: 1.0,
   };
 
   const queryClient = useQueryClient();
@@ -113,9 +113,12 @@ const OrderDeliveryHistoryPage = () => {
     }
   }, []);
 
+  const initQueries = async () => {
+    await queryClient.resetQueries('infiniteOrderList', { exact: true });
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(handleObserver, option);
-
     if (ref?.current) {
       observer.observe(ref?.current);
     }
@@ -128,9 +131,10 @@ const OrderDeliveryHistoryPage = () => {
     }
   }, [page]);
 
-  // useEffect(() => {
-  //   refetch();
-  // }, [withInDays]);
+  useEffect(() => {
+    // TODO: 의존성 때문에 처음에 두번 호출
+    initQueries();
+  }, [withInDays]);
 
   return (
     <Container ref={parentRef}>
