@@ -69,9 +69,9 @@ const LocationInfo = ({ item }: IParams) => {
           )
         }
       </InfoWrapper>
-      {/* <MapWrapper>
+      <MapWrapper>
         <DefaultKakaoMap centerLat={item?.coordinate.lat} centerLng={item?.coordinate.lon} />
-      </MapWrapper> */}
+      </MapWrapper>
     </Container>
   )
 };
