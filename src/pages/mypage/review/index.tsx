@@ -180,7 +180,7 @@ const ReviewPage = () => {
       )}
       {((isComplete && completeWriteList?.length! !== 0) || (isWillWrite && willWriteList?.length! !== 0)) && (
         <ReviewInfoWrapper>
-          최근 1년 이내 구독 내역만 조회 가능해요. (이전 구독 내역은 고객센터로 문의해 주세요.)
+          최근 1년 이내 후기 작성 내역만 조회 가능해요. (이전 후기 작성 내역은 고객센터로 문의해 주세요.)
         </ReviewInfoWrapper>
       )}
     </Container>

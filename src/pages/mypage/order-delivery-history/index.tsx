@@ -16,6 +16,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { postCartsApi } from '@api/cart';
 import { useToast } from '@hooks/useToast';
 import { SET_ALERT } from '@store/alert';
+import useIntersectionObserver from '@hooks/useIntersectionObserver';
 
 const OrderDateFilter = dynamic(() => import('@components/Filter/OrderDateFilter'));
 
@@ -32,57 +33,25 @@ export const deliveryDetailMap: Obj = {
   DINNER: '저녁',
 };
 
-const DEFAULT_SIZE = 100;
+const DEFAULT_SIZE = 10;
 
 const OrderDeliveryHistoryPage = () => {
   const dispatch = useDispatch();
   const [withInDays, setWithInDays] = useState<string>('90');
-  const [page, setPage] = useState<number>(0);
-  const ref = useRef<HTMLDivElement>(null);
+  const childRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { showToast } = useToast();
 
-  const option = {
-    root: parentRef?.current!, // 관찰대상의 부모요소를 지정
-    rootMargin: '0px', // 관찰하는 뷰포트의 마진 지정
-    threshold: 1.0,
-  };
-
   const queryClient = useQueryClient();
 
-  // const { data, isLoading } = useQuery(
-  //   ['getOrderLists', withInDays],
-  //   async () => {
-  //     const params = {
-  //       days: Number(withInDays),
-  //       page: 1,
-  //       size: 10,
-  //       orderType: 'GENERAL',
-  //     };
-
-  //     const { data } = await getOrderListsApi(params);
-
-  //     /*TODO: 정기구독이랑 묶일 경우 type="SUB" */
-
-  //     return data.data.orderDeliveries;
-  //   },
-  //   {
-  //     onSuccess: (data) => {},
-
-  //     refetchOnMount: true,
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
-
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status, isLoading } = useInfiniteOrderList({
-    withInDays,
-    orderType: 'GENERAL',
-    size: DEFAULT_SIZE,
-    page,
-  });
-
-  console.log(page, 'page');
+  const { data, fetchNextPage, refetch, hasNextPage, isFetching, isFetchingNextPage, status, isLoading } =
+    useInfiniteOrderList({
+      withInDays,
+      orderType: 'GENERAL',
+      size: DEFAULT_SIZE,
+      page: 1,
+    });
 
   const clickFilterHandler = () => {
     dispatch(
@@ -110,12 +79,21 @@ const OrderDeliveryHistoryPage = () => {
         dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
       },
       onSuccess: async () => {
-        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
+        showToast({ message: '상품을 장바구니에 담았어요! 😭' });
         await queryClient.refetchQueries('getCartList');
         await queryClient.refetchQueries('getCartCount');
       },
     }
   );
+
+  const { page } = useIntersectionObserver({
+    fetchNextPage,
+    totalPage: data?.pages[0]?.totalPage!,
+    currentPage: data?.pages.length!,
+    childRef,
+    parentRef,
+    isFetching,
+  });
 
   const buttonHandler = ({ menus, isDelivering }: { menus: IOrderMenusInOrderList[]; isDelivering: boolean }) => {
     if (isDelivering) {
@@ -130,38 +108,22 @@ const OrderDeliveryHistoryPage = () => {
     router.push('/');
   };
 
-  const handleObserver = useCallback((entries) => {
-    const target = entries[0];
-
-    if (target.isIntersecting) {
-      setPage((prev) => prev + 1);
-    }
-  }, []);
+  const initQueries = async () => {
+    await queryClient.resetQueries('infiniteOrderList', { exact: true });
+  };
 
   useEffect(() => {
-    const observer = new IntersectionObserver(handleObserver, option);
-
-    if (ref?.current) {
-      observer.observe(ref?.current);
-    }
-    return () => observer && observer.disconnect();
-  }, [handleObserver]);
-
-  useEffect(() => {
-    if (page <= data?.pages[0]?.totalPage!) {
-      fetchNextPage();
-    }
-  }, [page]);
-
-  if (isLoading) {
-    return <div>로딩</div>;
-  }
+    // TODO: 의존성 때문에 처음에 두번 호출
+    initQueries();
+  }, [withInDays]);
 
   return (
     <Container ref={parentRef}>
       <FlexEnd onClick={clickFilterHandler} padding="16px 0">
         <SVGIcon name="filter" />
-        <TextH6B padding="0 0 0 4px">정렬</TextH6B>
+        <TextH6B pointer padding="0 0 0 4px">
+          정렬
+        </TextH6B>
       </FlexEnd>
       {data?.pages[0]?.result?.length !== 0 ? (
         data?.pages.map((page: any, index: number) => {
@@ -182,7 +144,7 @@ const OrderDeliveryHistoryPage = () => {
         <NoSubsBox>
           <FlexCol width="100%">
             <TextB2R padding="0 0 24px" color={theme.greyScale65} center>
-              주문/배송 내역이 없어요 😭
+              주문/배송 내역이 없어요 :울음:
             </TextB2R>
             <Button backgroundColor="#fff" color="#242424" width="100%" border onClick={goToShop}>
               상품 보러가기
@@ -190,16 +152,24 @@ const OrderDeliveryHistoryPage = () => {
           </FlexCol>
         </NoSubsBox>
       )}
-      <div className="last" ref={ref}></div>
+      <div className="last" ref={childRef}></div>
     </Container>
   );
 };
 
 const Container = styled.div`
   ${homePadding}
+  .last {
+  }
 `;
 
-const List = styled.div``;
+const List = styled.div`
+  &:last-of-type {
+    > div:last-of-type {
+      border-bottom: none;
+    }
+  }
+`;
 const NoSubsBox = styled.div`
   height: calc(100vh - 104px);
   display: flex;

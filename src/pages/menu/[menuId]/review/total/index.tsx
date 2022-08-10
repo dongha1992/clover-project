@@ -16,6 +16,7 @@ import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM } from '@store/menu';
 import { userForm } from '@store/user';
 import { useInfiniteMenuReviews } from '@queries/menu';
 import { SET_ALERT } from '@store/alert';
+import useIntersectionObserver from '@hooks/useIntersectionObserver';
 /* TODO: 중복 코드 많음 , 리팩토링 */
 
 const DEFAULT_SIZE = 10;
@@ -25,8 +26,7 @@ interface IProps {
 }
 
 const TotalReviewPage = ({ menuId }: IProps) => {
-  const [page, setPage] = useState<number>(0);
-  const ref = useRef<HTMLDivElement>(null);
+  const childRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
@@ -56,7 +56,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
     useInfiniteMenuReviews({
       id: Number(menuId)!,
       size: DEFAULT_SIZE,
-      page,
+      page: 1,
     });
 
   const { data: reviewsImages, error: reviewsImagesError } = useQuery(
@@ -75,40 +75,20 @@ const TotalReviewPage = ({ menuId }: IProps) => {
     }
   );
 
+  const { page } = useIntersectionObserver({
+    fetchNextPage,
+    totalPage: data?.pages[0]?.totalPage!,
+    currentPage: data?.pages.length!,
+    childRef,
+    parentRef,
+    isFetching,
+  });
+
   useEffect(() => {
     return () => {
       dispatch(INIT_MENU_ITEM());
     };
   }, []);
-
-  const option = {
-    root: parentRef?.current!, // 관찰대상의 부모요소를 지정
-    rootMargin: '0px', // 관찰하는 뷰포트의 마진 지정
-    threshold: 1.0,
-  };
-
-  const handleObserver = useCallback((entries) => {
-    const target = entries[0];
-    console.log(target, 'target');
-    if (target.isIntersecting) {
-      setPage((prev) => prev + 1);
-    }
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(handleObserver, option);
-
-    if (ref?.current) {
-      observer.observe(ref?.current);
-    }
-    return () => observer && observer.disconnect();
-  }, [handleObserver]);
-
-  useEffect(() => {
-    if (page <= data?.pages[0]?.totalPage!) {
-      fetchNextPage();
-    }
-  }, [page]);
 
   const goToReviewImages = useCallback(() => {
     router.push(`/menu/${menuId}/review/photo`);
@@ -185,7 +165,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
           </EmptyWrapper>
         )}
       </Wrapper>
-      <div className="last" ref={ref}></div>
+      <div className="last" ref={childRef}></div>
     </Container>
   );
 };
