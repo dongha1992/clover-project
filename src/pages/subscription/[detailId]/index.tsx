@@ -179,7 +179,7 @@ const SubsDetailPage = () => {
           deliveryDetail={orderDetail?.deliveryDetail}
           subscriptionPeriod={orderDetail?.subscriptionPeriod!}
           name={orderDetail?.name!}
-          menuImage={orderDetail?.image.url!}
+          menuImage={orderDetail?.image?.url!}
         />
         {unSubsStatus && (
           <ClosedGuideBox
