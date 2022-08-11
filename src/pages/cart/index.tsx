@@ -151,6 +151,7 @@ const CartPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
+      staleTime: 0,
       enabled: !!selectedDeliveryDay && !!me,
       onSuccess: (data) => {
         try {
@@ -235,6 +236,7 @@ const CartPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      cacheTime: 0,
       enabled: !!me,
     }
   );
@@ -1258,6 +1260,8 @@ const CartPage = () => {
     setIsFirstRender(true);
     dispatch(INIT_ACCESS_METHOD());
   }, []);
+
+  console.log(me);
 
   if (isLoading) {
     return <div>로딩</div>;
