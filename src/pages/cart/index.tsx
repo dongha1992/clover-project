@@ -151,6 +151,7 @@ const CartPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
+      staleTime: 0,
       enabled: !!selectedDeliveryDay && !!me,
       onSuccess: (data) => {
         try {
@@ -235,6 +236,7 @@ const CartPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      cacheTime: 0,
       enabled: !!me,
     }
   );
@@ -1503,8 +1505,8 @@ const CartPage = () => {
               </Tag>
               <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
               <TextH6B>
-                {calculatePoint({ rate: me?.grade.benefit.accumulationRate!, total: totalAmount + getDeliveryFee() })}P
-                ({me?.grade.benefit.accumulationRate}%) 적립 예정
+                {calculatePoint({ rate: me?.grade.benefit.accrualRate!, total: totalAmount + getDeliveryFee() })}P (
+                {me?.grade.benefit.accrualRate}%) 적립 예정
               </TextH6B>
             </FlexEnd>
           )}
