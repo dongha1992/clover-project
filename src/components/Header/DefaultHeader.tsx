@@ -27,6 +27,8 @@ const DefaultHeader = ({ title }: TProps) => {
   const totalPhotoReview = router.pathname === '/menu/[menuId]/review/photo';
   const finishOrder = router.pathname === '/order/finish';
   const orderDetail = router.pathname === '/mypage/order-detail/[id]';
+  const subsCancel = router.pathname === '/subscription/[detailId]/cancel/complete';
+  const subsSubCancel = router.pathname === '/subscription/[detailId]/sub-cancel/complete';
 
   const countMap: Obj = {
     '/menu/[menuId]/review/total': reviewCount,
@@ -76,7 +78,7 @@ const DefaultHeader = ({ title }: TProps) => {
   return (
     <Container>
       <Wrapper>
-        {!oauth && !finishOrder && (
+        {!oauth && !finishOrder && !subsCancel && !subsSubCancel && (
           <div className="arrow" onClick={goBack}>
             <SVGIcon name="arrowLeft" />
           </div>

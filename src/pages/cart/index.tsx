@@ -138,20 +138,22 @@ const CartPage = () => {
     async () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
 
-      const params = {
+      const obj = {
         delivery: userDeliveryType?.toUpperCase()!,
         deliveryDate: selectedDeliveryDay,
         spotId: isSpot ? destinationObj?.spotId : null,
       };
 
-      const { data } = await getCartsApi({ params });
+      const params = selectedDeliveryDay ? obj : undefined;
+      const { data } = await getCartsApi(params);
       return data.data;
     },
     {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
-      enabled: !!selectedDeliveryDay && !!me,
+      staleTime: 0,
+      enabled: !!me,
       onSuccess: (data) => {
         try {
           reorderCartList(data.cartMenus);
@@ -235,6 +237,7 @@ const CartPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
+      cacheTime: 0,
       enabled: !!me,
     }
   );
@@ -1165,9 +1168,9 @@ const CartPage = () => {
   }, [checkedMenus]);
 
   const getSubOrderDelivery = async () => {
-    if (me) {
+    if (me && destinationObj?.delivery) {
       const params = {
-        delivery: destinationObj.delivery!.toUpperCase(),
+        delivery: destinationObj?.delivery!.toUpperCase(),
       };
       try {
         const { data } = await getSubOrdersCheckApi(params);
@@ -1503,8 +1506,8 @@ const CartPage = () => {
               </Tag>
               <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
               <TextH6B>
-                {calculatePoint({ rate: me?.grade.benefit.accumulationRate!, total: totalAmount + getDeliveryFee() })}P
-                ({me?.grade.benefit.accumulationRate}%) 적립 예정
+                {calculatePoint({ rate: me?.grade.benefit.accrualRate!, total: totalAmount + getDeliveryFee() })}P (
+                {me?.grade.benefit.accrualRate}%) 적립 예정
               </TextH6B>
             </FlexEnd>
           )}

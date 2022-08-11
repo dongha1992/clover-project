@@ -191,6 +191,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
+
       router.push({ pathname: '/cart/delivery-info', query: { destinationId: item?.id, isClosed: !!closedDate } });
     };
 
@@ -403,30 +404,30 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       <FlexCol>
         <ImageWrapper>
           {item?.spotPickup?.spot.isTrial ? (
-            <NextImage 
-              src='/images/fcospot/img_fcospot_empty.png'
+            <NextImage
+              src="/images/fcospot/img_fcospot_empty.png"
               alt="프코스팟 매장이미지"
-              width='60px'
-              height='60px'
-              className='fcospot-img'
+              width="60px"
+              height="60px"
+              className="fcospot-img"
               layout="responsive"
             />
           ) : item?.spotPickup?.spot?.images?.length! > 0 ? (
-            <Image 
-              src={item?.spotPickup?.spot.images[0].url!} 
+            <Image
+              src={item?.spotPickup?.spot.images[0].url!}
               height={60}
               width={60}
               layout="responsive"
               alt="프코스팟 매장이미지"
-              className='fcospot-img'
+              className="fcospot-img"
             />
           ) : (
-            <NextImage 
-              src='/images/fcospot/img_fcospot_empty.png'
+            <NextImage
+              src="/images/fcospot/img_fcospot_empty.png"
               alt="프코스팟 매장이미지"
-              width='60px'
-              height='60px'
-              className='fcospot-img'
+              width="60px"
+              height="60px"
+              className="fcospot-img"
               layout="responsive"
             />
           )}
@@ -512,7 +513,6 @@ const ImageWrapper = styled.div`
     border-radius: 8px;
   }
 `;
-
 
 const TagWrapper = styled.div``;
 

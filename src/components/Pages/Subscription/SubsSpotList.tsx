@@ -3,6 +3,9 @@ import { IMenus } from '@model/index';
 import { ScrollHorizonList, theme } from '@styles/theme';
 import styled from 'styled-components';
 import SubsItem from './SubsItem';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Mousewheel } from 'swiper';
+import 'swiper/css';
 interface IProps {
   menus: IMenus[];
   moreClickHandler: () => void;
@@ -21,11 +24,13 @@ const SubsSpotList = ({ menus, moreClickHandler }: IProps) => {
       </TitleBox>
       <ListBox>
         <ScrollHorizonList>
-          <SubsList>
+          <SubsList slidesPerView={'auto'} spaceBetween={16} mousewheel={true} modules={[Mousewheel]}>
             {menus?.map(
               (item, index) =>
                 item.subscriptionDeliveries?.includes('SPOT') && (
-                  <SubsItem item={item} key={index} height="168px" width="298px" testType="SPOT" />
+                  <SwiperSlide key={index}>
+                    <SubsItem item={item} height="168px" width="298px" />
+                  </SwiperSlide>
                 )
             )}
           </SubsList>
@@ -50,11 +55,14 @@ export const ListBox = styled.div`
   padding-left: 24px;
 `;
 
-export const SubsList = styled.div`
-  display: flex;
+export const SubsList = styled(Swiper)`
+  width: 100%;
   > div {
     margin-right: 16px;
     margin-bottom: 0;
+  }
+  .swiper-slide {
+    width: 298px;
   }
 `;
 export default SubsSpotList;
