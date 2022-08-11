@@ -5,6 +5,7 @@ import { FlexBetween, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { IMAGE_S3_URL } from '@constants/mock';
 import { getDiscountPrice } from '@utils/menu/getMenuDisplayPrice';
+import { getFormatPrice } from '@utils/common';
 interface IProps {
   menu: any;
   isDeliveryComplete?: boolean;
@@ -38,7 +39,7 @@ const OrderItem = ({ menu, isDeliveryComplete, isCanceled }: IProps) => {
                   {discount}%
                 </TextH5B>
               )}
-              <TextH5B>{discountedPrice}원</TextH5B>
+              <TextH5B>{getFormatPrice(String(discountedPrice))}원</TextH5B>
               <Col />
               <TextB2R>{menu.menuQuantity}개</TextB2R>
             </PriceWrapper>

@@ -229,6 +229,7 @@ const OrderDetailPage = () => {
 
     let alertMessage = '';
     let submitBtnText = '확인';
+    let alertSubMessage = '';
     let onSubmit = null;
 
     if (isSubOrder) {
@@ -240,9 +241,11 @@ const OrderDetailPage = () => {
       onSubmit = () => router.push(`/mypage/order-detail/cancel/${orderId}`);
     } else if (!hasSubOrder) {
       alertMessage = '정말 주문을 취소하시겠어요?';
+      alertSubMessage = '(사용 기한이 만료된 포인트, 쿠폰은 환불 후 바로 만료될 수 있어요.)';
       onSubmit = () => deleteOrderMutation(deliveryId);
     } else {
       alertMessage = '정말 주문을 취소하시겠어요?';
+      alertSubMessage = '(사용 기한이 만료된 포인트, 쿠폰은 환불 후 바로 만료될 수 있어요.)';
       onSubmit = () => deleteOrderMutation(deliveryId);
     }
 
@@ -250,6 +253,7 @@ const OrderDetailPage = () => {
       SET_ALERT({
         alertMessage,
         onSubmit,
+        alertSubMessage,
         submitBtnText,
         closeBtnText: '취소',
       })
@@ -409,16 +413,6 @@ const OrderDetailPage = () => {
         <TextH4B>주문정보</TextH4B>
         <OrderInfo orderId={orderDetail?.id!} deliveryStatus={deliveryStatus} paidAt={paidAt} payMethod={payMethod} />
         {isSubOrder && <SubOrderInfo isChange />}
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          border
-          margin="24px 0 0 0"
-          disabled={!canChangeDelivery}
-          onClick={cancelOrderHandler}
-        >
-          주문 취소하기
-        </Button>
       </OrderInfoWrapper>
       <BorderLine height={8} />
       <DevlieryInfoWrapper>
@@ -622,6 +616,28 @@ const OrderDetailPage = () => {
           </RefundInfoWrapper>
         </>
       )}
+      <CancelButtonContainer>
+        <CancelInfo>
+          <FlexRow>
+            <SVGIcon name="exclamationMark" />
+            <TextB3R padding="0 0 0 4px">주문 변경 및 취소 시 반드시 확인해주세요!</TextB3R>
+          </FlexRow>
+          <TextB3R>
+            주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능합니다. 단, 오전 7시~9시 반 사이에는 주문 직후 5분 뒤
+            제조가 시작되어 취소 불가합니다.
+          </TextB3R>
+        </CancelInfo>
+        <Button
+          backgroundColor={theme.white}
+          color={theme.black}
+          border
+          margin="24px 0 0 0"
+          disabled={!canChangeDelivery}
+          onClick={cancelOrderHandler}
+        >
+          주문 취소하기
+        </Button>
+      </CancelButtonContainer>
     </Container>
   );
 };
@@ -657,6 +673,17 @@ const ButtonWrapper = styled.div`
   width: 100%;
   display: flex;
   margin-top: 24px;
+`;
+
+const CancelInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: ${theme.greyScale3};
+  margin-bottom: 24px;
+`;
+
+const CancelButtonContainer = styled.div`
+  padding: 24px;
 `;
 
 const DevlieryInfoWrapper = styled.div`
