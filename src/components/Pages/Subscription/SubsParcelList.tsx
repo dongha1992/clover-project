@@ -3,6 +3,8 @@ import { IMenus } from '@model/index';
 import { ScrollHorizonList, theme } from '@styles/theme';
 import SubsItem from './SubsItem';
 import { ListBox, SubsList, SubsListContainer, TitleBox } from './SubsSpotList';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Mousewheel } from 'swiper';
 interface IProps {
   menus: IMenus[];
   moreClickHandler: () => void;
@@ -21,12 +23,14 @@ const SubsParcelList = ({ menus, moreClickHandler }: IProps) => {
       </TitleBox>
       <ListBox>
         <ScrollHorizonList>
-          <SubsList>
+          <SubsList slidesPerView={'auto'} spaceBetween={16} mousewheel={true} modules={[Mousewheel]}>
             {menus?.map(
               (item, index) =>
                 (item.subscriptionDeliveries?.includes('PARCEL') ||
                   item.subscriptionDeliveries?.includes('MORNING')) && (
-                  <SubsItem item={item} key={index} height="168px" width="298px" testType="PARCEL" />
+                  <SwiperSlide key={index}>
+                    <SubsItem item={item} key={index} height="168px" width="298px" />
+                  </SwiperSlide>
                 )
             )}
             {menus?.filter(
