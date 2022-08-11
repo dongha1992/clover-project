@@ -8,10 +8,11 @@ export const ImageApi = axios.create({
   },
 });
 
-export const postImageApi = (formData: any) => {
-  return ImageApi.post('/image', formData, {
+export const postImageApi = async (formData: any): Promise<string> => {
+  const result = await ImageApi.post('/image', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
+  return result.headers.location || '';
 };

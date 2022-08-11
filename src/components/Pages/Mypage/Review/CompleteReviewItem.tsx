@@ -7,7 +7,6 @@ import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
 import Image from '@components/Shared/Image';
-import { deleteReviewApi } from '@api/menu';
 
 const MAX_LINE = 5;
 interface IProps {
@@ -124,7 +123,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, del
                       onClick={() => imgUrlForViwer && clickImgViewHandler(imgUrlForViwer, index)}
                       key={index}
                     >
-                      <img src={process.env.IMAGE_SERVER_URL + img.url} alt="리뷰이미지" />
+                      <Image src={img.url} alt="리뷰이미지" width="72" height="72"></Image>
                     </ReviewImageWrapper>
                   );
                 })}
