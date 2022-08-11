@@ -107,7 +107,9 @@ export const Label = styled.span`
   font-weight: 700;
   font-size: 10px;
   letter-spacing: -0.4px;
-  width: 51px;
+  /* width: 51px; */
+  padding-left: 8px;
+  padding-right: 8px;
   height: 24px;
   margin-right: 4px;
   border-radius: 4px;
