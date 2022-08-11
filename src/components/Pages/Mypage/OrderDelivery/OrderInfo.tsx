@@ -1,14 +1,14 @@
 import React from 'react';
 import { FlexCol, FlexBetween } from '@styles/theme';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
-
+import { PAYMENT_METHOD } from '@constants/order';
 interface IProps {
   orderId: number;
   deliveryStatus: string;
   paidAt: string;
-  paymentMethod?: string;
+  payMethod?: string;
 }
-const OrderInfo = ({ orderId, deliveryStatus, paidAt, paymentMethod }: IProps) => {
+const OrderInfo = ({ orderId, deliveryStatus, paidAt, payMethod }: IProps) => {
   return (
     <FlexCol padding="24px 0 0 0">
       <FlexBetween>
@@ -25,7 +25,7 @@ const OrderInfo = ({ orderId, deliveryStatus, paidAt, paymentMethod }: IProps) =
       </FlexBetween>
       <FlexBetween margin="0 0 16px 0">
         <TextH5B>결제수단</TextH5B>
-        <TextB2R>{paymentMethod}</TextB2R>
+        <TextB2R>{PAYMENT_METHOD[payMethod!]}</TextB2R>
       </FlexBetween>
     </FlexCol>
   );

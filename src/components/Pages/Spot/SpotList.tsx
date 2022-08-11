@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { useToast } from '@hooks/useToast';
-import { IMAGE_S3_DEV_URL, IMAGE_S3_URL } from '@constants/mock';
 import { ISpotsDetail, ISpotPickupInfoInDestination } from '@model/index';
 import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
 import { cartForm } from '@store/cart';
@@ -20,6 +19,9 @@ import { spotSelector } from '@store/spot';
 import { getSpotDistanceUnit } from '@utils/spot';
 import { Button } from '@components/Shared/Button';
 import { postDestinationApi } from '@api/destination';
+import Image from '@components/Shared/Image';
+import NextImage from 'next/image';
+
 // spot list type은 세가지가 있다.
 // 1. normal 2. event 3. trial
 
@@ -205,13 +207,26 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                 <SVGIcon name="whitePeople" />
                 <TextH7B padding="2px 2px 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
               </Tag>
-              {list.isTrial ? (
-                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-              ) : list.images.length > 0 ? (
-                <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
-              ) : (
-                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-              )}
+              <ImageWrapper>
+                {list.isTrial || list.images.length < 0  ? (
+                  <NextImage 
+                    src='/images/fcospot/img_fcospot_empty.png'
+                    alt="프코스팟 매장이미지"
+                    width={132}
+                    height={132}
+                    layout="responsive"
+                  />
+                ) : (
+                  <Image 
+                    src={list.images[0].url}
+                    alt="프코스팟 매장이미지"
+                    width={132}
+                    height={132}
+                    className='fcospot-img'
+                    layout="responsive"
+                  />
+                )}
+              </ImageWrapper>
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
               <TextB2R margin="8px 0 0 0" color={theme.black}>
@@ -240,13 +255,26 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed' : 'whiteHeart24'} />
               </LikeWrapper>
-              {list.isTrial ? (
-                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-              ) : list.images.length > 0 ? (
-                <Img src={`${IMAGE_S3_URL}${list.images[0].url}`} alt="매장이미지" />
-              ) : (
-                <Img src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} alt="매장이미지" />
-              )}
+              <ImageWrapper>
+                {list.isTrial || list.images.length < 0  ? (
+                  <NextImage 
+                    src='/images/fcospot/img_fcospot_empty.png'
+                    alt="프코스팟 매장이미지"
+                    width={132}
+                    height={132}
+                    layout="responsive"
+                  />
+                ) : (
+                  <Image 
+                    src={list.images[0].url}
+                    alt="프코스팟 매장이미지"
+                    width={132}
+                    height={132}
+                    className='fcospot-img'
+                    layout="responsive"
+                  />
+                )}
+              </ImageWrapper>
             </StorImgWrapper>
             <LocationInfoWrapper type="event">
               <div>
@@ -374,13 +402,18 @@ const Tag = styled.span`
   border-radius: 4px;
   padding: 4px 8px;
   opacity: 90%;
+  z-index: 999;
 `;
 
-const Img = styled.img`
+const ImageWrapper = styled.div`
   width: 132px;
-  heigth: 132px;
+  heigth: 132px; 
   border: 1px solid ${theme.greyScale6};
   border-radius: 8px;
+  .fcospot-img {
+    width: 100%;
+    border-radius: 8px;
+  }
 `;
 
 const LocationInfoWrapper = styled.div<{ type: string }>`

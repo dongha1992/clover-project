@@ -6,13 +6,13 @@ import { Tag } from '@components/Shared/Tag';
 import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { SET_IMAGE_VIEWER } from '@store/common';
-import { IMAGE_S3_URL } from '@constants/mock/index';
 import { postSpotsStoryLike, deleteSpotsStoryLike, getSpotsStoryLike } from '@api/spot';
 import { ISpotStories } from '@model/index';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import router from 'next/router';
 import { SET_ALERT } from '@store/alert';
+import Image from '@components/Shared/Image';
 
 interface IProps {
   list: ISpotStories;
@@ -110,7 +110,16 @@ const DetailBottomStory = ({ list }: IProps): ReactElement => {
         {list?.images?.length > 0 &&
           list?.images?.map((i, idx) => {
             return (
-              <Img key={idx} src={`${IMAGE_S3_URL}${i.url}`} onClick={() => openImgViewer(i.url)} alt="스토리 이미지" />
+              <ImageWrapper key={idx} onClick={() => openImgViewer(i.url)}>
+                <Image 
+                  src={i?.url} 
+                  height='512'
+                  width='176'
+                  layout="responsive"
+                  alt="프코스팟 상세 페이지 스토리 이미지"
+                  className='fcospot-img'
+                />
+              </ImageWrapper>
             );
           })}
         <TextB1R margin="10px 0">{list?.content}</TextB1R>
@@ -129,11 +138,13 @@ const StoryContainer = styled.section`
 `;
 const TopWrapper = styled.div``;
 
-const Img = styled.img`
+const ImageWrapper = styled.div`
   width: 100%;
   height: 175px;
-  border-radius: 15px;
-  cursor: pointer;
+  .fcospot-img{
+    border-radius: 15px;
+    cursor: pointer;
+  }
 `;
 
 const LikeWrapper = styled.div`
