@@ -25,10 +25,12 @@ export const Label = styled.span`
   font-weight: 700;
   font-size: 10px;
   letter-spacing: -0.4px;
-  width: 51px;
+  /* width: 51px; */
   height: 24px;
   margin-right: 4px;
   border-radius: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
   border: 1px solid ${theme.brandColor};
   color: ${theme.brandColor};
   background-color: #fff;
