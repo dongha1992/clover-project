@@ -27,6 +27,14 @@ const GlobalStyle = createGlobalStyle`
         display: block;
     }
 
+    @media(max-width:512px){
+        body{
+            // 버튼 터치시 음영 삭제
+            -webkit-tap-highlight-color:rgba(255,255,255,0);
+            user-select: none;
+        }
+    }
+
     html{
         overscroll-behavior-y: none;
     }
@@ -37,6 +45,9 @@ const GlobalStyle = createGlobalStyle`
         /* background-color: #232323; */
         width: 100%;
         overscroll-behavior-y: none;
+        
+        
+
     }
     input[type="color"],
     input[type="date"],

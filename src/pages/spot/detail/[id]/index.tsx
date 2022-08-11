@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, ReactElement } from 'react';
 import styled from 'styled-components';
 import Slider from 'react-slick';
-import { breakpoints } from '@utils/common/getMediaQuery';
 import { Tag } from '@components/Shared/Tag';
 import { TextH2B, TextB3R, TextH5B, TextB2R, TextH4B, TextH6B, TextB1R } from '@components/Shared/Text';
 import { theme, FlexBetween, FlexStart, textH5 } from '@styles/theme';
@@ -10,7 +9,6 @@ import { useDispatch } from 'react-redux';
 import { SPOT_DETAIL_INFO } from '@constants/spot';
 import { DetailBottomStory, DetailBottomStoreInfo } from '@components/Pages/Spot';
 import { getSpotDetail, getSpotsDetailStory } from '@api/spot';
-import { IMAGE_S3_DEV_URL, IMAGE_S3_URL } from '@constants/mock';
 import { SPOT_ITEM } from '@store/spot';
 import { ISpotsDetail, ISpotStories } from '@model/index';
 import { useSelector } from 'react-redux';
@@ -18,6 +16,8 @@ import { spotSelector } from '@store/spot';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useQuery } from 'react-query';
+import Carousel from '@components/Shared/Carousel';
+import NextImage from 'next/image';
 
 interface IParams {
   id: number;
@@ -211,26 +211,21 @@ const SpotDetailPage = (): ReactElement => {
           <TextH5B color={theme.white}>n월 n일까지 임시 사용 가능한 프코스팟이에요!</TextH5B>
         </TopNoticeWrapper>
       )}
-      <SliderWrapper>
-        <TopBannerSlider {...settingsTop}>
-          {spotItem?.isTrial ? (
-            <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />
-          ) : spotItem?.images?.length! > 0 ? (
-            <>
-              {spotItem?.images?.map((item, idx: number) => {
-                return <StoreImgWrapper src={`${IMAGE_S3_URL}${item.url}`} alt="스팟 이미지" key={idx} />;
-              })}
-            </>
-          ) : (
-            <StoreImgWrapper src={`${IMAGE_S3_DEV_URL}${`/img_spot_detail_default.png`}`} alt="스팟 이미지" />
-          )}
-        </TopBannerSlider>
-        {(!spotItem?.isTrial || spotItem?.images?.length! < 0) && (
-          <SlideCount>
-            <TextH6B color={theme.white}>{`${currentIndex + 1} / ${imgTotalLen}`}</TextH6B>
-          </SlideCount>
-        )}
-      </SliderWrapper>
+      <ImageWrapper>
+      {
+        spotItem?.isTrial ? (
+          <NextImage 
+            src='/images/fcospot/img_fcospot_default.png'
+            width={512}
+            height={383}
+            alt="트라이얼 프코스팟 인 경우 또는 등록된 이미지가 없는 경우의 이미지"
+            layout="responsive"
+          />
+        ) : (
+          <Carousel images={spotItem?.images?.map(banner => ({ src: banner.url }))} />
+        )
+      }
+      </ImageWrapper>
       {/* 스팟 상세 상단 태그 리스트 */}
       <PlaceTypeTagWrapper>
         <>
@@ -264,9 +259,9 @@ const SpotDetailPage = (): ReactElement => {
           {`${spotItem?.location?.address} ${spotItem?.location?.addressDetail}`}
         </TextB2R>
       </PlaceTypeTagWrapper>
-      {spotItem && spotItem.notices?.length > 0 && (
+      {spotItem?.notices?.length! > 0 && (
         <NoticeSlider {...settingNotice}>
-          {spotItem.notices?.map(({ createdAt, content }, idx) => {
+          {spotItem?.notices?.map(({ createdAt, content }, idx) => {
             return (
               <NoticeCard key={idx}>
                 <FlexBetween margin="0 0 15px 0">
@@ -355,7 +350,12 @@ const SpotDetailPage = (): ReactElement => {
         </PickUpInfoWrapper>
       </PickupWrapper>
       <SpotEventBannerWrapper onClick={goToSpotNotice}>
-        <EventBanner src={`${IMAGE_S3_DEV_URL}/img_banner_fco_detail.png`} />
+        <NextImage 
+          src='/images/fcospot/img_banner_fco_info_360_96.png'
+          width={512}
+          height={110}
+          alt="프코스팟 상세 페이지 중간 배너"
+        />
       </SpotEventBannerWrapper>
       {/* <BorderLine height={8} ref={tabRef} /> */}
       <BottomTabWrapper>
@@ -404,40 +404,18 @@ const TopNoticeWrapper = styled.div`
   text-align: center;
 `;
 
-const SliderWrapper = styled.section`
-  position: relative;
-`;
-
-const TopBannerSlider = styled(Slider)`
-  max-width: ${breakpoints.mobile}px;
-  min-width: ${breakpoints.sm}px;
-`;
-
-const SlideCount = styled.div`
-  width: 45px;
-  border-radius: 24px;
-  background: #24242480;
-  text-align: center;
-  padding: 5px 0;
-  display: inline-block;
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-`;
-
-const StoreImgWrapper = styled.img`
+const ImageWrapper = styled.div`
   width: 100%;
-  object-fit: cover;
+  height: 100%;
 `;
 
 const PlaceTypeTagWrapper = styled.section`
-  margin: 24px;
+  padding: 24px 24px 16px 24px;
 `;
 
 const NoticeSlider = styled(Slider)`
   width: 100%;
   background: ${theme.greyScale6};
-  padding: 16px 0;
   .slick-slide > div {
     padding: 0 5px;
   }
@@ -451,7 +429,7 @@ const NoticeCard = styled.div`
 `;
 
 const PickupWrapper = styled.section`
-  margin: 24px;
+  padding: 16px 24px 16px 24px;
 `;
 
 const TextTitle = styled.div`
@@ -467,7 +445,7 @@ const PickUpInfoWrapper = styled.table`
 const PickUpInfoContent = styled.tr`
   display: flex;
   flex-direction: row;
-  margin: 0 0 16px 0;
+  padding: 0 0 16px 0;
   th {
     text-align: left;
   }
@@ -477,11 +455,6 @@ const SpotEventBannerWrapper = styled.section`
   width: 100%;
   height: 100%;
   cursor: pointer;
-`;
-
-const EventBanner = styled.img`
-  width: 100%;
-  height: 100%;
 `;
 
 const BottomTabWrapper = styled.section`
