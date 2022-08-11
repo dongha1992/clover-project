@@ -106,13 +106,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
           {item.orderMenus.map((menu: any, index: number) => (
             <MenuLi key={index} className="menuLi">
               <MenuImgBox>
-                <Image
-                  src={menu.image.url}
-                  alt="상품이미지"
-                  width={'100%'}
-                  height={'100%'}
-                  layout="responsive"
-                />
+                <Image src={menu.image.url} alt="상품이미지" width={'100%'} height={'100%'} layout="responsive" />
               </MenuImgBox>
               <MenuTextBox>
                 <TextB3R textHideMultiline color={`${item?.status === 'CANCELED' && '#C8C8C8'}`}>
@@ -172,7 +166,9 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
               <FlexBetweenStart padding="0 0 24px">
                 <TextH5B>픽업장소</TextH5B>
                 <FlexColEnd>
-                  <TextB2R>{item.spotName}</TextB2R>
+                  <TextB2R>
+                    {item.spotName} {item.spotPickupName}
+                  </TextB2R>
                   <TextB3R color="#717171">
                     {item.location.address}
                     {item.location.addressDetail}

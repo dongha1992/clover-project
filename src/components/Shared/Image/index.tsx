@@ -1,6 +1,6 @@
 import NextImage from 'next/image';
 import { ImageLoaderProps, ImageProps } from 'next/dist/client/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IMAGE_ERROR } from '@constants/menu';
 
 const thumborLoader = (props: ImageLoaderProps): string => {
@@ -11,8 +11,16 @@ const Image = (props: ImageProps) => {
   const { src, ...nextImageProps } = props;
   const [imageSrc, setImageSrc] = useState(src);
 
+  useEffect(() => {
+    setImageSrc(src);
+  }, [src]);
+
   return (
-    <NextImage loader={thumborLoader} src={imageSrc} {...nextImageProps} onError={() => setImageSrc(IMAGE_ERROR)} />
+    <>
+      {imageSrc && (
+        <NextImage loader={thumborLoader} src={imageSrc} {...nextImageProps} onError={() => setImageSrc(IMAGE_ERROR)} />
+      )}
+    </>
   );
 };
 

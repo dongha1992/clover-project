@@ -213,6 +213,7 @@ const SubsDetailPage = () => {
         datePeriodLast={
           getFormatDate(orderDetail?.orderDeliveries[orderDetail?.orderDeliveries.length - 1].deliveryDate)!
         }
+        subscriptionPeriod={orderDetail?.subscriptionPeriod}
       />
 
       <BorderLine height={8} />
