@@ -699,7 +699,10 @@ const CancelInfo = styled.div`
   border-radius: 8px;
 `;
 
-const CancelButtonContainer = styled.div``;
+const CancelButtonContainer = styled.div`
+  padding: 0 24px;
+  margin-bottom: 24px;
+`;
 
 const DevlieryInfoWrapper = styled.div`
   padding: 24px;

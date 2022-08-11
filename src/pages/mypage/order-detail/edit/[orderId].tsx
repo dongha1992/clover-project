@@ -21,7 +21,13 @@ import { dateN, SVGIcon } from '@utils/common';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
 import { useRouter } from 'next/router';
-import { ACCESS_METHOD_PLACEHOLDER, ACCESS_METHOD, DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
+import {
+  ACCESS_METHOD_PLACEHOLDER,
+  ACCESS_METHOD_VALUE,
+  ACCESS_METHOD,
+  DELIVERY_TYPE_MAP,
+  DELIVERY_TIME_MAP,
+} from '@constants/order';
 import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
 import {
   mypageSelector,
@@ -106,7 +112,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
         ACCESS_METHOD,
         indexBy((item) => item.value)
       );
-      console.log(orderDetail, 'orderDetail');
+
       setDeliveryEditObj({
         selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
         deliveryMessageType: orderDetail?.deliveryMessageType!,
@@ -296,7 +302,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   const selectAccessMethodHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <AccessMethodSheet userAccessMethod={userAccessMethod} />,
+        content: <AccessMethodSheet userAccessMethod={deliveryEditObj.selectedMethod} />,
       })
     );
   };
@@ -472,7 +478,13 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
               <AccessMethodWrapper onClick={selectAccessMethodHandler}>
-                <TextB2R color={theme.greyScale45}>{deliveryEditObj?.selectedMethod?.text || '출입방법 선택'}</TextB2R>
+                <TextB2R
+                  color={
+                    ACCESS_METHOD_VALUE[deliveryEditObj.deliveryMessageType] ? theme.greyScale100 : theme.greyScale45
+                  }
+                >
+                  {deliveryEditObj?.selectedMethod?.text || '출입방법 선택'}
+                </TextB2R>
                 <SVGIcon name="triangleDown" />
               </AccessMethodWrapper>
               <TextInput
