@@ -265,7 +265,7 @@ const OrderDetailPage = () => {
       return;
     }
 
-    if (!orderDeliveries.deliveryDateChangeCount) {
+    if (orderDeliveries.deliveryDateChangeCount === 1) {
       dispatch(
         SET_ALERT({
           alertMessage: '배송일 변경 제한 횟수(1회)를 초과하여 더 이상 변경할 수 없어요.',
@@ -274,7 +274,7 @@ const OrderDetailPage = () => {
       );
       return;
     }
-
+    console.log(orderDeliveries, 'orderDeliveries');
     if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       dispatch(
         SET_ALERT({
@@ -289,6 +289,7 @@ const OrderDetailPage = () => {
                     disabledDates={disabledDates}
                     deliveryAt={orderDeliveries.deliveryDate!}
                     deliveryId={deliveryId}
+                    delieryTime={orderDeliveries?.deliveryEndTime!}
                   />
                 ),
               })
@@ -308,6 +309,7 @@ const OrderDetailPage = () => {
               disabledDates={disabledDates}
               deliveryAt={orderDeliveries?.deliveryDate!}
               deliveryId={deliveryId}
+              delieryTime={orderDeliveries?.deliveryEndTime!}
             />
           ),
         })
@@ -478,7 +480,7 @@ const OrderDetailPage = () => {
         {menuDiscount > 0 && (
           <FlexBetween padding="8px 0 0 0">
             <TextB2R>상품 할인</TextB2R>
-            <TextB2R>{getFormatPrice(String(menuDiscount))}원</TextB2R>
+            <TextB2R>-{getFormatPrice(String(menuDiscount))}원</TextB2R>
           </FlexBetween>
         )}
         {eventDiscount > 0 && (
@@ -553,6 +555,7 @@ const OrderDetailPage = () => {
               <TextH5B>총 상품 금액</TextH5B>
               <TextB2R>{getFormatPrice(String(refundMenuAmount))}원</TextB2R>
             </FlexBetween>
+            <BorderLine height={1} margin="8px 0" />
             <FlexBetween padding="8px 0 0 0">
               <TextH5B>총 할인 금액</TextH5B>
               <TextB2R>{totalRefundDiscount}</TextB2R>
@@ -560,7 +563,7 @@ const OrderDetailPage = () => {
             {refundMenuDiscount > 0 && (
               <FlexBetween padding="8px 0 0 0">
                 <TextB2R>상품 할인</TextB2R>
-                <TextB2R>{getFormatPrice(String(refundMenuDiscount))}원</TextB2R>
+                <TextB2R>-{getFormatPrice(String(refundMenuDiscount))}원</TextB2R>
               </FlexBetween>
             )}
             {refundEventDiscount > 0 && (
