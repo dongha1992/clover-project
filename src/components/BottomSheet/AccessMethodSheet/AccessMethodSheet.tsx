@@ -15,7 +15,7 @@ interface IProps {
 
 const AccessMethodSheet = ({ userAccessMethod }: IProps) => {
   const [selectedAccessMethod, setSelectedAccessMethod] = useState<IAccessMethod | undefined>(undefined);
-
+  console.log(selectedAccessMethod, 'selectedAccessMethod');
   const dispatch = useDispatch();
 
   const changeRadioHandler = (place: IAccessMethod) => {
