@@ -35,13 +35,17 @@ const CartSheetItem = ({
   // 임시
   const { menuItem } = useSelector(menuSelector);
   const { discount, discountedPrice } = getMenuOptionPrice(menu);
-  const thumbnailUrl = (menu.thumbnail || [])[0] || {};
+
+  // TAYLER 이거 객체로 들어와서 수정하겠습니다.
+
+  // const thumbnailUrl = (menu.thumbnail || [])[0] || {};
+  const thumbnailUrl = menu?.thumbnail?.url || '';
 
   return (
     <Container isSold={menu.isSold} padding={padding} isCart={isCart}>
       <Wrapper>
         <ImageWrapper>
-          <Image src={thumbnailUrl} alt="상품이미지"></Image>
+          <Image src={thumbnailUrl} alt="상품이미지" layout="responsive" width={'100%'} height={'100%'} />
         </ImageWrapper>
         <ContentWrapper>
           <TextB3R>{menu.name}</TextB3R>

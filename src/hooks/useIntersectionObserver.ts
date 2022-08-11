@@ -1,13 +1,23 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { UseQueryResult } from 'react-query';
 
 export interface IUseInfinite {
-  ref: any;
+  fetchNextPage: (options?: { throwOnError: boolean; cancelRefetch: boolean }) => Promise<UseQueryResult>;
+  isFetching: boolean;
+  childRef: any;
   parentRef: any;
-  refetch: (options?: { throwOnError: boolean; cancelRefetch: boolean }) => Promise<UseQueryResult>;
+  totalPage: number;
+  currentPage: number;
 }
 
-const useInfinite = ({ parentRef, ref, refetch }: IUseInfinite) => {
+const useIntersectionObserver = ({
+  fetchNextPage,
+  totalPage,
+  childRef,
+  parentRef,
+  isFetching,
+  currentPage,
+}: IUseInfinite) => {
   const [page, setPage] = useState<number>(0);
 
   const option = {
@@ -27,19 +37,21 @@ const useInfinite = ({ parentRef, ref, refetch }: IUseInfinite) => {
   useEffect(() => {
     const observer = new IntersectionObserver(handleObserver, option);
 
-    if (ref?.current) {
-      observer.observe(ref?.current);
+    if (childRef?.current) {
+      observer.observe(childRef?.current);
     }
     return () => observer.disconnect();
   }, [handleObserver]);
 
   useEffect(() => {
-    if (page) {
-      refetch();
+    if (!isFetching) {
+      if (currentPage < totalPage!) {
+        fetchNextPage();
+      }
     }
   }, [page]);
 
   return { page };
 };
 
-export default useInfinite;
+export default useIntersectionObserver;

@@ -5,13 +5,12 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { IMAGE_S3_URL, IMAGE_S3_DEV_URL } from '@constants/mock';
 import { useDispatch, useSelector } from 'react-redux';
 import { IDestinationsResponse } from '@model/index';
 import { useRouter } from 'next/router';
 import { userForm } from '@store/user';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
-import { SET_TEMP_EDIT_DESTINATION, SET_TEMP_EDIT_SPOT } from '@store/mypage';
+import { SET_TEMP_EDIT_SPOT } from '@store/mypage';
 import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
 import { dateN, SVGIcon } from '@utils/common';
@@ -21,6 +20,8 @@ import { getSpotDistanceUnit } from '@utils/spot';
 import { weeks } from '@constants/delivery-info';
 import { dayOfWeek } from '@utils/common/getFormatDate';
 import useSubsSpotOpenCheck from '@hooks/subscription/useSubsSpotOpenCheck';
+import Image from '@components/Shared/Image';
+import NextImage from 'next/image';
 
 interface IProps {
   item: IDestinationsResponse | undefined;
@@ -82,12 +83,16 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     }
   }, [item?.spotPickup?.type]);
 
-  const isSubsSpot = useSubsSpotOpenCheck({
-    placeOpenDays: item?.spotPickup?.spot.placeOpenDays! ?? null,
-    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
-    dayOfWeek: dayOfWeek(deliveryDate) ?? null,
-    isAll: applyAll ?? null,
-  });
+  // const isSubsSpot = useSubsSpotOpenCheck({
+  //   placeOpenDays: item?.spotPickup?.spot.placeOpenDays! ?? null,
+  //   pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
+  //   dayOfWeek: dayOfWeek(deliveryDate) ?? null,
+  //   isAll: applyAll ?? null,
+  // });
+
+  // temp TO YOUNG
+
+  const isSubsSpot = false;
 
   const renderSpotMsg = useCallback(() => {
     switch (true) {
@@ -208,7 +213,8 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
     }
 
     if (isLoginSuccess) {
-      if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
+      if (orderId) {
+        // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
         if (
           closedDate &&
           ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
@@ -237,6 +243,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
               spotPickupId: item?.spotPickup?.id!,
               name: item?.name!,
               spotPickup: item?.spotPickup?.name!,
+              location: item?.location!,
             })
           );
           router.push({
@@ -338,21 +345,21 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       } else if (isDelivery && isSubs) {
         router.push({
           pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
-          query: { 
-            isSpot: true, 
-            isSubscription, 
-            subsDeliveryType, 
-            menuId, 
-            isDelivery: true 
+          query: {
+            isSpot: true,
+            isSubscription,
+            subsDeliveryType,
+            menuId,
+            isDelivery: true,
           },
         });
       } else {
         router.push({
           pathname: `/spot/detail/${id}`,
-          query: { 
-            isSpot: true, 
-            orderId, 
-            destinationId, 
+          query: {
+            isSpot: true,
+            orderId,
+            destinationId,
           },
         });
       }
@@ -396,11 +403,32 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       <FlexCol>
         <ImageWrapper>
           {item?.spotPickup?.spot.isTrial ? (
-            <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+            <NextImage 
+              src='/images/fcospot/img_fcospot_empty.png'
+              alt="프코스팟 매장이미지"
+              width='60px'
+              height='60px'
+              className='fcospot-img'
+              layout="responsive"
+            />
           ) : item?.spotPickup?.spot?.images?.length! > 0 ? (
-            <SpotImg src={`${IMAGE_S3_URL}${item?.spotPickup?.spot.images[0].url}`} />
+            <Image 
+              src={item?.spotPickup?.spot.images[0].url!} 
+              height={60}
+              width={60}
+              layout="responsive"
+              alt="프코스팟 매장이미지"
+              className='fcospot-img'
+            />
           ) : (
-            <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+            <NextImage 
+              src='/images/fcospot/img_fcospot_empty.png'
+              alt="프코스팟 매장이미지"
+              width='60px'
+              height='60px'
+              className='fcospot-img'
+              layout="responsive"
+            />
           )}
         </ImageWrapper>
         {isOpened && !isClosed ? (
@@ -476,13 +504,15 @@ const ImageWrapper = styled.div`
   margin-left: 15px;
   border-radius: 8px;
   margin-bottom: 10px;
-`;
 
-const SpotImg = styled.img`
-  width: 100%;
   border: 1px solid ${theme.greyScale6};
   border-radius: 8px;
+
+  .fcospot-img {
+    border-radius: 8px;
+  }
 `;
+
 
 const TagWrapper = styled.div``;
 

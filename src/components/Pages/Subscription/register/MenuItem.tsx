@@ -1,5 +1,4 @@
 import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { MenuImgBox, MenuLi, MenuTextBox } from '@pages/subscription/register';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import Image from '@components/Shared/Image';

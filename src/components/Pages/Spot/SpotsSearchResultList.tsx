@@ -5,7 +5,6 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { IMAGE_S3_URL, IMAGE_S3_DEV_URL } from '@constants/mock';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { ISpotsDetail, ISpotPickupInfoInDestination } from '@model/index';
 import { useRouter } from 'next/router';
@@ -24,6 +23,8 @@ import { postDestinationApi } from '@api/destination';
 import { weeks } from '@constants/delivery-info';
 import { dayOfWeek } from '@utils/common/getFormatDate';
 import useSubsSpotOpenCheck from '@hooks/subscription/useSubsSpotOpenCheck';
+import Image from '@components/Shared/Image';
+import NextImage from 'next/image';
 
 interface IProps {
   item: ISpotsDetail | any;
@@ -36,7 +37,7 @@ const now = dayjs();
 
 // 스팟 검색 - 검색 결과
 // 추천 스팟, 스팟 검색 결과, 스팟 검색 결과 지도뷰 리스트
-const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IProps): ReactElement => {
+const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IProps): ReactElement => {
   const dispatch = useDispatch();
   const router = useRouter();
   const {
@@ -87,12 +88,16 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
     });
   }, []);
 
-  const isSubsSpot = useSubsSpotOpenCheck({
-    placeOpenDays: item?.placeOpenDays! ?? null,
-    pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
-    dayOfWeek: dayOfWeek(deliveryDate) ?? null,
-    isAll: applyAll ?? null,
-  });
+  // const isSubsSpot = useSubsSpotOpenCheck({
+  //   placeOpenDays: item?.placeOpenDays! ?? null,
+  //   pickupDaysArr: JSON.parse(decodeURIComponent(pickupDays ?? null)),
+  //   dayOfWeek: dayOfWeek(deliveryDate) ?? null,
+  //   isAll: applyAll ?? null,
+  // });
+
+  // temp TO YOUNG
+
+  const isSubsSpot = false;
 
   const renderSpotMsg = () => {
     switch (true) {
@@ -163,18 +168,20 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
         if (data.code === 200) {
           const response = data.data;
           const destinationId = response.id;
-          if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
+          if (orderId) {
+            // 마이페이지 - 배송정보 - 스팟 배송지 변경인 경우
             dispatch(
               SET_TEMP_EDIT_SPOT({
                 spotPickupId: pickupInfo.id,
                 name: item.name,
                 spotPickup: pickupInfo.name,
+                location: response.location,
               })
             );
             router.push({
               pathname: '/mypage/order-detail/edit/[orderId]',
               query: { orderId, destinationId },
-            });  
+            });
           } else {
             dispatch(
               SET_DESTINATION({
@@ -200,7 +207,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
             router.push({
               pathname: '/cart',
               query: { isClosed: !!closedDate },
-            });  
+            });
           }
         }
       } catch (e) {
@@ -269,7 +276,8 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
     }
     if (isLoginSuccess) {
       //로그인 o
-      if (orderId) { // 마이페이지 - 배송정보 - 스팟 배송지 변경일 경우
+      if (orderId) {
+        // 마이페이지 - 배송정보 - 스팟 배송지 변경일 경우
         if (
           closedDate &&
           ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
@@ -290,10 +298,10 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
               onSubmit: () => {},
             })
           );
-        } else {        
-          <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={getDesticationInfo} />
-        };
-      };
+        } else {
+          <PickupSheet pickupInfo={item?.pickups} spotType={item?.type} onSubmit={getDesticationInfo} />;
+        }
+      }
       if (hasCart) {
         // 로그인o and 장바구니 o
         if (isDelivery) {
@@ -378,60 +386,70 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
     }
   };
 
-  const goToDetail = useCallback((id: number | undefined, e: React.SyntheticEvent) => {
-    if (dragging) {
-      e.stopPropagation();
-      return;
-    };
+  const goToDetail = useCallback(
+    (id: number | undefined, e: React.SyntheticEvent) => {
+      if (dragging) {
+        e.stopPropagation();
+        return;
+      }
 
-    if (
-      orderId &&
-      closedDate &&
-      ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
-        (!applyAll && dateN(deliveryDate) > dateN(closedDate)))
-    ) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: `운영 종료 예정인 프코스팟으로는\n변경할 수 없어요.`,
-          submitBtnText: '확인',
-          onSubmit: () => {},
-        })
-      );
-    } else if (orderId && !isSubsSpot && isSubs) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: `현재 구독의 배송 일정과 운영일이\n일치하지 않아 변경할 수 없어요.`,
-          submitBtnText: '확인',
-          onSubmit: () => {},
-        })
-      );
-    } else {
-      if (isDelivery && !isSubs) {
-        router.push({
-          pathname: `/spot/detail/${id}`,
-          query: {
-            isSpot: true,
-            isDelivery: true,
-          },
-        });
-      } else if (isDelivery && isSubs) {
-        router.push({
-          pathname: `/spot/detail/${id}`,
-          query: { isSpot: true, destinationId: item?.id, isSubscription, isDelivery: true, subsDeliveryType, menuId },
-        });
+      if (
+        orderId &&
+        closedDate &&
+        ((applyAll && dateN(lastDeliveryDate) > dateN(closedDate)) ||
+          (!applyAll && dateN(deliveryDate) > dateN(closedDate)))
+      ) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `운영 종료 예정인 프코스팟으로는\n변경할 수 없어요.`,
+            submitBtnText: '확인',
+            onSubmit: () => {},
+          })
+        );
+      } else if (orderId && !isSubsSpot && isSubs) {
+        dispatch(
+          SET_ALERT({
+            alertMessage: `현재 구독의 배송 일정과 운영일이\n일치하지 않아 변경할 수 없어요.`,
+            submitBtnText: '확인',
+            onSubmit: () => {},
+          })
+        );
       } else {
-        router.push({
-          pathname: `/spot/detail/${id}`,
-          query: {
-            isSpot: true,
-            orderId,
-            destinationId,
-          },
-        });
-      };
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dragging]);
+        if (isDelivery && !isSubs) {
+          router.push({
+            pathname: `/spot/detail/${id}`,
+            query: {
+              isSpot: true,
+              isDelivery: true,
+            },
+          });
+        } else if (isDelivery && isSubs) {
+          router.push({
+            pathname: `/spot/detail/${id}`,
+            query: {
+              isSpot: true,
+              destinationId: item?.id,
+              isSubscription,
+              isDelivery: true,
+              subsDeliveryType,
+              menuId,
+            },
+          });
+        } else {
+          router.push({
+            pathname: `/spot/detail/${id}`,
+            query: {
+              isSpot: true,
+              orderId,
+              destinationId,
+            },
+          });
+        }
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [dragging]
+  );
 
   return (
     <Container
@@ -474,12 +492,23 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging, }: IPr
       </FlexColStart>
       <FlexCol>
         <ImageWrapper>
-          {item.isTrial ? (
-            <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
-          ) : item.images?.length! > 0 ? (
-            <SpotImg src={`${IMAGE_S3_URL}${item.images[0].url}`} />
+          {item.isTrial || item.images?.length! < 0 ? (
+            <NextImage 
+              src='/images/fcospot/img_fcospot_empty.png'
+              alt="트라이얼 프코스팟 인 경우 또는 등록된 이미지가 없는 경우의 이미지"
+              width={60}
+              height={60}
+              layout="responsive"
+            />
           ) : (
-            <SpotImg src={`${IMAGE_S3_DEV_URL}${`/img_spot_default.png`}`} />
+            <Image 
+              src={item?.images[0].url} 
+              height={60}
+              width={60}
+              alt="프코스팟 매장이미지"
+              className='fcospot-img'
+              layout="responsive"
+            />
           )}
         </ImageWrapper>
         {!recommand &&
@@ -561,9 +590,15 @@ const MeterAndTime = styled.div`
 const TagWrapper = styled.div``;
 
 const ImageWrapper = styled.div<{ map?: boolean }>`
+  width: 60px;
   margin-left: 15px;
-  border-radius: 8px;
   margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid ${theme.greyScale6};  
+  .fcospot-img{
+    width: 100%;
+    border-radius: 8px;
+  }
   ${({ map }) => {
     if (map) {
       return css`

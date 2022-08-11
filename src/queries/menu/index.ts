@@ -1,15 +1,7 @@
 import { IMenus } from '@model/index';
-import {
-  MutationKey,
-  QueryKey,
-  useInfiniteQuery,
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-  UseQueryOptions,
-} from 'react-query';
+import { QueryKey, useQuery, UseQueryOptions } from 'react-query';
 import { getMenuDetailApi, getMenuDetailReviewApi } from '@api/menu';
-
+import { useInfinite } from '@queries/useInfinite';
 interface IProps {
   previous: any;
   id: number;
@@ -60,23 +52,5 @@ export const useInfiniteMenuReviews = ({ id, page, size }: { id: number; size: n
     };
   };
 
-  //getMenuDetailReview
-
-  const query = useInfiniteQuery('infiniteReviews', fetchDatas, {
-    getNextPageParam: (lastPage, pages) => {
-      if (lastPage.totalPage >= lastPage.nextPage) {
-        return lastPage.nextPage;
-      } else {
-        return null;
-      }
-    },
-    refetchOnMount: true,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: true,
-    retry: 1,
-    cacheTime: 0,
-    staleTime: 0,
-  });
-
-  return query;
+  return useInfinite('infinite', fetchDatas);
 };

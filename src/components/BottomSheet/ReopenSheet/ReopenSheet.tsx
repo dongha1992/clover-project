@@ -10,7 +10,7 @@ import TextInput from '@components/Shared/TextInput';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { userAuthTel, userConfirmTel, userChangeInfo, userProfile } from '@api/user';
+import { userProfile } from '@api/user';
 import { postNotificationApi } from '@api/menu';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
