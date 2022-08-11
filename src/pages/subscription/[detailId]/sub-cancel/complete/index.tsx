@@ -58,7 +58,7 @@ const SubOrderCancelCompletePage = () => {
       )}
       <BtnWrapper>
         <Button height="100%" onClick={goToSubscriptionDetail}>
-          구독 상세 보기
+          구독 취소하러 가기
         </Button>
       </BtnWrapper>
     </SubOrderCancelCompleteContainer>

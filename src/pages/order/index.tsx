@@ -1105,6 +1105,7 @@ const OrderPage = () => {
             deliveryDay={subsInfo?.deliveryDay?.join('·')!}
             datePeriodFirst={getFormatDate(subsInfo?.datePeriod![0])!}
             datePeriodLast={getFormatDate(subsInfo?.datePeriod![1])!}
+            subscriptionPeriod={previewOrder.order.subscriptionPeriod}
           />
           <BorderLine height={8} />
         </>
