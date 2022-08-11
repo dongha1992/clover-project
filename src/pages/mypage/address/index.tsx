@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { TabList } from '@components/Shared/TabList';
-import { breakpoints } from '@utils/common/getMediaQuery';
 import { PickupItem } from '@components/Pages/Mypage/Address';
 import router from 'next/router';
 import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
-import { fixedTab } from '@styles/theme';
+import { fixedTab, flexCenter } from '@styles/theme';
 import { useQuery } from 'react-query';
-import { getCartsApi } from '@api/cart';
 import { useDispatch } from 'react-redux';
 import { SET_DESTINATION, SET_USER_DELIVERY_TYPE } from '@store/destination';
-import { commonSelector } from '@store/common';
-import { useSelector } from 'react-redux';
 import useScrollCheck from '@hooks/useScrollCheck';
 
 const TAB_LIST = [
@@ -73,15 +69,19 @@ const AddressManagementPage = () => {
       <FixedTab scroll={isScroll}>
         <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
       </FixedTab>
-      <Wrapper>
-        {selectedTab === '/pickup'
-          ? filteredList?.map((item: any, index: number) => (
-              <PickupItem key={index} item={item} goToCart={goToCart} goToEdit={goToSpotEdit} />
-            ))
-          : filteredList?.map((item: IDestinationsResponse, index: number) => (
-              <DeliveryItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />
-            ))}
-      </Wrapper>
+      {filteredList?.length! > 0 ? (
+        <Wrapper>
+          {selectedTab === '/pickup'
+            ? filteredList?.map((item: any, index: number) => (
+                <PickupItem key={index} item={item} goToCart={goToCart} goToEdit={goToSpotEdit} />
+              ))
+            : filteredList?.map((item: IDestinationsResponse, index: number) => (
+                <DeliveryItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />
+              ))}
+        </Wrapper>
+      ) : (
+        <EmptyContainer>등록된 주소가 없어요</EmptyContainer>
+      )}
     </Container>
   );
 };
@@ -102,6 +102,14 @@ const FixedTab = styled.div<{ scroll: boolean }>`
 
 const Wrapper = styled.div`
   padding: 74px 0 24px 0px;
+`;
+
+const EmptyContainer = styled.div`
+  height: 80vh;
+  width: 100%;
+  ${flexCenter}
+  display: flex;
+  flex-direction: column;
 `;
 
 export default AddressManagementPage;
