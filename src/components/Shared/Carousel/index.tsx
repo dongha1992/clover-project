@@ -14,7 +14,7 @@ export interface ICarouselImageProps {
 }
 
 interface ICarouselProps {
-  images: ICarouselImageProps[];
+  images: ICarouselImageProps[] | undefined;
 }
 
 const NextArrow = ({ onClick }: any) => {
@@ -79,7 +79,7 @@ const Carousel = ({ images }: ICarouselProps) => {
         <TextH6B color={theme.white} padding="0 4px">
           /
         </TextH6B>
-        <TextH6B color={theme.white}>{images.length}</TextH6B>
+        <TextH6B color={theme.white}>{images?.length}</TextH6B>
       </Count>
     </Container>
   );

@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextH5B, TextB2R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { SVGIcon } from '@utils/common';
+import Image from 'next/image';
 
 interface IParams {
   type: string;
@@ -22,27 +22,27 @@ interface ISpotNotice {
 }
 
 const OpenInfo = ({type}: IParams) => {
-  const spotNoticeContetn = (): ISpotNotice[] | undefined => {
+  const spotNoticeContents = (): ISpotNotice[] | undefined => {
     switch(type){
       case 'PRIVATE':
         return [
           {
-            url: '/img_spot_review.png',
+            url: 'img_spot_review.png',
             title: '1. 제출한 신청서를 검토 중이에요.',
             desc: '트라이얼 진행을 위해 신청한 장소의 배송 적합성을 확인해요.',
           },
           {
-            url: '/img_spot_trial.png',
+            url: 'img_spot_trial.png',
             title: '2. 트라이얼 2주간 임시로 사용 가능해요.',
             desc: '신청한 장소로 트라이얼 2주간 5명 이상의 고객이 배송완료해야 다음 단계로 넘어갈 수 있어요. 신청자와 참여자 모두에게 혜택을 제공하니 배송비 무료로 트라이얼 주문해 보세요! (단, 트라이얼은 구독 주문할 수 없어요.)',
           },
           {
-            url: '/img_spot_open_review.png',
+            url: 'img_spot_open_review.png',
             title: '3. 최종 오픈을 위해 검토 중이에요.',
             desc: '트라이얼 2주가 종료되면 기간동안 운영, 배송에 발생한 이슈를 확인하고 최종 오픈을 위한 검토를 진행합니다.',
           },
           {
-            url: '/img_spot_open.png',
+            url: 'img_spot_open.png',
             title: '4. 프코스팟을 오픈 완료했어요.',
             desc: '오픈완료 시점부터 정상적으로 프코스팟을 사용할 수 있으니 배송비 무료로 스팟배송을 이용해 보세요!',
             notice: {
@@ -52,7 +52,7 @@ const OpenInfo = ({type}: IParams) => {
             },
           },
           {
-            url: '/img_spot_private_retry.png',
+            url: 'img_spot_private_retry.png',
             icon: 'exclamationMark',
             title: '아쉽지만 오픈 미진행될 수 있어요.',
             desc: '트라이얼 모집인원이 부족하거나 배송, 출입 등의 이슈로 운영 조건을 충족하지 못했을 때 미진행으로 처리돼요.',
@@ -65,12 +65,12 @@ const OpenInfo = ({type}: IParams) => {
       case 'PUBLIC':
         return [
           {
-            url: '/img_spot_join.png',
+            url: 'img_spot_join.png',
             title: '1. 함께 오픈할 참여자를 모집 중이에요.',
             desc: '신청한 장소를 프코스팟으로 운영하기 위해 많은 유저의 참여를 받는 기간이에요. 참여자가 많을수록 사장님을 설득하여 오픈 확률이 올라가요!',
           },
           {
-            url: '/img_spot_visit.png',
+            url: 'img_spot_visit.png',
             title: '2. 오픈을 검토 중이에요.',
             desc: '최대 100명의 유저가 참여하면 프코매니저가 직접 장소를 방문하여 사장님과 오픈 검토를 진행해요.',
             notice: {
@@ -78,12 +78,12 @@ const OpenInfo = ({type}: IParams) => {
             },
           },
           {
-            url: '/img_spot_open_public.png',
+            url: 'img_spot_open_public.png',
             title: '3. 프코스팟을 오픈 완료했어요.',
             desc: '오픈완료 시점부터 정상적으로 프코스팟을 사용할 수 있으니 배송비 무료로 스팟배송을 이용해 보세요!',
           },
           {
-            url: '/img_spot_public_failed.png',
+            url: 'img_spot_public_failed.png',
             icon: 'exclamationMark',
             title: '아쉽지만 오픈 미진행될 수 있어요.',
             desc: '참여자 수가 부족하거나 배송, 출입, 운영 등의 이슈로 운영 조건을 충족하지 못한 경우 오픈 미진행 처리돼요.\n(주변의 다른 장소로 대체 오픈한 경우에도 해당 신청은 미진행으로 처리돼요.)',
@@ -92,17 +92,17 @@ const OpenInfo = ({type}: IParams) => {
       case 'OWNER':
         return [
           {
-            url: '/img_spot_visit.png',
+            url: 'img_spot_visit.png',
             title: '1. 오픈을 검토 중이에요.',
             desc: '스팟 오픈을 위한 적합성을 판단하고 조율하는 단계예요.제출한 신청서를 검토하고 프코 매니저가 직접 방문하여 사장님과 인터뷰를 진행할 예정이에요.',
           },
           {
-            url: '/img_spot_open_public.png',
+            url: 'img_spot_open_public.png',
             title: '2. 프코스팟을 오픈 완료했어요.',
             desc: '오픈완료 시점부터 정상적으로 프코스팟을 운영할 수 있어요!',
           },
           {
-            url: '/img_spot_public_failed_owner.png',
+            url: 'img_spot_public_failed_owner.png',
             icon: 'exclamationMark',
             title: '아쉽지만 오픈 미진행될 수 있어요.',
             desc: '배송, 출입 등의 이슈로 운영 조건을 충족하지 못하거나 운영에 필요한 협의가 불충족된 경우 오픈 미진행으로 처리돼요. 별도의 페널티는 없어요!',
@@ -114,10 +114,19 @@ const OpenInfo = ({type}: IParams) => {
   return (
     <Container>
       {
-        spotNoticeContetn()?.map((i, idx) => {
+        spotNoticeContents()?.map((i, idx) => {
           return (
             <ContentTextWrapper key={idx}>
-              <Img src={`${IMAGE_S3_DEV_URL}${i.url}`} />
+              <ImageWrapper>
+                <Image 
+                  src={`/images/fcospot-status/${i.url}`}
+                  width={312}
+                  height={174}
+                  layout="responsive"
+                  alt="프코스팟 신청 안내 이미지"
+                />
+              </ImageWrapper>
+
               <Wrapper>
                 {
                   i.icon && (
@@ -182,7 +191,7 @@ const Wrapper = styled.div`
   margin: 0 0 8px 0;
 `;
 
-const Img = styled.img`
+const ImageWrapper = styled.div`
   width: 100%;
   margin: 0 0 16px 0;
 `;

@@ -17,7 +17,7 @@ import { SET_ALERT } from '@store/alert';
 import { spotSelector } from '@store/spot';
 import { ISpotsInfo } from '@model/index';
 import { getSpotInfo } from '@api/spot';
-import { IMAGE_S3_DEV_URL } from '@constants/mock';
+import NextImage from 'next/image';
 
 const SpotReqPage = () => {
   const router = useRouter();
@@ -125,9 +125,23 @@ const SpotReqPage = () => {
       <GuideImgWrapper>
         { type === 'PRIVATE' ? 
           (
-            <Img src={`${IMAGE_S3_DEV_URL}/img_detail_fco_add_private.png`} />
+            <NextImage 
+              src='/images/fcospot/img_fcospot_add_private.png'
+              width={'512px'}
+              height={'272px'}
+              alt="프라이빗 신청 페이지 이미지"
+              className='main-img'
+              layout="responsive"
+            />
           ) : (
-            <Img src={`${IMAGE_S3_DEV_URL}/img_detail_fco_add_public.png`} />
+            <NextImage 
+              src='/images/fcospot/img_fcospot_add_public.png'
+              width={'512px'}
+              height={'272px'}
+              alt="단골가게 또는 우리가게 신청 페이지 이미지"
+              className='main-img'
+              layout="responsive"
+            />
           )
         }
       </GuideImgWrapper>
@@ -157,6 +171,9 @@ const TopWrapper = styled.section`
 const GuideImgWrapper = styled.section`
   width: 100%;
   height: 100%;
+  .main-img {
+    height: auto !important;
+  }
 `;
 
 const Img = styled.img`

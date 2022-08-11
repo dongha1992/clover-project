@@ -5,11 +5,11 @@ import { TextH5B, TextB2R, TextH6B } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { useSelector } from 'react-redux';
 import { ISpotsDetail } from '@model/index';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { destinationForm } from '@store/destination';
 import { useRouter } from 'next/router';
 import { useOnLike } from 'src/queries';
 import { getSpotDistanceUnit } from '@utils/spot';
+import Image from '@components/Shared/Image';
 
 interface IParams {
   items: ISpotsDetail;
@@ -46,7 +46,14 @@ const SpotWishList = ({ items, onClick }: IParams) => {
     <Container>
       <WishList onClick={goToDetail}>
         <StorImgWrapper>
-          <ImgWrapper src={`${IMAGE_S3_URL}${items.images[0].url}`} alt="매장이미지" />
+          <Image 
+            src={items?.images[0].url!} 
+            height='100%'
+            width='100%'
+            layout="responsive"
+            alt="내가 찜한 프코스팟 매장이미지"
+            className='fcospot-img'
+          />
           {!items.isOpened && (
             <OpenLabel>
               <TextH6B color={theme.white} padding="5px 10px 4px 10px">
@@ -121,6 +128,9 @@ const ClosedFilter = styled.div`
 const ImgWrapper = styled.img`
   width: 100%;
   border-radius: 10px;
+  .fcospot-img{
+    border-radius: 10px;
+  }
 `;
 
 const LocationInfoWrapper = styled.div`
