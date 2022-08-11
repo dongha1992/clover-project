@@ -20,7 +20,7 @@ const Tag = ({
   padding,
   margin,
   backgroundColor = theme.greyScale6,
-  color = theme.greyScale45,
+  color = theme.greyScale65,
   children,
   borderRadius,
   center,

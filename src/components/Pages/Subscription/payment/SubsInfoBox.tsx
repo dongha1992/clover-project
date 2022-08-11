@@ -1,4 +1,5 @@
 import { TextB2R, TextH4B, TextH5B } from '@components/Shared/Text';
+import { periodMapper } from '@constants/subscription';
 import { subscriptionForm } from '@store/subscription';
 import { FlexBetween, FlexBetweenStart, FlexColEnd } from '@styles/theme';
 import { useSelector } from 'react-redux';
@@ -10,6 +11,7 @@ interface IProps {
   deliveryDay: string;
   datePeriodFirst: string;
   datePeriodLast: string;
+  subscriptionPeriod: string;
 }
 
 const SubsInfoBox = ({
@@ -18,8 +20,8 @@ const SubsInfoBox = ({
   deliveryDay,
   datePeriodFirst,
   datePeriodLast,
+  subscriptionPeriod,
 }: IProps) => {
-  const { subsInfo } = useSelector(subscriptionForm);
   return (
     <SubsInfoBoxContainer>
       <TextH4B padding="0 0 24px 0">구독정보</TextH4B>
@@ -30,9 +32,13 @@ const SubsInfoBox = ({
         </TextB2R>
       </FlexBetween>
       <FlexBetweenStart>
-        <TextH5B>배송주기</TextH5B>
+        <TextH5B>구독기간</TextH5B>
         <FlexColEnd>
-          <TextB2R>정기구독 {subscriptionRound}회차</TextB2R>
+          {subscriptionPeriod === 'UNLIMITED' ? (
+            <TextB2R>정기구독 {subscriptionRound}회차</TextB2R>
+          ) : (
+            <TextB2R>{periodMapper[subscriptionPeriod]} 구독</TextB2R>
+          )}
           <TextB2R>
             {datePeriodFirst} ~ {datePeriodLast}
           </TextB2R>

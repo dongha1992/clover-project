@@ -19,7 +19,7 @@ const SubsOrderItem = ({ deliveryType, deliveryDetail, subscriptionPeriod, name,
     <SubsOrderContainer>
       <FlexRowStart>
         <ImgBox>
-          <Image src={menuImage ?? '/'} alt="상품이미지" width={'100%'} height={'100%'} layout="responsive" />
+          <Image src={menuImage} alt="상품이미지" width={'100%'} height={'100%'} layout="responsive" />
         </ImgBox>
         <InfoBox>
           <div className="labelBox">
