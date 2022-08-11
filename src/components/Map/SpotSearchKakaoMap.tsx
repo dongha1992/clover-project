@@ -1,11 +1,7 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled, {css} from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { 
-  spotSelector, 
-  SET_SPOT_MAP_SWITCH, 
-  } from '@store/spot';
-import { IMAGE_S3_DEV_URL } from '@constants/mock';
+import { useDispatch } from 'react-redux';
+import { SET_SPOT_MAP_SWITCH } from '@store/spot';
 import { SET_ALERT } from '@store/alert';
 import { ISpotsDetail } from '@model/index';
 import { SVGIcon } from '@utils/common';
@@ -76,7 +72,8 @@ const SpotSearchKakaoMap = ({
         const map = new window.kakao.maps.Map(container, options); // 지도 생성
         const markerPosition = new window.kakao.maps.LatLng(currentPositionLat, currentPositionLon);
         const imageSize = new window.kakao.maps.Size(50, 54);
-        const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
+        const imageSrc = '/images/fcospot-map/ic_fcospot_DEFAULT_PIN.png';
+        
         const selectedMarkerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); // 선택된 마커 이미지
 
         const clusterStyles = [
@@ -86,7 +83,7 @@ const SpotSearchKakaoMap = ({
             color: 'white',
             textAlign: 'center',
             fontSize: '13px',
-            background: `url(${IMAGE_S3_DEV_URL}/ic_group_pin.png) no-repeat center`,
+            background: `url(/images/fcospot-map/ic_fcospot_GROUP_PIN.png) no-repeat center`,
             backgroundSize: '100% 100%',
             display: 'flex',
             justifyContent: 'center',
@@ -97,7 +94,7 @@ const SpotSearchKakaoMap = ({
             width : '40px', 
             height : '40px',
             color: 'white',
-            background: `url(${IMAGE_S3_DEV_URL}/ic_group_pin.png) no-repeat center`,
+            background: `url(/images/fcospot-map/ic_fcospot_GROUP_PIN.png) no-repeat center`,
             backgroundSize: '100% 100%',
             justifyContent: 'center',
             alignItems: 'center',
@@ -108,7 +105,7 @@ const SpotSearchKakaoMap = ({
             height : '50px',
             color: 'white',
             fontSize: '15px',
-            background: `url(${IMAGE_S3_DEV_URL}/ic_group_pin.png) no-repeat  center`,
+            background: `url(/images/fcospot-map/ic_fcospot_GROUP_PIN.png) no-repeat  center`,
             backgroundSize: '100% 100%',
             justifyContent: 'center',
             alignItems: 'center',
@@ -126,23 +123,27 @@ const SpotSearchKakaoMap = ({
             zIndex: 700,
         });
 
-        // 마커 리스트
-        //ic_map_pin.png 선택 마커
-        //ic_circle.png 프라이빗 마커
-        //ic_bookstore.png 퍼블릭 마커
-        //ic_cafe.png
-        //ic_GS25.png
-        //ic_gym.png
-        //ic_pharmacy.png
-        //ic_sevenelven.png
-        //ic_store.png
-        //ic_storyway.png
-        //ic_cafe_storyway.png
-        //ic_etc.png
-        //ic_tripin.png
+        // 마커 아이콘 리스트
+        //ic_fcospot_DEFAULT_PIN.png 선택된 마커 아이콘
+        //ic_fcospot_PRIVATE.png 프라이빗 마커 아이콘
+        //ic_fcospot_BOOKSTORE.png 
+        //ic_fcospot_CAFE.png
+        //ic_fcospot_CONVENIENCE_STORE_GS25.png
+        //ic_fcospot_FITNESS_CENTER.png
+        //ic_fcospot_DRUGSTORE.png
+        //ic_fcospot_CONVENIENCE_STORE_SEVEN_ELEVEN.png
+        //ic_fcospot_STORE.png
+        //ic_fcospot_CONVENIENCE_STORE_STORYWAY.png
+        //ic_fcospot_CAFE_STORYWAY.png
+        //ic_fcospot_ETC.png
+        //ic_fcospot_CAFE_TRIPIN.png
 
-        //ic_group_pin.png // 클러스터링 마커 
-        let selectedMarker: any = null;
+        //ic_fcospot_GROUP_PIN.png // 클러스터링 마커 
+
+        // 마커 종류
+        // BOOKSTORE, CAFE, CAFE_STORYWAY, CAFE_TRIPIN, CONVENIENCE_STORE_GS25, CONVENIENCE_STORE_SEVEN_ELEVEN,
+        // DRUGSTORE, CONVENIENCE_STORE_STORYWAY, ETC, FITNESS_CENTER, STORE.
+        
 
         //   const filterResult = spotList.filter(i => i.type === 'PUBLIC');
         //   const result = filterResult?.reduce((acc: any, cur: any) => {
@@ -151,6 +152,7 @@ const SpotSearchKakaoMap = ({
         //   }, {});
 
         // console.log('result', result);
+        let selectedMarker: any = null;
         const markersArr: any[] =[];
 
         for (let i = 0; i < spotList.length; i++) {
@@ -159,39 +161,8 @@ const SpotSearchKakaoMap = ({
 
         function displayMarker (item: ISpotsDetail, idx: number) {
 
-          const placeType = () => {
-            switch(item.spotMarker) {
-              case 'PRIVATE': 
-                return '/ic_circle.png';
-              case 'BOOKSTORE': 
-                return '/ic_bookstore.png';
-              case 'CAFE': 
-                return '/ic_cafe.png';
-              case 'CAFE_STORYWAY':
-                return '/ic_cafe_storyway.png';
-              case 'CAFE_TRIPIN':
-                return '/ic_tripin.png';
-              case 'CONVENIENCE_STORE_GS25':
-                return '/ic_GS25.png';
-              case 'CONVENIENCE_STORE_SEVEN_ELEVEN':
-                return '/ic_seveneleven.png';
-              case 'CONVENIENCE_STORE_STORYWAY':
-                return '/ic_storyway.png';
-              case 'DRUGSTORE':
-                return '/ic_pharmacy.png';
-              case 'ETC':
-                return '/ic_etc.png';
-              case 'FITNESS_CENTER':
-                return '/ic_gym.png';
-              case 'STORE':
-                return '/ic_store.png';
-              default: 
-                return '/ic_etc.png';
-            };
-          };
-          
-          // 마커 이미지를 생성
-          const mapMarkerImgSrc = `${IMAGE_S3_DEV_URL}${placeType()}`;
+          // 마커 이미지 생성
+          const mapMarkerImgSrc = `/images/fcospot-map/ic_fcospot_${item.spotMarker}.png`;
           const imgSize = () => {
             if (item.type === 'PRIVATE') {
               return {
@@ -290,7 +261,7 @@ const SpotSearchKakaoMap = ({
               map.setCenter(currentPos); // 현재 위치로 지도 이동
               map.setLevel(3);
               // 마커 생성
-              const imageSrc = `${IMAGE_S3_DEV_URL}/ic_current_position.png`;
+              const imageSrc = '/images/fcospot-map/ic_fcospot_POSITION_PIN.png';
               const imageSize = new window.kakao.maps.Size(32, 36);
               const currentPositionIcon = new window.kakao.maps.MarkerImage(imageSrc, imageSize); 
               const marker = new window.kakao.maps.Marker({
