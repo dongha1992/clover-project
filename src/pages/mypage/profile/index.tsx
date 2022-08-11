@@ -128,7 +128,11 @@ const ProfilePage = () => {
       },
       onError: async (error: any) => {
         console.error(error);
-        dispatch(SET_ALERT({ alertMessage: error.message }));
+        if (error.code === 1001) {
+          dispatch(SET_ALERT({ alertMessage: '이메일 형식을 다시 확인해주세요' }));
+        } else {
+          dispatch(SET_ALERT({ alertMessage: error.message }));
+        }
       },
     }
   );
@@ -369,6 +373,11 @@ const ProfilePage = () => {
     if (!isValidName || !isValidNickname) return;
     if (!isValidBirthDay) {
       dispatch(SET_ALERT({ alertMessage: '14세 미만은 가입할 수 없어요.' }));
+      return;
+    }
+
+    if (!emailValidation.isValid) {
+      dispatch(SET_ALERT({ alertMessage: emailValidation.message }));
       return;
     }
     const hasBirthDate = userInfo.year > 0 && userInfo.month > 0 && userInfo.day > 0;

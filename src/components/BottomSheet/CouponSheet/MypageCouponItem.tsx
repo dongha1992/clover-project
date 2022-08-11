@@ -7,6 +7,7 @@ import { Tag } from '@components/Shared/Tag';
 import { ICoupon } from '@model/index';
 import { getCustomDate } from '@utils/destination/';
 import dayjs from 'dayjs';
+import { getFormatPrice } from '@utils/common';
 interface IProps {
   coupon: ICoupon;
   selectCouponHandler: (coupon: ICoupon) => void;
@@ -25,12 +26,13 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
 
   const isMoreThenOneMenu = coupon?.descriptions?.join().includes('특정 상품');
   const tagetIndex = coupon?.descriptions?.findIndex((item) => item.includes('특정 상품'));
-  const canNotUse = !coupon.canUse;
+  const canNotUse = coupon.canUse && !coupon.canUse;
   const tagColorSet = canNotUse ? theme.greyScale6 : theme.brandColor5;
   const priceColorSet = canNotUse ? theme.greyScale25 : theme.brandColor;
   const tagNameColorSet = canNotUse ? theme.greyScale45 : theme.brandColor;
   const nameColorSet = canNotUse ? theme.greyScale25 : theme.black;
   const desColorSet = canNotUse ? theme.systemRed : theme.black;
+
   return (
     <Container
       isDownload={canNotUse}
@@ -45,15 +47,19 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
       <Wrapper>
         <Content>
           <FlexBetween padding="0 0 4px 0">
-            <TextH4B color={priceColorSet}>{isRateDiscount ? `${coupon.value}%` : `${coupon.value}원`}</TextH4B>
-            <Tag backgroundColor={tagColorSet} color={tagNameColorSet}>
-              D-{dDay}
-            </Tag>
+            <TextH4B color={priceColorSet}>
+              {isRateDiscount ? `${coupon.value}%` : `${getFormatPrice(String(coupon.value))}원`}
+            </TextH4B>
+            {dDay >= 6 && (
+              <Tag backgroundColor={tagColorSet} color={tagNameColorSet}>
+                D{dDay}
+              </Tag>
+            )}
           </FlexBetween>
           <TextB2R18 color={nameColorSet}>{coupon.name}</TextB2R18>
           <FlexCol padding="8px 0 0 0">
             {coupon.descriptions.map((description, index) => {
-              if (index === tagetIndex + 1 && !isShow) {
+              if (tagetIndex > 0 && index === tagetIndex + 1 && !isShow) {
                 return;
               }
               return (
