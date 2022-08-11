@@ -191,8 +191,8 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      console.log(item, 'item');
-      // router.push({ pathname: '/cart/delivery-info', query: { destinationId: item?.id, isClosed: !!closedDate } });
+
+      router.push({ pathname: '/cart/delivery-info', query: { destinationId: item?.id, isClosed: !!closedDate } });
     };
 
     const handleSubsDeliveryType = () => {
