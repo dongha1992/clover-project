@@ -138,13 +138,14 @@ const CartPage = () => {
     async () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
 
-      const params = {
+      const obj = {
         delivery: userDeliveryType?.toUpperCase()!,
         deliveryDate: selectedDeliveryDay,
         spotId: isSpot ? destinationObj?.spotId : null,
       };
 
-      const { data } = await getCartsApi({ params });
+      const params = selectedDeliveryDay ? obj : undefined;
+      const { data } = await getCartsApi(params);
       return data.data;
     },
     {
@@ -152,7 +153,7 @@ const CartPage = () => {
       refetchOnWindowFocus: false,
       cacheTime: 0,
       staleTime: 0,
-      enabled: !!selectedDeliveryDay && !!me,
+      enabled: !!me,
       onSuccess: (data) => {
         try {
           reorderCartList(data.cartMenus);
@@ -1167,9 +1168,9 @@ const CartPage = () => {
   }, [checkedMenus]);
 
   const getSubOrderDelivery = async () => {
-    if (me) {
+    if (me && destinationObj?.delivery) {
       const params = {
-        delivery: destinationObj.delivery!.toUpperCase(),
+        delivery: destinationObj?.delivery!.toUpperCase(),
       };
       try {
         const { data } = await getSubOrdersCheckApi(params);
