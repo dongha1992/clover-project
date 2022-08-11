@@ -142,7 +142,6 @@ const Header = () => {
         '/promotion': '기획전',
         '/event': '이벤트',
         '/promotion/detail/[id]': `${eventTitle ? eventTitle: '기획전'}`,
-        '/md': 'MD추천',
   };
 
     const title = headerTitleMap[currentPath];
@@ -202,7 +201,6 @@ const Header = () => {
         '/mypage/dib/subscription',
         '/mypage/order-detail',
         '/promotion/detail/[id]',
-        '/md',
       ].includes(currentPath): {
         return (
           <Container scroll={scroll}>

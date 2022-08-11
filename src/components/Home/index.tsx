@@ -21,7 +21,7 @@ import Carousel from "@components/Shared/Carousel";
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
   const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
-
+  // const [mainContents, setMainContents] = useState<any>();
   const router = useRouter();
   const { type } = useSelector(filterSelector);
   const dispatch = useDispatch();
@@ -52,43 +52,25 @@ const Home = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  // MD 추천 api 호출
-  const { 
-    data: mdMenu,
-    error: mdMenuError,
-    isLoading: isLoadingMdMenu,
-  } = useQuery(
-    'getRecommendMenus',
-    async () => {
-      const { data } = await getExhibitionMdRecommendApi();
-      return data.data.menus;
-    },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
-  );
-
   const {
     data: mainContents,
     error: exhiError,
     isLoading: isLoadingExhibition,
   } = useQuery(
-    'exhibitionList',
+    'getRecommendMenus',
     async () => {
       const { data } = await getMainPromotionContentsApi();
       return data.data.mainContents;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    { refetchOnMount: true, refetchOnWindowFocus: false, }
   );
-
-  const goToMd = () => {
-    router.push('/md');
-  };
 
   const goToPromotion = (id: number, title: string) => {
     dispatch(SET_EVENT_TITLE(title ? title : '기획전'));
     router.push(`/promotion/detail/${id}`);
   };
 
-  if (isLoadingMdMenu) {
+  if (isLoadingExhibition) {
     return <div>로딩</div>;
   };
 
@@ -101,55 +83,48 @@ const Home = () => {
         <MainTab />
         <BorderLine height={1} margin="24px 0 24px 0" />
       </SectionWrapper>
-      <FlexSpace>
-        <SectionTitle>MD 추천</SectionTitle>
-        <TextH5B 
-          onClick={goToMd}
-          color={theme.greyScale65} 
-          textDecoration='underline' 
-          pointer
-        >더보기</TextH5B>
-      </FlexSpace>
-      <SectionWrapper>
-        <FlexWrapWrapper>
-          {mdMenu?.length! > 0
-            ? mdMenu?.map((item: any, index: number) => {
-                if (index > 3) return;
-                return <Item item={item} key={index} />;
-              })
-            : '상품을 준비 중입니다.'}
-        </FlexWrapWrapper>
-      </SectionWrapper>
       {
-        mainContents?.length! > 0
-          ? mainContents?.map((item, iex) => {
-            if(item.type === "BANNER") {
-              return (
-                <PromotionBanner key={iex} onClick={() => goToPromotion(item.banner.id, item.banner.title)}>
-                  <Image
-                    src={item.banner.image.url}
-                    height="120px"
-                    width="512px"
-                    layout="responsive"
-                    alt="홈 배너형 기획전 이미지"
-                  />
-                </PromotionBanner>
-              )
-            } else if (item.type === "EXHIBITION") {
-              if(item.exhibition.type === "GENERAL_MENU") {
+        mainContents?.length! > 0 
+          ? mainContents?.map((item: any, idx: number) => {
+            if(item?.type === 'EXHIBITION') {
+              if(item?.exhibition.type === 'MD_RECOMMENDED') {
                 return (
-                  <PromotionWrapper key={iex}>
+                  <PromotionWrapper key={idx}>
                     <FlexSpace>
-                      <SectionTitle>{item.exhibition.title}</SectionTitle>
+                      <SectionTitle>{item?.exhibition.title}</SectionTitle>
                       <TextH5B 
-                        onClick={() => goToPromotion(item.exhibition.id, item.exhibition.title)}
+                        onClick={()=> goToPromotion(item?.exhibition.id, item?.exhibition.title)}
+                        color={theme.greyScale65} 
+                        textDecoration='underline' 
+                        pointer
+                      >더보기</TextH5B>
+                    </FlexSpace>
+                    <SectionWrapper>
+                      <FlexWrapWrapper>
+                        {item?.exhibition.menus?.length! > 0
+                          ? item?.exhibition.menus?.map((item: any, index: number) => {
+                              if (index > 3) return;
+                              return <Item item={item} key={index} />;
+                            })
+                          : '상품을 준비 중입니다.'}
+                      </FlexWrapWrapper>
+                    </SectionWrapper>
+                  </PromotionWrapper>          
+                )
+              } else if (item?.exhibition.type === 'GENERAL_MENU') {
+                return (
+                  <PromotionWrapper key={idx}>
+                    <FlexSpace>
+                      <SectionTitle>{item?.exhibition.title}</SectionTitle>
+                      <TextH5B 
+                        onClick={() => goToPromotion(item?.exhibition.id, item?.exhibition.title)}
                         color={theme.greyScale65} 
                         textDecoration='underline' 
                         pointer
                       >더보기</TextH5B>
                     </FlexSpace>
                     <Image
-                      src={item.exhibition.image.url}
+                      src={item?.exhibition?.image.url}
                       height="300px"
                       width="512px"
                       layout="responsive"
@@ -157,8 +132,8 @@ const Home = () => {
                     />
                     <ItemListRowWrapper>
                       <ItemListRow>
-                        {item.exhibition.menus?.length! > 0
-                          ? item.exhibition.menus?.map((item, index) => {
+                        {item?.exhibition.menus?.length! > 0
+                          ? item?.exhibition.menus?.map((item: any, index: number) => {
                               if (index > 9) return;
                               return <Item item={item} key={index} isHorizontal />;
                             })
@@ -168,6 +143,18 @@ const Home = () => {
                   </PromotionWrapper>
                 )
               }
+            } else if (item?.type === 'BANNER') {
+              return (
+                <PromotionBanner key={idx} onClick={() => goToPromotion(item.banner.id, item.banner.title)}>
+                  <Image
+                    src={item?.banner?.image.url}
+                    height="120px"
+                    width="512px"
+                    layout="responsive"
+                    alt="홈 배너형 기획전 이미지"
+                  />
+                </PromotionBanner>
+              )
             }
           })
           : null
