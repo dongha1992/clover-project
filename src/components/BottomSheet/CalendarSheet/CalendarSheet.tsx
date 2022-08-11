@@ -64,6 +64,13 @@ const CalendarSheet = ({
               submitBtnText: '확인',
             })
           );
+        } else if (error.code === 1999) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '해당 주문은 배송일 변경을 할 수 없어요.',
+              submitBtnText: '확인',
+            })
+          );
         } else {
           return dispatch(
             SET_ALERT({
