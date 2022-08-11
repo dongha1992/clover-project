@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { IMAGE_S3_DEV_URL } from '@constants/mock';
 import { SVGIcon } from '@utils/common';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { theme } from '@styles/theme';
@@ -23,7 +22,7 @@ const DefaultKakaoMap = ({
 
   const onLoadKakaoMap = () => {
     window.kakao.maps.load(() => {
-      const imageSrc = `${IMAGE_S3_DEV_URL}/ic_map_pin.png`;
+      const imageSrc = '/images/fcospot-map/ic_fcospot_DEFAULT_PIN.png';
       const imageSize = new window.kakao.maps.Size(50, 54);
       const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize); 
 
