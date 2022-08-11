@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { Button } from '@components/Shared/Button';
-import { fixedBottom, homePadding, FlexBetween, FlexCol } from '@styles/theme';
+import { fixedBottom, homePadding, FlexBetween, FlexCol, FlexCenter } from '@styles/theme';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { SVGIcon } from '@utils/common';
 import { TextB2R, TextH2B, TextB3R, TextH4B } from '@components/Shared/Text';
@@ -22,20 +22,14 @@ interface IProps {
 const OrderCancelSheet = ({ url, name, payAmount, orderId }: IProps) => {
   const dispatch = useDispatch();
 
+  //TODO: 기존 주문 상세보기 -> 함께배송일때
+
   return (
     <Container>
       <Header>
-        <FlexBetween margin="16px 0 0 0">
-          <div />
+        <FlexCenter margin="16px 0 0 0">
           <TextH4B>취소완료</TextH4B>
-          <div
-            onClick={() => {
-              dispatch(INIT_BOTTOM_SHEET());
-            }}
-          >
-            <SVGIcon name="defaultCancel24" />
-          </div>
-        </FlexBetween>
+        </FlexCenter>
       </Header>
       <Body>
         <FlexCol>
@@ -55,7 +49,7 @@ const OrderCancelSheet = ({ url, name, payAmount, orderId }: IProps) => {
         <ItemInfo url={url} name={name} amount={payAmount} />
       </Body>
       <BtnWrapper onClick={() => dispatch(INIT_BOTTOM_SHEET())}>
-        <Button height="100%">주문상세보기</Button>
+        <Button height="100%">주문 상세보기</Button>
       </BtnWrapper>
     </Container>
   );

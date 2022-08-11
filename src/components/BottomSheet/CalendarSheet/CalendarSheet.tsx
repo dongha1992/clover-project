@@ -53,6 +53,13 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
               submitBtnText: '확인',
             })
           );
+        } else {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: error.message,
+              submitBtnText: '확인',
+            })
+          );
         }
       },
     }

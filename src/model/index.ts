@@ -1239,6 +1239,8 @@ export interface IOrderDetailInOrderDeliveries {
   status: string;
   orderMenus: IOrderMenus[];
   type: string;
+  deliveryDateChangeCount: number;
+  deliveryDateChangeMaximum: number;
   name?: string;
   subOrderDelivery: ISubOrderDelivery;
   orderOptions: IOrderOptionsInOrderDeliveries[];

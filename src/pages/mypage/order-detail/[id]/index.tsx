@@ -42,7 +42,7 @@ const disabledDates: any = [];
 /* 단건의 경우 배열 요소 하나 하지만 정기구독은 배열형태임 */
 
 const OrderDetailPage = () => {
-  const [isShowOrderItemSection, setIsShowOrderItemSection] = useState<boolean>(false);
+  const [isShowOrderItemSection, setIsShowOrderItemSection] = useState<boolean>(true);
   const [orderId, setOrderId] = useState<number>();
   const { showToast } = useToast();
 
@@ -153,7 +153,7 @@ const OrderDetailPage = () => {
     );
   };
 
-  const deliveryDescription = (status: string) => {
+  const deliveryDescriptionRenderer = (status: string) => {
     switch (status) {
       case 'COMPLETED':
       case 'DELIVERING': {
@@ -262,6 +262,16 @@ const OrderDetailPage = () => {
 
   const changeDevlieryDateHandler = () => {
     if (!canChangeDelivery || isSubOrder) {
+      return;
+    }
+
+    if (!orderDeliveries.deliveryDateChangeCount) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '배송일 변경 제한 횟수(1회)를 초과하여 더 이상 변경할 수 없어요.',
+          closeBtnText: '취소',
+        })
+      );
       return;
     }
 
@@ -389,7 +399,7 @@ const OrderDetailPage = () => {
             {deliveryAt} 도착예정
           </TextB1R>
         </FlexRow>
-        <FlexRow>{deliveryDescription(status)}</FlexRow>
+        {isParcel && <FlexRow>{deliveryDescriptionRenderer(status)}</FlexRow>}
       </DeliveryStatusWrapper>
       <BorderLine height={8} />
       <OrderItemsWrapper>
@@ -618,13 +628,15 @@ const OrderDetailPage = () => {
       )}
       <CancelButtonContainer>
         <CancelInfo>
-          <FlexRow>
+          <FlexRow margin="0 0 12px 0">
             <SVGIcon name="exclamationMark" />
-            <TextB3R padding="0 0 0 4px">주문 변경 및 취소 시 반드시 확인해주세요!</TextB3R>
+            <TextH6B padding="0 0 0 4px" color={theme.brandColor}>
+              주문 변경 및 취소 시 반드시 확인해주세요!
+            </TextH6B>
           </FlexRow>
-          <TextB3R>
-            주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능합니다. 단, 오전 7시~9시 반 사이에는 주문 직후 5분 뒤
-            제조가 시작되어 취소 불가합니다.
+          <TextB3R color={theme.brandColor}>주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능합니다.</TextB3R>
+          <TextB3R color={theme.brandColor}>
+            단, 오전 7시~9시 반 사이에는 주문 직후 5분 뒤 제조가 시작되어 취소 불가합니다.
           </TextB3R>
         </CancelInfo>
         <Button
@@ -680,11 +692,11 @@ const CancelInfo = styled.div`
   flex-direction: column;
   background-color: ${theme.greyScale3};
   margin-bottom: 24px;
+  padding: 24px;
+  border-radius: 8px;
 `;
 
-const CancelButtonContainer = styled.div`
-  padding: 24px;
-`;
+const CancelButtonContainer = styled.div``;
 
 const DevlieryInfoWrapper = styled.div`
   padding: 24px;
