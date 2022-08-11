@@ -51,6 +51,7 @@ const PromotionDetailPage = () => {
   return (
     <Container>
       {
+        items.type !== 'MD_RECOMMENDED' &&
         items.content && (
           <MarkDownWrapper>
             <MarkdownRenderer content={items.content!} />
