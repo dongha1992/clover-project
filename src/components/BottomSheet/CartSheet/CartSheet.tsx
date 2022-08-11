@@ -440,7 +440,7 @@ const CartSheet = ({ menuItem }: any) => {
               필수옵션
             </TextH5B>
             <Select placeholder="필수옵션" type={'main'}>
-              {menuItem?.menuDetails?.map((option: any, index: number) => {
+              {menuItem?.menuDetails?.map((option: IMenuDetails, index: number) => {
                 if (option.main) {
                   return (
                     <MenuOption
