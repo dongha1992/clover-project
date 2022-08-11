@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { SVGIcon } from '@utils/common';
 import Image from '@components//Shared/Image';
-import {TextH6B} from "@components/Shared/Text";
-import {theme} from "@styles/theme";
+import { TextH6B } from '@components/Shared/Text';
+import { theme } from '@styles/theme';
 
 export interface ICarouselImageProps {
-  src: string
-  alt?: string
-  width?: number
+  src: string;
+  alt?: string;
+  width?: number;
 }
 
 interface ICarouselProps {
@@ -63,14 +63,7 @@ const Carousel = ({ images }: ICarouselProps) => {
       <Slider {...settings}>
         {images?.map((image: ICarouselImageProps, index: number) => {
           return (
-            <Image
-              src={image.src}
-              alt={image.alt || ""}
-              width="512px"
-              height="383px"
-              layout="responsive"
-              key={index}
-            />
+            <Image src={image.src} alt={image.alt || ''} width="512px" height="512px" layout="responsive" key={index} />
           );
         })}
       </Slider>
