@@ -1261,8 +1261,6 @@ const CartPage = () => {
     dispatch(INIT_ACCESS_METHOD());
   }, []);
 
-  console.log(me);
-
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -1507,8 +1505,8 @@ const CartPage = () => {
               </Tag>
               <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
               <TextH6B>
-                {calculatePoint({ rate: me?.grade.benefit.accumulationRate!, total: totalAmount + getDeliveryFee() })}P
-                ({me?.grade.benefit.accumulationRate}%) 적립 예정
+                {calculatePoint({ rate: me?.grade.benefit.accrualRate!, total: totalAmount + getDeliveryFee() })}P (
+                {me?.grade.benefit.accrualRate}%) 적립 예정
               </TextH6B>
             </FlexEnd>
           )}
