@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { ReviewInfo, ReviewInfoBottom } from '@components/Pages/Mypage/Review';
 import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '@styles/theme';
-import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
-import { SVGIcon, getImageSize } from '@utils/common';
+import { TextH3B, TextB2R, TextH6B, TextB3R } from '@components/Shared/Text';
+import { SVGIcon } from '@utils/common';
 import { Button, ButtonGroup } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
@@ -17,16 +17,10 @@ import { userForm } from '@store/user';
 import { useRouter } from 'next/router';
 import { IPatchReviewRequest } from '@model/index';
 import { postImageApi } from '@api/image';
-import NextImage from '@components/Shared/Image';
-import { reviewSelector, INIT_MENU_IMAGE } from '@store/review';
+import Image from '@components/Shared/Image';
+import { INIT_MENU_IMAGE } from '@store/review';
 import { NickName } from '../write/[orderDeliveryId]';
 import { getLimitDateOfReview } from '@utils/menu';
-
-interface IWriteMenuReviewObj {
-  imgFiles: string[] | undefined;
-  deletedImgIds: string[];
-  preview: string[];
-}
 
 interface IProp {
   menuId: string;
@@ -38,30 +32,22 @@ const LIMIT = 30;
 
 const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   const [isShow, setIsShow] = useState(false);
-  const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
-    imgFiles: [],
-    deletedImgIds: [],
-    preview: [],
-  });
+  const [reviewImages, setReviewImages] = useState<string[]>([])
+  const [imageUploading, setImageUploading] = useState(false);
 
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [rating, setRating] = useState(5);
-  const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
+  const [numberOfReviewContent, setNumberOfReviewContent] = useState<number>(0);
 
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { me } = useSelector(userForm);
-  const { menu } = useSelector(reviewSelector);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
 
-  /* TODO: blob 타입 정의 */
-  /* TODO: 사이즈 체크 및 사진 올리는 hooks */
-
   const {
     data: selectedReviewDetail,
-    error: menuError,
     isLoading,
   } = useQuery(
     'getReviewDetail',
@@ -76,7 +62,6 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
     },
 
     {
-      onSuccess: async (data) => {},
       onError: () => {
         router.back();
       },
@@ -90,7 +75,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
 
   const { mutateAsync: mutateEditMenuReview } = useMutation(
     async (reqBody: IPatchReviewRequest) => {
-      const { data } = await editMenuReviewApi({ data: reqBody, reviewId: Number(reviewId) });
+      await editMenuReviewApi({ data: reqBody, reviewId: Number(reviewId) });
     },
     {
       onSuccess: async () => {
@@ -113,7 +98,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
 
   const { mutateAsync: mutateDeleteMenuReview } = useMutation(
     async () => {
-      const { data } = await deleteReviewApi({ id: Number(reviewId) });
+      await deleteReviewApi({ id: Number(reviewId) });
     },
     {
       onSuccess: async () => {
@@ -126,17 +111,17 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
     }
   );
 
-  const { limitAt, deliveryAt, isAvailable } = getLimitDateOfReview(selectedReviewDetail?.menuReview?.createdAt!);
+  getLimitDateOfReview(selectedReviewDetail?.menuReview?.createdAt!);
 
   useEffect(() => {
     return () => {
       dispatch(INIT_MENU_IMAGE());
     };
-  }, []);
+  });
 
   useEffect(() => {
     if (textAreaRef.current) {
-      setNumberOfReivewContent(textAreaRef.current?.value?.length);
+      setNumberOfReviewContent(textAreaRef.current?.value?.length);
     }
   }, [selectedReviewDetail]);
 
@@ -155,79 +140,35 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   const writeReviewHandler = () => {
     if (textAreaRef.current) {
       const text = textAreaRef.current?.value.trim();
-      setNumberOfReivewContent(text.length);
+      setNumberOfReviewContent(text.length);
     }
   };
 
-  const onChangeFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // const LIMIT_SIZE = 5 * 1024 * 1024;
-    const LIMIT_SIZE = 1000000;
-
-    let imageFile = e.target.files! as any;
-    if (!imageFile[0]) return;
-
+  const onChangeFileHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const LIMIT_SIZE = 1024 * 1024 * 10;
     try {
-      if (imageFile.length! > 0) {
-        /* 사이즈 제한 걸리는 경우 */
-        if (LIMIT_SIZE < imageFile[0].size) {
-          /* 이미지 사이즈 줄이기 */
-          const blobURL = window.URL.createObjectURL(imageFile[0]);
-          const MAX_WIDTH = 1000;
-          const MAX_HEIGHT = 1000;
-          const MIME_TYPE = 'image/jpeg';
-          const QUALITY = 0.8;
-          const img = new Image();
-          img.src = blobURL;
-
-          img.onerror = () => {
-            URL.revokeObjectURL(blobURL);
-            alert('이미지 업로드에 실패했습니다');
-            return;
-          };
-          img.onload = () => {
-            URL.revokeObjectURL(blobURL);
-            const [formatWidth, formatHeight] = getImageSize(img, MAX_WIDTH, MAX_HEIGHT);
-            const canvas = document.createElement('canvas');
-            canvas.width = formatWidth;
-            canvas.height = formatHeight;
-            const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-            ctx.drawImage(img, 0, 0, formatWidth, formatHeight);
-            canvas.toBlob(
-              (blob: any) => {
-                imageFile = new File([blob], imageFile[0].name, {
-                  type: imageFile[0].type,
-                });
-                getImageFileReader(imageFile);
-              },
-              MIME_TYPE,
-              QUALITY
-            );
-          };
-        } else {
-          getImageFileReader(imageFile[0]);
-        }
+      const imageFile = (e.target.files || [])[0];
+      if (!imageFile) return;
+      if(imageFile.size > LIMIT_SIZE || imageFile.name.length > 255) {
+        dispatch(SET_ALERT({ alertMessage: '사진은 1장 당 20MB 이하 (jpg, png), 파일명은 255자 이하만 등록 가능해요.' }));
+        return;
       }
-    } catch (error) {
-      console.error(error);
+      const formData = new FormData();
+      formData.append('media', imageFile, `/menu/review/origin/${imageFile.name}`);
+      setImageUploading(true);
+      const imageLocation = await postImageApi(formData);
+      setReviewImages(imageList => [...imageList, imageLocation]);
+    } catch (e) {
+      dispatch(SET_ALERT({ alertMessage: '이미지 업로드에 실패했습니다.' }));
+    } finally {
+      e.target.value = '';
+      setImageUploading(false);
     }
-  };
-
-  const getImageFileReader = (imageFile: any) => {
-    const imageFileReader = new FileReader();
-    imageFileReader.onload = (e: any) => {
-      setWriteMenuReviewObj({
-        ...writeMenuReviewObj,
-        preview: [...writeMenuReviewObj?.preview!, e.target.result],
-        imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
-      });
-    };
-    imageFileReader.readAsDataURL(imageFile);
   };
 
   const removePreviewImgHandler = (index: number) => {
-    const filterImg = writeMenuReviewObj?.imgFiles?.filter((img, idx) => idx !== index);
-    const filterPreviewImg = writeMenuReviewObj?.preview?.filter((img, idx) => idx !== index);
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterImg, preview: filterPreviewImg });
+    const filterImages = reviewImages.filter((img, idx) => idx !== index);
+    setReviewImages(filterImages)
   };
 
   const finishWriteReview = async () => {
@@ -236,40 +177,17 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
       return;
     }
 
-    let formData = new FormData();
-    let location = [];
-
-    if (writeMenuReviewObj?.imgFiles?.length! > 0) {
-      for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
-        try {
-          const img = writeMenuReviewObj.imgFiles && writeMenuReviewObj?.imgFiles[i]!;
-
-          if (typeof img === 'string') {
-            location.push(img);
-          } else {
-            console.log('here');
-            formData.append('media', img!);
-            const result = await postImageApi(formData);
-            formData = new FormData();
-            location.push(result.headers.location);
-          }
-        } catch (error) {
-          console.error(error);
-          dispatch(SET_ALERT({ alertMessage: '이미지 업로드에 실패했습니다.' }));
-          return;
-        }
-      }
+    if (imageUploading) {
+      dispatch(SET_ALERT({ alertMessage: '사진 등록 완료 후 다시 시도해 주세요. 😭' }));
+      return;
     }
-
-    const hasReviewImgs = location.length !== 0;
-
     const reqBody = {
       content: textAreaRef?.current?.value!,
-      images: hasReviewImgs ? location : [],
+      images: reviewImages,
       rating,
     };
 
-    mutateEditMenuReview(reqBody);
+    return mutateEditMenuReview(reqBody);
   };
 
   const deleteReview = () => {
@@ -285,16 +203,13 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
 
   useEffect(() => {
     if (selectedReviewDetail) {
-      setWriteMenuReviewObj({
-        ...writeMenuReviewObj,
-        imgFiles: selectedReviewDetail?.menuReview?.images?.map((img) => img.url)!,
-        preview: selectedReviewDetail?.menuReview?.images?.map((img) => img.url)!,
-      });
+      const images = selectedReviewDetail.menuReview?.images || [];
+      setReviewImages(images.map((img) => img.url));
       setRating(selectedReviewDetail.menuReview.rating);
     }
   }, [selectedReviewDetail]);
 
-  const over30Letter = LIMIT - numberOfReivewContent > 0;
+  const over30Letter = LIMIT - numberOfReviewContent > 0;
 
   if (isLoading) {
     return <div>로딩</div>;
@@ -317,7 +232,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
         </FlexCol>
         <FlexRow>
           <ImgWrapper>
-            <NextImage
+            <Image
               src={menuImage}
               alt="상품이미지"
               width={'100%'}
@@ -358,9 +273,9 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
           <TextB3R color={theme.brandColor}>
             {!over30Letter
               ? '글자 수 조건 충족!'
-              : `${LIMIT - numberOfReivewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
+              : `${LIMIT - numberOfReviewContent}자만 더 쓰면 포인트 적립 조건 충족!`}
           </TextB3R>
-          <TextB3R>{numberOfReivewContent.toLocaleString()}/1,000</TextB3R>
+          <TextB3R>{numberOfReviewContent.toLocaleString()}/1,000</TextB3R>
         </FlexBetween>
       </Wrapper>
       <BorderLine height={8} margin="32px 0" />
@@ -375,27 +290,24 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
           </TextB3R>
         </FlexRow>
         <FlexRow>
-          {writeMenuReviewObj?.imgFiles?.length! < 2 && (
-            <UploadInputWrapper>
-              <TextInput
+          <UploadInputWrapper>
+            <TextInput
                 width="100%"
                 height="100%"
                 padding="0"
                 inputType="file"
-                accept="image/*"
+                accept=".jpg, .jpeg, .png, .heif, .heic"
+                disabled={reviewImages.length > 1}
                 eventHandler={onChangeFileHandler}
-              />
-              <div className="plusBtn">
-                <SVGIcon name="plus18" />
-              </div>
-            </UploadInputWrapper>
-          )}
-          {writeMenuReviewObj?.preview?.length! > 0 &&
-            writeMenuReviewObj?.preview?.map((img: string, index: number) => {
-              const base64 = img?.includes('data:image');
+            />
+            <div className="plusBtn">
+              <SVGIcon name="plus18" />
+            </div>
+          </UploadInputWrapper>
+          {reviewImages.map((img: string, index: number) => {
               return (
                 <PreviewImgWrapper key={index}>
-                  <img src={base64 ? img : `${process.env.IMAGE_SERVER_URL}${img}`} />
+                  <Image src={img} width="72" height="72" alt="메뉴 후기"></Image>
                   <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
                     <SVGIcon name="blackBackgroundCancel" />
                   </div>
