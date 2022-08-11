@@ -25,6 +25,7 @@ import { removeCookie } from '@utils/common/cookie';
 import { INIT_CART_LISTS } from '@store/cart';
 import { commonSelector } from '@store/common';
 import useIsApp from '@hooks/useIsApp';
+import { SET_ALERT } from '@store/alert';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -154,23 +155,33 @@ const MypagePage = () => {
   };
 
   const logoutHandler = () => {
-    dispatch(INIT_USER());
-    dispatch(INIT_CART_LISTS());
-    removeCookie({ name: 'acstk' });
-    removeCookie({ name: 'refreshTokenObj' });
-    removeCookie({ name: 'autoL' });
-    localStorage.removeItem('persist:nextjs');
-    sessionStorage.removeItem('recommendCode');
-    if (window.navigator.userAgent === 'fco-clover-webview' && window.Kakao && window.Kakao.Auth.getAccessToken()) {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-kakao' }));
-    } else if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
-      window.Kakao.Auth.logout();
-    } else if (window.navigator.userAgent === 'fco-clover-webview' && loginType === 'APPLE') {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-apple' }));
-    }
-    router.push('/mypage');
+    dispatch(
+      SET_ALERT({
+        alertMessage: '로그아웃 하시겠어요?',
+        onSubmit: () => {
+          dispatch(INIT_USER());
+          dispatch(INIT_CART_LISTS());
+          removeCookie({ name: 'acstk' });
+          removeCookie({ name: 'refreshTokenObj' });
+          removeCookie({ name: 'autoL' });
+          localStorage.removeItem('persist:nextjs');
+          sessionStorage.removeItem('recommendCode');
+          if (
+            window.navigator.userAgent === 'fco-clover-webview' &&
+            window.Kakao &&
+            window.Kakao.Auth.getAccessToken()
+          ) {
+            window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-kakao' }));
+          } else if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
+            window.Kakao.Auth.logout();
+          } else if (window.navigator.userAgent === 'fco-clover-webview' && loginType === 'APPLE') {
+            window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-apple' }));
+          }
+          router.push('/mypage');
+        },
+      })
+    );
   };
-
   if (isNil(orderList) && infoLoading && subsOrdersLoading) {
     return <div>로딩</div>;
   }
