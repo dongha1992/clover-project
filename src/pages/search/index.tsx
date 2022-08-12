@@ -36,7 +36,7 @@ const SearchPage = () => {
 
   useEffect(() => {
     dispatch(INIT_MENU_KEYWORD());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkIsSold = (menuList: IMenus[]) => {
@@ -45,14 +45,14 @@ const SearchPage = () => {
     });
   };
 
-  const getSearchResult = async(e: React.KeyboardEvent<HTMLInputElement>) => {
+  const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
     if (e.key === 'Enter') {
       router.push({
         pathname: '/search/result',
-        query: { keyword: keyword, },
+        query: { keyword: keyword },
       });
-    };
+    }
   };
 
   const changeInputHandler = (e: any) => {
@@ -61,7 +61,7 @@ const SearchPage = () => {
     if (!value) {
       // setIsSearched(false);
       setKeyword('');
-    };
+    }
   };
 
   const clearInputHandler = () => {
@@ -69,7 +69,7 @@ const SearchPage = () => {
       initInputHandler();
       // setIsSearched(false);
       setKeyword('');
-    };
+    }
   };
 
   const initInputHandler = () => {
@@ -87,28 +87,23 @@ const SearchPage = () => {
   return (
     <Container>
       <SearchBarWrapper>
-        <label className='textLabel'>
-          {
-            keyword.length === 0 &&
-              <span className='textPlaceholde'>도로명, 건물명 또는 지번으로 검색</span>
-          }
+        <label className="textLabel">
+          {keyword.length === 0 && <span className="textPlaceholde">도로명, 건물명 또는 지번으로 검색</span>}
           <TextInput
             inputType="text"
             svg="searchIcon"
-            fontSize='14px'
+            fontSize="14px"
             keyPressHandler={getSearchResult}
             eventHandler={changeInputHandler}
             value={keyword}
             ref={inputRef}
           />
         </label>
-        {
-          keyword.length > 0 && (
-            <div className="removeSvg" onClick={clearInputHandler}>
-              <SVGIcon name="removeItem" />
-            </div>
-          )
-        }
+        {keyword.length > 0 && (
+          <div className="removeSvg" onClick={clearInputHandler}>
+            <SVGIcon name="removeItem" />
+          </div>
+        )}
       </SearchBarWrapper>
       <DefaultSearchContainer>
         <CategoryWrapper>

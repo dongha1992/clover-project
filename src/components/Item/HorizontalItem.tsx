@@ -21,7 +21,7 @@ const HorizontalItem = ({ item }: TProps) => {
   const router = useRouter();
 
   const { menuDetails } = item;
-  const { discount, price } = getMenuDisplayPrice(menuDetails);
+  const { discount, price } = getMenuDisplayPrice(menuDetails ?? [{}]);
 
   const goToCartSheet = (e: any) => {
     e.stopPropagation();
