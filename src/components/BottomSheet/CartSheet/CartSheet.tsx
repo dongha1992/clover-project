@@ -454,26 +454,30 @@ const CartSheet = ({ menuItem }: any) => {
               })}
             </Select>
           </MainOption>
-          <OptionalOption>
-            <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
-              선택옵션
-            </TextH5B>
-
-            <Select placeholder="선택옵션" type={'optional'}>
-              {menuItem?.menuDetails?.map((option: any, index: number) => {
-                if (!option.main) {
-                  return (
-                    <MenuOption
-                      key={index}
-                      option={option}
-                      selectMenuHandler={selectMenuHandler}
-                      menuId={menuItem.id}
-                    />
-                  );
-                }
-              })}
-            </Select>
-          </OptionalOption>
+          {
+            optionalMenus.length > 0 && (
+              <OptionalOption>
+                <TextH5B padding="24px 0 16px 2px" color={theme.greyScale65}>
+                  선택옵션
+                </TextH5B>
+    
+                <Select placeholder="선택옵션" type={'optional'}>
+                  {menuItem?.menuDetails?.map((option: any, index: number) => {
+                    if (!option.main) {
+                      return (
+                        <MenuOption
+                          key={index}
+                          option={option}
+                          selectMenuHandler={selectMenuHandler}
+                          menuId={menuItem.id}
+                        />
+                      );
+                    }
+                  })}
+                </Select>
+              </OptionalOption>
+            )
+          }
           {selectedMenus.length > 0 ? (
             <SelectedCartItemContainer>
               {selectedMenus.map((menu: any, index: number) => (
