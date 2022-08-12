@@ -3,11 +3,9 @@ import styled from 'styled-components';
 import { ReviewInfo, ReviewInfoBottom } from '@components/Pages/Mypage/Review';
 import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '@styles/theme';
 import { TextH3B, TextB2R, TextH6B, TextB3R } from '@components/Shared/Text';
-import { SVGIcon } from '@utils/common';
 import { Button, ButtonGroup } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
-import TextInput from '@components/Shared/TextInput';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
@@ -16,11 +14,12 @@ import { StarRating } from '@components/StarRating';
 import { userForm } from '@store/user';
 import { useRouter } from 'next/router';
 import { IPatchReviewRequest } from '@model/index';
-import { postImageApi } from '@api/image';
 import Image from '@components/Shared/Image';
 import { INIT_MENU_IMAGE } from '@store/review';
 import { NickName } from '../write/[orderDeliveryId]';
 import { getLimitDateOfReview } from '@utils/menu';
+import { ReviewImagePreview, ReviewImageUpload } from '@components/Pages/Review';
+import { hide, show } from '@store/loading';
 
 interface IProp {
   menuId: string;
@@ -32,7 +31,7 @@ const LIMIT = 30;
 
 const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   const [isShow, setIsShow] = useState(false);
-  const [reviewImages, setReviewImages] = useState<string[]>([])
+  const [reviewImages, setReviewImages] = useState<string[]>([]);
   const [imageUploading, setImageUploading] = useState(false);
 
   const [hoverRating, setHoverRating] = useState<number>(0);
@@ -144,27 +143,23 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
     }
   };
 
-  const onChangeFileHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const LIMIT_SIZE = 1024 * 1024 * 10;
-    try {
-      const imageFile = (e.target.files || [])[0];
-      if (!imageFile) return;
-      if(imageFile.size > LIMIT_SIZE || imageFile.name.length > 255) {
-        dispatch(SET_ALERT({ alertMessage: '사진은 1장 당 20MB 이하 (jpg, png), 파일명은 255자 이하만 등록 가능해요.' }));
-        return;
-      }
-      const formData = new FormData();
-      formData.append('media', imageFile, `/menu/review/origin/${imageFile.name}`);
-      setImageUploading(true);
-      const imageLocation = await postImageApi(formData);
-      setReviewImages(imageList => [...imageList, imageLocation]);
-    } catch (e) {
-      dispatch(SET_ALERT({ alertMessage: '이미지 업로드에 실패했습니다.' }));
-    } finally {
-      e.target.value = '';
-      setImageUploading(false);
-    }
-  };
+  const onUploadStartHandler = () => {
+    setImageUploading(true);
+    dispatch(show());
+  }
+
+  const onUploadFinishHandler = () => {
+    setImageUploading(false);
+    dispatch(hide());
+  }
+
+  const fileUploadErrorHandler = (alertMessage: string) => {
+    dispatch(SET_ALERT({ alertMessage }));
+  }
+
+  const uploadSuccessHandler = (url: string) => {
+    setReviewImages(imageList => [...imageList, url]);
+  }
 
   const removePreviewImgHandler = (index: number) => {
     const filterImages = reviewImages.filter((img, idx) => idx !== index);
@@ -290,28 +285,12 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
           </TextB3R>
         </FlexRow>
         <FlexRow>
-          <UploadInputWrapper>
-            <TextInput
-                width="100%"
-                height="100%"
-                padding="0"
-                inputType="file"
-                accept=".jpg, .jpeg, .png, .heif, .heic"
-                disabled={reviewImages.length > 1}
-                eventHandler={onChangeFileHandler}
-            />
-            <div className="plusBtn">
-              <SVGIcon name="plus18" />
-            </div>
-          </UploadInputWrapper>
+          <ReviewImageUpload
+            onError={fileUploadErrorHandler} onSuccess={uploadSuccessHandler}
+            onStart={onUploadStartHandler} onFinish={onUploadFinishHandler} disabled={reviewImages.length > 1}/>
           {reviewImages.map((img: string, index: number) => {
               return (
-                <PreviewImgWrapper key={index}>
-                  <Image src={img} width="72" height="72" alt="메뉴 후기"></Image>
-                  <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
-                    <SVGIcon name="blackBackgroundCancel" />
-                  </div>
-                </PreviewImgWrapper>
+                <ReviewImagePreview key={index} image={img} onRemove={()=> removePreviewImgHandler(index)}/>
               );
             })}
         </FlexRow>
@@ -370,57 +349,8 @@ const UploadPhotoWrapper = styled.div`
   ${homePadding}
 `;
 
-const UploadInputWrapper = styled.label`
-  position: relative;
-  display: block;
-  width: 72px;
-  height: 72px;
-  background-color: ${theme.greyScale6};
-  border-radius: 8px;
-  margin: 16px 0 48px 0;
-  cursor: pointer;
-  input {
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-  }
-
-  .plusBtn {
-    position: absolute;
-    left: 40%;
-    top: 35%;
-  }
-`;
-
 const ButtonWrapper = styled.div`
   ${fixedBottom}
-`;
-
-const PreviewImgWrapper = styled.div`
-  position: relative;
-  width: 72px;
-  height: 72px;
-  background-color: ${theme.greyScale6};
-  border-radius: 8px;
-  margin: 16px 0 48px 8px;
-  border: none;
-
-  > img {
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-
-  .svgWrapper {
-    svg {
-      cursor: pointer;
-      position: absolute;
-      right: 10%;
-      top: 10%;
-    }
-  }
 `;
 
 const PointInfoWrapper = styled.div`
