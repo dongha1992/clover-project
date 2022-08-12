@@ -65,7 +65,8 @@ const OrderDetailInfo = ({
         <FlexBetween margin="16px 0 0 0">
           <TextH5B>배송방법</TextH5B>
           <TextB2R>
-            {delivery} {deliveryDetail ? '-' + deliveryDetail : null}
+            {delivery}
+            {deliveryDetail ? '-' + deliveryDetail : null}
           </TextB2R>
         </FlexBetween>
         <FlexBetweenStart margin="16px 0 24px 0">

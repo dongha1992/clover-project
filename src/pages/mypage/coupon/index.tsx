@@ -87,7 +87,7 @@ const CouponManagementPage = () => {
     return <div>로딩중</div>;
   }
 
-  if (coupons?.length! < 0) {
+  if (coupons?.length === 0) {
     return (
       <>
         <FlexRow padding="24px 0 0 0">
