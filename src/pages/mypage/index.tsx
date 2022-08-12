@@ -23,6 +23,8 @@ import isNil from 'lodash-es/isNil';
 import { useGetOrders } from 'src/queries/order';
 import { removeCookie } from '@utils/common/cookie';
 import { INIT_CART_LISTS } from '@store/cart';
+import { INIT_MENU_ITEM } from '@store/menu';
+import { INIT_DESTINATION, INIT_USER_DELIVERY_TYPE } from '@store/destination';
 import { commonSelector } from '@store/common';
 import useIsApp from '@hooks/useIsApp';
 import { SET_ALERT } from '@store/alert';
@@ -161,6 +163,10 @@ const MypagePage = () => {
         onSubmit: () => {
           dispatch(INIT_USER());
           dispatch(INIT_CART_LISTS());
+          // TEMP, persist 초기화 다시 해야함
+          dispatch(INIT_DESTINATION());
+          dispatch(INIT_MENU_ITEM());
+          dispatch(INIT_USER_DELIVERY_TYPE());
           removeCookie({ name: 'acstk' });
           removeCookie({ name: 'refreshTokenObj' });
           removeCookie({ name: 'autoL' });
