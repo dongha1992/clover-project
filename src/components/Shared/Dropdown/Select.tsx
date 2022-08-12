@@ -53,7 +53,7 @@ const SelectContainer = styled.div`
   width: 100%;
   max-height: 350px;
   background-color: ${theme.white};
-  border-radius: 8px;
+  border-radius: 5px;
   border: 1px solid ${theme.greyScale15};
 
   .SelectedText {
@@ -78,12 +78,13 @@ const OptionContainer = styled.ul<{
   margin: 0;
   padding: 0;
   text-align: center;
-  border-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
   display: flex;
   flex-direction: column;
   width: 100%;
 
-  border: 1px solid #e4e4e4;
+  border-top: 1px solid #e4e4e4;
 
   ${({ isShowDropdown }) => {
     if (isShowDropdown) {

@@ -6,7 +6,7 @@ import { getMenuOptionPrice } from '@utils/menu/getMenuDisplayPrice';
 import { IMenuDetails } from '@model/index';
 
 type TProps = {
-  option: any;
+  option: IMenuDetails;
   selectMenuHandler: any;
   menuId: number;
 };
@@ -19,7 +19,7 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
       case option.isSold: {
         return <TextH7B color={theme.greyScale25}>품절</TextH7B>;
       }
-      case option.personalMaximum: {
+      case !!option.personalMaximum: {
         return <TextH7B color={theme.black}>{`구매 수량 제한 :${option.personalMaximum}개`}</TextH7B>;
       }
       default: {
@@ -31,18 +31,19 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
   return (
     <OptionList
       onClick={() => {
-        if (option.isSold) return;
+        if (option.isSold || !option.availability?.availability) return;
         selectMenuHandler({ ...option, menuId });
       }}
       isSold={option.isSold}
+      availability={!option.availability?.availability}
     >
       <FlexBetween>
         <TextB3R>{option.name}</TextB3R>
         <FlexRow>
-          {!option.isSold && option.personalMaximum && (
+          {!option.isSold && option.availability?.availability && option.personalMaximum && (
             <TextH7B color={theme.black}>{`구매 수량 제한 :${option.personalMaximum}개`}</TextH7B>
           )}
-          {option.isSold && (
+          {(option.isSold || !option.availability?.availability) && (
             <TextH7B padding="0 0 0 4px" color={theme.greyScale25}>
               품절
             </TextH7B>
@@ -52,7 +53,7 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
       <FlexRowStart padding="0 0 4px 0"></FlexRowStart>
       <FlexRow>
         {discount < 0 && (
-          <TextH6B padding="0 0 0 4px" color={!option.isSold ? theme.brandColor : theme.greyScale25}>
+          <TextH6B padding="0 0 0 4px" color={!option.isSold || option.availability?.availability ? theme.brandColor : theme.greyScale25}>
             {discount}%
           </TextH6B>
         )}
@@ -65,7 +66,7 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
   );
 };
 
-const OptionList = styled.li<{ isSold?: boolean }>`
+const OptionList = styled.li<{ isSold?: boolean, availability?: boolean }>`
   display: flex;
   flex-direction: column;
   list-style-type: none;
@@ -74,12 +75,12 @@ const OptionList = styled.li<{ isSold?: boolean }>`
   background-color: white;
   cursor: pointer;
 
-  ${({ isSold }) => {
-    if (isSold) {
+  ${({ isSold, availability }) => {
+    if (isSold || availability) {
       return css`
         color: ${theme.greyScale25};
       `;
-    } else if (!isSold) {
+    } else if (!isSold || !availability) {
       return css``;
     }
   }}
