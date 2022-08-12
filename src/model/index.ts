@@ -222,6 +222,24 @@ export interface IUserInfoResponse {
     availableCoupons: ICoupon[];
   };
 }
+
+export interface IUserGrade {
+  benefit: { accrualRate: number };
+  insufficientAmount?: number;
+  isLast?: boolean;
+  level: number;
+  name: string;
+  nextUserGrade?: IUserGrade;
+}
+export interface IUserGradeResponse {
+  code: number;
+  message: string;
+  data: {
+    expectedUserGrade: IUserGrade;
+    userGrade: IUserGrade;
+    userGrades: IUserGrade[];
+  };
+}
 export interface IJusoRequest {
   query: string;
   page: number;
@@ -1239,6 +1257,8 @@ export interface IOrderDetailInOrderDeliveries {
   status: string;
   orderMenus: IOrderMenus[];
   type: string;
+  deliveryDateChangeCount: number;
+  deliveryDateChangeMaximum: number;
   name?: string;
   subOrderDelivery: ISubOrderDelivery;
   orderOptions: IOrderOptionsInOrderDeliveries[];

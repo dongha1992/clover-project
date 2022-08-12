@@ -7,7 +7,7 @@ import Checkbox from '@components/Shared/Checkbox';
 import { SVGIcon, getFormatPrice, getCookie } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tag } from '@components/Shared/Tag';
-import { Calendar } from '@components/Calendar';
+import { Calendar, deliveryTimeInfoRenderer } from '@components/Calendar';
 import { Button, CountButton, RadioButton } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
 import {
@@ -20,7 +20,7 @@ import {
 } from '@store/cart';
 import { SET_ORDER } from '@store/order';
 import { Item, DetailItem } from '@components/Item';
-import { SET_ALERT, INIT_ALERT } from '@store/alert';
+import { SET_ALERT } from '@store/alert';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import {
   ISubOrderDelivery,
@@ -298,9 +298,10 @@ const CartPage = () => {
           }
         }
       },
-      onError: (error: any) => {
-        console.log(error, '1231');
-        dispatch(SET_ALERT({ alertMessage: error.message }));
+      onError: ({ response }: any) => {
+        const { data: error } = response as any;
+        console.log(response, 'respotn');
+        dispatch(SET_ALERT({ alertMessage: error?.message }));
         return;
       },
       refetchOnMount: true,
@@ -1078,36 +1079,6 @@ const CartPage = () => {
     }
   };
 
-  const deliveryTimeInfoRenderer = () => {
-    const { dates }: { dates: number } = getCustomDate(new Date(selectedDeliveryDay));
-    const today: number = new Date().getDate();
-    const selectedTime = lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected);
-    const selectToday = dates === today;
-
-    try {
-      switch (destinationObj.delivery) {
-        case 'parcel': {
-          return <TextH6B>{`${dates}일 도착`}</TextH6B>;
-        }
-        case 'morning': {
-          return <TextH6B>{`${dates}일 새벽 7시 전 도착`}</TextH6B>;
-        }
-        case 'quick':
-        case 'spot': {
-          if (selectToday) {
-            return <TextH6B>{`오늘 ${selectedTime?.time} 전 도착`}</TextH6B>;
-          } else {
-            return <TextH6B>{`${dates}일 ${selectedTime?.time} 전 도착`}</TextH6B>;
-          }
-        }
-        default:
-          return;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
     if (isSpotOrQuick) {
@@ -1401,7 +1372,11 @@ const CartPage = () => {
                 <TextH3B padding="2px 4px 0 0">{isSpot ? '픽업날짜' : '배송일'}</TextH3B>
                 <SVGIcon name="questionMark" />
               </FlexRow>
-              {deliveryTimeInfoRenderer()}
+              {deliveryTimeInfoRenderer({
+                selectedDeliveryDay,
+                selectedTime: lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.time!,
+                delivery: destinationObj.delivery,
+              })}
             </FlexBetween>
             <Calendar
               disabledDates={[]}

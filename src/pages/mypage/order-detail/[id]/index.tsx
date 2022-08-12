@@ -42,7 +42,7 @@ const disabledDates: any = [];
 /* 단건의 경우 배열 요소 하나 하지만 정기구독은 배열형태임 */
 
 const OrderDetailPage = () => {
-  const [isShowOrderItemSection, setIsShowOrderItemSection] = useState<boolean>(false);
+  const [isShowOrderItemSection, setIsShowOrderItemSection] = useState<boolean>(true);
   const [orderId, setOrderId] = useState<number>();
   const { showToast } = useToast();
 
@@ -153,7 +153,7 @@ const OrderDetailPage = () => {
     );
   };
 
-  const deliveryDescription = (status: string) => {
+  const deliveryDescriptionRenderer = (status: string) => {
     switch (status) {
       case 'COMPLETED':
       case 'DELIVERING': {
@@ -229,6 +229,7 @@ const OrderDetailPage = () => {
 
     let alertMessage = '';
     let submitBtnText = '확인';
+    let alertSubMessage = '';
     let onSubmit = null;
 
     if (isSubOrder) {
@@ -240,9 +241,11 @@ const OrderDetailPage = () => {
       onSubmit = () => router.push(`/mypage/order-detail/cancel/${orderId}`);
     } else if (!hasSubOrder) {
       alertMessage = '정말 주문을 취소하시겠어요?';
+      alertSubMessage = '(사용 기한이 만료된 포인트, 쿠폰은 환불 후 바로 만료될 수 있어요.)';
       onSubmit = () => deleteOrderMutation(deliveryId);
     } else {
       alertMessage = '정말 주문을 취소하시겠어요?';
+      alertSubMessage = '(사용 기한이 만료된 포인트, 쿠폰은 환불 후 바로 만료될 수 있어요.)';
       onSubmit = () => deleteOrderMutation(deliveryId);
     }
 
@@ -250,6 +253,7 @@ const OrderDetailPage = () => {
       SET_ALERT({
         alertMessage,
         onSubmit,
+        alertSubMessage,
         submitBtnText,
         closeBtnText: '취소',
       })
@@ -261,6 +265,16 @@ const OrderDetailPage = () => {
       return;
     }
 
+    if (orderDeliveries.deliveryDateChangeCount === 1) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '배송일 변경 제한 횟수(1회)를 초과하여 더 이상 변경할 수 없어요.',
+          closeBtnText: '취소',
+        })
+      );
+      return;
+    }
+    console.log(orderDeliveries, 'orderDeliveries');
     if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       dispatch(
         SET_ALERT({
@@ -275,6 +289,7 @@ const OrderDetailPage = () => {
                     disabledDates={disabledDates}
                     deliveryAt={orderDeliveries.deliveryDate!}
                     deliveryId={deliveryId}
+                    delieryTime={orderDeliveries?.deliveryEndTime!}
                   />
                 ),
               })
@@ -294,6 +309,7 @@ const OrderDetailPage = () => {
               disabledDates={disabledDates}
               deliveryAt={orderDeliveries?.deliveryDate!}
               deliveryId={deliveryId}
+              delieryTime={orderDeliveries?.deliveryEndTime!}
             />
           ),
         })
@@ -385,7 +401,7 @@ const OrderDetailPage = () => {
             {deliveryAt} 도착예정
           </TextB1R>
         </FlexRow>
-        <FlexRow>{deliveryDescription(status)}</FlexRow>
+        {isParcel && <FlexRow>{deliveryDescriptionRenderer(status)}</FlexRow>}
       </DeliveryStatusWrapper>
       <BorderLine height={8} />
       <OrderItemsWrapper>
@@ -409,16 +425,6 @@ const OrderDetailPage = () => {
         <TextH4B>주문정보</TextH4B>
         <OrderInfo orderId={orderDetail?.id!} deliveryStatus={deliveryStatus} paidAt={paidAt} payMethod={payMethod} />
         {isSubOrder && <SubOrderInfo isChange />}
-        <Button
-          backgroundColor={theme.white}
-          color={theme.black}
-          border
-          margin="24px 0 0 0"
-          disabled={!canChangeDelivery}
-          onClick={cancelOrderHandler}
-        >
-          주문 취소하기
-        </Button>
       </OrderInfoWrapper>
       <BorderLine height={8} />
       <DevlieryInfoWrapper>
@@ -474,7 +480,7 @@ const OrderDetailPage = () => {
         {menuDiscount > 0 && (
           <FlexBetween padding="8px 0 0 0">
             <TextB2R>상품 할인</TextB2R>
-            <TextB2R>{getFormatPrice(String(menuDiscount))}원</TextB2R>
+            <TextB2R>-{getFormatPrice(String(menuDiscount))}원</TextB2R>
           </FlexBetween>
         )}
         {eventDiscount > 0 && (
@@ -549,6 +555,7 @@ const OrderDetailPage = () => {
               <TextH5B>총 상품 금액</TextH5B>
               <TextB2R>{getFormatPrice(String(refundMenuAmount))}원</TextB2R>
             </FlexBetween>
+            <BorderLine height={1} margin="8px 0" />
             <FlexBetween padding="8px 0 0 0">
               <TextH5B>총 할인 금액</TextH5B>
               <TextB2R>{totalRefundDiscount}</TextB2R>
@@ -556,7 +563,7 @@ const OrderDetailPage = () => {
             {refundMenuDiscount > 0 && (
               <FlexBetween padding="8px 0 0 0">
                 <TextB2R>상품 할인</TextB2R>
-                <TextB2R>{getFormatPrice(String(refundMenuDiscount))}원</TextB2R>
+                <TextB2R>-{getFormatPrice(String(refundMenuDiscount))}원</TextB2R>
               </FlexBetween>
             )}
             {refundEventDiscount > 0 && (
@@ -622,6 +629,30 @@ const OrderDetailPage = () => {
           </RefundInfoWrapper>
         </>
       )}
+      <CancelButtonContainer>
+        <CancelInfo>
+          <FlexRow margin="0 0 12px 0">
+            <SVGIcon name="exclamationMark" />
+            <TextH6B padding="0 0 0 4px" color={theme.brandColor}>
+              주문 변경 및 취소 시 반드시 확인해주세요!
+            </TextH6B>
+          </FlexRow>
+          <TextB3R color={theme.brandColor}>주문 변경 및 취소는 수령일 하루 전 오후 3시까지 가능합니다.</TextB3R>
+          <TextB3R color={theme.brandColor}>
+            단, 오전 7시~9시 반 사이에는 주문 직후 5분 뒤 제조가 시작되어 취소 불가합니다.
+          </TextB3R>
+        </CancelInfo>
+        <Button
+          backgroundColor={theme.white}
+          color={theme.black}
+          border
+          margin="24px 0 0 0"
+          disabled={!canChangeDelivery}
+          onClick={cancelOrderHandler}
+        >
+          주문 취소하기
+        </Button>
+      </CancelButtonContainer>
     </Container>
   );
 };
@@ -657,6 +688,20 @@ const ButtonWrapper = styled.div`
   width: 100%;
   display: flex;
   margin-top: 24px;
+`;
+
+const CancelInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: ${theme.greyScale3};
+  margin-bottom: 24px;
+  padding: 24px;
+  border-radius: 8px;
+`;
+
+const CancelButtonContainer = styled.div`
+  padding: 0 24px;
+  margin-bottom: 24px;
 `;
 
 const DevlieryInfoWrapper = styled.div`

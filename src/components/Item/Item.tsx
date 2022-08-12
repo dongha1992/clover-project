@@ -154,7 +154,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
   const { me } = useSelector(userForm);
   const { menuDetails, isReopen } = item;
-  const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
+  const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails ?? [{}]);
   let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(item);
 
   const isTempSold = isItemSold && !isReopen;
