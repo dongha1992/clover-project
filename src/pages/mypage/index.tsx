@@ -211,7 +211,7 @@ const MypagePage = () => {
                     {me.grade.name}
                   </Tag>
                   <TextB3R color={theme.brandColor} padding="2px 0 0 0">
-                    다음 등급까지 12,000원 남았어요
+                    다음 달 예정인 등급을 확인해 보세요!
                   </TextB3R>
                 </FlexRow>
                 <TextH6B
