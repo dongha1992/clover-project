@@ -1410,7 +1410,7 @@ const CartPage = () => {
           </FlexCol>
         </>
       )}
-      {me && <BorderLine height={8} margin="32px 0" />}
+      {me && cartItemList?.length !== 0 && <BorderLine height={8} margin="32px 0" />}
       <MenuListContainer>
         {me && likeMenusList?.length !== 0 && (
           <MenuListWarpper>
@@ -1488,7 +1488,6 @@ const CartPage = () => {
           )}
         </TotalPriceWrapper>
       )}
-
       <OrderBtn onClick={goToOrder}>{orderButtonRender()}</OrderBtn>
     </Container>
   );
