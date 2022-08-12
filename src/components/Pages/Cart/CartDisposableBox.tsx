@@ -14,7 +14,7 @@ interface IProps {
 const CartDisposableBox = ({ disposableList, disposableItems }: IProps) => {
   return (
     <>
-      {disposableList.some((item: IDisposable) => item.isSelected) && (
+      {disposableList?.some((item: IDisposable) => item.isSelected) && (
         <>
           <BorderLine height={1} margin="16px 0" />
           <FlexBetween padding="0px">
@@ -25,7 +25,7 @@ const CartDisposableBox = ({ disposableList, disposableItems }: IProps) => {
           </FlexBetween>
         </>
       )}
-      {disposableList.length > 0 &&
+      {disposableList?.length > 0 &&
         disposableList.map((disposable, index) => {
           const { id, quantity, price, isSelected } = disposable;
           const hasFork = id === 1 && isSelected;

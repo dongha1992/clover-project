@@ -24,7 +24,7 @@ import { useGetOrders } from 'src/queries/order';
 import { removeCookie } from '@utils/common/cookie';
 import { INIT_CART_LISTS } from '@store/cart';
 import { commonSelector } from '@store/common';
-import useIsApp from '@hooks/useIsApp';
+
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -40,7 +40,6 @@ const MypagePage = () => {
   const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
   const [subsCloseOrders, setSubsCloseOrders] = useState([]);
   const [showBoard, setShowBoard] = useState<string>('');
-  const isApp = useIsApp();
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
     async () => {
@@ -253,7 +252,7 @@ const MypagePage = () => {
                 />
               </ImageWrapper>
               <MypageMenu title="고객센터" link="/mypage/customer-service" />
-              {isApp && <MypageMenu title="앱설정" link="/mypage/setting" />}
+              <MypageMenu title="앱설정" link="/mypage/setting" />
               <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
               <LogoutWrapper onClick={logoutHandler}>
                 <FlexBetween padding="24px 0">
@@ -318,7 +317,7 @@ const MypagePage = () => {
                 </Link>
               </ImageWrapper>
               <MypageMenu title="고객센터" link="/mypage/customer-service" />
-              <MypageMenu title="앱설정" link="/mypage/setting" />
+              {/* <MypageMenu title="앱설정" link="/mypage/setting" /> */}
               <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
             </ManageWrapper>
           </>
