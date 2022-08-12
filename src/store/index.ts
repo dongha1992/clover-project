@@ -1,4 +1,5 @@
 import { configureStore, getDefaultMiddleware, combineReducers, AnyAction, CombinedState } from '@reduxjs/toolkit';
+import loading from './loading';
 import alert from './alert';
 import menu from './menu';
 import bottomSheet from './bottomSheet';
@@ -26,6 +27,7 @@ const rootReducer = (state: any, action: AnyAction): CombinedState<any> => {
     };
   }
   return combineReducers({
+    loading,
     alert,
     cart,
     menu,
@@ -65,7 +67,7 @@ const store = configureStore({
   devTools: isDev,
 });
 
-const makeStore = (context: any) => {
+const makeStore = () => {
   const isServer = typeof window === 'undefined';
 
   if (isServer) {

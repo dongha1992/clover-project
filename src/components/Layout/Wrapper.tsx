@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import dynamic from 'next/dynamic';
 import { alertForm } from '@store/alert';
-import { cartForm } from '@store/cart';
 import { toastSelector } from '@store/toast';
 import { bottomSheetForm } from '@store/bottomSheet';
 import { useSelector } from 'react-redux';
@@ -10,6 +9,8 @@ import Header from '@components/Header';
 import Bottom from '@components/Bottom';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { commonSelector } from '@store/common';
+import Loading from '@components/Shared/Loading';
+import { AppState } from '@store/index';
 // import Alert from '@components/Shared/Alert';
 // import BottomSheet from '@components/BottomSheet';
 // import Toast from '@components/Shared/Toast';
@@ -32,9 +33,9 @@ const ImageViewer = dynamic(() => import('@components/ImageViewer'));
 const Wrapper: React.FC = ({ children }) => {
   const alert = useSelector(alertForm);
   const bottomSheet = useSelector(bottomSheetForm);
-  const cart = useSelector(cartForm);
   const toast = useSelector(toastSelector);
   const { imagesForViewer } = useSelector(commonSelector);
+  const loadingState = useSelector((state: AppState) => state.loading);
 
   const isClickReviewImg = imagesForViewer?.images?.length > 0;
 
@@ -54,6 +55,7 @@ const Wrapper: React.FC = ({ children }) => {
     <>
       <Container>
         <Center>
+          <Loading isShow={loadingState.isShown}></Loading>
           {alert && (
             <Alert
               alertMessage={alert.alertMessage}
@@ -115,7 +117,6 @@ const Center = styled.div`
   height: 100%;
   min-height: calc(var(--vh, 1vh) * 100);
   --ms-overflow-style: none;
-  scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
   }
