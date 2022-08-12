@@ -42,7 +42,7 @@ const RankPage = () => {
             <TextH2B>{me?.nickname}님은</TextH2B>
             <FlexRow>
               <TextH2B color={theme.brandColor}>{userGrade?.userGrade.name}</TextH2B>
-              <TextH2B padding="0 0 0 4px">회원입니다.</TextH2B>
+              <TextH2B padding="0 0 0 4px">회원이에요.</TextH2B>
             </FlexRow>
           </FlexCol>
           <FlexCol>
