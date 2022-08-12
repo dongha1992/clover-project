@@ -539,10 +539,10 @@ const OrderDetailPage = () => {
           <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
           <TextH6B>
             {calculatePoint({
-              rate: me?.grade.benefit.accumulationRate!,
+              rate: me?.grade.benefit.accrualRate!,
               total: payAmount + point,
             })}
-            P ({me?.grade.benefit.accumulationRate}%) 적립 예정
+            P ({me?.grade.benefit.accrualRate}%) 적립 예정
           </TextH6B>
         </FlexEnd>
       </TotalPriceWrapper>
@@ -620,10 +620,10 @@ const OrderDetailPage = () => {
               <TextB3R padding="0 0 0 3px">환불 시 </TextB3R>
               <TextH6B>
                 {calculatePoint({
-                  rate: me?.grade.benefit.accumulationRate!,
+                  rate: me?.grade.benefit.accrualRate!,
                   total: refundCoupon + refundPoint + refundPayAmount,
                 })}
-                P ({me?.grade.benefit.accumulationRate}%) 환불 예정
+                P ({me?.grade.benefit.accrualRate}%) 환불 예정
               </TextH6B>
             </FlexEnd>
           </RefundInfoWrapper>

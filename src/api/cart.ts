@@ -9,16 +9,14 @@ import {
   ICartCountResponse,
 } from '@model/index';
 
-export const getCartsApi = ({
-  params,
-}: {
-  params: {
-    delivery: string;
-    deliveryDate: string;
-    spotId?: number | null;
-  };
-}): Promise<AxiosResponse<IGetCartResponse>> => {
-  return Api.get(`cart/v1/carts`, { params });
+interface IProps {
+  delivery: string;
+  deliveryDate: string;
+  spotId?: number | null;
+}
+
+export const getCartsApi = (params: IProps | undefined): Promise<AxiosResponse<IGetCartResponse>> => {
+  return Api.get(`cart/v1/carts`, params && { params });
 };
 
 export const postCartsApi = (data: ICreateCartRequest[]): Promise<AxiosResponse<IResponse>> => {

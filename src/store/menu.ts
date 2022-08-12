@@ -27,6 +27,7 @@ export const menu = createSlice({
     SET_MENU: (state: any, action: PayloadAction<TProps>) => {
       state.menu = action.payload;
     },
+
     SET_MENU_ITEM: (state: any, action: PayloadAction<IMenus> | any) => {
       state.menuItem = action.payload;
     },
