@@ -15,6 +15,7 @@ import { INIT_MENU_KEYWORD } from '@store/menu';
 import { IMenus, Obj } from '@model/index';
 import router from 'next/router';
 import TextInput from '@components/Shared/TextInput';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 const SearchPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -134,17 +135,18 @@ const SearchPage = () => {
               더보기
             </TextH6B>
           </FlexBetween>
-          {mdMenus?.length! > 0 ? (
-            <ItemListRowWrapper>
-              <ItemListRow>
-                {mdMenus?.map((item, index) => {
-                  return <Item item={item} key={index} isHorizontal />;
-                })}
-              </ItemListRow>
-            </ItemListRowWrapper>
-          ) : (
-            '상품을 준비 중입니다'
-          )}
+          <SliderWrapper className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={700}>
+            {
+              mdMenus?.map((item, index) => {
+                if (index > 9) return;
+                return(
+                  <SwiperSlide className="swiper-slide" key={index}>
+                    <Item item={item} isHorizontal />
+                  </SwiperSlide>
+                ) 
+              })
+            }
+          </SliderWrapper>
         </MdRecommendationWrapper>
       </DefaultSearchContainer>
     </Container>
@@ -153,19 +155,11 @@ const SearchPage = () => {
 
 const Container = styled.main``;
 
-const ItemListRow = styled.div`
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-  > div {
-    padding-right: 10px;
-  }
-`;
-
-const ItemListRowWrapper = styled.div`
-  padding: 16px 0px 16px 0px;
+const SliderWrapper = styled(Swiper)`
   width: auto;
-  margin-bottom: 48px;
+  .swiper-slide {
+    width: 120px;
+  }
 `;
 
 const SearchBarWrapper = styled.div`
@@ -205,7 +199,7 @@ const CatetoryList = styled.div`
 
 const DefaultSearchContainer = styled.div``;
 
-const MdRecommendationWrapper = styled.div`
+const MdRecommendationWrapper = styled.section`
   margin-bottom: 48px;
   padding: 8px 24px;
 `;
