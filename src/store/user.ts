@@ -41,6 +41,7 @@ export interface IUser {
     birthDate?: string;
     email?: string;
     marketingEmailReceived?: boolean;
+    marketingPushReceived?: boolean;
     gender?: string | null;
     name?: string;
     nickname?: string;
@@ -60,6 +61,7 @@ const initialState: IUser = {
     birthDate: '',
     email: '',
     marketingEmailReceived: false,
+    marketingPushReceived: false,
     gender: null,
     name: '',
     nickname: '',

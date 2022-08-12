@@ -141,7 +141,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   const { mutateAsync: mutationDeliveryInfo } = useMutation(
     async (reqBody: any) => {
       const deliveryId = orderDetail?.id!;
-
+      console.log(deliveryEditObj, 'deliveryEditObj');
       if (!isSpot) {
         const { selectedMethod, ...rest } = reqBody;
         const { data } = await editDeliveryDestinationApi({
