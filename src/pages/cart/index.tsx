@@ -864,7 +864,8 @@ const CartPage = () => {
 
   const getTotalPrice = useCallback((): void => {
     const itemsPrice = getItemsPrice();
-    const disposablePrice = getDisposableItem().price;
+
+    const disposablePrice = getDisposableItem()?.price;
     const totalDiscountPrice = getTotalDiscountPrice();
     const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
     setTotalAmount(tempTotalAmout);
