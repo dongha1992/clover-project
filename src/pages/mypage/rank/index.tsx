@@ -4,15 +4,36 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
 import BorderLine from '@components/Shared/BorderLine';
-import ProgressBar from '@components/ProgressBar';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
+import { useQuery } from 'react-query';
+import { getUserGradeApi } from '@api/user';
 
 const RankPage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
-  //temp
-  let isMax = false;
+
+  const {
+    data: userGrade,
+    error,
+    refetch,
+    isLoading,
+    isFetching,
+  } = useQuery(
+    ['userGrade'],
+    async () => {
+      const { data } = await getUserGradeApi();
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!me,
+      onError: () => {},
+      onSuccess: (data) => {},
+    }
+  );
+
   return (
     <Container>
       {isLoginSuccess ? (
@@ -20,18 +41,18 @@ const RankPage = () => {
           <FlexCol padding="24px 0 32px 0">
             <TextH2B>{me?.nickname}님은</TextH2B>
             <FlexRow>
-              <TextH2B color={theme.brandColor}>{me?.grade.name}</TextH2B>
+              <TextH2B color={theme.brandColor}>{userGrade?.userGrade.name}</TextH2B>
               <TextH2B padding="0 0 0 4px">회원입니다.</TextH2B>
             </FlexRow>
           </FlexCol>
           <FlexCol>
-            <UserRankInfo title="적립금" count={me?.grade.benefit.accrualRate} id={1} />
+            <UserRankInfo title="적립금" count={userGrade?.userGrade.benefit.accrualRate} id={1} />
           </FlexCol>
           <BorderLine height={1} margin="24px 0" />
-          {isMax ? (
+          {userGrade?.userGrade.isLast ? (
             <FlexCol padding="0 0 48px 0">
               <FlexRow>
-                <TextH5B>프코팡팡</TextH5B>
+                <TextH5B>{userGrade.userGrade.name}</TextH5B>
                 <TextB2R padding="0 4px 0 0">으로 남아주실 거죠?</TextB2R>
               </FlexRow>
               <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
@@ -42,12 +63,12 @@ const RankPage = () => {
             <FlexCol padding="0 0 48px 0">
               <FlexRow>
                 <TextB2R padding="0 4px 0 0">다음 달 예상 등급은</TextB2R>
-                <TextH5B>프코팡팡</TextH5B>,
+                <TextH5B>{userGrade.expectedUserGrade.name}</TextH5B>,
               </FlexRow>
               <FlexRow>
-                <TextH4B color={theme.brandColor}>12333원</TextH4B>
+                <TextH4B color={theme.brandColor}>{userGrade.expectedUserGrade.insufficientAmount}원</TextH4B>
                 <TextB2R padding="0 0 0 4px">더 구매하면 </TextB2R>
-                <TextH5B>프코팡팡</TextH5B>
+                <TextH5B>{userGrade.expectedUserGrade.nextUserGrade?.name}</TextH5B>
                 <TextB2R>이 돼요</TextB2R>
               </FlexRow>
               <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
