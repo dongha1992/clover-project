@@ -41,7 +41,7 @@ export interface IUser {
     birthDate?: string;
     email?: string;
     marketingEmailReceived?: boolean;
-    marketingPushReceived: boolean;
+    marketingPushReceived?: boolean;
     gender?: string | null;
     name?: string;
     nickname?: string;
