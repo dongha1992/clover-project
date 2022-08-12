@@ -26,7 +26,7 @@ interface IMe {
   joinType: string;
   createdAt: string;
   grade: {
-    benefit: { accumulationRate: number };
+    benefit: { accrualRate: number };
     level: number;
     name: string;
   };
@@ -41,6 +41,7 @@ export interface IUser {
     birthDate?: string;
     email?: string;
     marketingEmailReceived?: boolean;
+    marketingPushReceived?: boolean;
     gender?: string | null;
     name?: string;
     nickname?: string;
@@ -60,6 +61,7 @@ const initialState: IUser = {
     birthDate: '',
     email: '',
     marketingEmailReceived: false,
+    marketingPushReceived: false,
     gender: null,
     name: '',
     nickname: '',

@@ -79,6 +79,7 @@ const SignupPage = () => {
         loginType,
         marketingEmailReceived: userAgreeMarketingTerm.includes(3),
         marketingSmsReceived: userAgreeMarketingTerm.includes(4),
+        marketingPushReceived: isAllMarketinngChecked,
       })
     );
     router.push('/signup/auth');

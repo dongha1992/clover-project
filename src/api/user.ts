@@ -7,7 +7,7 @@ import {
   IAuthTel,
   IAavilabiltyEmail,
   ISignupUser,
-  ILoginResponse,
+  IUserGradeResponse,
   ISignupResponse,
   IResponse,
   IConfirmTelResponse,
@@ -88,4 +88,8 @@ export const getAppleTokenApi = ({
   params: { appleToken: string };
 }): Promise<AxiosResponse<IAppleTokenResponse>> => {
   return Api.get('/user/v1/availability/apple', { params });
+};
+
+export const getUserGradeApi = (): Promise<AxiosResponse<IUserGradeResponse>> => {
+  return Api.get('/user/v1/grade');
 };

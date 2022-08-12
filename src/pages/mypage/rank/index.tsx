@@ -4,13 +4,35 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
 import BorderLine from '@components/Shared/BorderLine';
-import ProgressBar from '@components/ProgressBar';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
+import { useQuery } from 'react-query';
+import { getUserGradeApi } from '@api/user';
 
 const RankPage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
+
+  const {
+    data: userGrade,
+    error,
+    refetch,
+    isLoading,
+    isFetching,
+  } = useQuery(
+    ['userGrade'],
+    async () => {
+      const { data } = await getUserGradeApi();
+      return data.data;
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!me,
+      onError: () => {},
+      onSuccess: (data) => {},
+    }
+  );
 
   return (
     <Container>
@@ -19,26 +41,41 @@ const RankPage = () => {
           <FlexCol padding="24px 0 32px 0">
             <TextH2B>{me?.nickname}님은</TextH2B>
             <FlexRow>
-              <TextH2B color={theme.brandColor}>{me?.grade.name}</TextH2B>
-              <TextH2B padding="0 0 0 4px">회원입니다.</TextH2B>
+              <TextH2B color={theme.brandColor}>{userGrade?.userGrade.name}</TextH2B>
+              <TextH2B padding="0 0 0 4px">회원이에요.</TextH2B>
             </FlexRow>
           </FlexCol>
           <FlexCol>
-            <UserRankInfo title="적립금" count={me?.grade.benefit.accumulationRate} id={1} />
+            <UserRankInfo title="적립금" count={userGrade?.userGrade.benefit.accrualRate} id={1} />
           </FlexCol>
           <BorderLine height={1} margin="24px 0" />
-          <FlexCol padding="0 0 48px 0">
-            <FlexRow>
-              <TextB2R padding="0 4px 0 0">다음 등급</TextB2R>
-              <TextH5B>프코팡팡</TextH5B>
-              <TextB2R>까지 남은 금액</TextB2R>
-            </FlexRow>
-            <TextH4B padding="4px 0 16px 0">12333원</TextH4B>
-            <ProgressBar />
-            <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
-              (기준 결제금액에 할인, 포인트, 취소 금액은 제외됩니다.)
-            </TextB3R>
-          </FlexCol>
+          {userGrade?.userGrade.isLast ? (
+            <FlexCol padding="0 0 48px 0">
+              <FlexRow>
+                <TextH5B>{userGrade?.userGrade.name}</TextH5B>
+                <TextB2R padding="0 4px 0 0">으로 남아주실 거죠?</TextB2R>
+              </FlexRow>
+              <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
+                (기준 결제금액에 할인, 포인트, 취소 금액은 제외됩니다.)
+              </TextB3R>
+            </FlexCol>
+          ) : (
+            <FlexCol padding="0 0 48px 0">
+              <FlexRow>
+                <TextB2R padding="0 4px 0 0">다음 달 예상 등급은</TextB2R>
+                <TextH5B>{userGrade?.expectedUserGrade?.name!}</TextH5B>,
+              </FlexRow>
+              <FlexRow>
+                <TextH4B color={theme.brandColor}>{userGrade?.expectedUserGrade?.insufficientAmount!}원</TextH4B>
+                <TextB2R padding="0 0 0 4px">더 구매하면 </TextB2R>
+                <TextH5B>{userGrade?.expectedUserGrade?.nextUserGrade?.name!}</TextH5B>
+                <TextB2R>이 돼요</TextB2R>
+              </FlexRow>
+              <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
+                (기준 결제금액에 할인, 포인트, 취소 금액은 제외됩니다.)
+              </TextB3R>
+            </FlexCol>
+          )}
         </Wrapper>
       ) : (
         <Wrapper>
@@ -54,7 +91,7 @@ const RankPage = () => {
               margin="16px 0 0 0"
               pointer
             >
-              등급 혜택 받으러 가기
+              로그인 후 등급 혜택 받기
             </TextH5B>
           </FlexCol>
         </Wrapper>
@@ -69,31 +106,10 @@ const RankPage = () => {
         </Wrapper>
       </BrandColor5>
       <PaddingWrapper>
-        <RankInfo
-          name="신규회원"
-          desc="전월 구매내역이 없는 고객"
-          benefit1="적립금 1%"
-          benefit2="신규회원혜택 사용 가능"
-        />
-        <RankInfo
-          name="프코팡"
-          desc="전월 10만원 미만 구매고객"
-          benefit1="적립금 2%"
-          benefit2="5% 할인쿠폰 (2만원 이상 구매 시)"
-        />
-        <RankInfo
-          name="프코팡팡"
-          desc="전월 10만원 이상 30만원 미만 구매고객"
-          benefit1="적립금 2%"
-          benefit2="7% 할인쿠폰 (2만원 이상 구매 시)"
-        />
-        <RankInfo
-          name="프코팡팡팡"
-          desc="전월 30만원 이상 구매고객"
-          benefit1="적립금 3%"
-          benefit2="10% 할인쿠폰 (2만원 이상 구매 시)"
-          isLast
-        />
+        <RankInfo name="신규회원" desc="전월 구매내역이 없는 고객" benefit2="신규회원혜택 사용 가능" />
+        <RankInfo name="프코팡" desc="전월 5만원 미만 구매고객" benefit1="적립금 0.5%" />
+        <RankInfo name="프코팡팡" desc="전월 5만원 이상 20만원 미만 구매고객" benefit1="적립금 1%" />
+        <RankInfo name="프코팡팡팡" desc="전월 20만원 이상 구매고객" benefit1="적립금 1.5%" isLast />
       </PaddingWrapper>
       <PleaseCheck>
         <TextH5B color={theme.greyScale65} padding="24px 0 0 0">
@@ -163,14 +179,18 @@ export const RankInfo = ({ name, desc, benefit1, benefit2, isLast }: any) => {
         {desc}
       </TextB3R>
       <FlexCol padding="14px 0 0 0">
-        <FlexRow>
-          <Dot />
-          <TextB2R>{benefit1}</TextB2R>
-        </FlexRow>
-        <FlexRow>
-          <Dot />
-          <TextB2R>{benefit2}</TextB2R>
-        </FlexRow>
+        {benefit1 && (
+          <FlexRow>
+            <Dot />
+            <TextB2R>{benefit1}</TextB2R>
+          </FlexRow>
+        )}
+        {benefit2 && (
+          <FlexRow>
+            <Dot />
+            <TextB2R>{benefit2}</TextB2R>
+          </FlexRow>
+        )}
       </FlexCol>
       {!isLast && <BorderLine height={1} margin="24px 0" />}
     </FlexCol>

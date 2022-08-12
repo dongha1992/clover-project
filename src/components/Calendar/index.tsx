@@ -1,2 +1,3 @@
 import Calendar from './Calendar';
-export { Calendar };
+import deliveryTimeInfoRenderer from './deliveryTimeInfoRenderer';
+export { Calendar, deliveryTimeInfoRenderer };

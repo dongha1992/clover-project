@@ -19,6 +19,7 @@ const ChangeNamePage = () => {
   const [name, setName] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
   const { me } = useSelector(userForm);
+  const recommendCode = sessionStorage.getItem('recommendCode');
 
   const dispatch = useDispatch();
 
@@ -55,7 +56,7 @@ const ChangeNamePage = () => {
       const { data } = await userChangeInfo(reqBody);
 
       if (data.code === 200) {
-        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
+        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
       }
     } catch (error) {}
   };

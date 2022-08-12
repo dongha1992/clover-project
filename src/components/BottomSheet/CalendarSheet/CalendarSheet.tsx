@@ -5,13 +5,15 @@ import { Button } from '@components/Shared/Button';
 import { TextB3R, TextH3B, TextH5B, TextH6B } from '@components/Shared/Text';
 import { useDispatch } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { Calendar } from '@components/Calendar';
+import { Calendar, deliveryTimeInfoRenderer } from '@components/Calendar';
 import { SET_ALERT } from '@store/alert';
 import { SVGIcon } from '@utils/common';
 import { getCustomDate } from '@utils/destination';
 import { INIT_USER_DELIVERY_TYPE } from '@store/destination';
 import { useMutation, useQueryClient } from 'react-query';
 import { editDeliveryDateApi } from '@api/order';
+import { destinationForm } from '@store/destination';
+import { useSelector } from 'react-redux';
 interface IProps {
   title: string;
   disabledDates: string[];
@@ -19,17 +21,26 @@ interface IProps {
   subOrderDelivery?: any[];
   isSheet?: boolean;
   deliveryId: number;
+  delieryTime: string;
 }
 /* TODO: 배송일 변경용 캘린더 컴포넌트 따로? */
 
-const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, deliveryAt, deliveryId }: IProps) => {
+const CalendarSheet = ({
+  title,
+  disabledDates,
+  subOrderDelivery = [],
+  isSheet,
+  deliveryAt,
+  deliveryId,
+  delieryTime,
+}: IProps) => {
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
+  const { userDeliveryType } = useSelector(destinationForm);
 
   const queryClient = useQueryClient();
 
   const { mutate: changeDeliveryDateMutation } = useMutation(
     async () => {
-      console.log(deliveryId, 'deliveryId');
       const { data } = await editDeliveryDateApi({ deliveryId, selectedDeliveryDay });
     },
     {
@@ -50,6 +61,20 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
           return dispatch(
             SET_ALERT({
               alertMessage: '배송일 변경 횟수를 초과하였습니다.(일반주문:1회, 정기구독:5회)',
+              submitBtnText: '확인',
+            })
+          );
+        } else if (error.code === 1999) {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: '해당 주문은 배송일 변경을 할 수 없어요.',
+              submitBtnText: '확인',
+            })
+          );
+        } else {
+          return dispatch(
+            SET_ALERT({
+              alertMessage: error.message,
               submitBtnText: '확인',
             })
           );
@@ -95,7 +120,11 @@ const CalendarSheet = ({ title, disabledDates, subOrderDelivery = [], isSheet, d
               <TextH3B padding="0 4px 0 0">배송일</TextH3B>
               <SVGIcon name="questionMark" />
             </FlexRow>
-            <TextH6B>{dates}일 도착</TextH6B>
+            {deliveryTimeInfoRenderer({
+              selectedDeliveryDay,
+              selectedTime: delieryTime,
+              delivery: userDeliveryType,
+            })}
           </FlexBetween>
         </FlexCol>
       </Wrapper>
