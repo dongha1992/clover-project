@@ -16,6 +16,8 @@ import { getMainPromotionContentsApi } from '@api/promotion';
 import { SET_EVENT_TITLE , INIT_EVENT_TITLE } from '@store/event';
 import Carousel from "@components/Shared/Carousel";
 import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import { IMenus } from '@model/index';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 
 const Home = () => {
@@ -100,7 +102,7 @@ const Home = () => {
                     <SectionWrapper>
                       <FlexWrapWrapper>
                         {item?.exhibition.menus?.length! > 0
-                          ? item?.exhibition.menus?.map((item: any, index: number) => {
+                          ? item?.exhibition.menus?.map((item: IMenus, index: number) => {
                               if (index > 3) return;
                               return <Item item={item} key={index} />;
                             })
@@ -128,9 +130,9 @@ const Home = () => {
                       layout="responsive"
                       alt="홈 기획전 이미지"
                     />
-                    <SliderWrapper className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={700}>
+                    <SliderWrapper slidesPerView={'auto'} spaceBetween={25} speed={500}>
                       {
-                        item?.exhibition.menus?.map((item: any, index: number) => {
+                        item?.exhibition.menus?.map((item: IMenus, index: number) => {
                           if (index > 9) return;
                           return(
                             <SwiperSlide className="swiper-slide" key={index}>
