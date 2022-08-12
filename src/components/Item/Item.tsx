@@ -65,6 +65,14 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
+        queryClient.setQueryData(['getMainContents'], (previous: any) => {
+          return previous?.map((_item: any) => {
+            if (_item.exhibition.id === item.id) {
+              return { ..._item, reopenNotificationRequested: false };
+            }
+            return _item;
+          });
+        });
         showToast({ message: '알림 신청을 완료했어요!' });
       },
       onMutate: async () => {},
@@ -92,6 +100,14 @@ const Item = ({ item, isHorizontal }: TProps) => {
         queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
           return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
         });
+        queryClient.setQueryData(['getMainContents'], (previous: any) => {
+          return previous?.map((_item: any) => {
+            if(_item?.exhibition?.type === 'MD_RECOMMENDED'){
+             return onMenuLikes({ previous: _item.exhibition.menus, id: item.id, likeCount: item.likeCount, liked: item.liked });
+            }
+          }) 
+        });
+
       },
       onMutate: async () => {},
       onError: async (error: any) => {
@@ -117,6 +133,15 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
         });
+        queryClient.setQueryData(['getMainContents'], (previous: any) => {
+          if (previous) {
+            return previous?.map((_item: any) => {
+              if(_item?.exhibition?.type === 'MD_RECOMMENDED'){
+               return onMenuLikes({ previous: _item.exhibition.menus, id: item.id, likeCount: item.likeCount, liked: item.liked });
+              }
+            })   
+          }
+        });
         queryClient.invalidateQueries(['getLikeMenus', 'GENERAL']);
       },
       onMutate: async () => {},
@@ -129,7 +154,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
 
   const { me } = useSelector(userForm);
   const { menuDetails, isReopen } = item;
-  const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails);
+  const { discount, discountedPrice } = getMenuDisplayPrice(menuDetails ?? [{}]);
   let { isItemSold, checkIsBeforeThanLaunchAt } = checkMenuStatus(item);
 
   const isTempSold = isItemSold && !isReopen;
@@ -231,7 +256,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
       <ImageWrapper isHorizontal={isHorizontal}>
         <Image
-          src={item.thumbnail[0]?.url}
+          src={item?.thumbnail&&item?.thumbnail[0].url}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}
@@ -262,11 +287,11 @@ const Item = ({ item, isHorizontal }: TProps) => {
         <NameWrapper>
           {isHorizontal ? (
             <TextB2R margin="8px 0 0px 0" width="100%" textHideMultiline>
-              {item.name.trim()}
+              {item.name?.trim()}
             </TextB2R>
           ) : (
             <TextB2R margin="8px 0 0px 0" width="100%" textHide>
-              {item.name.trim()}
+              {item.name?.trim()}
             </TextB2R>
           )}
         </NameWrapper>
@@ -284,7 +309,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
           <>
             <DesWrapper>
               <TextB3R color={theme.greyScale65} textHideMultiline>
-                {item.summary.trim()}
+                {item.summary?.trim()}
               </TextB3R>
             </DesWrapper>
             <LikeAndReview>

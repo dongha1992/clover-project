@@ -13,9 +13,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { userAuthTel, userConfirmTel } from '@api/user';
-import { removeCookie } from '@utils/common/cookie';
-import { SET_LOGIN_SUCCESS } from '@store/user';
-import { commonSelector } from '@store/common';
 import { userForm, INIT_USER, SET_USER } from '@store/user';
 import { availabilityEmail, userChangeInfo, userProfile } from '@api/user';
 import Validation from '@components/Pages/User/Validation';
@@ -26,8 +23,6 @@ import { NAME_REGX } from '@constants/regex';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { IChangeMe } from '@model/index';
 import { getValidBirthday } from '@utils/common';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { ReopenSheet } from '@components/BottomSheet/ReopenSheet';
 
 interface IVaildation {
   message: string;
@@ -133,7 +128,11 @@ const ProfilePage = () => {
       },
       onError: async (error: any) => {
         console.error(error);
-        dispatch(SET_ALERT({ alertMessage: error.message }));
+        if (error.code === 1001) {
+          dispatch(SET_ALERT({ alertMessage: '이메일 형식을 다시 확인해주세요' }));
+        } else {
+          dispatch(SET_ALERT({ alertMessage: error.message }));
+        }
       },
     }
   );
@@ -376,6 +375,11 @@ const ProfilePage = () => {
       dispatch(SET_ALERT({ alertMessage: '14세 미만은 가입할 수 없어요.' }));
       return;
     }
+
+    if (!emailValidation.isValid) {
+      dispatch(SET_ALERT({ alertMessage: emailValidation.message }));
+      return;
+    }
     const hasBirthDate = userInfo.year > 0 && userInfo.month > 0 && userInfo.day > 0;
     const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month)}-${getFormatTime(userInfo.day)}`;
 
@@ -414,7 +418,7 @@ const ProfilePage = () => {
     }
   };
 
-  const checkPhontValid = () => {
+  const checkPhoneValid = () => {
     if (PHONE_REGX.test(userInfo.tel)) {
       setPhoneValidation(true);
     } else {
@@ -451,7 +455,7 @@ const ProfilePage = () => {
       month: hasBirthDate ? Number(month) : 0,
       day: hasBirthDate ? Number(day) : 0,
     });
-    checkPhontValid();
+    checkPhoneValid();
   }, [me]);
 
   useEffect(() => {
@@ -461,6 +465,8 @@ const ProfilePage = () => {
 
   const isKakao = me?.joinType === 'KAKAO';
   const isNotEmail = me?.joinType !== 'EMAIL';
+
+  console.log(isValidNickname, 'isValidNickname');
 
   return (
     <Container>

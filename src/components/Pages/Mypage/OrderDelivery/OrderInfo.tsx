@@ -23,10 +23,12 @@ const OrderInfo = ({ orderId, deliveryStatus, paidAt, payMethod }: IProps) => {
         <TextH5B>결제일시</TextH5B>
         <TextB2R>{paidAt}</TextB2R>
       </FlexBetween>
-      <FlexBetween margin="0 0 16px 0">
-        <TextH5B>결제수단</TextH5B>
-        <TextB2R>{PAYMENT_METHOD[payMethod!]}</TextB2R>
-      </FlexBetween>
+      {PAYMENT_METHOD[payMethod!] && (
+        <FlexBetween margin="0 0 16px 0">
+          <TextH5B>결제수단</TextH5B>
+          <TextB2R>{PAYMENT_METHOD[payMethod!]}</TextB2R>
+        </FlexBetween>
+      )}
     </FlexCol>
   );
 };

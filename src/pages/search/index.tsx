@@ -15,6 +15,8 @@ import { INIT_MENU_KEYWORD } from '@store/menu';
 import { IMenus, Obj } from '@model/index';
 import router from 'next/router';
 import TextInput from '@components/Shared/TextInput';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 const SearchPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -36,7 +38,7 @@ const SearchPage = () => {
 
   useEffect(() => {
     dispatch(INIT_MENU_KEYWORD());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkIsSold = (menuList: IMenus[]) => {
@@ -45,14 +47,14 @@ const SearchPage = () => {
     });
   };
 
-  const getSearchResult = async(e: React.KeyboardEvent<HTMLInputElement>) => {
+  const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
     if (e.key === 'Enter') {
       router.push({
         pathname: '/search/result',
-        query: { keyword: keyword, },
+        query: { keyword: keyword },
       });
-    };
+    }
   };
 
   const changeInputHandler = (e: any) => {
@@ -61,7 +63,7 @@ const SearchPage = () => {
     if (!value) {
       // setIsSearched(false);
       setKeyword('');
-    };
+    }
   };
 
   const clearInputHandler = () => {
@@ -69,7 +71,7 @@ const SearchPage = () => {
       initInputHandler();
       // setIsSearched(false);
       setKeyword('');
-    };
+    }
   };
 
   const initInputHandler = () => {
@@ -87,28 +89,23 @@ const SearchPage = () => {
   return (
     <Container>
       <SearchBarWrapper>
-        <label className='textLabel'>
-          {
-            keyword.length === 0 &&
-              <span className='textPlaceholde'>도로명, 건물명 또는 지번으로 검색</span>
-          }
+        <label className="textLabel">
+          {keyword.length === 0 && <span className="textPlaceholde">도로명, 건물명 또는 지번으로 검색</span>}
           <TextInput
             inputType="text"
             svg="searchIcon"
-            fontSize='14px'
+            fontSize="14px"
             keyPressHandler={getSearchResult}
             eventHandler={changeInputHandler}
             value={keyword}
             ref={inputRef}
           />
         </label>
-        {
-          keyword.length > 0 && (
-            <div className="removeSvg" onClick={clearInputHandler}>
-              <SVGIcon name="removeItem" />
-            </div>
-          )
-        }
+        {keyword.length > 0 && (
+          <div className="removeSvg" onClick={clearInputHandler}>
+            <SVGIcon name="removeItem" />
+          </div>
+        )}
       </SearchBarWrapper>
       <DefaultSearchContainer>
         <CategoryWrapper>
@@ -139,17 +136,18 @@ const SearchPage = () => {
               더보기
             </TextH6B>
           </FlexBetween>
-          {mdMenus?.length! > 0 ? (
-            <ItemListRowWrapper>
-              <ItemListRow>
-                {mdMenus?.map((item, index) => {
-                  return <Item item={item} key={index} isHorizontal />;
-                })}
-              </ItemListRow>
-            </ItemListRowWrapper>
-          ) : (
-            '상품을 준비 중입니다'
-          )}
+          <SliderWrapper className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
+            {
+              mdMenus?.map((item, index) => {
+                if (index > 9) return;
+                return(
+                  <SwiperSlide className="swiper-slide" key={index}>
+                    <Item item={item} isHorizontal />
+                  </SwiperSlide>
+                ) 
+              })
+            }
+          </SliderWrapper>
         </MdRecommendationWrapper>
       </DefaultSearchContainer>
     </Container>
@@ -158,19 +156,11 @@ const SearchPage = () => {
 
 const Container = styled.main``;
 
-const ItemListRow = styled.div`
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-  > div {
-    padding-right: 10px;
-  }
-`;
-
-const ItemListRowWrapper = styled.div`
-  padding: 16px 0px 16px 0px;
+const SliderWrapper = styled(Swiper)`
   width: auto;
-  margin-bottom: 48px;
+  .swiper-slide {
+    width: 120px;
+  }
 `;
 
 const SearchBarWrapper = styled.div`
@@ -210,7 +200,7 @@ const CatetoryList = styled.div`
 
 const DefaultSearchContainer = styled.div``;
 
-const MdRecommendationWrapper = styled.div`
+const MdRecommendationWrapper = styled.section`
   margin-bottom: 48px;
   padding: 8px 24px;
 `;

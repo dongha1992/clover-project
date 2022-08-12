@@ -122,7 +122,7 @@ const OrderDeliveryHistoryPage = () => {
       <FlexEnd onClick={clickFilterHandler} padding="16px 0">
         <SVGIcon name="filter" />
         <TextH6B pointer padding="0 0 0 4px">
-          정렬
+          {withInDays}일
         </TextH6B>
       </FlexEnd>
       {data?.pages[0]?.result?.length !== 0 ? (
