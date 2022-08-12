@@ -1,31 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { ReviewInfo, ReviewInfoBottom } from '@components/Pages/Mypage/Review';
 import { homePadding, FlexCol, FlexRow, theme, FlexBetween, fixedBottom } from '@styles/theme';
-import { TextH3B, TextB2R, TextH6B, TextB3R, TextH5B } from '@components/Shared/Text';
+import { TextH3B, TextB2R, TextH6B, TextB3R } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import BorderLine from '@components/Shared/BorderLine';
 import TextArea from '@components/Shared/TextArea';
-import TextInput from '@components/Shared/TextInput';
-import { getImageSize } from '@utils/common';
 import { Button } from '@components/Shared/Button';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from '@components/Shared/Tooltip';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getMenuDetailApi, createMenuReviewApi } from '@api/menu';
-import ThumborImage from '@components/Shared/Image';
+import Image from '@components/Shared/Image';
 import { StarRating } from '@components/StarRating';
 import { userForm } from '@store/user';
 import { ICreateReivewRequest } from '@model/index';
-import { postImageApi } from '@api/image';
 import router from 'next/router';
-
-interface IWriteMenuReviewObj {
-  imgFiles: string[];
-  deletedImgIds: string[];
-  preview: string[];
-}
+import { ReviewImagePreview, ReviewImageUpload } from '@components/Pages/Review';
 
 const LIMIT = 30;
 
@@ -54,11 +46,9 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
   const [isShow, setIsShow] = useState(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [numberOfReivewContent, setNumberOfReivewContent] = useState<number>(0);
-  const [writeMenuReviewObj, setWriteMenuReviewObj] = useState<IWriteMenuReviewObj>({
-    imgFiles: [],
-    deletedImgIds: [],
-    preview: [],
-  });
+  const [reviewImages, setReviewImages] = useState<string[]>([]);
+  const [imageUploading, setImageUploading] = useState(false);
+
   const [rating, setRating] = useState(5);
 
   const dispatch = useDispatch();
@@ -67,12 +57,8 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  /* TODO: blob 타입 정의 */
-  /* TODO: 사이즈 체크 및 사진 올리는 hooks */
-
   const {
     data,
-    error: menuError,
     isLoading,
   } = useQuery(
     'getMenuDetail',
@@ -82,8 +68,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
     },
 
     {
-      onSuccess: (data) => {},
-      onError: (error: any) => {
+      onError: () => {
         dispatch(
           SET_ALERT({
             alertMessage: '알 수 없는 에러가 발생했습니다.',
@@ -102,7 +87,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
 
   const { mutateAsync: mutateCreateMenuReview } = useMutation(
     async (reqBody: ICreateReivewRequest) => {
-      const { data } = await createMenuReviewApi(reqBody);
+      await createMenuReviewApi(reqBody);
     },
     {
       onSuccess: async () => {
@@ -141,75 +126,25 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
     }
   };
 
-  const onChangeFileHandler = (e: any) => {
-    // const LIMIT_SIZE = 5 * 1024 * 1024;
-    const LIMIT_SIZE = 1000000;
+  const onUploadStartHandler = () => {
+    setImageUploading(true);
+  }
 
-    let imageFile = e.target.files! as any;
-    if (!imageFile[0]) return;
+  const onUploadFinishHandler = () => {
+    setImageUploading(false);
+  }
 
-    try {
-      if (e.target.files.length > 0) {
-        /* 사이즈 제한 걸리는 경우 */
-        if (LIMIT_SIZE < imageFile[0].size) {
-          /* 이미지 사이즈 줄이기 */
-          const blobURL = window.URL.createObjectURL(imageFile[0]);
-          const MAX_WIDTH = 1000;
-          const MAX_HEIGHT = 1000;
-          const MIME_TYPE = 'image/jpeg';
-          const QUALITY = 0.8;
-          const img = new Image();
-          img.src = blobURL;
-          img.onerror = () => {
-            URL.revokeObjectURL(blobURL);
-            alert('이미지 업로드에 실패했습니다');
-            return;
-          };
-          img.onload = () => {
-            URL.revokeObjectURL(blobURL);
-            const [formatWidth, formatHeight] = getImageSize(img, MAX_WIDTH, MAX_HEIGHT);
-            const canvas = document.createElement('canvas');
-            canvas.width = formatWidth;
-            canvas.height = formatHeight;
-            const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-            ctx.drawImage(img, 0, 0, formatWidth, formatHeight);
-            canvas.toBlob(
-              (blob: any) => {
-                imageFile = new File([blob], imageFile[0].name, {
-                  type: imageFile[0].type,
-                });
-                getImageFileReader(imageFile);
-              },
-              MIME_TYPE,
-              QUALITY
-            );
-          };
-        } else {
-          getImageFileReader(imageFile[0]);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const fileUploadErrorHandler = (alertMessage: string) => {
+    dispatch(SET_ALERT({ alertMessage }));
+  }
 
-  const getImageFileReader = (imageFile: any) => {
-    const imageFileReader = new FileReader();
-
-    imageFileReader.onload = (e: any) => {
-      setWriteMenuReviewObj({
-        ...writeMenuReviewObj,
-        preview: [...writeMenuReviewObj?.preview!, e.target.result],
-        imgFiles: [...writeMenuReviewObj?.imgFiles!, imageFile],
-      });
-    };
-    imageFileReader.readAsDataURL(imageFile);
-  };
+  const uploadSuccessHandler = (url: string) => {
+    setReviewImages(imageList => [...imageList, url]);
+  }
 
   const removePreviewImgHandler = (index: number) => {
-    const filterImg = writeMenuReviewObj.imgFiles.filter((img, idx) => idx !== index);
-    const filterPreviewImg = writeMenuReviewObj?.preview?.filter((img, idx) => idx !== index);
-    setWriteMenuReviewObj({ ...writeMenuReviewObj, imgFiles: filterImg, preview: filterPreviewImg });
+    const filterImages = reviewImages.filter((img, idx) => idx !== index);
+    setReviewImages(filterImages)
   };
 
   const finishWriteReview = async () => {
@@ -217,27 +152,14 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
       dispatch(SET_ALERT({ alertMessage: '최소 30자 이상 입력해 주세요' }));
       return;
     }
-    let formData = new FormData();
-    let location = [];
-
-    if (writeMenuReviewObj?.imgFiles?.length! > 0) {
-      for (let i = 0; i < writeMenuReviewObj?.imgFiles?.length!; i++) {
-        try {
-          writeMenuReviewObj.imgFiles && formData.append('media', writeMenuReviewObj?.imgFiles[i]);
-          const result = await postImageApi(formData);
-          location.push(result.headers.location);
-        } catch (error) {
-          dispatch(SET_ALERT({ alertMessage: '이미지 업로드에 실패했습니다.' }));
-          return;
-        }
-      }
+    if (imageUploading) {
+      dispatch(SET_ALERT({ alertMessage: '사진 등록 완료 후 다시 시도해 주세요. 😭' }));
+      return;
     }
-
-    const hasReviewImgs = location.length !== 0;
 
     const reqBody = {
       content: textAreaRef?.current?.value!,
-      images: hasReviewImgs ? location : [],
+      images: reviewImages,
       menuDetailId: Number(menuDetailId),
       menuId: Number(menuId),
       orderDeliveryId: Number(orderDeliveryId),
@@ -245,7 +167,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
       rating,
     };
 
-    mutateCreateMenuReview(reqBody);
+    return mutateCreateMenuReview(reqBody);
   };
 
   const over30Letter = LIMIT - numberOfReivewContent > 0;
@@ -270,7 +192,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
         </FlexCol>
         <FlexRow>
           <ImgWrapper>
-            <ThumborImage
+            <Image
               src={data?.thumbnail[0].url || ''}
               alt="상품이미지"
               width={'100%'}
@@ -328,33 +250,14 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
           </TextB3R>
         </FlexRow>
         <FlexRow>
-          {writeMenuReviewObj?.imgFiles?.length < 2 && (
-            <UploadInputWrapper>
-              <TextInput
-                width="100%"
-                height="100%"
-                padding="0"
-                inputType="file"
-                accept="image/*"
-                eventHandler={onChangeFileHandler}
-              />
-              <div className="plusBtn">
-                <SVGIcon name="plus18" />
-              </div>
-            </UploadInputWrapper>
-          )}
-          {writeMenuReviewObj?.preview.length! > 0 &&
-            writeMenuReviewObj?.preview.map((img: string, index: number) => {
-              const base64 = img?.includes('data:image');
-              return (
-                <PreviewImgWrapper key={index}>
-                  <img src={base64 ? img : `${process.env.IMAGE_SERVER_URL}${img}`} />
-                  <div className="svgWrapper" onClick={() => removePreviewImgHandler(index)}>
-                    <SVGIcon name="blackBackgroundCancel" />
-                  </div>
-                </PreviewImgWrapper>
-              );
-            })}
+          <ReviewImageUpload
+            onError={fileUploadErrorHandler} onSuccess={uploadSuccessHandler}
+            onStart={onUploadStartHandler} onFinish={onUploadFinishHandler} disabled={reviewImages.length > 1}/>
+          {reviewImages.map((img: string, index: number) => {
+            return (
+              <ReviewImagePreview key={index} image={img} onRemove={()=> removePreviewImgHandler(index)}/>
+            );
+          })}
         </FlexRow>
       </UploadPhotoWrapper>
       <PointInfoWrapper>
@@ -400,57 +303,6 @@ const RateWrapper = styled.div`
 const UploadPhotoWrapper = styled.div`
   position: relative;
   ${homePadding}
-`;
-
-const UploadInputWrapper = styled.label`
-  cursor: pointer;
-  position: relative;
-  display: block;
-  width: 72px;
-  height: 72px;
-  background-color: ${theme.greyScale6};
-  border-radius: 8px;
-  margin: 16px 0 48px 0;
-  input {
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    display: none;
-  }
-
-  .plusBtn {
-    cursor: pointer;
-    position: absolute;
-    left: 40%;
-    top: 35%;
-  }
-`;
-
-const PreviewImgWrapper = styled.div`
-  position: relative;
-  width: 72px;
-  height: 72px;
-  background-color: ${theme.greyScale6};
-  border-radius: 8px;
-  margin: 16px 0 48px 8px;
-  border: none;
-
-  > img {
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-
-  .svgWrapper {
-    cursor: pointer;
-    svg {
-      position: absolute;
-      right: 10%;
-      top: 10%;
-    }
-  }
 `;
 
 const PointInfoWrapper = styled.div`
