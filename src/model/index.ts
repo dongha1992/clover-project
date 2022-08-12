@@ -1803,6 +1803,12 @@ export interface IMenuDetails {
   protein: number;
   personalMaximum?: number;
   menuId?: number;
+  availability?: {
+    availability: boolean;
+    menuDetailAvailabilityMessage: string;
+    menuDetailId: number;
+    remainingQuantity: number;
+  }
 }
 
 export interface IBestReviews {
