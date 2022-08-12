@@ -62,11 +62,12 @@ const Oauth = () => {
             dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
           }
         } else {
-          console.log(recommendCode, 'recommendCode');
           recommendCode ? router.push(`/mypage/friend`) : router.push('/');
         }
       }
-    } catch (error: any) {
+    } catch ({ response }: any) {
+      const { data: error } = response as any;
+
       if (error.code === 2010) {
         dispatch(
           SET_ALERT({

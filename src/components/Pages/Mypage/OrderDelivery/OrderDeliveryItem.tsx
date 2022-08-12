@@ -18,14 +18,14 @@ interface IProps {
 }
 
 const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
-  const { deliveryDate, status } = orderDeliveryItem;
+  const { deliveryDate, status, delivery } = orderDeliveryItem;
   const { name, payAmount, amount } = orderDeliveryItem.order;
   const { url } = orderDeliveryItem.image;
 
   const { dayFormatter: paidAt } = getCustomDate(new Date(orderDeliveryItem.order.paidAt));
   const { dayFormatter: deliverAt } = getCustomDate(new Date(deliveryDate));
   /* TODO: 아래 중복 코드 많음 헬퍼함수? */
-
+  const isParcel = delivery === 'PARCEL';
   const deliveryStatus = DELIVERY_STATUS_MAP[status];
   const deliveryDetail = DELIVERY_TIME_MAP[orderDeliveryItem.deliveryDetail];
   const isCompleted = deliveryStatus === '배송완료';
@@ -68,7 +68,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
             margin="16px 8px 0 0"
             onClick={() => buttonHandler({ menus: orderDeliveryItem.orderMenus, isDelivering })}
           >
-            {isDelivering ? '배송조회하기' : '장바구니 담기'}
+            {isParcel && isDelivering ? '배송조회하기' : '장바구니 담기'}
           </Button>
         </FlexRow>
       </Wrapper>
