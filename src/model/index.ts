@@ -1783,7 +1783,7 @@ export interface IMenuDetails {
   protein: number;
   personalMaximum?: number;
   menuId?: number;
-  availability: {
+  availability?: {
     availability: boolean;
     menuDetailAvailabilityMessage: string;
     menuDetailId: number;
