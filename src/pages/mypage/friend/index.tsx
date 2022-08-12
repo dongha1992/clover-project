@@ -29,6 +29,7 @@ const InviteFriendPaage = () => {
   const recommendCode = sessionStorage.getItem('recommendCode');
 
   console.log(recommendCode, 'recommendCode');
+
   const {
     data,
     error: menuError,
@@ -74,12 +75,14 @@ const InviteFriendPaage = () => {
       },
       onError: async (error: any) => {
         let alertMessage = '';
+        let alertSubMessage = '';
         if (error.code === 2201) {
           alertMessage = '이미 등록된 초대코드예요.';
+          alertSubMessage = '(초대코드는 총 1회 등록 가능해요.)';
         } else if (error.code === 1105) {
           alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
         } else if (1101) {
-          alertMessage = '유저를 찾을 수 없습니다.';
+          alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요..';
         } else {
           alertMessage = error.message;
         }
@@ -87,6 +90,7 @@ const InviteFriendPaage = () => {
         return dispatch(
           SET_ALERT({
             alertMessage,
+            alertSubMessage,
             submitBtnText: '확인',
           })
         );
@@ -151,7 +155,7 @@ const InviteFriendPaage = () => {
           <TextH4B padding="0 0 24px 0">친구의 초대코드 등록</TextH4B>
           <FlexRow margin="0 0 48px 0">
             <TextInput
-              placeholder="초대코드 등록하고 3,000p 받기"
+              placeholder="초대코드 등록하고 3,000P 받기"
               ref={codeRef}
               value={recommendCode ? recommendCode : ''}
             />
