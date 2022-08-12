@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { theme, FlexRow, homePadding, FlexBetweenStart, FlexCol, FlexBetween } from '@styles/theme';
+import { theme, FlexRow, homePadding, FlexBetweenStart, FlexCol, FlexBetween, flexCenter } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import { Button } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
@@ -166,35 +166,41 @@ const PointPage = () => {
         <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
       </Wrapper>
       <ScrollView>
-        {pointHistory?.map((item: IPointHistories, index: number) => {
-          if (targetIndex === item.id) {
-            const itemYear = new Date(item.createdAt).getFullYear();
+        {pointHistory?.length! > 0 ? (
+          pointHistory?.map((item: IPointHistories, index: number) => {
+            if (targetIndex === item.id) {
+              const itemYear = new Date(item.createdAt).getFullYear();
+              return (
+                <FlexCol key={index}>
+                  <BorderLine height={1} />
+                  <TextH5B color={theme.greyScale45} center padding="8px 0 0 0">
+                    {itemYear}년
+                  </TextH5B>
+                  <PointItem
+                    content={item.content}
+                    value={item.value}
+                    createdAt={item.createdAt}
+                    expiredDate={item.expiredDate}
+                    key={index}
+                  />
+                </FlexCol>
+              );
+            }
             return (
-              <FlexCol key={index}>
-                <BorderLine height={1} />
-                <TextH5B color={theme.greyScale45} center padding="8px 0 0 0">
-                  {itemYear}년
-                </TextH5B>
-                <PointItem
-                  content={item.content}
-                  value={item.value}
-                  createdAt={item.createdAt}
-                  expiredDate={item.expiredDate}
-                  key={index}
-                />
-              </FlexCol>
+              <PointItem
+                content={item.content}
+                value={item.value}
+                createdAt={item.createdAt}
+                expiredDate={item.expiredDate}
+                key={index}
+              />
             );
-          }
-          return (
-            <PointItem
-              content={item.content}
-              value={item.value}
-              createdAt={item.createdAt}
-              expiredDate={item.expiredDate}
-              key={index}
-            />
-          );
-        })}
+          })
+        ) : (
+          <EmptyContainer>
+            <TextB2R color={theme.greyScale65}>포인트가 없어요 😭</TextB2R>
+          </EmptyContainer>
+        )}
       </ScrollView>
     </Container>
   );
@@ -263,11 +269,20 @@ const ScrollView = styled.div`
   overflow-y: scroll;
   height: calc(100vh - 379px);
 `;
+
 // const ScrollView = styled.div<{ customMargin?: number }>`
 //   padding: 24px 25px;
 //   overflow-y: scroll;
 //   height: 100%;
 //   padding-top: ${({ customMargin }) => customMargin && customMargin}px;
 // `;
+
+const EmptyContainer = styled.div`
+  height: 30vh;
+  width: 100%;
+  ${flexCenter}
+  display: flex;
+  flex-direction: column;
+`;
 
 export default PointPage;

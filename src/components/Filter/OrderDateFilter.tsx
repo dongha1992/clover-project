@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { OrderFilter } from '@components/Filter/components';
-import { TextH5B } from '@components/Shared/Text';
+import { TextB3R, TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { ORDER_DATE_RADIO_CHECKBOX } from '@constants/filter';
 import { theme, bottomSheetButton } from '@styles/theme';
@@ -29,18 +29,19 @@ const OrderDateFilter = ({ handler }: IProps) => {
   return (
     <Container>
       <TextH5B padding="24px 0 16px 0" center>
-        정렬
+        조회 기간
       </TextH5B>
       <Wrapper>
-        <TextH5B padding={'0 0 8px 0'} color={theme.greyScale65}>
-          정렬
-        </TextH5B>
         <OrderFilter
           data={ORDER_DATE_RADIO_CHECKBOX}
           changeHandler={radioButtonHandler}
           selectedRadioValue={selectedRadioValue}
         />
+        <TextB3R padding="12px 0 0 0">
+          최근 1년 이내 구독 내역만 조회 가능해요. (이전 구독 내역은 고객센터로 문의해 주세요.)
+        </TextB3R>
       </Wrapper>
+
       <ButtonContainer>
         <Button height="100%" width="100%" borderRadius="0" onClick={changeWithInDays}>
           적용하기
@@ -52,10 +53,9 @@ const OrderDateFilter = ({ handler }: IProps) => {
 
 const Container = styled.div`
   width: 100%;
-  margin-bottom: 32px;
 `;
 const Wrapper = styled.div`
-  padding-left: 24px;
+  padding: 24px;
 `;
 const ButtonContainer = styled.div`
   ${bottomSheetButton}

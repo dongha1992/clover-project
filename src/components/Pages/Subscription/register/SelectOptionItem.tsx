@@ -8,7 +8,7 @@ interface IProps {
   item: IMenus;
 }
 const SelectOptionItem = ({ item }: IProps) => {
-  const { discount, price } = getMenuDisplayPrice(item.menuDetails);
+  const { discount, price } = getMenuDisplayPrice(item.menuDetails ?? [{}]);
   return (
     <MenuLi key={item.id}>
       <MenuImgBox>

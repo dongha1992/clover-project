@@ -23,8 +23,11 @@ import isNil from 'lodash-es/isNil';
 import { useGetOrders } from 'src/queries/order';
 import { removeCookie } from '@utils/common/cookie';
 import { INIT_CART_LISTS } from '@store/cart';
+import { INIT_MENU_ITEM } from '@store/menu';
+import { INIT_DESTINATION, INIT_USER_DELIVERY_TYPE } from '@store/destination';
 import { commonSelector } from '@store/common';
 import useIsApp from '@hooks/useIsApp';
+import { SET_ALERT } from '@store/alert';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -154,23 +157,37 @@ const MypagePage = () => {
   };
 
   const logoutHandler = () => {
-    dispatch(INIT_USER());
-    dispatch(INIT_CART_LISTS());
-    removeCookie({ name: 'acstk' });
-    removeCookie({ name: 'refreshTokenObj' });
-    removeCookie({ name: 'autoL' });
-    localStorage.removeItem('persist:nextjs');
-    sessionStorage.removeItem('recommendCode');
-    if (window.navigator.userAgent === 'fco-clover-webview' && window.Kakao && window.Kakao.Auth.getAccessToken()) {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-kakao' }));
-    } else if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
-      window.Kakao.Auth.logout();
-    } else if (window.navigator.userAgent === 'fco-clover-webview' && loginType === 'APPLE') {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-apple' }));
-    }
-    router.push('/mypage');
+    dispatch(
+      SET_ALERT({
+        alertMessage: '로그아웃 하시겠어요?',
+        onSubmit: () => {
+          dispatch(INIT_USER());
+          dispatch(INIT_CART_LISTS());
+          // TEMP, persist 초기화 다시 해야함
+          dispatch(INIT_DESTINATION());
+          dispatch(INIT_MENU_ITEM());
+          dispatch(INIT_USER_DELIVERY_TYPE());
+          removeCookie({ name: 'acstk' });
+          removeCookie({ name: 'refreshTokenObj' });
+          removeCookie({ name: 'autoL' });
+          localStorage.removeItem('persist:nextjs');
+          sessionStorage.removeItem('recommendCode');
+          if (
+            window.navigator.userAgent === 'fco-clover-webview' &&
+            window.Kakao &&
+            window.Kakao.Auth.getAccessToken()
+          ) {
+            window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-kakao' }));
+          } else if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
+            window.Kakao.Auth.logout();
+          } else if (window.navigator.userAgent === 'fco-clover-webview' && loginType === 'APPLE') {
+            window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-apple' }));
+          }
+          router.push('/mypage');
+        },
+      })
+    );
   };
-
   if (isNil(orderList) && infoLoading && subsOrdersLoading) {
     return <div>로딩</div>;
   }
@@ -183,14 +200,14 @@ const MypagePage = () => {
           <>
             <UserInfoWrapper>
               <FlexRow>
-                <TextH2B padding="0 6px 0 0">{me?.name}님은</TextH2B>
+                <TextH2B padding="0 6px 0 0">{me?.nickname}님</TextH2B>
                 <IconBox onClick={() => goToEditUserInfo()}>
                   <SVGIcon name="arrowRight" />
                 </IconBox>
               </FlexRow>
               <FlexBetween padding="8px 0 0 0">
                 <FlexRow>
-                  <Tag color={theme.brandColor} margin="0 8px 0 0">
+                  <Tag backgroundColor={theme.brandColor5} color={theme.brandColor} margin="0 8px 0 0">
                     {me.grade.name}
                   </Tag>
                   <TextB3R color={theme.brandColor} padding="2px 0 0 0">
