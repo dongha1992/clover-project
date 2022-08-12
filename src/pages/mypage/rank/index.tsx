@@ -52,7 +52,7 @@ const RankPage = () => {
           {userGrade?.userGrade.isLast ? (
             <FlexCol padding="0 0 48px 0">
               <FlexRow>
-                <TextH5B>{userGrade.userGrade.name}</TextH5B>
+                <TextH5B>{userGrade?.userGrade.name}</TextH5B>
                 <TextB2R padding="0 4px 0 0">으로 남아주실 거죠?</TextB2R>
               </FlexRow>
               <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
@@ -63,12 +63,12 @@ const RankPage = () => {
             <FlexCol padding="0 0 48px 0">
               <FlexRow>
                 <TextB2R padding="0 4px 0 0">다음 달 예상 등급은</TextB2R>
-                <TextH5B>{userGrade.expectedUserGrade.name}</TextH5B>,
+                <TextH5B>{userGrade?.expectedUserGrade?.name!}</TextH5B>,
               </FlexRow>
               <FlexRow>
-                <TextH4B color={theme.brandColor}>{userGrade.expectedUserGrade.insufficientAmount}원</TextH4B>
+                <TextH4B color={theme.brandColor}>{userGrade?.expectedUserGrade?.insufficientAmount!}원</TextH4B>
                 <TextB2R padding="0 0 0 4px">더 구매하면 </TextB2R>
-                <TextH5B>{userGrade.expectedUserGrade.nextUserGrade?.name}</TextH5B>
+                <TextH5B>{userGrade?.expectedUserGrade?.nextUserGrade?.name!}</TextH5B>
                 <TextB2R>이 돼요</TextB2R>
               </FlexRow>
               <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
