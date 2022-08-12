@@ -16,6 +16,7 @@ import { IMenus, Obj } from '@model/index';
 import router from 'next/router';
 import TextInput from '@components/Shared/TextInput';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 const SearchPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -135,7 +136,7 @@ const SearchPage = () => {
               더보기
             </TextH6B>
           </FlexBetween>
-          <SliderWrapper className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={700}>
+          <SliderWrapper className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
             {
               mdMenus?.map((item, index) => {
                 if (index > 9) return;
