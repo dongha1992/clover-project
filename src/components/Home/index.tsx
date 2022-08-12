@@ -8,20 +8,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
-import { getRecommendMenusApi } from '@api/menu';
 import { filterSelector } from '@store/filter';
 import Image from '@components/Shared/Image';
 import BorderLine from '@components/Shared/BorderLine';
 import { useRouter } from 'next/router';
-import { getExhibitionMdRecommendApi, getMainPromotionContentsApi } from '@api/promotion';
+import { getMainPromotionContentsApi } from '@api/promotion';
 import { SET_EVENT_TITLE , INIT_EVENT_TITLE } from '@store/event';
 import Carousel from "@components/Shared/Carousel";
+import { Swiper, SwiperSlide } from 'swiper/react';
 /* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
   const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
-  // const [mainContents, setMainContents] = useState<any>();
   const router = useRouter();
   const { type } = useSelector(filterSelector);
   const dispatch = useDispatch();
@@ -40,7 +39,6 @@ const Home = () => {
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
-
 
   const { error: eventsError } = useQuery(
     'eventsBanners',
@@ -130,16 +128,18 @@ const Home = () => {
                       layout="responsive"
                       alt="홈 기획전 이미지"
                     />
-                    <ItemListRowWrapper>
-                      <ItemListRow>
-                        {item?.exhibition.menus?.length! > 0
-                          ? item?.exhibition.menus?.map((item: any, index: number) => {
-                              if (index > 9) return;
-                              return <Item item={item} key={index} isHorizontal />;
-                            })
-                          : '상품을 준비 중입니다.'}
-                      </ItemListRow>
-                    </ItemListRowWrapper>
+                    <SliderWrapper className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={700}>
+                      {
+                        item?.exhibition.menus?.map((item: any, index: number) => {
+                          if (index > 9) return;
+                          return(
+                            <SwiperSlide className="swiper-slide" key={index}>
+                              <Item item={item} isHorizontal />
+                            </SwiperSlide>
+                          ) 
+                        })
+                      }
+                    </SliderWrapper>
                   </PromotionWrapper>
                 )
               }
@@ -190,8 +190,6 @@ const PromotionBanner = styled.section`
   margin: 24px 0px;
 `;
 
-const MainContentsWrapper = styled.div``;
-
 const PromotionWrapper = styled.section`
   width: 100%;
 `;
@@ -203,13 +201,12 @@ const FlexSpace = styled.div`
   align-items: center;
 `;
 
-const ItemListRowWrapper = styled.div`
-  padding: 24px 0px 24px 24px;
+const SliderWrapper = styled(Swiper)`
   width: auto;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-  //margin-bottom: 12px;
+  padding: 24px;
+  .swiper-slide {
+    width: 120px;
+  }
 `;
 
 export const ItemListRow = styled.div`
