@@ -65,6 +65,14 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
+        queryClient.setQueryData(['getMainContents'], (previous: any) => {
+          return previous?.map((_item: any) => {
+            if (_item.exhibition.id === item.id) {
+              return { ..._item, reopenNotificationRequested: false };
+            }
+            return _item;
+          });
+        });
         showToast({ message: '알림 신청을 완료했어요!' });
       },
       onMutate: async () => {},
@@ -92,6 +100,14 @@ const Item = ({ item, isHorizontal }: TProps) => {
         queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
           return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
         });
+        queryClient.setQueryData(['getMainContents'], (previous: any) => {
+          return previous?.map((_item: any) => {
+            if(_item?.exhibition?.type === 'MD_RECOMMENDED'){
+             return onMenuLikes({ previous: _item.exhibition.menus, id: item.id, likeCount: item.likeCount, liked: item.liked });
+            }
+          }) 
+        });
+
       },
       onMutate: async () => {},
       onError: async (error: any) => {
@@ -115,6 +131,15 @@ const Item = ({ item, isHorizontal }: TProps) => {
         queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
           if (previous) {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
+          }
+        });
+        queryClient.setQueryData(['getMainContents'], (previous: any) => {
+          if (previous) {
+            return previous?.map((_item: any) => {
+              if(_item?.exhibition?.type === 'MD_RECOMMENDED'){
+               return onMenuLikes({ previous: _item.exhibition.menus, id: item.id, likeCount: item.likeCount, liked: item.liked });
+              }
+            })   
           }
         });
         queryClient.invalidateQueries(['getLikeMenus', 'GENERAL']);

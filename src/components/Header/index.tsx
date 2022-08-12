@@ -78,7 +78,6 @@ const Header = () => {
       '/mypage/card/register': '카드등록',
       '/mypage/card/edit': '카드 편집',
       '/mypage/card/register/term': '이용약관',
-      '/mypage/order-detail/[id]': '주문 상세',
       '/mypage/order-delivery-history': '주문/배송 내역',
       '/mypage/profile/password': '비밀번호 변경',
       '/mypage/profile/confirm': '회원정보 수정',
@@ -142,7 +141,6 @@ const Header = () => {
       '/promotion': '기획전',
       '/event': '이벤트',
       '/promotion/detail/[id]': `${eventTitle ? eventTitle : '기획전'}`,
-      '/md': 'MD추천',
     };
 
     const title = headerTitleMap[currentPath];
