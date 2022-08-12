@@ -18,9 +18,9 @@ export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
     ?.every((item: IMenuDetails) => item.isSold);
 
   const checkedMenusAvailiability = () => {
-    const mainMenusDetailsLen = menu.menuDetails.filter(i => i.main);
-    if (mainMenusDetailsLen.length < 2) {
-      if(mainMenusDetailsLen.find(i => i.availability?.availability)?.availability?.availability){
+    const mainMenusDetailsLen = menu?.menuDetails?.filter(i => i.main);
+    if (mainMenusDetailsLen?.length < 2) {
+      if(mainMenusDetailsLen?.find(i => i.availability?.availability)?.availability?.availability){
         return false; // 게속 판매 가능
       } else {
         return true; // 일시 품절 상태
