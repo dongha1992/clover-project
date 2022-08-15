@@ -83,6 +83,7 @@ export const OptionLi = styled.li`
     padding: 10px 16px;
     border: 1px solid #242424;
     border-radius: 8px;
+    color: ${theme.black};
   }
 `;
 
