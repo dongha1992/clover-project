@@ -64,6 +64,7 @@ import { userForm } from '@store/user';
 import { subscriptionForm } from '@store/subscription';
 import { periodMapper } from '@constants/subscription';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
+import useIsApp from '@hooks/useIsApp';
 
 declare global {
   interface Window {
@@ -106,7 +107,7 @@ const OrderPage = () => {
     privacy: false,
     subscription: false,
   });
-
+  const isApp = useIsApp();
   const token = getCookie({ name: 'acstk' });
 
   const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
@@ -576,7 +577,7 @@ const OrderPage = () => {
           inputHidden.setAttribute('value', response[formName]);
         }
 
-        if (isMobile) {
+        if (isMobile || isApp) {
           if (!['EncodeParameters', 'SocketYN', 'UserIP'].includes(formName)) {
             payFormMobile.appendChild(inputHidden);
           }
@@ -585,13 +586,14 @@ const OrderPage = () => {
         }
       }
 
-      if (isMobile) {
+      if (isMobile || isApp) {
         let acsNoIframeInput = document.createElement('input');
         acsNoIframeInput.setAttribute('type', 'hidden');
         acsNoIframeInput.setAttribute('name', 'AcsNoIframe');
         acsNoIframeInput.setAttribute('value', 'Y'); // 변경 불가
         payFormMobile.appendChild(acsNoIframeInput);
         nicepayMobileStart();
+        if (isApp) window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-show-backButton' }));
         return;
       } else {
         nicepayStart();
@@ -649,7 +651,9 @@ const OrderPage = () => {
         value: data.data.tid,
       });
 
-      if (isMobile) {
+      if (isApp) {
+        window.location.href = data.data.next_redirect_app_url;
+      } else if (isMobile) {
         window.location.href = data.data.next_redirect_mobile_url;
       } else {
         window.location.href = data.data.next_redirect_pc_url;

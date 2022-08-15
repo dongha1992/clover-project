@@ -28,6 +28,7 @@ import { INIT_DESTINATION, INIT_USER_DELIVERY_TYPE } from '@store/destination';
 import { commonSelector } from '@store/common';
 
 import { SET_ALERT } from '@store/alert';
+import useIsApp from '@hooks/useIsApp';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -43,6 +44,8 @@ const MypagePage = () => {
   const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
   const [subsCloseOrders, setSubsCloseOrders] = useState([]);
   const [showBoard, setShowBoard] = useState<string>('');
+
+  const isApp = useIsApp();
   const { data: orderList, isLoading } = useQuery(
     'getOrderLists',
     async () => {
@@ -171,15 +174,11 @@ const MypagePage = () => {
           removeCookie({ name: 'autoL' });
           localStorage.removeItem('persist:nextjs');
           sessionStorage.removeItem('recommendCode');
-          if (
-            window.navigator.userAgent === 'fco-clover-webview' &&
-            window.Kakao &&
-            window.Kakao.Auth.getAccessToken()
-          ) {
+          if (isApp && window.Kakao && window.Kakao.Auth.getAccessToken()) {
             window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-kakao' }));
           } else if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
             window.Kakao.Auth.logout();
-          } else if (window.navigator.userAgent === 'fco-clover-webview' && loginType === 'APPLE') {
+          } else if (isApp && loginType === 'APPLE') {
             window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-logout-apple' }));
           }
           router.push('/mypage');
