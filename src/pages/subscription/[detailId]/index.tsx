@@ -1,4 +1,5 @@
 import SubsMngCalendar from '@components/Calendar/subscription/SubsMngCalendar';
+import RefundInfoBox from '@components/Pages/Subscription/cancel/RefundInfoBox';
 import { ClosedGuideBox, SubsBottomBtn } from '@components/Pages/Subscription/detail';
 import PaymentGuideBox from '@components/Pages/Subscription/detail/GuideBox/PaymentGuideBox';
 import SubsDetailOrderInfo from '@components/Pages/Subscription/detail/SubsDetailOrderInfo';
@@ -6,7 +7,7 @@ import { SubsInfoBox, SubsOrderItem } from '@components/Pages/Subscription/payme
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
-import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
+import { TextB2R, TextB3R, TextH4B, TextH5B, TextH6B, TextH7B } from '@components/Shared/Text';
 import { PAYMENT_METHOD } from '@constants/order';
 import { SUBS_MNG_STATUS } from '@constants/subscription';
 import useOptionsPrice from '@hooks/subscription/useOptionsPrice';
@@ -18,8 +19,9 @@ import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
 import { userForm } from '@store/user';
-import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexRow, theme } from '@styles/theme';
-import { getFormatDate, SVGIcon } from '@utils/common';
+import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexEnd, FlexRow, theme } from '@styles/theme';
+import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
+import { calculatePoint } from '@utils/menu';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { useRouter } from 'next/router';
@@ -299,11 +301,52 @@ const SubsDetailPage = () => {
         grade={me?.grade}
         coupon={orderDetail?.coupon}
       />
-
       {orderDetail?.subscriptionPeriod === 'UNLIMITED' &&
       orderDetail?.isSubscribing &&
       orderDetail?.status === 'COMPLETED' ? null : (
         <BorderLine height={8} />
+      )}
+      {(!orderDetail?.canCancel || orderDetail?.status === 'CANCELED') && (
+        <>
+          <TextH4B padding="24px 24px 0 24px">환불정보</TextH4B>
+          <RefundInfoContainer>
+            <RefundInfoBox
+              totalPayAmount={orderDetail?.payAmount + orderDetail?.point}
+              totalRefundAmount={orderDetail?.refundPayAmount + orderDetail?.refundPoint}
+              completedDeliveryCount={orderDetail?.completedDeliveryCount ?? 0}
+              completedAmount={orderDetail?.completedAmount ?? 0}
+              partialRefundAmount={0}
+              refundPoint={orderDetail?.refundPoint}
+              refundCoupon={orderDetail?.refundCoupon}
+              refundPayAmount={orderDetail?.refundPayAmount}
+            />
+            <FlexEnd margin="16px 0 0 0">
+              <Badge>
+                <TextH7B>{me?.grade?.name!}</TextH7B>
+              </Badge>
+              <TextB3R>
+                구매 시
+                <b>
+                  {' '}
+                  {getFormatPrice(
+                    String(
+                      calculatePoint({
+                        rate: me?.grade.benefit.accrualRate!,
+                        total:
+                          orderDetail?.menuAmount +
+                          optionsPrice.option1.price +
+                          optionsPrice.option2.price +
+                          (orderDetail?.deliveryFee - orderDetail?.deliveryFeeDiscount) -
+                          orderDetail?.menuDiscount,
+                      })
+                    )
+                  )}
+                  P 적립 취소 예정
+                </b>
+              </TextB3R>
+            </FlexEnd>
+          </RefundInfoContainer>
+        </>
       )}
       <SubsBottomBtn
         subscriptionPeriod={orderDetail?.subscriptionPeriod}
@@ -346,16 +389,14 @@ const DietConfirmBox = styled.div`
 const OrderInfoBox = styled.div`
   padding: 24px;
 `;
-const PaymentInfoBox = styled.div`
+const RefundInfoContainer = styled.div`
   padding: 24px;
-  .bbN {
-    border-bottom: 1px solid #ececec;
-  }
-  .bbB {
-    border-bottom: 1px solid #242424;
-  }
-  svg {
-    margin-bottom: 3px;
-  }
+`;
+
+const Badge = styled.div`
+  padding: 4px 8px;
+  margin-right: 4px;
+  background-color: ${theme.brandColor5P};
+  color: ${theme.brandColor};
 `;
 export default SubsDetailPage;

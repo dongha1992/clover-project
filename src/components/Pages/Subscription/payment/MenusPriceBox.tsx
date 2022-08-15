@@ -95,12 +95,10 @@ const MenusPriceBox = ({
             <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
           </MenuPriceLi>
         )}
-        {!!coupon && coupon !== 0 && (
-          <MenuPriceLi>
-            <TextB2R>쿠폰 사용</TextB2R>
-            <TextB2R>-{coupon}원</TextB2R>
-          </MenuPriceLi>
-        )}
+        <MenuPriceLi>
+          <TextB2R>쿠폰 사용</TextB2R>
+          <TextB2R>{coupon !== 0 && coupon ? `-${getFormatPrice(String(coupon))}` : 0}원</TextB2R>
+        </MenuPriceLi>
       </MenuPriceUl>
       <MenuPriceUl>
         <MenuPriceLi className="btN" padding="16px 0 0">
@@ -151,12 +149,18 @@ const MenusPriceBox = ({
           {disposable
             ? getFormatPrice(
                 String(
-                  menuPrice + menuOption1?.price + menuOption2?.price + deliveryPrice - menuDiscount - eventDiscount
+                  menuPrice +
+                    menuOption1?.price +
+                    menuOption2?.price +
+                    deliveryPrice -
+                    menuDiscount -
+                    eventDiscount -
+                    (coupon ?? 0)
                   // menuPrice + menuOption1?.price + menuOption2?.price + deliveryPrice - menuDiscount
                 )
               )
             : // : getFormatPrice(String(menuPrice + deliveryPrice - menuDiscount))}
-              getFormatPrice(String(menuPrice + deliveryPrice - menuDiscount - eventDiscount))}
+              getFormatPrice(String(menuPrice + deliveryPrice - menuDiscount - eventDiscount - (coupon ?? 0)))}
           원
         </TextH4B>
       </FlexBetween>

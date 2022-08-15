@@ -17,6 +17,7 @@ import { getAppleTokenApi, userProfile } from '@api/user';
 import { userLoginApi } from '@api/authentication';
 import { SET_ALERT } from '@store/alert';
 import { useAppleLogin, useKakaoLogin } from '@hooks/auth';
+import useIsApp from '@hooks/useIsApp';
 
 const OnBoarding: NextPage = () => {
   const emailButtonStyle = {
@@ -59,6 +60,8 @@ const OnBoarding: NextPage = () => {
     };
   }, [window.ReactNativeWebView]);
 
+  const isApp = useIsApp();
+
   const webviewListener = async (e: any) => {
     let { cmd, data = null } = await JSON.parse(e.data);
     switch (cmd) {
@@ -83,7 +86,7 @@ const OnBoarding: NextPage = () => {
 
   const kakaoLoginHandler = () => {
     /* 웹뷰 */
-    if (window.navigator.userAgent === 'fco-clover-webview') {
+    if (isApp) {
       window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     } else {
       const url =
@@ -100,7 +103,7 @@ const OnBoarding: NextPage = () => {
   /* TODO: 나중에 도메인 나오면 redirectUrl 수정해야 함  */
   const appleLoginHandler = async () => {
     if (typeof window !== undefined) {
-      if (window.navigator.userAgent === 'fco-clover-webview') {
+      if (isApp) {
         window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-apple' }));
       } else {
         window.AppleID.auth.init({

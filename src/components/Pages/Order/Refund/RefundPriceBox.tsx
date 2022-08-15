@@ -3,49 +3,46 @@ import { FlexBetween, FlexEnd, theme } from '@styles/theme';
 import { getFormatPrice } from '@utils/common';
 import styled from 'styled-components';
 interface IProps {
-  amount: number;
-  payAmount: number;
-  point: number;
-  coupon: number;
+  refundPayAmount: number;
+  refundPoint: number;
+  refundCoupon: number;
+  refundCouponCount?: number;
 }
-const RefundPriceBox = ({ amount, payAmount, point, coupon }: IProps) => {
+const RefundPriceBox = ({ refundPayAmount, refundPoint, refundCoupon, refundCouponCount }: IProps) => {
   return (
     <RefundPriceContainer>
-      <ul>
-        <li>
-          <TextH5B>총 결제금액</TextH5B>
-          <TextB2R>{getFormatPrice(String(amount))}원</TextB2R>
-        </li>
-        <li>
-          <TextB2R>환불금액</TextB2R>
-          <TextB2R>{getFormatPrice(String(payAmount))}원</TextB2R>
-        </li>
-        <li>
-          <TextB2R>환불 포인트</TextB2R>
-          <TextB2R>{getFormatPrice(String(point))}원</TextB2R>
-        </li>
-        <li>
+      <div className="box">
+        <FlexBetween padding="16px 0 16px">
+          <TextH4B>최종 환불 합계</TextH4B>
+          <TextH4B>{getFormatPrice(String(refundPayAmount + refundPoint + refundCoupon))}원</TextH4B>
+        </FlexBetween>
+      </div>
+      <RefundDetailBox>
+        {refundPayAmount !== 0 && (
+          <FlexBetween padding="0 0 8px">
+            <TextB2R>환불 금액</TextB2R>
+            <TextB2R>{getFormatPrice(String(refundPayAmount))}원</TextB2R>
+          </FlexBetween>
+        )}
+        {refundPoint !== 0 && (
+          <FlexBetween padding="0 0 8px">
+            <TextB2R>환불 포인트</TextB2R>
+            <TextB2R>{getFormatPrice(String(refundPoint))}원</TextB2R>
+          </FlexBetween>
+        )}
+        <FlexBetween>
           <TextB2R>환불 쿠폰</TextB2R>
-          <TextB2R>{coupon}개</TextB2R>
-        </li>
-      </ul>
-      <FlexBetween padding="16px 0 0">
-        <TextH4B>최종 환불금액</TextH4B>
-        <TextH4B>{getFormatPrice(String(amount))}원</TextH4B>
-      </FlexBetween>
-      <FlexEnd>
-        <Badge>
-          <TextH7B>프코회원</TextH7B>
-        </Badge>
-        <TextH6B>210P 적립 취소 예정</TextH6B>
-      </FlexEnd>
+          <TextB2R>{refundCouponCount ?? 0}개</TextB2R>
+        </FlexBetween>
+      </RefundDetailBox>
     </RefundPriceContainer>
   );
 };
 const RefundPriceContainer = styled.article`
-  padding: 24px;
-  background-color: ${theme.greyScale3};
-  ul {
+  padding: 0 24px 0 24px;
+  /* background-color: ${theme.greyScale3}; */
+  .box {
+    border-top: 1px solid ${theme.black};
     li {
       display: flex;
       padding-bottom: 8px;
@@ -57,11 +54,9 @@ const RefundPriceContainer = styled.article`
     }
   }
 `;
-const Badge = styled.div`
-  padding: 4px 8px;
-  margin-right: 4px;
-  background-color: ${theme.brandColor5P};
-  color: ${theme.brandColor};
+const RefundDetailBox = styled.div`
+  padding: 16px;
+  background-color: ${theme.greyScale3};
 `;
 
 export default RefundPriceBox;

@@ -69,9 +69,10 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
           data.menuDiscount = data.menuDiscount + item.menuDiscount;
           data.eventDiscount = data.eventDiscount + item.eventDiscount;
         } else {
-          data.menuPrice = data.menuPrice + item.menuPrice * item.count!;
-          data.menuDiscount = data.menuDiscount + item.menuDiscount * item.count!;
-          data.eventDiscount = data.eventDiscount + item.eventDiscount * item.count!;
+          data.menuPrice = data.menuPrice + item.menuPrice;
+
+          data.menuDiscount = data.menuDiscount + item.menuDiscount;
+          data.eventDiscount = data.eventDiscount + item.eventDiscount;
         }
 
         item.menuOptions.forEach((option) => {
