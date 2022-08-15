@@ -1,4 +1,4 @@
-import RefundTotalPriceBox from '@components/Pages/Order/Refund/RefundTotalPriceBox';
+import RefundInfoBox from '@components/Pages/Subscription/cancel/RefundInfoBox';
 import { Button } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
 import { IResponse } from '@model/index';
@@ -73,7 +73,19 @@ const OrderCancelPage = () => {
         <TextB2R color={theme.greyScale65}>취소 가능 시간이 지난 회차는 환불에서 제외됩니다.</TextB2R>
       </div>
       <div className="refundInfoWrapper">
-        <RefundTotalPriceBox cancelPrivew={cancelPrivew} />
+        {/* <RefundTotalPriceBox cancelPrivew={cancelPrivew} /> */}
+        <RefundInfoBox
+          totalPayAmount={cancelPrivew?.totalPayAmount}
+          totalRefundAmount={
+            cancelPrivew?.partialRefundAmount + cancelPrivew?.refundPayAmount + cancelPrivew?.refundPoint
+          }
+          completedDeliveryCount={cancelPrivew?.completedDeliveryCount}
+          completedAmount={cancelPrivew?.completedAmount}
+          partialRefundAmount={cancelPrivew?.partialRefundAmount}
+          refundPoint={cancelPrivew?.refundPoint}
+          refundCoupon={cancelPrivew?.couponCount}
+          refundPayAmount={cancelPrivew?.refundPayAmount}
+        />
       </div>
       <div className="confirmMentBox">
         <TextH5B color={theme.greyScale65} padding="0 0 16px 0">

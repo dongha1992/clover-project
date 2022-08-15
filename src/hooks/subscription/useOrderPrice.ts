@@ -58,7 +58,7 @@ const useOrderPrice = (orderMenus: any, orderOptions: any) => {
     });
     const amount = info.menuPrice + info.option2.price + info.option1.price - info.menuDiscount;
 
-    info.deliveryPrice = amount >= 35000 ? 0 : 3000;
+    info.deliveryPrice = amount >= 35000 ? 0 : 3500;
 
     setPriceInfo(info);
   }, [orderMenus, orderOptions]);
