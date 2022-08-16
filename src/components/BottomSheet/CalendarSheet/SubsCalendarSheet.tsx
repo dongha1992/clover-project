@@ -229,9 +229,15 @@ const BottomButton = styled.button`
   height: 56px;
   background-color: ${theme.black};
   color: #fff;
+  > div {
+    color: #fff;
+  }
   &:disabled {
     background-color: ${theme.greyScale6};
     color: ${theme.greyScale25};
+    > div {
+      color: ${theme.greyScale25};
+    }
   }
 `;
 export default React.memo(SubsCalendarSheet);
