@@ -62,7 +62,7 @@ const SubsItem = ({ item, height, width }: IProps) => {
     },
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getSubscriptionMenus'], (previous: any) => {
+        queryClient.setQueryData(['getExhibitionMenus'], (previous: any) => {
           if (previous) {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
@@ -86,7 +86,7 @@ const SubsItem = ({ item, height, width }: IProps) => {
     },
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getSubscriptionMenus'], (previous: any) => {
+        queryClient.setQueryData(['getExhibitionMenus'], (previous: any) => {
           if (previous) {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
