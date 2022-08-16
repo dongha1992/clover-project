@@ -69,7 +69,7 @@ const RefundInfoBox = ({
             )}
             <FlexBetween>
               <TextB2R>환불 쿠폰</TextB2R>
-              <TextB2R>{refundCouponCount ?? 0}개</TextB2R>
+              <TextB2R>{refundCoupon ? 1 : 0}개</TextB2R>
             </FlexBetween>
           </RefundDetailBox>
         </li>
