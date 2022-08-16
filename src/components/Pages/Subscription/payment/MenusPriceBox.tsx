@@ -95,10 +95,12 @@ const MenusPriceBox = ({
             <TextB2R>{eventDiscount ? `-${getFormatPrice(String(eventDiscount))}` : 0}원</TextB2R>
           </MenuPriceLi>
         )}
-        <MenuPriceLi>
-          <TextB2R>쿠폰 사용</TextB2R>
-          <TextB2R>{coupon !== 0 && coupon ? `-${getFormatPrice(String(coupon))}` : 0}원</TextB2R>
-        </MenuPriceLi>
+        {coupon !== undefined && (
+          <MenuPriceLi>
+            <TextB2R>쿠폰 사용</TextB2R>
+            <TextB2R>{coupon !== 0 && coupon ? `-${getFormatPrice(String(coupon))}` : 0}원</TextB2R>
+          </MenuPriceLi>
+        )}
       </MenuPriceUl>
       <MenuPriceUl>
         <MenuPriceLi className="btN" padding="16px 0 0">
