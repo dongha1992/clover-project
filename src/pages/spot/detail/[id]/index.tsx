@@ -230,7 +230,7 @@ const SpotDetailPage = (): ReactElement => {
       <PlaceTypeTagWrapper>
         <>
           {spotItem?.isTrial ? (
-            <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+            <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale65}>
               트라이얼
             </Tag>
           ) : spotItem?.type === 'PRIVATE' ? (
@@ -238,9 +238,10 @@ const SpotDetailPage = (): ReactElement => {
               프라이빗
             </Tag>
           ) : null}
-          {spotItem?.type !== 'PRIVATE' && placeType() !== null && <Tag margin="0 5px 0 0">{placeType()}</Tag>}
-          {spotItem?.canEat && <Tag margin="0 5px 0 0">취식가능</Tag>}
-          {spotItem?.canParking && <Tag margin="0 5px 0 0">주차가능</Tag>}
+          {spotItem?.type !== 'PRIVATE' && placeType() !== null && 
+            <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale65}>{placeType()}</Tag>}
+          {spotItem?.canEat && <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale65}>취식가능</Tag>}
+          {spotItem?.canParking && <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale65}>주차가능</Tag>}
           {!!spotItem?.discountRate && (
             <Tag
               margin="0 5px 0 0"
