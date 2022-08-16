@@ -57,7 +57,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return _item;
           });
         });
-        queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
+        queryClient.setQueryData(['getExhibitionMenus'], (previous: any) => {
           return previous?.map((_item: IMenus) => {
             if (_item.id === item.id) {
               return { ..._item, reopenNotificationRequested: false };
@@ -99,17 +99,9 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
         });
-        queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
+        queryClient.setQueryData(['getExhibitionMenus'], (previous: any) => {
           return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
         });
-        queryClient.setQueryData(['getMainContents'], (previous: any) => {
-          return previous?.map((_item: any) => {
-            if(_item?.exhibition?.type === 'MD_RECOMMENDED'){
-             return onMenuLikes({ previous: _item.exhibition.menus, id: item.id, likeCount: item.likeCount, liked: item.liked });
-            }
-          }) 
-        });
-
       },
       onMutate: async () => {},
       onError: async (error: any) => {
@@ -130,19 +122,9 @@ const Item = ({ item, isHorizontal }: TProps) => {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
         });
-        queryClient.setQueryData(['getRecommendMenus'], (previous: any) => {
+        queryClient.setQueryData(['getExhibitionMenus'], (previous: any) => {
           if (previous) {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
-          }
-        });
-        queryClient.setQueryData(['getMainContents'], (previous: any) => {
-          if (previous) {
-            previous?.map((_item: any) => {
-              if(_item?.exhibition?.type === 'MD_RECOMMENDED'){
-                console.log(_item.exhibition.menus);
-               return onMenuLikes({ previous: _item.exhibition.menus, id: item.id, likeCount: item.likeCount, liked: item.liked });
-              }
-            })
           }
         });
         queryClient.invalidateQueries(['getLikeMenus', 'GENERAL']);
