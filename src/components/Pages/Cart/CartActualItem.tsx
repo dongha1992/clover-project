@@ -28,7 +28,7 @@ interface IProps {
   clickMinusButton: (menuDetailId: number, quantity: number) => void;
   menuId: number;
   menuDetail: IMenuDetailsInCart;
-  holiday: number[][] | null;
+  holiday?: number[][] | null;
   menuName: string;
 }
 
