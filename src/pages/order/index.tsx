@@ -205,9 +205,9 @@ const OrderPage = () => {
               alertMessage: '잘못된 배송일 입니다.',
             })
           );
-          router.replace('/cart');
+          isSubscription ? router.replace('/subscription') : router.replace('/cart');
         } else {
-          router.replace('/cart');
+          isSubscription ? router.replace('/subscription') : router.replace('/cart');
         }
       },
       refetchOnMount: true,
@@ -488,6 +488,17 @@ const OrderPage = () => {
     router.push('/mypage/card/register');
   };
 
+  const webviewPayment = () => {
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({
+        cmd: 'webview-payment',
+        data: {
+          returnUrl: `${process.env.SERVICE_URL}${router.asPath}`,
+        },
+      })
+    );
+  };
+
   const goToTermInfo = () => {};
 
   const nicepayStart = () => {
@@ -595,7 +606,9 @@ const OrderPage = () => {
         acsNoIframeInput.setAttribute('value', 'Y'); // 변경 불가
         payFormMobile.appendChild(acsNoIframeInput);
         nicepayMobileStart();
-        if (isApp) window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-show-backButton' }));
+        if (isApp) {
+          webviewPayment();
+        }
         return;
       } else {
         nicepayStart();
@@ -1381,6 +1394,7 @@ const OrderPage = () => {
           deliveryType={previewOrder?.order.delivery}
           subscriptionDiscountRates={previewOrder?.order.subscriptionDiscountRates}
           grade={grade!}
+          coupon={userInputObj?.coupon > 0 ? userInputObj?.coupon : undefined}
         />
       )}
       <OrderTermWrapper>

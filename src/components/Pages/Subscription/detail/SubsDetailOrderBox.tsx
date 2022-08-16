@@ -197,7 +197,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
                 </FlexBetweenStart>
               ) : (
                 <FlexBetweenStart padding="0 0 24px">
-                  <TextH5B>픽업장소</TextH5B>
+                  <TextH5B>배송지</TextH5B>
                   <FlexColEnd>
                     <TextB2R className="textRight">{item.location.address}</TextB2R>
                     <TextB2R className="textRight">{item.location.addressDetail}</TextB2R>
