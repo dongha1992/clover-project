@@ -159,10 +159,12 @@ const CartPage = () => {
       onSuccess: (data) => {
         try {
           reorderCartList(data.cartMenus);
+          setDisposableList(initMenuOptions(data.cartMenus));
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
+
           if (isFirstRender) {
-            setDisposableList(initMenuOptions(data));
+            // setDisposableList(initMenuOptions(data.cartMenus));
             setHoliday(formatHoliday());
           }
         } catch (error) {
@@ -297,7 +299,7 @@ const CartPage = () => {
       },
       onError: ({ response }: any) => {
         const { data: error } = response as any;
-        console.log(response, 'respotn');
+
         dispatch(SET_ALERT({ alertMessage: error?.message }));
         return;
       },
@@ -309,30 +311,36 @@ const CartPage = () => {
   );
 
   const { mutate: mutateItemQuantity } = useMutation(
-    async (params: { menuDetailId: number; quantity: number }) => {
-      /* TODO : 구매제한체크 api */
-
-      // const checkHasLimitQuantity = checkedMenus.find((item) => item.id === menuDetailId)?.limitQuantity;
-      // if (checkHasLimitQuantity && checkHasLimitQuantity < quantity) {
-      //   return;
-      // }
-
-      const { data } = await patchCartsApi(params);
+    async (params: { menuDetailId: number; quantity: number; type: string }) => {
+      const { data } = await patchCartsApi({ menuDetailId: params.menuDetailId, quantity: params.quantity });
       if (data.code === 200) {
         return params;
       }
     },
     {
       onSuccess: async (params) => {
-        const { menuDetailId, quantity } = params!;
+        const { menuDetailId, quantity, type } = params!;
 
         const sliced = cartItemList.slice();
         const changedCartItemList = changedQuantityHandler(sliced, menuDetailId, quantity);
-
         reorderCartList(changedCartItemList);
+
+        const menuDetailsCount = changedCartItemList.reduce((total: number, menus: any) => {
+          return menus.menuDetails.reduce((acc: number, cur: any) => {
+            return total + cur.quantity;
+          }, 0);
+        }, 0);
+
+        setDisposableList(
+          disposableList.map((item) => {
+            const plus = type === 'plus';
+            const minimum = item.quantity === menuDetailsCount;
+            return { ...item, quantity: plus ? item.quantity + 1 : !minimum ? item.quantity - 1 : menuDetailsCount };
+          })
+        );
       },
       onError: () => {
-        dispatch(SET_ALERT({ alertMessage: '실패했습니다.' }));
+        dispatch(SET_ALERT({ alertMessage: '다시 시도해주세요.' }));
       },
     }
   );
@@ -389,7 +397,7 @@ const CartPage = () => {
     const checkedDisposable = getCookie({ name: 'disposableChecked' });
     let editDisposableList: any = [];
 
-    list?.cartMenus?.forEach((item: any) => {
+    list?.forEach((item: any) => {
       item.menuDetails?.forEach((menuDetail: any) => {
         editDisposableList = menuDetail.menuDetailOptions?.map((detail: any) => {
           const found = editDisposableList?.find((item: any) => item.id === detail.id);
@@ -764,7 +772,9 @@ const CartPage = () => {
       const parmas = {
         menuDetailId,
         quantity,
+        type: 'plus',
       };
+
       mutateItemQuantity(parmas);
     }
   };
@@ -780,6 +790,7 @@ const CartPage = () => {
     const parmas = {
       menuDetailId,
       quantity,
+      type: 'minus',
     };
 
     mutateItemQuantity(parmas);
