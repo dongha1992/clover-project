@@ -1808,7 +1808,7 @@ export interface IMenuDetails {
     menuDetailAvailabilityMessage: string;
     menuDetailId: number;
     remainingQuantity: number;
-  }
+  };
 }
 
 export interface IBestReviews {
@@ -2193,11 +2193,13 @@ export interface IMenuDetailsInCart {
   discountRate: number | null;
   id: number;
   menuId?: number;
+  holiday: number[][] | null;
+  menuDetailOptions: IMenuDetailOptions[];
   // menuQuantity?: number;
 }
 export interface IGetCart {
   menuId?: number;
-  holiday: number[][] | null;
+  // holiday: number[][] | null;
   name: string;
   image: {
     id: number;
