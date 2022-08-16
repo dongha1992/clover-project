@@ -27,7 +27,7 @@ const PromotionDetailPage = () => {
     error: listError,
     isLoading,
   } = useQuery(
-    'getRecommendMenus',
+    'getExhibitionMenus',
     async () => {
       const { data } = await getExhibitionInquireApi(id!);
       setItems(data.data);
