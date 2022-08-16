@@ -4,6 +4,8 @@ import Image from '@components/Shared/Image';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_EVENT_TITLE, INIT_EVENT_TITLE } from '@store/event';
+import { TextB3R } from '@components/Shared/Text';
+import { theme } from '@styles/theme';
 
 const EVENT_BANNER = [
   {
@@ -72,20 +74,25 @@ const EventPage = () => {
   return (
     <Container>
       {
-        EVENT_BANNER.map((item, idx)=> {
-          return (
-            <BannerWrapper key={idx} onClick={() => goToEvent(item.promotion, item.id, item.edit, item.title)}>
-              <Image
-                src={item.img}
-                height="300px"
-                width="512px"
-                layout="responsive"
-                alt="기획전"
-              />
-            </BannerWrapper>
-          )
-        })
-      
+        EVENT_BANNER.length > 0 ? (
+          EVENT_BANNER.map((item, idx)=> {
+            return (
+              <BannerWrapper key={idx} onClick={() => goToEvent(item.promotion, item.id, item.edit, item.title)}>
+                <Image
+                  src={item.img}
+                  height="300px"
+                  width="512px"
+                  layout="responsive"
+                  alt="기획전"
+                />
+              </BannerWrapper>
+            )
+          })
+        ) : (
+          <NoneEventList>
+            <TextB3R color={theme.greyScale65}>이벤트·소식이 없어요. 😭</TextB3R>
+          </NoneEventList>
+        )
       }
     </Container>
   )
@@ -97,6 +104,14 @@ const Container = styled.div`
 
 const BannerWrapper = styled.div`
   width: 100%;
+`;
+
+const NoneEventList = styled.div`
+  width: 100%;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default EventPage;

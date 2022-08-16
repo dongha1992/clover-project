@@ -40,10 +40,6 @@ const PromotionDetailPage = () => {
     }
   );
 
-  const goToSpot = () => {
-    // router.push('/subscription/products?tab=spot');
-  };
-
   if(isLoading){
     return <div>로딩..</div>;
   };
