@@ -98,6 +98,7 @@ const CartPage = () => {
     name: '',
   });
   const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [holiday, setHoliday] = useState<string[]>([]);
 
   const calendarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -162,6 +163,7 @@ const CartPage = () => {
           dispatch(SET_CART_LISTS(data));
           if (isFirstRender) {
             setDisposableList(initMenuOptions(data));
+            setHoliday(formatHoliday());
           }
         } catch (error) {
           console.error(error);
@@ -375,13 +377,21 @@ const CartPage = () => {
   //   });
   // };
 
-  const initMenuOptions = (list) => {
+  const formatHoliday = () => {
+    const holidays = checkedMenus?.flatMap((item) =>
+      item?.menuDetails?.flatMap((detail) => detail?.holiday?.map((holiday) => holiday!))
+    )!;
+
+    return getUniqueInArray(holidays!);
+  };
+
+  const initMenuOptions = (list: any) => {
     const checkedDisposable = getCookie({ name: 'disposableChecked' });
     let editDisposableList: any = [];
 
-    list?.cartMenus?.forEach((item) => {
-      item.menuDetails?.forEach((menuDetail) => {
-        editDisposableList = menuDetail.menuDetailOptions?.map((detail) => {
+    list?.cartMenus?.forEach((item: any) => {
+      item.menuDetails?.forEach((menuDetail: any) => {
+        editDisposableList = menuDetail.menuDetailOptions?.map((detail: any) => {
           const found = editDisposableList?.find((item: any) => item.id === detail.id);
           if (found) {
             const isSelected = checkedDisposable ? checkedDisposable.includes(detail.id) : true;
@@ -748,7 +758,6 @@ const CartPage = () => {
     if (!me) {
       const sliced = cartItemList.slice();
       const changedCartItemList = changedQuantityHandler(sliced, menuDetailId, quantity);
-
       reorderCartList(changedCartItemList);
       return;
     } else {
@@ -919,7 +928,7 @@ const CartPage = () => {
     return list?.filter((item) => !item.isSold && !checkIsAllSoldout(item.menuDetails))!;
   };
 
-  const getUniqueInArray = (list: (number[] | null)[]) => {
+  const getUniqueInArray = (list: (number[] | undefined)[]) => {
     const getUnique: string[] = [];
 
     list?.forEach((item, index) => {
@@ -930,9 +939,8 @@ const CartPage = () => {
     });
     return getUnique;
   };
+
   const checkCanOrderThatDate = () => {
-    const holidays = checkedMenus.flatMap((item) => item.holiday)!;
-    const uniqueHolidays = getUniqueInArray(holidays!);
     const formatDate = selectedDeliveryDay
       .split('-')
       .map((item, index) => {
@@ -943,7 +951,7 @@ const CartPage = () => {
       })
       .join(',');
 
-    return !uniqueHolidays.includes(formatDate);
+    return !formatHoliday().includes(formatDate);
   };
 
   const goToDeliveryInfo = () => {
@@ -1394,7 +1402,7 @@ const CartPage = () => {
               })}
             </FlexBetween>
             <Calendar
-              disabledDates={[]}
+              disabledDates={holiday}
               subOrderDelivery={subOrderDelivery}
               selectedDeliveryDay={selectedDeliveryDay}
               changeDeliveryDate={changeDeliveryDate}
