@@ -67,6 +67,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import 'swiper/css';
+import { latest } from 'immer/dist/internal';
 
 dayjs.locale('ko');
 
@@ -160,13 +161,7 @@ const CartPage = () => {
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
           if (isFirstRender) {
-            const checkedDisposable = getCookie({ name: 'disposableChecked' });
-            setDisposableList(
-              data?.menuDetailOptions?.map((item) => {
-                const isSelected = checkedDisposable ? checkedDisposable.includes(item.id) : true;
-                return { ...item, isSelected: isSelected };
-              })
-            );
+            setDisposableList(initMenuOptions(data));
           }
         } catch (error) {
           console.error(error);
@@ -379,6 +374,25 @@ const CartPage = () => {
   //     }
   //   });
   // };
+
+  const initMenuOptions = (list) => {
+    const checkedDisposable = getCookie({ name: 'disposableChecked' });
+    let editDisposableList: any = [];
+
+    list?.cartMenus?.forEach((item) => {
+      item.menuDetails?.forEach((menuDetail) => {
+        editDisposableList = menuDetail.menuDetailOptions?.map((detail) => {
+          const found = editDisposableList?.find((item: any) => item.id === detail.id);
+          if (found) {
+            const isSelected = checkedDisposable ? checkedDisposable.includes(detail.id) : true;
+            return { ...detail, quantity: found.quantity + detail.quantity, isSelected };
+          }
+          return detail;
+        });
+      });
+    });
+    return editDisposableList;
+  };
 
   const reorderLikeMenus = (menus: IMenus[]) => {
     let copiedMenus = menus.slice();
