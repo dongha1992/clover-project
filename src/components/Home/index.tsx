@@ -23,6 +23,7 @@ import { IMenus } from '@model/index';
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
   const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
+  const [mainContents, setMainContents] = useState<any[]>([]);
   const router = useRouter();
   const { type } = useSelector(filterSelector);
   const dispatch = useDispatch();
@@ -53,14 +54,15 @@ const Home = () => {
   );
 
   const {
-    data: mainContents,
+    data: contents,
     error: exhiError,
     isLoading: isLoadingExhibition,
   } = useQuery(
-    'getRecommendMenus',
+    ['getExhibitionMenus'],
     async () => {
       const { data } = await getMainPromotionContentsApi();
-      return data.data.mainContents;
+      setMainContents(data.data.mainContents);
+      return data.data.mainContents.find(i => i.exhibition?.type === 'MD_RECOMMENDED')?.exhibition.menus;
     },
     { refetchOnMount: true, refetchOnWindowFocus: false, }
   );
@@ -77,7 +79,7 @@ const Home = () => {
   return (
     <Container>
         <Container>
-            <Carousel images={bannerList.map(banner => ({ src: banner.image.url }))} />
+          <Carousel images={bannerList.map(banner => ({ src: banner.image.url }))} />
         </Container>
       <SectionWrapper>
         <MainTab />
@@ -101,8 +103,8 @@ const Home = () => {
                     </FlexSpace>
                     <SectionWrapper>
                       <FlexWrapWrapper>
-                        {item?.exhibition.menus?.length! > 0
-                          ? item?.exhibition.menus?.map((item: IMenus, index: number) => {
+                        {contents?.length! > 0
+                          ? contents?.map((item: IMenus, index: number) => {
                               if (index > 3) return;
                               return <Item item={item} key={index} />;
                             })
