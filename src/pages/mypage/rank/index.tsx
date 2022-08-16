@@ -9,6 +9,7 @@ import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { useQuery } from 'react-query';
 import { getUserGradeApi } from '@api/user';
+import { getFormatPrice } from '@utils/common';
 
 const RankPage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
@@ -49,7 +50,7 @@ const RankPage = () => {
             <UserRankInfo title="적립금" count={userGrade?.userGrade.benefit.accrualRate} id={1} />
           </FlexCol>
           <BorderLine height={1} margin="24px 0" />
-          {userGrade?.expectedUserGrade.isLast ? (
+          {userGrade?.expectedUserGrade?.nextUserGrade?.isLast ? (
             <FlexCol padding="0 0 48px 0">
               <FlexRow>
                 <TextH5B>{userGrade?.userGrade.name}</TextH5B>
@@ -66,7 +67,9 @@ const RankPage = () => {
                 <TextH5B>{userGrade?.expectedUserGrade?.name!}</TextH5B>,
               </FlexRow>
               <FlexRow>
-                <TextH4B color={theme.brandColor}>{userGrade?.expectedUserGrade?.insufficientAmount!}원</TextH4B>
+                <TextH4B color={theme.brandColor}>
+                  {getFormatPrice(String(userGrade?.expectedUserGrade?.nextUserGrade?.insufficientAmount!))}원
+                </TextH4B>
                 <TextB2R padding="0 0 0 4px">더 구매하면 </TextB2R>
                 <TextH5B>{userGrade?.expectedUserGrade?.nextUserGrade?.name!}</TextH5B>
                 <TextB2R>이 돼요</TextB2R>
