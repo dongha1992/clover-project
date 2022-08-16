@@ -39,7 +39,7 @@ const SubsDetailPage = () => {
   const [detailId, setDetailId] = useState<any>();
   const [deliveryDay, setDeliveryDay] = useState<any>();
   const [subDeliveries, setSubDeliveries] = useState<number[]>([]);
-
+  const [completedDeliveryCount, setCompletedDeliveryCount] = useState<number>();
   useEffect(() => {
     return () => {
       dispatch(INIT_BOTTOM_SHEET());
@@ -56,6 +56,7 @@ const SubsDetailPage = () => {
     onSuccess: (data: IOrderDetail) => {
       let pickupDayObj = new Set();
       let subArr: number[] = [];
+      let deliveryCount = 0;
       data.orderDeliveries.forEach((o) => {
         pickupDayObj.add(dayjs(o.deliveryDate).format('dd'));
         if (
@@ -66,8 +67,12 @@ const SubsDetailPage = () => {
         ) {
           subArr.push(o.subOrderDelivery.order.id);
         }
+        if (o.status === 'PREPARING' || o.status === 'DELIVERING' || o.status === 'COMPLETED') {
+          deliveryCount += 1;
+        }
       });
       setSubDeliveries(subArr);
+      setCompletedDeliveryCount(deliveryCount);
       setDeliveryDay(Array.from(pickupDayObj));
     },
     refetchOnMount: true,
@@ -313,8 +318,13 @@ const SubsDetailPage = () => {
             <RefundInfoBox
               totalPayAmount={orderDetail?.payAmount + orderDetail?.point}
               totalRefundAmount={orderDetail?.refundPayAmount + orderDetail?.refundPoint}
-              completedDeliveryCount={orderDetail?.completedDeliveryCount ?? 0}
-              completedAmount={orderDetail?.completedAmount ?? 0}
+              completedDeliveryCount={completedDeliveryCount ?? 0}
+              completedAmount={
+                orderDetail?.menuAmount +
+                  orderDetail?.optionAmount -
+                  orderDetail?.refundMenuAmount -
+                  orderDetail?.refundOptionAmount ?? 0
+              }
               partialRefundAmount={0}
               refundPoint={orderDetail?.refundPoint}
               refundCoupon={orderDetail?.refundCoupon}
