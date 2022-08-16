@@ -2194,8 +2194,8 @@ export interface IMenuDetailsInCart {
   discountRate: number | null;
   id: number;
   menuId?: number;
-  holiday: number[][] | null;
-  menuDetailOptions: IMenuDetailOptions[];
+  holiday?: number[][] | null;
+  menuDetailOptions?: IMenuDetailOptions[];
   // menuQuantity?: number;
 }
 export interface IGetCart {
