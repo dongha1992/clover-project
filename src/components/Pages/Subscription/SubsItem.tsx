@@ -62,7 +62,7 @@ const SubsItem = ({ item, height, width }: IProps) => {
     },
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getSubscriptionMenus'], (previous: any) => {
+        queryClient.setQueryData(['getExhibitionMenus'], (previous: any) => {
           if (previous) {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
@@ -86,7 +86,7 @@ const SubsItem = ({ item, height, width }: IProps) => {
     },
     {
       onSuccess: async () => {
-        queryClient.setQueryData(['getSubscriptionMenus'], (previous: any) => {
+        queryClient.setQueryData(['getExhibitionMenus'], (previous: any) => {
           if (previous) {
             return onMenuLikes({ previous, id: item.id, likeCount: item.likeCount, liked: item.liked });
           }
@@ -132,7 +132,7 @@ const SubsItem = ({ item, height, width }: IProps) => {
   return (
     <ItemBox width={width}>
       <ImageWrapper height={height} onClick={goToDetail}>
-        <Image src={item.thumbnail[0].url} alt="상품이미지" width={'100%'} height={'100%'} layout="responsive" />
+        <Image src={item?.thumbnail[0]?.url} alt="상품이미지" width={'100%'} height={'100%'} layout="responsive" />
 
         <LabelArea>
           {badgeMessage && <Badge message={badgeMessage} />}

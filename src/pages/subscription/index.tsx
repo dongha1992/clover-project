@@ -20,7 +20,7 @@ const SubscriptiopPage = () => {
   const { me } = useSelector(userForm);
 
   const { data: menus, isLoading: isMenusLoading } = useQuery(
-    'getSubscriptionMenus',
+    'getExhibitionMenus',
     async () => {
       const params = { categories: '', keyword: '', type: 'SUBSCRIPTION' };
 

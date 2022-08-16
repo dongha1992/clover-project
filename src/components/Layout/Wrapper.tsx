@@ -55,7 +55,7 @@ const Wrapper: React.FC = ({ children }) => {
     <>
       <Container>
         <Center>
-          <Loading isShow={loadingState.isShown}></Loading>
+          <Loading isShow={loadingState?.isShown}></Loading>
           {alert && (
             <Alert
               alertMessage={alert.alertMessage}

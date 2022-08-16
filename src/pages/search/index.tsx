@@ -28,7 +28,7 @@ const SearchPage = () => {
     error: mdMenuError,
     isLoading: mdIsLoading,
   } = useQuery(
-    'getRecommendMenus',
+    'getExhibitionMenus',
     async () => {
       const { data } = await getExhibitionMdRecommendApi();
       return checkIsSold(data.data.menus);

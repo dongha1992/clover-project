@@ -76,12 +76,6 @@ const LocationPage = () => {
 
   useEffect(()=>{
     if(currentLocation){
-      dispatch(
-        SET_SPOT_POSITIONS({
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
-        })
-      );
       onLoadKakaoCurrentPositionAddress(currentLocation.latitude, currentLocation.longitude);
     };
 
