@@ -9,6 +9,7 @@ import { userForm } from '@store/user';
 import { onUnauthorized } from '@api/Api';
 import { useQuery } from 'react-query';
 import { getUserGradeApi } from '@api/user';
+import { getFormatPrice } from '@utils/common';
 
 const RankPage = () => {
   const { me, isLoginSuccess } = useSelector(userForm);
@@ -33,7 +34,7 @@ const RankPage = () => {
       onSuccess: (data) => {},
     }
   );
-
+  console.log(userGrade, 'userGrade');
   return (
     <Container>
       {isLoginSuccess ? (
@@ -49,7 +50,7 @@ const RankPage = () => {
             <UserRankInfo title="적립금" count={userGrade?.userGrade.benefit.accrualRate} id={1} />
           </FlexCol>
           <BorderLine height={1} margin="24px 0" />
-          {userGrade?.userGrade.isLast ? (
+          {userGrade?.expectedUserGrade?.nextUserGrade?.isLast ? (
             <FlexCol padding="0 0 48px 0">
               <FlexRow>
                 <TextH5B>{userGrade?.userGrade.name}</TextH5B>
@@ -66,7 +67,9 @@ const RankPage = () => {
                 <TextH5B>{userGrade?.expectedUserGrade?.name!}</TextH5B>,
               </FlexRow>
               <FlexRow>
-                <TextH4B color={theme.brandColor}>{userGrade?.expectedUserGrade?.insufficientAmount!}원</TextH4B>
+                <TextH4B color={theme.brandColor}>
+                  {getFormatPrice(String(userGrade?.expectedUserGrade?.nextUserGrade?.insufficientAmount!))}원
+                </TextH4B>
                 <TextB2R padding="0 0 0 4px">더 구매하면 </TextB2R>
                 <TextH5B>{userGrade?.expectedUserGrade?.nextUserGrade?.name!}</TextH5B>
                 <TextB2R>이 돼요</TextB2R>
@@ -106,10 +109,13 @@ const RankPage = () => {
         </Wrapper>
       </BrandColor5>
       <PaddingWrapper>
-        <RankInfo name="신규회원" desc="전월 구매내역이 없는 고객" benefit2="신규회원혜택 사용 가능" />
+        {userGrade?.userGrades.map((item, index) => {
+          return <RankInfo name={item.name} desc={item.description} key={index} />;
+        })}
+        {/* <RankInfo name="신규회원" desc="전월 구매내역이 없는 고객" benefit2="신규회원혜택 사용 가능" />
         <RankInfo name="프코팡" desc="전월 5만원 미만 구매고객" benefit1="적립금 0.5%" />
         <RankInfo name="프코팡팡" desc="전월 5만원 이상 20만원 미만 구매고객" benefit1="적립금 1%" />
-        <RankInfo name="프코팡팡팡" desc="전월 20만원 이상 구매고객" benefit1="적립금 1.5%" isLast />
+        <RankInfo name="프코팡팡팡" desc="전월 20만원 이상 구매고객" benefit1="적립금 1.5%" isLast /> */}
       </PaddingWrapper>
       <PleaseCheck>
         <TextH5B color={theme.greyScale65} padding="24px 0 0 0">
