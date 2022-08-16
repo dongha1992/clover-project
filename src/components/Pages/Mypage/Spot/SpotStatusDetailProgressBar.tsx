@@ -164,22 +164,22 @@ const SpotStatusDetailProgressBar = ({ item }: IParams) => {
         {
           item?.rejected || item?.trialUserCount! >= item?.trialTargetUserCount! ? (
             <>
-              <TextH4B padding="24px 24px 16px 24px">{spotOpenRejectedText()?.title}</TextH4B>
-              <TextB3R padding="0 24px 0 24px" textDecoration='underline' pointer onClick={handleSpotRejectedNotice}>오픈 미진행 안내 보기</TextB3R>
+              <TextH4B color={theme.white} padding="24px 24px 16px 24px">{spotOpenRejectedText()?.title}</TextH4B>
+              <TextB3R color={theme.white} padding="0 24px 0 24px" textDecoration='underline' pointer onClick={handleSpotRejectedNotice}>오픈 미진행 안내 보기</TextB3R>
             </>
           ) : (
             <>
-              <TextH4B padding="24px 24px 16px 24px">{progressStepType()?.title}</TextH4B>
+              <TextH4B color={theme.white} padding="24px 24px 16px 24px">{progressStepType()?.title}</TextH4B>
               {
                 item?.step === 'TRIAL' ? (
                   progressStepType()?.subtitle && 
-                  <TextB3R padding="0 24px 0 24px">
+                  <TextB3R color={theme.white} padding="0 24px 0 24px">
                     <Text12>{`${formtrialStart} ~ ${formtrialEnd}`}</Text12>
                     {progressStepType()?.subtitle}
                   </TextB3R>
                 ) : (
                   progressStepType()?.subtitle && 
-                    <TextB2R padding="0 24px 0 24px">{progressStepType()?.subtitle}</TextB2R>
+                    <TextB2R color={theme.white} padding="0 24px 0 24px">{progressStepType()?.subtitle}</TextB2R>
                 )
               }
             </>
