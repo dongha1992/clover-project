@@ -401,14 +401,15 @@ const CartPage = () => {
       item.menuDetails?.forEach((menuDetail: any) => {
         editDisposableList = menuDetail.menuDetailOptions?.map((detail: any) => {
           const found = editDisposableList?.find((item: any) => item.id === detail.id);
+          const isSelected = checkedDisposable ? checkedDisposable.includes(detail.id) : true;
           if (found) {
-            const isSelected = checkedDisposable ? checkedDisposable.includes(detail.id) : true;
             return { ...detail, quantity: found.quantity + detail.quantity, isSelected };
           }
-          return detail;
+          return { ...detail, isSelected };
         });
       });
     });
+
     return editDisposableList;
   };
 
