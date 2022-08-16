@@ -132,11 +132,11 @@ export const getLikeMenus = (menuPattern: string): Promise<AxiosResponse<any>> =
 };
 
 export const postLikeMenus = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {
-  return Api.post(`menu/v1/like/${menuId}`);
+  return Api.post(`/menu/v1/menus/${menuId}/like`);
 };
 
 export const deleteLikeMenus = ({ menuId }: { menuId: number }): Promise<AxiosResponse<IResponse>> => {
-  return Api.delete(`menu/v1/like/${menuId}`);
+  return Api.delete(`/menu/v1/menus/${menuId}/like`);
 };
 
 export const getRecommendMenusApi = (): Promise<AxiosResponse<IGetMenusResponse>> => {

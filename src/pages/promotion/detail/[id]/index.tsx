@@ -27,7 +27,7 @@ const PromotionDetailPage = () => {
     error: listError,
     isLoading,
   } = useQuery(
-    'getRecommendMenus',
+    'getExhibitionMenus',
     async () => {
       const { data } = await getExhibitionInquireApi(id!);
       setItems(data.data);
@@ -39,10 +39,6 @@ const PromotionDetailPage = () => {
       enabled: !!id, 
     }
   );
-
-  const goToSpot = () => {
-    // router.push('/subscription/products?tab=spot');
-  };
 
   if(isLoading){
     return <div>로딩..</div>;

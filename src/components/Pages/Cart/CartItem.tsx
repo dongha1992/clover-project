@@ -47,7 +47,7 @@ const CartItem = ({
             removeCartActualItemHandler={removeCartActualItemHandler}
             menuDetail={menuDetail}
             menuId={menu?.menuId!}
-            holiday={menu.holiday}
+            holiday={menuDetail.holiday}
             menuName={menu.name}
           />
         );
