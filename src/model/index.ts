@@ -230,6 +230,7 @@ export interface IUserGrade {
   level: number;
   name: string;
   nextUserGrade?: IUserGrade;
+  description?: string;
 }
 export interface IUserGradeResponse {
   code: number;

@@ -10,6 +10,9 @@ import { IMenuDetailsInCart } from '@model/index';
 import { getDiscountPrice } from '@utils/menu';
 import { getFormatPrice } from '@utils/common';
 import { getHolidayByMenu } from '@utils/menu';
+import { getCustomDate } from '@utils/destination';
+
+const VALID_DAYS = 14;
 
 interface IProps {
   removeCartActualItemHandler: ({
@@ -44,9 +47,21 @@ const CartActualItem = ({
   });
 
   const { menuDetailAvailabilityMessage, availability, remainingQuantity } = menuDetail?.availabilityInfo;
+  const { years: curYear, months: curMonth, dates: curDay } = getCustomDate(new Date());
 
   const isSold = menuDetail.isSold;
-  const hasHoliday = holiday?.length! > 0;
+  const isValidHoliday =
+    holiday?.filter((item) => {
+      const year = item[0];
+      const month = item[1];
+      const day = item[2];
+      const sameYear = year === curYear;
+      const sameMonth = month === curMonth + 1;
+      const withInTwoWeeks = curDay + VALID_DAYS <= day;
+      if (sameYear && sameMonth && withInTwoWeeks) {
+        return item;
+      }
+    }).length !== 0;
 
   // TODO: MENU_DETAIL_SOLD CASE
 
@@ -140,7 +155,7 @@ const CartActualItem = ({
           <InfoContainer>
             <FlexCol>
               {!defaultStatus ? <InfoMessage message={checkMenuStatus()} /> : <div />}
-              {!soldCases && hasHoliday ? (
+              {!soldCases && isValidHoliday ? (
                 <InfoMessage message={`${getHolidayByMenu(holiday!)} 배송이 불가능해요`} />
               ) : (
                 <div />
