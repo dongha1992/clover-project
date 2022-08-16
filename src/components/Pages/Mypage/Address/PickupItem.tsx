@@ -87,7 +87,7 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
           <FlexRow>
             <TextH5B padding="0 8px 0 0">{name}</TextH5B>
             {spotPickup?.spot.isTrial ? (
-              <Tag margin="0 4px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+              <Tag margin="0 4px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale65}>
                 트라이얼
               </Tag>
             ) : spotPickup?.spot.type === 'PRIVATE' ? (
@@ -96,7 +96,7 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
               </Tag>
             ) : null}
             {main && (
-              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+              <Tag backgroundColor={theme.greyScale6} color={theme.greyScale65}>
                 기본 프코스팟
               </Tag>
             )}

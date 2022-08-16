@@ -466,7 +466,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
           {!item.isClosed && (
             <>
               {item?.isTrial ? (
-                <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale45}>
+                <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale65}>
                   트라이얼
                 </Tag>
               ) : item?.type === 'PRIVATE' ? (

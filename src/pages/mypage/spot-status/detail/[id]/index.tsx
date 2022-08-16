@@ -242,7 +242,7 @@ const SpotStatusDetailPage = (): ReactElement => {
           <Tag color={theme.brandColor} backgroundColor={theme.brandColor5P} margin="0 4px 0 0">
             {tagType()}
           </Tag>
-          <Tag>{spotStatusStep(statusDetail!)}</Tag>
+          <Tag backgroundColor={theme.greyScale6} color={theme.greyScale65}>{spotStatusStep(statusDetail!)}</Tag>
         </Flex>
         <TextH2B margin="0 0 4px 0">{statusDetail?.placeName}</TextH2B>
         <TextB2R>{`${statusDetail?.location.address} ${statusDetail?.location.addressDetail}`}</TextB2R>
