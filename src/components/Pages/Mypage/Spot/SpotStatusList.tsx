@@ -156,9 +156,9 @@ const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
       <Wrppaer>
         <FlexBetween margin="0 0 6px 0">
           <Flex>
-            <TextH4B color={`${item?.rejected ? theme.greyScale65 : theme.black}`} margin="0 8px 0 0">
+            <TextH5B color={`${item?.rejected ? theme.greyScale65 : theme.black}`} margin="0 8px 0 0">
               {spotStatusStep(item)}
-            </TextH4B>
+            </TextH5B>
             <Tag color={theme.brandColor} backgroundColor={theme.brandColor5P}>
               {spotType(item?.type)}
             </Tag>
