@@ -67,10 +67,12 @@ const Item = ({ item, isHorizontal }: TProps) => {
         });
         queryClient.setQueryData(['getMainContents'], (previous: any) => {
           return previous?.map((_item: any) => {
-            if (_item.exhibition.id === item.id) {
-              return { ..._item, reopenNotificationRequested: false };
-            }
-            return _item;
+            _item?.exhibition?.menus.map((_menus: IMenus)=> {
+              if (_menus.id === item.id) {
+                return { ..._menus, reopenNotificationRequested: false };
+              }
+              return _menus;  
+            })
           });
         });
         showToast({ message: '알림 신청을 완료했어요!' });
@@ -135,11 +137,12 @@ const Item = ({ item, isHorizontal }: TProps) => {
         });
         queryClient.setQueryData(['getMainContents'], (previous: any) => {
           if (previous) {
-            return previous?.map((_item: any) => {
+            previous?.map((_item: any) => {
               if(_item?.exhibition?.type === 'MD_RECOMMENDED'){
+                console.log(_item.exhibition.menus);
                return onMenuLikes({ previous: _item.exhibition.menus, id: item.id, likeCount: item.likeCount, liked: item.liked });
               }
-            })   
+            })
           }
         });
         queryClient.invalidateQueries(['getLikeMenus', 'GENERAL']);
