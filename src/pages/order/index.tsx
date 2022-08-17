@@ -253,11 +253,17 @@ const OrderPage = () => {
           dispatch(SET_RECENT_PAYMENT(selectedOrderMethod));
         }
 
+        if (data.status === 'PROGRESS') {
+          router.replace(`/order/finish?orderId=${data.id}`);
+          return;
+        }
+
         if (selectedOrderMethod === 'NICE_BILLING') {
           router.replace(`/order/finish?orderId=${data.id}`);
-        } else {
-          processOrder(data);
+          return;
         }
+
+        processOrder(data);
         // 완료되면 쿠폰 초기화
         dispatch(INIT_COUPON());
       },
@@ -694,6 +700,7 @@ const OrderPage = () => {
     };
 
     if (checkIsAlreadyPaid(orderData)) return;
+
     try {
       const { data } = await postTossPaymentApi({ orderId, data: reqBody });
       setCookie({

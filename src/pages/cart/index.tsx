@@ -1450,7 +1450,7 @@ const CartPage = () => {
         {me && likeMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
-              <TextH3B padding="0 0 24px 0">{me?.nickname}님이 찜한 상품이에요</TextH3B>
+              <TextH3B padding="12px 0 24px 0">{me?.nickname}님이 찜한 상품이에요</TextH3B>
               <ScrollHorizonListGroup className="swiper-container" slidesPerView={'auto'} spaceBetween={16} speed={500}>
                 {likeMenusList?.map((item: IMenus, index: number) => {
                   if (index > 9) return;
