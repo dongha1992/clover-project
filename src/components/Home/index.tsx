@@ -22,7 +22,6 @@ import { IMenus } from '@model/index';
 
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
-  const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
   const [mainContents, setMainContents] = useState<any[]>([]);
   const router = useRouter();
   const { type } = useSelector(filterSelector);
@@ -39,16 +38,6 @@ const Home = () => {
       const params = { type: 'CAROUSEL', size: 100 };
       const { data } = await getBannersApi(params);
       setBannerList(data.data);
-    },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
-  );
-
-  const { error: eventsError } = useQuery(
-    'eventsBanners',
-    async () => {
-      const params = { type: 'EVENT', size: 100 };
-      const { data } = await getBannersApi(params);
-      setEventBannerList(data.data);
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
@@ -192,6 +181,7 @@ const PromotionBanner = styled.section`
   max-width: 512px;
   width: 100%;
   margin: 24px 0px;
+  cursor: pointer;
 `;
 
 const PromotionWrapper = styled.section`
