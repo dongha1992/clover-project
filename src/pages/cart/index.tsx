@@ -172,7 +172,7 @@ const CartPage = () => {
         }
       },
       onError: (error: any) => {
-        alert(error.message);
+        alert(error);
       },
     }
   );
