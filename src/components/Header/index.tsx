@@ -139,7 +139,7 @@ const Header = () => {
       '/subscription/[detailId]/sub-cancel/complete': '취소완료',
       '/subscription/[detailId]/cancel/complete': '취소완료',
       '/promotion': '기획전',
-      '/event': '이벤트',
+      '/event': '이벤트·소식',
       '/promotion/detail/[id]': `${eventTitle ? eventTitle : '기획전'}`,
     };
 
