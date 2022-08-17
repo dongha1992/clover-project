@@ -77,12 +77,12 @@ const InviteFriendPaage = () => {
         let alertMessage = '';
         let alertSubMessage = '';
         if (error.code === 2201) {
-          alertMessage = '이미 등록된 초대코드예요.';
+          alertMessage = '이미 초대코드를 등록했어요.';
           alertSubMessage = '(초대코드는 총 1회 등록 가능해요.)';
         } else if (error.code === 1105) {
           alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
         } else if (1101) {
-          alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요..';
+          alertMessage = '유효하지 않은 코드예요. 다시 한번 확인해 주세요.';
         } else {
           alertMessage = error.message;
         }
