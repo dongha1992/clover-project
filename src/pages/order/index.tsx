@@ -225,6 +225,9 @@ const OrderPage = () => {
       const { point, payAmount, deliveryMessage, receiverName, receiverTel, coupon, deliveryMessageReused, ...rest } =
         previewOrder?.order!;
 
+      const hasMsg = userInputObj?.deliveryMessage.length !== 0;
+      const hasMsgType = userInputObj.deliveryMessageType.length !== 0;
+
       dispatch(SET_IS_LOADING(true));
 
       const reqBody = {
@@ -233,9 +236,8 @@ const OrderPage = () => {
         point: userInputObj?.point,
         payAmount: payAmount - (userInputObj.point + (userInputObj.coupon! || 0)),
         couponId: selectedCoupon?.id! || null,
-        deliveryMessage: userInputObj?.deliveryMessage,
-        // deliveryMessageType: userAccessMethod?.value.toString(),
-        deliveryMessageType: userInputObj.deliveryMessageType,
+        deliveryMessage: hasMsg ? userInputObj?.deliveryMessage : null,
+        deliveryMessageType: hasMsgType ? userInputObj.deliveryMessageType : null,
         receiverName: userInputObj?.receiverName!,
         receiverTel: userInputObj?.receiverTel!,
         deliveryMessageReused: checkForm?.accessMethodReuse.isSelected
