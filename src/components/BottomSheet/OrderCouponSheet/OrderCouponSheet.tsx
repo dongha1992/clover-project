@@ -5,11 +5,9 @@ import TextInput from '@components/Shared/TextInput';
 import { Button } from '@components/Shared/Button';
 import { TextH4B, TextH5B } from '@components/Shared/Text';
 import { MypageCouponItem } from '@components/BottomSheet/CouponSheet';
-import { useRouter } from 'next/router';
 import { couponForm, INIT_COUPON, SET_USER_SELECT_COUPON } from '@store/coupon';
 import { useDispatch, useSelector } from 'react-redux';
 import { ICoupon } from '@model/index';
-import { useMutation, useQueryClient } from 'react-query';
 import { SVGIcon } from '@utils/common';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
@@ -25,14 +23,28 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (selectedCoupon) setUseSelectedCoupon(selectedCoupon);
+  }, []);
+
   const goToOrder = () => {
     dispatch(INIT_BOTTOM_SHEET());
     dispatch(SET_USER_SELECT_COUPON(useSelectedCoupon!));
+    if (useSelectedCoupon === selectedCoupon) {
+      dispatch(INIT_COUPON());
+    } else {
+      dispatch(SET_USER_SELECT_COUPON(useSelectedCoupon!));
+    }
   };
 
   const selectCouponHandler = (coupon: ICoupon): void => {
     setUseSelectedCoupon(coupon);
-    console.log(coupon, '--');
+
+    if (useSelectedCoupon === selectedCoupon) {
+      setUseSelectedCoupon(null);
+    } else {
+      setUseSelectedCoupon(coupon);
+    }
   };
 
   const registerPromotionCode = () => {};
