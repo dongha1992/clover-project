@@ -18,6 +18,7 @@ import styled from 'styled-components';
 import MenuPriceBox from '../payment/MenuPriceBox';
 import DeliveryInfoGuidBox from './GuideBox/DeliveryInfoGuidBox';
 import DietGuideBox from './GuideBox/DietGuideBox';
+import { MorningPickupPlace, ParcelPickupPlace, SpotPickupPlace } from './pickupPlace';
 
 interface IProps {
   item: any;
@@ -155,56 +156,34 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
             <TextH5B>휴대폰 번호</TextH5B>
             <TextB2R>{item.receiverTel.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`)}</TextB2R>
           </FlexBetween>
-          {item.delivery === 'SPOT' ? (
-            <>
-              <FlexBetween padding="0 0 16px">
-                <TextH5B>배송방법</TextH5B>
-                <TextB2R>
-                  {DELIVERY_TYPE_MAP[item.delivery]} - {DELIVERY_TIME_MAP[item.deliveryDetail]}
-                </TextB2R>
-              </FlexBetween>
-              <FlexBetweenStart padding="0 0 24px">
-                <TextH5B>픽업장소</TextH5B>
-                <FlexColEnd>
-                  <TextB2R>
-                    {item.spotName} {item.spotPickupName}
-                  </TextB2R>
-                  <TextB3R color="#717171">
-                    {item.location.address}
-                    {item.location.addressDetail}
-                  </TextB3R>
-                </FlexColEnd>
-              </FlexBetweenStart>
-            </>
-          ) : (
-            <>
-              <FlexBetween padding="0 0 16px">
-                <TextH5B>배송방법</TextH5B>
-                <TextB2R>{DELIVERY_TYPE_MAP[item.delivery]}</TextB2R>
-              </FlexBetween>
-              {subsFailType === 'destination' ? (
-                <FlexBetweenStart padding="0 0 16px">
-                  <TextH5B>픽업장소</TextH5B>
-                  <FlexColEnd>
-                    <FlexRow>
-                      <SVGIcon name="exclamationMark" />
-                      <TextB2R padding="2.5px 0 0 4px" className="textRight">
-                        {item.location.address}
-                      </TextB2R>
-                    </FlexRow>
-                    <TextB2R className="textRight">{item.location.addressDetail}</TextB2R>
-                  </FlexColEnd>
-                </FlexBetweenStart>
-              ) : (
-                <FlexBetweenStart padding="0 0 24px">
-                  <TextH5B>배송지</TextH5B>
-                  <FlexColEnd>
-                    <TextB2R className="textRight">{item.location.address}</TextB2R>
-                    <TextB2R className="textRight">{item.location.addressDetail}</TextB2R>
-                  </FlexColEnd>
-                </FlexBetweenStart>
-              )}
-            </>
+          {item.delivery === 'SPOT' && (
+            <SpotPickupPlace
+              spotName={item.spotName}
+              spotPickupName={item.spotPickupName}
+              delivery={item.delivery}
+              deliveryDetail={item.deliveryDetail}
+              address={item.location.address}
+              isFail={!!subsFailType}
+            />
+          )}
+          {item.delivery === 'PARCEL' && (
+            <ParcelPickupPlace
+              delivery={item.delivery}
+              deliveryMessage={item.deliveryMessage}
+              address={item.location.address}
+              addressDetail={item.location.addressDetail}
+              isFail={!!subsFailType}
+            />
+          )}
+          {item.delivery === 'MORNING' && (
+            <MorningPickupPlace
+              delivery={item.delivery}
+              deliveryMessageType={item.deliveryMessageType}
+              deliveryMessage={item.deliveryMessage}
+              address={item.location.address}
+              addressDetail={item.location.addressDetail}
+              isFail={!!subsFailType}
+            />
           )}
           {subsFailType === 'destination' && <DeliveryInfoGuidBox />}
 

@@ -407,6 +407,8 @@ const Badge = styled.div`
   padding: 4px 8px;
   margin-right: 4px;
   background-color: ${theme.brandColor5P};
-  color: ${theme.brandColor};
+  div {
+    color: ${theme.brandColor};
+  }
 `;
 export default SubsDetailPage;
