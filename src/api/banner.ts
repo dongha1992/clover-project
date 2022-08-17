@@ -8,7 +8,7 @@ export const getBannersApi = (
   return Api.get('banner/v1/banners', { params });
 };
 
-export const getBannerApi = (
+export const getBannerDetailApi = (
   id: number
 ): Promise<AxiosResponse<IGetBannersResponse>> => {
   return Api.get(`banner/v1/banners/${id}`, { params: id });
