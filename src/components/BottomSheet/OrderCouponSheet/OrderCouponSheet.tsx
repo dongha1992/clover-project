@@ -20,11 +20,6 @@ interface IProps {
 const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
   const { selectedCoupon } = useSelector(couponForm);
   const [useSelectedCoupon, setUseSelectedCoupon] = useState<ICoupon | null>();
-  const router = useRouter();
-
-  useEffect(() => {
-    dispatch(INIT_COUPON());
-  }, []);
 
   const promotionCodeRef = useRef<HTMLInputElement>(null);
 
@@ -37,6 +32,7 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
 
   const selectCouponHandler = (coupon: ICoupon): void => {
     setUseSelectedCoupon(coupon);
+    console.log(coupon, '--');
   };
 
   const registerPromotionCode = () => {};
@@ -45,7 +41,7 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
     dispatch(INIT_BOTTOM_SHEET());
   };
 
-  const isDisabled = useSelectedCoupon !== undefined;
+  // const isDisabled = useSelectedCoupon !== undefined;
 
   return (
     <Container>
@@ -75,7 +71,7 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
           ))}
         </FlexCol>
         <ButtonWrapper onClick={goToOrder}>
-          <Button height="100%" width="100%" borderRadius="0" disabled={!isDisabled}>
+          <Button height="100%" width="100%" borderRadius="0">
             적용하기
           </Button>
         </ButtonWrapper>
