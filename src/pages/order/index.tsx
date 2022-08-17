@@ -191,6 +191,7 @@ const OrderPage = () => {
           // 정기구독은 카드결제만 가능
           setSelectedOrderMethod('NICE_BILLING');
         }
+
         setUserInputObj({
           ...userInputObj,
           receiverName: data?.order.userName!,
@@ -232,7 +233,8 @@ const OrderPage = () => {
         payAmount: payAmount - (userInputObj.point + (userInputObj.coupon! || 0)),
         couponId: selectedCoupon?.id! || null,
         deliveryMessage: userInputObj?.deliveryMessage,
-        deliveryMessageType: userAccessMethod?.value.toString(),
+        // deliveryMessageType: userAccessMethod?.value.toString(),
+        deliveryMessageType: userInputObj.deliveryMessageType,
         receiverName: userInputObj?.receiverName!,
         receiverTel: userInputObj?.receiverTel!,
         deliveryMessageReused: checkForm?.accessMethodReuse.isSelected
@@ -730,13 +732,6 @@ const OrderPage = () => {
       }
     }
 
-    // if (isParcel) {
-    //   if (!userInputObj?.deliveryMessage) {
-    //     dispatch(SET_ALERT({ alertMessage: '출입 메시지를 입력해주세요.' }));
-    //     return;
-    //   }
-    // }
-
     if (userInputObj.receiverName.length === 0 || userInputObj.receiverTel.length === 0) {
       dispatch(SET_ALERT({ alertMessage: '받는 사람 정보를 입력해주세요.' }));
       return;
@@ -850,22 +845,15 @@ const OrderPage = () => {
             receiverName: userName,
             receiverTel: userTel,
           });
-        } else if (userAccessMethod?.value!) {
-          setUserInputObj({
-            ...userInputObj,
-            deliveryMessageType: userAccessMethod?.value!,
-            deliveryMessage: '',
-            receiverName: userName,
-            receiverTel: userTel,
-          });
+          return;
         } else {
           setUserInputObj({
             ...userInputObj,
             receiverName: userName,
             receiverTel: userTel,
           });
+          return;
         }
-        return;
       } else {
         setUserInputObj({
           ...userInputObj,
@@ -878,14 +866,12 @@ const OrderPage = () => {
     }
   }, [previewOrder, userAccessMethod?.value]);
 
-  console.log(userInputObj, 'userInputObj');
-
   useEffect(() => {
     const card = selectedCard
       ? previewOrder?.cards.find((c) => c.id === selectedCard)
       : previewOrder?.cards.find((c) => c.main);
-    setCard(card!);
 
+    setCard(card!);
     setCheckForm({
       ...checkForm,
       accessMethodReuse: { isSelected: previewOrder?.order?.deliveryMessageReused },
@@ -932,10 +918,22 @@ const OrderPage = () => {
   }, []);
 
   useEffect(() => {
+    if (userAccessMethod?.value!) {
+      setUserInputObj({
+        ...userInputObj,
+        deliveryMessageType: userAccessMethod?.value!,
+        deliveryMessage: '',
+        receiverName: userName,
+        receiverTel: userTel,
+      });
+    }
+  }, [userAccessMethod]);
+
+  useEffect(() => {
     return () => {
       // 컴포넌트 마운트 해제될때 선택된쿠폰 초기화
       dispatch(INIT_COUPON());
-      dispatch(INIT_ACCESS_METHOD());
+      // dispatch(INIT_ACCESS_METHOD());
     };
   }, []);
 

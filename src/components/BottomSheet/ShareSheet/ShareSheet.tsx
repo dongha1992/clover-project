@@ -27,6 +27,7 @@ const ShareSheet = ({ customUrl }: IParams) => {
   const { showToast, hideToast } = useToast();
   const shareHandler = (e: React.MouseEvent<HTMLDivElement>, value: string) => {
     let url = customUrl ? customUrl : window.location.href;
+
     const shareMapper: { [index: string]: () => void } = {
       kakao: () => {
         handleKakaoTalk(url);
