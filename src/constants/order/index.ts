@@ -87,8 +87,10 @@ export const PAYMENT_METHOD: Obj = {
   NICE_CARD: '신용카드',
   NICE_BANK: '계좌이체',
   KAKAO_CARD: '카카오페이',
+  KAKAO_MONEY: '카카오페이',
   PAYCO_EASY: '페이코',
   TOSS_CARD: '토스',
+  TOSS_MONEY: '토스',
 };
 
 export const PAYMENT_METHOD_IN_ORDER_PAGE = [
