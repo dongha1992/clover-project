@@ -15,13 +15,22 @@ const MyPageHeader = () => {
   const goToNoti = () => {
     router.push('/mypage/noti');
   };
+
+  const goToSearch = () => {
+    router.push('search');
+  };
+
   return (
     <Container>
       <Wrapper>
         <Right>
-          {isLoginSuccess && (
+          {isLoginSuccess ? (
             <NotiWrapper onClick={goToNoti}>
               <SVGIcon name="notification" />
+            </NotiWrapper>
+          ) : (
+            <NotiWrapper onClick={goToSearch}>
+              <SVGIcon name="searchIcon" />
             </NotiWrapper>
           )}
           <CartWrapper>
