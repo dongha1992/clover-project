@@ -1,66 +1,29 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH5B } from '@components/Shared/Text';
-import ShareSheetItem from './SheetSheetItem';
-import { useSelector, useDispatch } from 'react-redux';
-import { menuSelector } from '@store/menu';
+import { useDispatch } from 'react-redux';
 import { homePadding } from '@styles/theme';
-import { SVGIcon, getUrlLink } from '@utils/common';
+import { SVGIcon } from '@utils/common';
 import { useToast } from '@hooks/useToast';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { copyToClipboard } from '@utils/common/clipboard';
+import { SET_ALERT } from '@store/alert';
 
 /* TODO : og 태그 고려 */
 
-const SHARE_ICONS = [
-  { value: 'kakao', name: '카카오톡' },
-  { value: 'facebook', name: '페이스북' },
-  { value: 'band', name: '밴드' },
-  { value: 'urlIcon', name: '링크 복사' },
-];
-
 interface IParams {
-  customUrl?: string;
+  shareUrl: string;
 }
 
-const ShareSheet = ({ customUrl }: IParams) => {
+const ShareSheet = ({ shareUrl }: IParams) => {
   const dispatch = useDispatch();
-  const { showToast, hideToast } = useToast();
-  const shareHandler = (e: React.MouseEvent<HTMLDivElement>, value: string) => {
-    let url = customUrl ? customUrl : window.location.href;
-
-    const shareMapper: { [index: string]: () => void } = {
-      kakao: () => {
-        handleKakaoTalk(url);
-      },
-      facebook: () => {
-        url = `http://www.facebook.com/sharer/sharer.php?u=${url}`;
-        windowOpen(url);
-      },
-      band: () => {
-        const encodeUrl = encodeURIComponent(url);
-        const encodeTitle = encodeURIComponent('1');
-
-        const link = `http://band.us/plugin/share?body=${encodeTitle}&route=${encodeUrl}`;
-        window.open(link, 'share', 'width=500, height=500');
-      },
-      urlIcon: () => {
-        getUrlLink(e, toastHandler, customUrl);
-      },
-    };
-
-    shareMapper[value]();
-  };
-
-  const toastHandler = () => {
-    showToast({ message: '링크가 복사되었습니다.' });
-    dispatch(INIT_BOTTOM_SHEET());
-  };
+  const { showToast } = useToast();
 
   const windowOpen = (url: string) => {
     window.open(url, '', 'width=600,height=300,top=100,left=100,scrollbars=yes');
   };
 
-  const handleKakaoTalk = (url: string) => {
+  const handleKakaoTalk = () => {
     window.Kakao.Link.sendDefault({
       objectType: 'feed',
       content: {
@@ -70,13 +33,40 @@ const ShareSheet = ({ customUrl }: IParams) => {
         imageWidth: 800,
         imageHeight: 420,
         link: {
-          webUrl: url,
-          mobileWebUrl: url,
+          webUrl: shareUrl,
+          mobileWebUrl: shareUrl,
         },
       },
       buttons: [],
     });
   };
+
+  const handleFacebook = () => {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
+    windowOpen(url);
+  }
+
+  const handleBand = () => {
+    const encodeUrl = encodeURIComponent(shareUrl);
+    const encodeTitle = encodeURIComponent('1');
+
+    const link = `https://band.us/plugin/share?body=${encodeTitle}&route=${encodeUrl}`;
+    window.open(link, 'share', 'width=500, height=500');
+  }
+
+  const handleCopyUrl = async () => {
+    try {
+      await copyToClipboard(shareUrl);
+      showToast({ message: '링크가 복사되었습니다.' });
+      dispatch(INIT_BOTTOM_SHEET());
+    } catch (e) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '클립보드 복사에 살패 하였습니다.',
+        })
+      );
+    }
+  }
 
   return (
     <Container>
@@ -85,12 +75,22 @@ const ShareSheet = ({ customUrl }: IParams) => {
           공유하기
         </TextH5B>
         <LinkWrapper>
-          {SHARE_ICONS.map((item, index) => (
-            <LinkGroup key={index} onClick={(e) => shareHandler(e, item.value)}>
-              <SVGIcon name={item.value} />
-              <TextH5B padding="0 0 0 8px">{item.name}</TextH5B>
-            </LinkGroup>
-          ))}
+          <LinkGroup onClick={handleKakaoTalk}>
+            <SVGIcon name="kakao" />
+            <TextH5B padding="0 0 0 8px">카카오톡</TextH5B>
+          </LinkGroup>
+          <LinkGroup onClick={handleFacebook}>
+            <SVGIcon name="facebook" />
+            <TextH5B padding="0 0 0 8px">페이스북</TextH5B>
+          </LinkGroup>
+          <LinkGroup onClick={handleBand}>
+            <SVGIcon name="band" />
+            <TextH5B padding="0 0 0 8px">밴드</TextH5B>
+          </LinkGroup>
+          <LinkGroup onClick={handleCopyUrl}>
+            <SVGIcon name="urlIcon" />
+            <TextH5B padding="0 0 0 8px">링크복사</TextH5B>
+          </LinkGroup>
         </LinkWrapper>
       </Wrapper>
     </Container>
