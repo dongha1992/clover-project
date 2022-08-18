@@ -6,80 +6,49 @@ import { useDispatch } from 'react-redux';
 import { SET_EVENT_TITLE, INIT_EVENT_TITLE } from '@store/event';
 import { TextB3R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-
-const EVENT_BANNER = [
-  {
-    id: 1,
-    title: '기획전 김치전 해물파전은 맛있어',
-    promotion: true,
-    img: '/banner/img_home_contents_event.png', 
-    edit: true,
-  },
-  {
-    id: 2,
-    title: '이건 무슨 기획전일까?',
-    promotion: true,
-    img: '/banner/img_home_contents_event_2.png', 
-    edit: false,
-  },
-  {
-    id: 3,
-    title: '',
-    promotion: false,
-    img: '/banner/img_home_contents_event.png', 
-    edit: false,
-  },
-  {
-    id: 4,
-    title: '',
-    promotion: false,
-    img: '/banner/img_home_contents_event_2.png', 
-    edit: false,
-  },
-  {
-    id: 5,
-    title: '',
-    promotion: false,
-    img: '/banner/img_home_contents_event.png', 
-    edit: false,
-  },
-  {
-    id: 6,
-    title: '',
-    promotion: false,
-    img: '/banner/img_home_contents_event_2.png', 
-    edit: false,
-  },
-];
+import { useQuery } from 'react-query';
+import { getBannersApi } from '@api/banner';
+import { IBanners } from '@model/index';
 
 const EventPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [page, setPage] = useState<number>(1);
+  const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
 
-  const goToEvent = (promotion: boolean, id: number, edit: boolean, title: string) => {
-    if(promotion) {
-      dispatch(SET_EVENT_TITLE(title));
-      router.push({
-        pathname: '/promotion/detail',
-        query: {
-          id: id,
-          edit_feed: edit,
-        },
-      });
-    } else {
+  const { error: eventsError } = useQuery(
+    'eventsBanners',
+    async () => {
+      const params = { type: 'EVENT', size: 100 };
+      const { data } = await getBannersApi(params);
+      setEventBannerList(data.data);
+    },
+    { refetchOnMount: true, refetchOnWindowFocus: false }
+  );
+
+  const goToEvent = (id: number, title: string) => {
+    // if(promotion) {
+    //   dispatch(SET_EVENT_TITLE(title));
+    //   router.push({
+    //     pathname: '/promotion/detail',
+    //     query: {
+    //       id: id,
+    //       edit_feed: edit,
+    //     },
+    //   });
+    // } else {
       router.push('/event');
-    };
+    // };
   };
   return (
     <Container>
       {
-        EVENT_BANNER.length > 0 ? (
-          EVENT_BANNER.map((item, idx)=> {
+        eventbannerList.length > 0 ? (
+          eventbannerList.map((item, idx)=> {
             return (
-              <BannerWrapper key={idx} onClick={() => goToEvent(item.promotion, item.id, item.edit, item.title)}>
+              <BannerWrapper key={idx} onClick={() => goToEvent(item.id, item.title)}>
                 <Image
-                  src={item.img}
+                  src={item?.image?.url}
                   height="300px"
                   width="512px"
                   layout="responsive"
@@ -104,6 +73,7 @@ const Container = styled.div`
 
 const BannerWrapper = styled.div`
   width: 100%;
+  cursor: pointer;
 `;
 
 const NoneEventList = styled.div`

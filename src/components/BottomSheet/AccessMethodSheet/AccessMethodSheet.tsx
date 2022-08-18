@@ -10,7 +10,7 @@ import { IAccessMethod } from '@model/index';
 import { SET_ACCESS_METHOD } from '@store/common';
 
 interface IProps {
-  userAccessMethod: IAccessMethod | undefined;
+  userAccessMethod?: IAccessMethod | undefined;
 }
 
 const AccessMethodSheet = ({ userAccessMethod }: IProps) => {
