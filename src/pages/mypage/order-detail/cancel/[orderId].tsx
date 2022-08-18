@@ -64,6 +64,8 @@ const OrderCancelPage = ({ orderId }: IProps) => {
                 url={subOrder?.image.url!}
                 name={subOrder?.order.name!}
                 payAmount={subOrder?.order.amount!}
+                orderId={orderId}
+                isSubOrder
               />
             ),
           })

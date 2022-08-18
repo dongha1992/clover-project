@@ -1,10 +1,9 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@components/Shared/Button';
-import { fixedBottom, homePadding, FlexBetween, FlexCol, FlexCenter } from '@styles/theme';
+import { homePadding, FlexCol, FlexCenter } from '@styles/theme';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { SVGIcon } from '@utils/common';
-import { TextB2R, TextH2B, TextB3R, TextH4B } from '@components/Shared/Text';
+import { TextH2B, TextB3R, TextH4B } from '@components/Shared/Text';
 import router from 'next/router';
 import { theme } from '@styles/theme';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -17,12 +16,15 @@ interface IProps {
   url: string;
   payAmount: number;
   orderId?: number;
+  isSubOrder?: boolean;
 }
 
-const OrderCancelSheet = ({ url, name, payAmount, orderId }: IProps) => {
+const OrderCancelSheet = ({ url, name, payAmount, orderId, isSubOrder }: IProps) => {
   const dispatch = useDispatch();
 
-  //TODO: 기존 주문 상세보기 -> 함께배송일때
+  const goToOrderDetail = () => {
+    router.push(`/mypage/order-detail/${orderId}`);
+  };
 
   return (
     <Container>
@@ -49,7 +51,9 @@ const OrderCancelSheet = ({ url, name, payAmount, orderId }: IProps) => {
         <ItemInfo url={url} name={name} amount={payAmount} />
       </Body>
       <BtnWrapper onClick={() => dispatch(INIT_BOTTOM_SHEET())}>
-        <Button height="100%">주문 상세보기</Button>
+        <Button height="100%" onClick={goToOrderDetail}>
+          {isSubOrder ? '기존 주문 취소하러 가기' : '주문 상세보기'}
+        </Button>
       </BtnWrapper>
     </Container>
   );
