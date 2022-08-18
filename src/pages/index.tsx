@@ -8,6 +8,7 @@ import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { HomePopupSheet }  from '@components/BottomSheet/HomePopupSheet';
+import { AppDownloadPushSheet } from '@components/BottomSheet/AppDownloadPushSheet';
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,14 @@ const HomePage = () => {
         })
       );  
     }
+
+    dispatch(
+      SET_BOTTOM_SHEET({
+        content: <AppDownloadPushSheet />,
+        noneMarginBottom: true,
+      })
+    );  
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
