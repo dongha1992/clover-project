@@ -1265,8 +1265,8 @@ const OrderPage = () => {
         <FlexBetween>
           <TextH4B>할인 쿠폰</TextH4B>
           <FlexRow>
-            {userInputObj.coupon ? (
-              <TextB2R padding="0 10px 0 0">{userInputObj.coupon.toLocaleString()}원</TextB2R>
+            {selectedCoupon ? (
+              <TextB2R padding="0 10px 0 0">{getFormatPrice(String(selectedCoupon.usedValue))}원</TextB2R>
             ) : (
               <TextB2R padding="0 10px 0 0">{previewOrder?.coupons.length}장 보유</TextB2R>
             )}
