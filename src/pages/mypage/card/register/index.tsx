@@ -390,7 +390,7 @@ const CardRegisterPage = () => {
           <TextH5B padding="0 0 9px 0">유효기간</TextH5B>
           <CustomInputWrapper>
             <input
-              type="password"
+              type="number"
               name="expireDateInput"
               placeholder="MMYY"
               onChange={changeExpireDateHandler}
