@@ -1,9 +1,31 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Home from '@components/Home';
 import Footer from '@components/Footer';
+import { useDispatch, useSelector } from 'react-redux';
+import { getBannersApi } from '@api/banner';
+import { IBanners } from '@model/index';
+import { useQuery } from 'react-query';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { HomePopupSheet }  from '@components/BottomSheet/HomePopupSheet';
 
 const HomePage = () => {
+  const dispatch = useDispatch();
+
+  useEffect(()=> {
+    const getMidNight = localStorage.getItem('popupClose');
+    const currentData = new Date().getTime();
+  
+    if (JSON.parse(getMidNight!) === null || JSON.parse(getMidNight!) < currentData) {
+      dispatch(
+        SET_BOTTOM_SHEET({
+          content: <HomePopupSheet />,
+        })
+      );  
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Container>
       <Home />
