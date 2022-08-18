@@ -699,16 +699,9 @@ const OrderPage = () => {
 
   const processTossPay = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
-    // const reqBody = {
-    //   successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=toss`,
-    //   failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
-    // };
-
-    const temp = 'https://5214-222-235-55-123.jp.ngrok.io';
-
     const reqBody = {
-      successUrl: `${temp}/${successOrderPath}?orderId=${orderId}&pg=toss`,
-      failureUrl: `${temp}${router.asPath}`,
+      successUrl: `${process.env.SERVICE_URL}/${successOrderPath}?orderId=${orderId}&pg=toss`,
+      failureUrl: `${process.env.SERVICE_URL}${router.asPath}`,
     };
 
     if (checkIsAlreadyPaid(orderData)) return;
