@@ -271,15 +271,6 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
           }
         }
 
-        // case isParcel: {
-        //   if (noMsg) {
-        //     dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
-        //     return false;
-        //   } else {
-        //     return true;
-        //   }
-        // }
-
         default: {
           return true;
         }

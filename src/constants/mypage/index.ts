@@ -19,7 +19,7 @@ export const MANAGE_MENU = [
   { id: 6, text: '주소 관리', link: '/mypage/address' },
   { id: 7, text: '결제 관리', link: '/mypage/payment' },
   { id: 8, text: '이벤트', link: '/mypage/event' },
-  { id: 9, text: '배송안내', link: '/mypage/deliver-infomation' },
+  { id: 9, text: '배송안내', link: '/mypage/delivery-infomation' },
   { id: 10, text: '고객센터', link: '/mypage/customer-service' },
   { id: 11, text: '약관 및 정책', link: '/mypage/term' },
 ];
