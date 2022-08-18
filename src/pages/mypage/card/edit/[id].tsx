@@ -20,19 +20,23 @@ const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
 interface IProps {
   id: number;
   orginCardName: string;
+  isMain: boolean;
 }
 
-const CardEditPage = ({ id, orginCardName }: IProps) => {
-  const [isMainCard, setIsMainCard] = useState<boolean>(false);
+const CardEditPage = ({ id, orginCardName, isMain }: IProps) => {
+  const [isMainCard, setIsMainCard] = useState<boolean>(isMain);
   const [cardName, setCardName] = useState<string>(orginCardName);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
   const { mutate: mutateDeleteCard } = useMutation((id: number) => deleteCard(id), {
     onSuccess: async () => {
+      router.push('/mypage/card');
       await queryClient.refetchQueries('getCardList');
       await queryClient.refetchQueries('getMainCard');
-      router.push('/mypage/card');
+    },
+    onError: () => {
+      dispatch(SET_ALERT({ alertMessage: '실패하였습니다.' }));
     },
   });
 
@@ -45,8 +49,10 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
     },
     {
       onSuccess: async () => {
-        await queryClient.refetchQueries('getCardList');
-        await queryClient.refetchQueries('getMainCard');
+        router.push('/mypage/card');
+      },
+      onError: () => {
+        dispatch(SET_ALERT({ alertMessage: '실패하였습니다.' }));
       },
     }
   );
@@ -58,9 +64,6 @@ const CardEditPage = ({ id, orginCardName }: IProps) => {
     };
     try {
       const { data } = await mutateEditCardAsync(params);
-      if (data.code === 200) {
-        router.push('/mypage/card');
-      }
     } catch (error) {
       console.error(error);
     }
@@ -121,9 +124,10 @@ const Container = styled.div`
 `;
 
 export async function getServerSideProps(context: any) {
-  const { id, name } = context.query;
+  const { id, name, isMain } = context.query;
+
   return {
-    props: { id, orginCardName: name },
+    props: { id, orginCardName: name, isMain: isMain === 'true' },
   };
 }
 
