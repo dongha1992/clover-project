@@ -122,7 +122,7 @@ const OrderDetailPage = () => {
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
   const orderDeliveries = orderDetail && orderDetail?.orderDeliveries[0]!;
   const { dateFormatter: deliveryAt, dayFormatter: deliveryAtWithDay } = getCustomDate(
-    new Date(orderDetail?.orderDeliveries[0].deliveryDate!)
+    orderDetail?.orderDeliveries[0].deliveryDate!
   );
 
   const deliveryStatus = DELIVERY_STATUS_MAP[orderDeliveries?.status!];

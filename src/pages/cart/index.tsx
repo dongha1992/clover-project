@@ -1117,7 +1117,7 @@ const CartPage = () => {
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
     if (isSpotOrQuick) {
-      const { currentTime, currentDate } = getCustomDate(new Date());
+      const { currentTime, currentDate } = getCustomDate();
       const isFinishLunch = currentTime >= 9.29;
       const isDisabledLunch = isFinishLunch && currentDate === selectedDeliveryDay;
 
@@ -1219,7 +1219,7 @@ const CartPage = () => {
 
   useEffect(() => {
     // 스팟 종료 날짜
-    const { dateFormatter: closedDate } = getCustomDate(new Date(destinationObj?.closedDate!));
+    const { dateFormatter: closedDate } = getCustomDate(destinationObj?.closedDate!);
     const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
 
     // 스팟 운영 종료

@@ -13,7 +13,7 @@ const checkIsValidTimer = (deliveryType: TResult): string => {
   let { locationStatus } = useSelector(destinationForm);
   const dispatch = useDispatch();
 
-  const { days } = getCustomDate(new Date());
+  const { days } = getCustomDate();
 
   // 요일 체크
   let isWeekends = ['토', '일'].includes(days);

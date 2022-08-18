@@ -14,7 +14,7 @@ interface IProps {
 const BirthDate = ({ selected, onChange }: IProps) => {
   const [days, setDays] = useState<number[]>([]);
 
-  const { CURRENT_KOR_DATE } = getCustomDate(new Date());
+  const { CURRENT_KOR_DATE } = getCustomDate();
 
   const years = () => {
     let year = CURRENT_KOR_DATE.getFullYear() - 13;

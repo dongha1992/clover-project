@@ -981,7 +981,7 @@ const OrderPage = () => {
     previewOrder?.order?.orderDeliveries[0]!;
   const orderMenus = previewOrder?.order?.orderDeliveries[0]?.orderMenus || [];
   const { point } = previewOrder!;
-  const { dayFormatter } = getCustomDate(new Date(deliveryDate));
+  const { dayFormatter } = getCustomDate(deliveryDate);
 
   const isParcel = delivery === 'PARCEL';
   const isMorning = delivery === 'MORNING';
