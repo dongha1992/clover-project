@@ -1,12 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import { TextH2B, TextH4B, TextB2R, TextH6B, TextH5B } from '@components/Shared/Text';
-import { theme, FlexBetween, FlexCenter, FlexCol } from '@styles/theme';
+import { TextH2B, TextH4B, TextB2R, TextH5B } from '@components/Shared/Text';
+import { theme, FlexBetween, FlexCenter } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
-import { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { ShareSheet } from '@components/BottomSheet/ShareSheet';
 import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
 import {
@@ -15,7 +13,6 @@ import {
   getSpotPopular,
   getSpotInfo,
   getSpotRegistrationsRecruiting,
-  getSpotsRegistrationStatus,
 } from '@api/spot';
 import { IParamsSpots, ISpotsInfo } from '@model/index';
 import { useQuery } from 'react-query';
@@ -27,9 +24,8 @@ import { spotSelector, SET_SPOT_INFO } from '@store/spot';
 import { destinationForm } from '@store/destination';
 import { SET_ALERT } from '@store/alert';
 import { Button } from '@components/Shared/Button';
-import { commonSelector } from '@store/common';
 import NextImage from 'next/image';
-import Image from '@components/Shared/Image';
+import ShareUrl from '@components/ShareUrl';
 
 const FCO_SPOT_BANNER = [
   {
@@ -57,7 +53,6 @@ const FCO_SPOT_BANNER = [
 const SpotPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isMobile } = useSelector(commonSelector);
   const { me, isLoginSuccess } = useSelector(userForm);
   const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
@@ -67,6 +62,9 @@ const SpotPage = () => {
   const latLen = spotsPosition.latitude !== null;
   const lonLen = spotsPosition.longitude !== null;
   const uerLocationInfo = !!userLocation.emdNm?.length;
+  const currentUrl = window.location.href;
+  const trialSpotId = info?.trialSpotRegistration?.id;
+  const spotLink = `${currentUrl}/open?trialId=${trialSpotId}`;
 
   useEffect(() => {
     // 스팟 정보 조회
@@ -217,34 +215,6 @@ const SpotPage = () => {
     });
   };
 
-  const goToSpotShare = () => {
-    const currentUrl = window.location.href;
-    const trialSpotId = info?.trialSpotRegistration?.id;
-    const spotLink = `${currentUrl}/open?trialId=${trialSpotId}`;
-    if (isMobile) {
-      if (navigator.share) {
-        navigator
-          .share({
-            title: '트라이얼 프코스팟 공유 링크',
-            url: spotLink,
-          })
-          .then(() => {
-            alert('공유가 완료되었습니다.');
-          })
-          .catch(console.error);
-      } else {
-        return 'null';
-      }
-    } else {
-      dispatch(INIT_BOTTOM_SHEET());
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: <ShareSheet customUrl={spotLink} />,
-        })
-      );
-    }
-  };
-
   const isLoading = isLoadingNew && isLoadingEvent && isLoadingPopular && isLoadingTrial;
 
   if (isLoading) {
@@ -275,7 +245,7 @@ const SpotPage = () => {
             /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
             info?.trialSpotRegistration?.trialUserCount! < 5 && (
               <SwiperSlide className="swiper-slide">
-                <BoxHandlerWrapper onClick={goToSpotShare}>
+                <WideShareUrl linkUrl={spotLink} title="트라이얼 프코스팟 공유 링크">
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>
                       {`[${info?.trialSpotRegistration?.placeName}]\n`}
@@ -289,7 +259,7 @@ const SpotPage = () => {
                       <SVGIcon name="blackCircleShare" />
                     </IconWrapper>
                   </FlexBetween>
-                </BoxHandlerWrapper>
+                </WideShareUrl>
               </SwiperSlide>
             )
           }
@@ -297,14 +267,14 @@ const SpotPage = () => {
             /* 신청한 프코스팟 알림카드 - 참여인원 5명 이상 일때 */
             info?.trialSpotRegistration?.trialUserCount! >= 5 && (
               <SwiperSlide className="swiper-slide">
-                <BoxHandlerWrapper onClick={goToSpotShare}>
+                <WideShareUrl linkUrl={spotLink} title="트라이얼 프코스팟 공유 링크">
                   <FlexBetween height="92px" padding="22px">
                     <TextH4B>{`[${info?.trialSpotRegistration?.placeName}]\n늘어나는 주문만큼 3,000P씩 더!`}</TextH4B>
                     <IconWrapper>
                       <SVGIcon name="blackCircleShare" />
                     </IconWrapper>
                   </FlexBetween>
-                </BoxHandlerWrapper>
+                </WideShareUrl>
               </SwiperSlide>
             )
           }
@@ -534,10 +504,10 @@ const IconWrapper = styled.div`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0px 4px 8px 0px #00000033;
+  box-shadow: 0 4px 8px 0 #00000033;
 `;
 
-const BoxHandlerWrapper = styled.div`
+const WideShareUrl = styled(ShareUrl)`
   width: 100%;
   background: ${theme.greyScale3};
   border-radius: 8px;
@@ -581,11 +551,6 @@ const StoryContentsWrapper = styled.div`
   .benner-info-img {
     height: auto !important;
   }
-`;
-
-const EmptyImg = styled.img`
-  width: 100%;
-  height: 100%;
 `;
 
 export default SpotPage;
