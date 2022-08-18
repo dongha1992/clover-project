@@ -600,12 +600,10 @@ const OrderDetailPage = () => {
                   <TextB2R>{getFormatPrice(String(refundPayAmount))}원</TextB2R>
                 </FlexBetween>
               )}
-              {refundCoupon > 0 && coupon > 0 && (
-                <FlexBetween padding="8px 0 0 0">
-                  <TextB2R>환불 쿠폰</TextB2R>
-                  <TextB2R>1개</TextB2R>
-                </FlexBetween>
-              )}
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>환불 쿠폰</TextB2R>
+                <TextB2R>{coupon ? `1개` : `0개`}</TextB2R>
+              </FlexBetween>
               {refundPoint > 0 && (
                 <FlexBetween padding="8px 0 0 0">
                   <TextB2R>환불 포인트</TextB2R>
