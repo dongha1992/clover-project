@@ -19,9 +19,21 @@ const DeliveryTag = ({ deliveryType, margin }: ITagProps) => {
     QUICK: '퀵배송',
   };
 
+  const setFontColor = () => {
+    if (deliveryType === 'SPOT') {
+      return `${theme.brandColor}`;
+    } else if (deliveryType === 'MORNING') {
+      return `${theme.morningColor}`;
+    } else if (deliveryType === 'PARCEL') {
+      return `${theme.parcelColor}`;
+    } else {
+      return `${theme.quickColor}`;
+    };
+  };
+
   return (
     <Container deliveryType={deliveryType!} margin={margin}>
-      <TextH7B>{deliveryMap[deliveryType!]}</TextH7B>
+      <TextH7B color={setFontColor()}>{deliveryMap[deliveryType!]}</TextH7B>
     </Container>
   );
 };
@@ -37,22 +49,18 @@ const Container = styled.div<{ deliveryType: TDeliveryType | string; margin?: st
     if (deliveryType === 'SPOT') {
       return css`
         border: 1px solid ${theme.brandColor};
-        color: ${theme.brandColor};
       `;
     } else if (deliveryType === 'MORNING') {
       return css`
         border: 1px solid ${theme.morningColor};
-        color: ${theme.morningColor};
       `;
     } else if (deliveryType === 'PARCEL') {
       return css`
         border: 1px solid ${theme.parcelColor};
-        color: ${theme.parcelColor};
       `;
     } else {
       return css`
         border: 1px solid ${theme.quickColor};
-        color: ${theme.quickColor};
       `;
     }
   }}
