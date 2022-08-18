@@ -20,7 +20,7 @@ const CouponItem = ({ coupon, onClick }: IProps) => {
   const { isMobile } = useSelector(commonSelector);
 
   const isRateDiscount = coupon.coupon.criteria === 'RATIO';
-  const { dayFormatter: expiredDate } = getCustomDate(new Date(coupon?.coupon.expiredDate));
+  const { dayFormatter: expiredDate } = getCustomDate(coupon?.coupon.expiredDate);
 
   const { participationStatus } = coupon;
 

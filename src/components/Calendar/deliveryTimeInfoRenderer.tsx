@@ -10,7 +10,7 @@ interface IProps {
 }
 
 const deliveryTimeInfoRenderer = ({ selectedDeliveryDay, selectedTime, delivery }: IProps) => {
-  const { dates }: { dates: number } = getCustomDate(new Date(selectedDeliveryDay));
+  const { dates }: { dates: number } = getCustomDate(selectedDeliveryDay);
   const today: number = new Date().getDate();
   const selectToday = dates === today;
 

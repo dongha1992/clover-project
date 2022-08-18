@@ -122,7 +122,7 @@ const CartSheet = ({ menuItem }: any) => {
   const canSpotDinnerToday = deliveryType === '스팟저녁';
 
   const checkArrivaldate = (): string => {
-    const { days } = getCustomDate(new Date());
+    const { days } = getCustomDate();
 
     let isFriday = days === '금';
     let isSaturday = days === '토';
