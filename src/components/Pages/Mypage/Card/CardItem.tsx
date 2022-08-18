@@ -10,10 +10,10 @@ interface IProps {
   onClick: (card: IGetCard) => void;
   card?: IGetCard;
   cardCount?: number;
-  isOrder?: boolean;
+  isFromOrder?: boolean;
 }
 
-const CardItem = ({ onClick, card, cardCount, isOrder }: IProps) => {
+const CardItem = ({ onClick, card, cardCount, isFromOrder }: IProps) => {
   return (
     <RegisteredCardWrapper>
       <FlexBetweenStart>
@@ -28,13 +28,13 @@ const CardItem = ({ onClick, card, cardCount, isOrder }: IProps) => {
           </FlexCol>
         </FlexRowStart>
 
-        {isOrder ? (
+        {isFromOrder ? (
           <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)} pointer>
-            선택하기
+            선택
           </TextH6B>
         ) : (
           <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)} pointer>
-            변경하기
+            편집
           </TextH6B>
         )}
 

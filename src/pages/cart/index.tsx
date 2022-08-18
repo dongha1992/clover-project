@@ -164,7 +164,6 @@ const CartPage = () => {
           dispatch(SET_CART_LISTS(data));
 
           if (isFirstRender) {
-            // setDisposableList(initMenuOptions(data.cartMenus));
             setHoliday(formatHoliday());
           }
         } catch (error) {
@@ -738,7 +737,8 @@ const CartPage = () => {
 
   const checkHasSubOrderDelivery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
-      const sameDeliveryAddress = isEqual(location, destinationObj?.location);
+      const sameDeliveryAddress = isEqual(location, userDestination?.location!);
+
       return sameDeliveryAddress;
     };
 
@@ -746,7 +746,7 @@ const CartPage = () => {
   };
 
   const checkSameDateSubDelivery = () => {
-    const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
+    const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
 
     for (const subOrder of subOrderDelivery) {
       const { deliveryDate, deliveryDetail } = subOrder;
@@ -922,7 +922,7 @@ const CartPage = () => {
   const getSpotDiscountPrice = useCallback((): number => {
     const spotDiscount = cartResponse?.discountInfos[0];
     const discoutnedItemsPrice = getItemsPrice() - getItemDiscountPrice();
-    return (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice;
+    return (spotDiscount?.discountRate ?? 0 / 100) * discoutnedItemsPrice;
   }, [checkedMenus]);
 
   const getDeliveryFee = useCallback(() => {
@@ -1174,14 +1174,15 @@ const CartPage = () => {
   }, [checkedMenus]);
 
   const getSubOrderDelivery = async () => {
-    if (me && destinationObj?.delivery) {
+    if (me) {
       const params = {
-        delivery: destinationObj?.delivery!.toUpperCase(),
+        delivery: userDeliveryType.toUpperCase(),
       };
       try {
         const { data } = await getSubOrdersCheckApi(params);
         if (data.code === 200) {
           const result = checkHasSubOrderDelivery(data?.data.orderDeliveries);
+
           setSubOrderDeliery(result);
         }
       } catch (error) {
@@ -1194,7 +1195,6 @@ const CartPage = () => {
     //  첫 렌딩 때 체크
     if (isFirstRender) {
       const canCheckMenus = getCanCheckedMenus(cartItemList);
-      // PERIOD가 false일 경우, isSold = true가 되는지 몰라 일단 방어로직
       const canOrderPeriodMenus = cartItemList.filter((item) => checkPeriodCartMenuStatus(item.menuDetails));
       const filtered = canCheckMenus.filter(
         (item) => !canOrderPeriodMenus?.map((item) => item.menuId).includes(item.menuId)
