@@ -1111,8 +1111,8 @@ export interface ICreateOrderRequest {
   deliveryMessageReused?: boolean;
   subscriptionMenuDetailId?: number;
   subscriptionRound?: number;
-  deliveryMessage?: string;
-  deliveryMessageType?: string;
+  deliveryMessage?: string | null;
+  deliveryMessageType?: string | null;
 }
 
 export interface IOrderRequestInOrderDeliveries {

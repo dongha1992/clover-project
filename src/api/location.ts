@@ -28,17 +28,13 @@ KakaoApi.interceptors.request.use((req) => {
   return req;
 });
 
-export const getLonLatFromAddress = (
-  params: IKakaoAddress
-): Promise<AxiosResponse<any>> => {
+export const getLonLatFromAddress = (params: IKakaoAddress): Promise<AxiosResponse<any>> => {
   return KakaoApi.get('/v2/local/search/address.json', {
     params,
   });
 };
 
-export const getPOIKeyword = (
-  params: IKakaoAddress
-): Promise<AxiosResponse<any>> => {
+export const getPOIKeyword = (params: IKakaoAddress): Promise<AxiosResponse<any>> => {
   return KakaoApi.get('/v2/local/search/keyword.json', {
     params,
   });
