@@ -68,8 +68,6 @@ const CouponSheet = ({ coupons }: IProps) => {
     }
   );
 
-  useEffect(() => {}, []);
-
   const updateCouponHandler = (id: number) => {
     return couponList.map((item) => {
       if (item.id === id) {

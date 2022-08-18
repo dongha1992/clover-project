@@ -45,6 +45,8 @@ const Carousel = ({ images }: ICarouselProps) => {
     slidersToScroll: 1,
     centerMode: true,
     infinite: true,
+    autoplay: true,
+    autoplaySpeed: 5000,
     afterChange: setCurrentPageNumber,
     centerPadding: '0px',
     nextArrow: <NextArrow />,
