@@ -55,7 +55,7 @@ const CardManagementPage = () => {
       dispatch(SET_CARD(card.id));
       router.push('/order');
     } else {
-      router.push(`/mypage/card/edit/${card.id}?name=${card.name}`);
+      router.push(`/mypage/card/edit/${card.id}?name=${card.name}&isMain=${card.main}`);
     }
   };
 
@@ -90,7 +90,7 @@ const CardManagementPage = () => {
           <TextH4B padding="24px 0">카드 관리</TextH4B>
           {cards.map((card: IGetCard, index: number) => (
             <div key={index}>
-              <CardItem onClick={cardEditHandler} card={card} isOrder={isFromOrder} />
+              <CardItem onClick={cardEditHandler} card={card} isFromOrder={isFromOrder} />
               {cards.length !== index - 1 && <BorderLine height={1} margin="0 0 24px 0" />}
             </div>
           ))}
