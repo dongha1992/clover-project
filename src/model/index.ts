@@ -806,8 +806,6 @@ export interface IGetBannersResponse {
   data: IBanners[];
 }
 
-type BannerType = 'CAROUSEL' | 'CATEGORY' | 'EVENT' | 'EXHIBITION' | 'IMAGE' | 'MENU' | 'ORDER';
-
 export interface IBanner {
   type: string;
   size: number;
