@@ -1,6 +1,5 @@
 import SVGIcon from './SVGIcon';
 import getValues from './getValues';
-import getUrlLink from './getUrlLink';
 import getMediaQuery from './getMediaQuery';
 import getImageSize from './getImageSize';
 import {
@@ -20,7 +19,6 @@ import getUnCommaPrice from './getUnCommaPrice';
 export {
   SVGIcon,
   getValues,
-  getUrlLink,
   getMediaQuery,
   getImageSize,
   setCookie,
