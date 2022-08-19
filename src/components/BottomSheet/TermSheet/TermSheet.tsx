@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { homePadding, bottomSheetButton } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
@@ -39,6 +39,7 @@ const TermSheet = ({ title, versions, currentVersion }: IProps) => {
         {versions.map((version: IVersion, index: number) => {
           let formatDate = version.startedAt.split(' ')[0];
           const isSelected = selectedVersion === version.version;
+
           const isFirst = index === 0;
 
           if (isFirst) {
@@ -46,9 +47,8 @@ const TermSheet = ({ title, versions, currentVersion }: IProps) => {
           }
 
           return (
-            <PickWrapper key={index}>
-              <RadioButton onChange={() => changeRadioHandler(version.version)} isSelected={isSelected} />
-
+            <PickWrapper key={index} onClick={() => changeRadioHandler(version.version)}>
+              <RadioButton isSelected={isSelected} />
               {isSelected ? (
                 <TextH5B padding="0 0 0 8px">{formatDate}</TextH5B>
               ) : (
