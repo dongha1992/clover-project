@@ -35,8 +35,6 @@ const HomePage = () => {
     }
   );
 
-  console.log(isMobile)
-
   useEffect(()=> {
     const getHomePopupKey = localStorage.getItem('HOMEMAIN_POPUP_CLOSE');
     const getLookAroundKey = localStorage.getItem('LOOKAROUND_POPUP_CLOSE');
