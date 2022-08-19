@@ -1,4 +1,4 @@
-import { TextH2B, TextH5B, TextB2R, TextH4B, TextB3R, TextH3B } from '@components/Shared/Text';
+import { TextH2B, TextH5B, TextB2R, TextH4B, TextB3R, TextH3B, TextB1R } from '@components/Shared/Text';
 import { FlexCol, FlexRow, homePadding, theme, FlexBetween, FlexColEnd, FlexBetweenStart } from '@styles/theme';
 import React from 'react';
 import styled, { css } from 'styled-components';
@@ -50,35 +50,32 @@ const RankPage = () => {
             <UserRankInfo title="적립금" count={userGrade?.userGrade.benefit.accrualRate} id={1} />
           </FlexCol>
           <BorderLine height={1} margin="24px 0" />
-          {userGrade?.expectedUserGrade?.nextUserGrade?.isLast ? (
-            <FlexCol padding="0 0 48px 0">
-              <FlexRow>
-                <TextH5B>{userGrade?.userGrade.name}</TextH5B>
-                <TextB2R padding="0 4px 0 0">으로 남아주실 거죠?</TextB2R>
-              </FlexRow>
-              <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
-                (기준 결제금액에 할인, 포인트, 취소 금액은 제외됩니다.)
-              </TextB3R>
-            </FlexCol>
-          ) : (
-            <FlexCol padding="0 0 48px 0">
-              <FlexRow>
-                <TextB2R padding="0 4px 0 0">다음 달 예상 등급은</TextB2R>
-                <TextH5B>{userGrade?.expectedUserGrade?.name!}</TextH5B>,
-              </FlexRow>
+          <FlexCol padding="0 0 48px 0">
+            <FlexRow>
+              <TextB1R padding="0 4px 0 0">다음 달 예상 등급은</TextB1R>
+              <TextH4B>{userGrade?.expectedUserGrade?.name!}</TextH4B>,
+            </FlexRow>
+            {userGrade?.expectedUserGrade.isLast ? (
+              <FlexCol padding="0 0 0 0">
+                <FlexRow>
+                  <TextH4B>{userGrade?.expectedUserGrade.name}</TextH4B>
+                  <TextB1R padding="0 4px 0 0">으로 남아주실 거죠?</TextB1R>
+                </FlexRow>
+              </FlexCol>
+            ) : (
               <FlexRow>
                 <TextH4B color={theme.brandColor}>
                   {getFormatPrice(String(userGrade?.expectedUserGrade?.nextUserGrade?.insufficientAmount!))}원
                 </TextH4B>
-                <TextB2R padding="0 0 0 4px">더 구매하면 </TextB2R>
-                <TextH5B>{userGrade?.expectedUserGrade?.nextUserGrade?.name!}</TextH5B>
-                <TextB2R>이 돼요</TextB2R>
+                <TextB1R padding="0 0 0 4px">더 구매하면 </TextB1R>
+                <TextH4B>{userGrade?.expectedUserGrade?.nextUserGrade?.name!}</TextH4B>
+                <TextB1R>이 돼요</TextB1R>
               </FlexRow>
-              <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
-                (기준 결제금액에 할인, 포인트, 취소 금액은 제외됩니다.)
-              </TextB3R>
-            </FlexCol>
-          )}
+            )}
+            <TextB3R padding="8px 0 0 0" color={theme.greyScale65}>
+              (기준 결제금액에 할인, 포인트, 취소 금액은 제외됩니다.)
+            </TextB3R>
+          </FlexCol>
         </Wrapper>
       ) : (
         <Wrapper>

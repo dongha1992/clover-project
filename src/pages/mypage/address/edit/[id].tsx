@@ -362,8 +362,14 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
             <FlexBetween>
               <TextH4B>출입 방법</TextH4B>
               <FlexRow>
-                <Checkbox onChange={checkAccessInit} isSelected={deliveryEditObj.isAccessInit} />
-                <TextB2R padding="0 0 0 8px">입력 초기화</TextB2R>
+                <TextH6B
+                  padding="0 0 0 8px"
+                  onClick={checkAccessInit}
+                  color={theme.greyScale65}
+                  textDecoration="underLine"
+                >
+                  입력 초기화
+                </TextH6B>
               </FlexRow>
             </FlexBetween>
             <FlexCol padding="24px 0 16px 0">
