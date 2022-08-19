@@ -1,8 +1,7 @@
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { useEffect, useRef } from 'react';
+import { ReactElement, ReactNode, useEffect, useRef } from 'react';
 import GlobalStyle from '@styles/GlobalStyle';
-import Wrapper from '@components/Layout/Wrapper';
 import { theme } from '@styles/theme';
 import { getMediaQuery } from '@utils/common';
 import { ThemeProvider } from 'styled-components';
@@ -27,6 +26,7 @@ import { INIT_USER, SET_LOGIN_SUCCESS, SET_USER, userForm } from '@store/user';
 import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
 import useWebviewListener from '@hooks/useWebviewListener';
+import { NextPage } from 'next';
 
 declare global {
   interface Window {
@@ -38,7 +38,15 @@ declare global {
   }
 }
 
-const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
+export type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useRef<QueryClient>();
@@ -52,6 +60,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
   const store: any = useStore();
   const { me } = useSelector(userForm);
   const isAutoLogin = getCookie({ name: 'autoL' });
+  const getLayout = Component.getLayout ?? ((page) => page)
 
   useWebviewListener();
 
@@ -104,18 +113,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
     }
   };
 
-  useEffect(() => {
-    if (typeof window !== undefined) {
-      const md = new MobileDetect(window.navigator.userAgent); // mobile인지 pc인지 구분
-      let mobile = !!md.mobile();
-      dispatch(SET_IS_MOBILE(mobile));
-    }
-    authCheck();
-    // temp
-    dispatch(INIT_IMAGE_VIEWER());
-  }, []);
-
-  useEffect(() => {
+  const initKakao = () => {
     try {
       if (!window.Kakao.isInitialized()) {
         if (typeof window !== undefined) {
@@ -125,29 +123,18 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
     } catch (error) {
       console.error(error);
     }
+  }
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      const md = new MobileDetect(window.navigator.userAgent);
+      let mobile = !!md.mobile();
+      dispatch(SET_IS_MOBILE(mobile));
+    }
+    authCheck();
+    initKakao();
+    // temp
+    dispatch(INIT_IMAGE_VIEWER());
   }, []);
-
-  // //가상계좌입금만료일 설정 (today +1)
-
-  // function getTomorrow() {
-  //   var now = new Date();
-  //   var utc = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
-  //   var KOR_TIME_DIFF = 9 * 60 * 60 * 1000;
-  //   var CURRENT_KOR_DATE;
-
-  //   var today = new Date(utc + KOR_TIME_DIFF);
-
-  //   var yyyy = today.getFullYear().toString();
-  //   var mm = (today.getMonth() + 1).toString();
-  //   var dd = (today.getDate() + 1).toString();
-  //   if (mm.length < 2) {
-  //     mm = '0' + mm;
-  //   }
-  //   if (dd.length < 2) {
-  //     dd = '0' + dd;
-  //   }
-  //   return yyyy + mm + dd;
-  // }
 
   return (
     <>
@@ -194,12 +181,10 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
       <QueryClientProvider client={queryClient.current}>
         <ThemeProvider theme={{ ...theme, ...getMediaQuery, isWithContentsSection, isMobile }}>
           <GlobalStyle />
-          <PersistGate persistor={store.__persistor}>
-            <Wrapper>
+            <PersistGate persistor={store.__persistor}>
               <ReactQueryDevtools initialIsOpen={false} />
-              <Component {...pageProps} />
-            </Wrapper>
-          </PersistGate>
+              {getLayout(<Component {...pageProps} />)}
+            </PersistGate>
         </ThemeProvider>
         <form
           name="payForm"
@@ -219,9 +204,6 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
           style={{ display: 'none' }}
         ></form>
       </QueryClientProvider>
-      <script
-      // eslint-disable-next-line react/no-danger
-      />
     </>
   );
 };

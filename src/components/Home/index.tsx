@@ -4,11 +4,10 @@ import MainTab from '@components/Home/MainTab';
 import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
 import { TextH5B } from '@components/Shared/Text';
 import { Item } from '@components/Item';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
 import { useQuery } from 'react-query';
-import { filterSelector } from '@store/filter';
 import Image from '@components/Shared/Image';
 import BorderLine from '@components/Shared/BorderLine';
 import { useRouter } from 'next/router';
@@ -23,13 +22,11 @@ const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
   const [mainContents, setMainContents] = useState<any[]>([]);
   const router = useRouter();
-  const { type } = useSelector(filterSelector);
   const dispatch = useDispatch();
 
   useEffect(()=> {
     dispatch(INIT_EVENT_TITLE());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   const { error: carouselError } = useQuery(
     'carouselBanners',
@@ -74,7 +71,7 @@ const Home = () => {
         <BorderLine height={1} margin="24px 0 24px 0" />
       </SectionWrapper>
       {
-        mainContents?.length! > 0 
+        mainContents?.length! > 0
           ? mainContents?.map((item: any, idx: number) => {
             if(item?.type === 'EXHIBITION') {
               if(item?.exhibition.type === 'MD_RECOMMENDED') {
@@ -82,10 +79,10 @@ const Home = () => {
                   <PromotionWrapper key={idx}>
                     <FlexSpace>
                       <SectionTitle>{item?.exhibition.title}</SectionTitle>
-                      <TextH5B 
+                      <TextH5B
                         onClick={()=> goToPromotion(item?.exhibition.id, item?.exhibition.title)}
-                        color={theme.greyScale65} 
-                        textDecoration='underline' 
+                        color={theme.greyScale65}
+                        textDecoration='underline'
                         pointer
                       >더보기</TextH5B>
                     </FlexSpace>
@@ -99,17 +96,17 @@ const Home = () => {
                           : '상품을 준비 중입니다.'}
                       </FlexWrapWrapper>
                     </SectionWrapper>
-                  </PromotionWrapper>          
+                  </PromotionWrapper>
                 )
               } else if (item?.exhibition.type === 'GENERAL_MENU') {
                 return (
                   <PromotionWrapper key={idx}>
                     <FlexSpace>
                       <SectionTitle>{item?.exhibition.title}</SectionTitle>
-                      <TextH5B 
+                      <TextH5B
                         onClick={() => goToPromotion(item?.exhibition.id, item?.exhibition.title)}
-                        color={theme.greyScale65} 
-                        textDecoration='underline' 
+                        color={theme.greyScale65}
+                        textDecoration='underline'
                         pointer
                       >더보기</TextH5B>
                     </FlexSpace>
@@ -128,7 +125,7 @@ const Home = () => {
                             <SwiperSlide className="swiper-slide" key={index}>
                               <Item item={item} isHorizontal />
                             </SwiperSlide>
-                          ) 
+                          )
                         })
                       }
                     </SliderWrapper>
@@ -170,12 +167,6 @@ const SectionTitle = styled.div`
   margin-bottom: 24px;
 `;
 
-export const ItemListCol = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 16px;
-`;
-
 const PromotionBanner = styled.section`
   max-width: 512px;
   width: 100%;
@@ -202,14 +193,4 @@ const SliderWrapper = styled(Swiper)`
   }
 `;
 
-export const ItemListRow = styled.div`
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-
-  > div {
-    padding-right: 16px;
-  }
-`;
-
-export default React.memo(Home);
+export default Home;
