@@ -7,12 +7,12 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import NextImage from 'next/image';
 import { useDispatch } from 'react-redux';
 
-const AppDownloadPushSheet = () => {
-  const dispatch = useDispatch();
-    
-  const closeHandler = () => {
-    dispatch(INIT_BOTTOM_SHEET());
-  };
+interface IProps {
+  onClick: () => void;
+  closeHandler: () => void;
+}
+
+const AppDownloadPushSheet = ({onClick, closeHandler}: IProps) => {
 
   return (
     <Container>
@@ -29,6 +29,7 @@ const AppDownloadPushSheet = () => {
         </ImageWrapper>
         <TextH4B center padding='16px 0 16px 0'>{'프레시코드 앱 다운로드 받고\n더 많은 혜택 얻어 가세요'}</TextH4B>
         <Button
+          onClick={onClick}
           color={theme.white}
           backgroundColor={theme.black}
         >

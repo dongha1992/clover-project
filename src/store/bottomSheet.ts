@@ -6,6 +6,7 @@ type TProps = {
   submitHandler?: () => void | null;
   height?: string | null;
   noneMarginBottom?: boolean;
+  dimmedHandler?: () => void | null;
 };
 
 const initialState: TProps = {
@@ -13,6 +14,7 @@ const initialState: TProps = {
   submitHandler: () => {},
   height: null,
   noneMarginBottom: false,
+  dimmedHandler: () => {},
 };
 
 export const style = createSlice({

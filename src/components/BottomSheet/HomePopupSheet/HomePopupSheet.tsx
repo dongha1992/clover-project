@@ -3,50 +3,26 @@ import styled from 'styled-components';
 import { bottomSheetButton, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import Carousel from "@components/Shared/Carousel";
-import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
-import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
-const HomePopupSheet = () => {
-  const dispatch = useDispatch();
+interface IProps {
+  bannerList: IBanners[];
+  onClick: () => void;
+  closeHandler: () => void;
+}
 
-  useEffect(()=> {
-  }, []);
-
-  const { data: popupBanner, error: popupBannerError } = useQuery(
-    'homepopupBanner',
-    async () => {
-      const params = { type: 'POPUP', size: 100 };
-      const { data } = await getBannersApi(params);
-      return data.data;
-    },
-    { 
-      refetchOnMount: true, 
-      refetchOnWindowFocus: false, 
-    }
-  );
-
-  const popupTodayCloseHandler = () => {
-    let midnight = new Date();
-    midnight.setHours(23, 59, 59, 0);
-    localStorage.setItem('popupClose', midnight.getTime()?.toString());
-    dispatch(INIT_BOTTOM_SHEET());
-  };
- 
-  const closeHandler = () => {
-    dispatch(INIT_BOTTOM_SHEET());
-  };
+const HomePopupSheet = ({bannerList, onClick, closeHandler}: IProps): JSX.Element => {
 
   return (
     <Container>
       <ImageWrapper>
         <Carousel 
-          images={popupBanner?.map((banner: IBanners) => ({ src: banner.image.url }))} 
+          images={bannerList?.map((banner: IBanners) => ({ src: banner.image.url }))} 
           noneArrow
           width='512px'
-          height='270px' 
+          height='412px' 
         />
       </ImageWrapper>
       <BtnWrapper>
@@ -59,7 +35,7 @@ const HomePopupSheet = () => {
           fontWeight={400}
           justifyContent='flex-start'
           padding='0 0 0 35px'
-          onClick={popupTodayCloseHandler}
+          onClick={onClick}
         >
           오늘 하루 그만보기
         </Button>

@@ -12,7 +12,7 @@ import { breakpoints } from '@utils/common/getMediaQuery';
 const BottomSheet = () => {
   const { sheetRef, contentRef, size } = useBottomSheet();
   const dispatch = useDispatch();
-  const { content, height, noneMarginBottom }: any = useSelector(bottomSheetForm);
+  const { content, height, noneMarginBottom, dimmedHandler }: any = useSelector(bottomSheetForm);
 
   useEffect(() => {
     // sheetRef.current => sheetRef.current?.offsetHeight 수정
@@ -31,7 +31,11 @@ const BottomSheet = () => {
     if (target !== currentTarget) {
       return;
     }
-    dispatch(INIT_BOTTOM_SHEET());
+    if(noneMarginBottom) {
+      dimmedHandler();
+    } else {
+      dispatch(INIT_BOTTOM_SHEET());
+    }
   };
 
   return (
