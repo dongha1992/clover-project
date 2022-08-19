@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import { TextH2B, TextH4B, TextB2R, TextH5B } from '@components/Shared/Text';
 import { theme, FlexBetween, FlexCenter } from '@styles/theme';
@@ -26,6 +26,9 @@ import { SET_ALERT } from '@store/alert';
 import { Button } from '@components/Shared/Button';
 import NextImage from 'next/image';
 import ShareUrl from '@components/ShareUrl';
+import DefaultLayout from '@components/Layout/Default';
+import HomeBottom from '@components/Bottom/HomeBottom';
+import HomePage from '@pages/index';
 
 const FCO_SPOT_BANNER = [
   {
@@ -552,5 +555,9 @@ const StoryContentsWrapper = styled.div`
     height: auto !important;
   }
 `;
+
+SpotPage.getLayout = (page: ReactElement) => {
+  return (<DefaultLayout bottom={<HomeBottom/>}>{page}</DefaultLayout>)
+}
 
 export default SpotPage;
