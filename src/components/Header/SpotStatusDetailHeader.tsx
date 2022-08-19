@@ -1,14 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { useDispatch, useSelector } from 'react-redux';
-import { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { commonSelector } from '@store/common';
-import { ShareSheet } from '@components/BottomSheet/ShareSheet';
+import { useSelector } from 'react-redux';
 import router from 'next/router';
 import { spotSelector } from '@store/spot';
 import { userForm } from '@store/user';
+import ShareUrl from '@components/ShareUrl';
 
 type TProps = {
   isMobile?: boolean;
@@ -17,51 +15,18 @@ type TProps = {
 /* TODO: Header props으로 svg만 추가 */
 
 const SpotStatusDetailHeader = ({}: TProps) => {
-  const dispatch = useDispatch();
   const { q_share } = router.query;
-  const { isMobile } = useSelector(commonSelector);
   const { spotStatusDetail } = useSelector(spotSelector);
   const { me } = useSelector(userForm);
   const loginUserId = me?.id;
-
-  useEffect(() => {
-    return () => {
-      dispatch(INIT_BOTTOM_SHEET());
-    };
-  }, []);
+  const currentUrl = window.location.href;
+  const spotLink = `${currentUrl}?q_share=true`;
 
   const goBack = (): void => {
     if (q_share) {
       router.push('/spot');
     } else {
       router.back();
-    }
-  };
-
-  const goToShare = () => {
-    const currentUrl = window.location.href;
-    const spotLink = `${currentUrl}?q_share=true`;
-    if (isMobile) {
-      if (navigator.share) {
-        navigator
-          .share({
-            title: '트라이얼 프코스팟 공유 링크',
-            url: spotLink,
-          })
-          .then(() => {
-            alert('공유가 완료되었습니다.');
-          })
-          .catch(console.error);
-      } else {
-        return 'null';
-      }
-    } else {
-      dispatch(INIT_BOTTOM_SHEET());
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: <ShareSheet customUrl={spotLink} />,
-        })
-      );
     }
   };
 
@@ -73,9 +38,9 @@ const SpotStatusDetailHeader = ({}: TProps) => {
         </div>
         <BtnWrapper>
           {spotStatusDetail?.type === 'PRIVATE' && loginUserId === spotStatusDetail?.userId && (
-            <div className="share" onClick={goToShare}>
+            <ShareUrl className="share" title="트라이얼 프코스팟 공유 링크" linkUrl={spotLink}>
               <SVGIcon name="share" />
-            </div>
+            </ShareUrl>
           )}
         </BtnWrapper>
       </Wrapper>

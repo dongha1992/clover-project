@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { useDispatch, useSelector } from 'react-redux';
-import { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { commonSelector } from '@store/common';
 import CartIcon from '@components/Header/Cart';
-import { ShareSheet } from '@components/BottomSheet/ShareSheet';
+import ShareUrl from '@components/ShareUrl';
 
 type TProps = {
   title?: string;
@@ -18,17 +15,8 @@ type TProps = {
 /* TODO: Header props으로 svg만 추가 */
 
 const MenuDetailHeader = ({ title }: TProps) => {
-  const dispatch = useDispatch();
-  const { isMobile } = useSelector(commonSelector);
-
   const router = useRouter();
   const { isSpot } = router.query;
-
-  useEffect(() => {
-    return () => {
-      dispatch(INIT_BOTTOM_SHEET());
-    };
-  }, []);
 
   const goBack = (): void => {
     if (isSpot) {
@@ -37,31 +25,6 @@ const MenuDetailHeader = ({ title }: TProps) => {
       router.push(router.query.returnPath as string);
     } else {
       router.back();
-    }
-  };
-
-  const goToShare = () => {
-    if (isMobile) {
-      if (navigator.share) {
-        navigator
-          .share({
-            title: 'test',
-            url: 'test',
-          })
-          .then(() => {
-            alert('공유가 완료되었습니다.');
-          })
-          .catch(console.error);
-      } else {
-        return 'null';
-      }
-    } else {
-      dispatch(INIT_BOTTOM_SHEET());
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: <ShareSheet />,
-        })
-      );
     }
   };
 
@@ -77,9 +40,9 @@ const MenuDetailHeader = ({ title }: TProps) => {
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
         <BtnWrapper>
-          <div className="share" onClick={goToShare}>
+          <ShareUrl className="share" title="상품 상세 페이지 링크" linkUrl={window.location.href}>
             <SVGIcon name="share" />
-          </div>
+          </ShareUrl>
           <CartIcon onClick={goToCart} />
         </BtnWrapper>
       </Wrapper>

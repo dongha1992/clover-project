@@ -12,9 +12,8 @@ import { useQuery, useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { ShareSheet } from '@components/BottomSheet/ShareSheet';
-import { useRouter } from 'next/router';
+import { copyToClipboard } from '@utils/common/clipboard';
+import ShareUrl from '@components/ShareUrl';
 
 const textStyle = {
   color: theme.greyScale65,
@@ -25,14 +24,12 @@ const InviteFriendPaage = () => {
   const codeRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);
-  const router = useRouter();
   const recommendCode = sessionStorage.getItem('recommendCode');
-
-  console.log(recommendCode, 'recommendCode');
+  const url = location.origin;
+  const recommendCodeUrl = `${url}/onboarding?recommendCode=${me?.promotionCode}`;
 
   const {
     data,
-    error: menuError,
     isLoading,
   } = useQuery(
     'getInvitationInfo',
@@ -61,7 +58,7 @@ const InviteFriendPaage = () => {
       }
     },
     {
-      onSuccess: async (data) => {
+      onSuccess: async () => {
         if (sessionStorage.getItem('recommendCode')) {
           sessionStorage.removeItem('recommendCode');
         }
@@ -98,20 +95,13 @@ const InviteFriendPaage = () => {
     }
   );
 
-  const getCodeCopy = (e: any) => {
-    e.preventDefault();
-    const { clipboard } = window.navigator;
-    clipboard.writeText(me?.promotionCode!).then(() => {
+  const getCodeCopy = async () => {
+    try {
+      await copyToClipboard(me?.promotionCode!);
       showToast({ message: '초대코드를 복사했어요.' });
-    });
-  };
-
-  const goToShare = () => {
-    // 임시
-    const url = location.hostname === 'localhost' ? 'http://localhost:9009' : `${process.env.SERVICE_URL}`;
-    const recommendCodeUrl = `${url}/onboarding?recommendCode=${me?.promotionCode}`;
-
-    dispatch(SET_BOTTOM_SHEET({ content: <ShareSheet customUrl={recommendCodeUrl} /> }));
+    } catch (e) {
+      alert('클립보드 복사에 살패 하였습니다.');
+    }
   };
 
   if (isLoading) {
@@ -132,9 +122,9 @@ const InviteFriendPaage = () => {
           </TextH1B>
         </FlexCol>
         <FlexRow width="70%" padding="24px 0 0 0">
-          <Button backgroundColor={theme.black} onClick={() => goToShare()}>
-            공유하기
-          </Button>
+          <ShareButton linkUrl={recommendCodeUrl} title="친구 초대 공유 링크">
+            <Button>공유하기</Button>
+          </ShareButton>
           <Button backgroundColor={theme.white} color={theme.black} margin="0 0 0 8px" border onClick={getCodeCopy}>
             초대코드 복사하기
           </Button>
@@ -218,6 +208,11 @@ const GreyBackground = styled.div`
   background-color: ${theme.greyScale3};
   border-radius: 8px;
   margin-bottom: 8px;
+`;
+
+const ShareButton = styled(ShareUrl)`
+  display: flex;
+  width: 100%;
 `;
 
 export default InviteFriendPaage;
