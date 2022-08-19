@@ -207,7 +207,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
 
     switch (true) {
       case isMorning: {
-        const noMsg = !deliveryEditObj.deliveryMessage.length;
+        const noMsg = !deliveryEditObj?.deliveryMessage?.length;
         if (noMsg) {
           dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
@@ -280,6 +280,10 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
       });
     }
   }, [isSamePerson]);
+
+  useEffect(() => {
+    setIsDefaultSpot(data?.main!);
+  }, []);
 
   if (isLoading) {
     return <div>로딩중</div>;
