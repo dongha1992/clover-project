@@ -21,7 +21,7 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
       return false
     };
   };
-
+console.log(discount)
   return (
     <OptionList
       onClick={() => {
@@ -46,9 +46,9 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
       </FlexBetween>
       <FlexRowStart padding="0 0 4px 0"></FlexRowStart>
       <FlexRow>
-        {discount < 0 && (
-          <TextH6B padding="0 0 0 4px" color={!option.isSold || option.availability?.availability ? theme.brandColor : theme.greyScale25}>
-            {discount}%
+        {discount > 0 && (
+          <TextH6B color={!option.isSold || option.availability?.availability ? theme.brandColor : theme.greyScale25}>
+            {discount}%&nbsp;
           </TextH6B>
         )}
         <TextH6B padding="0 4px 0 0" color={isCheckedFontColor() ? theme.greyScale25 : theme.black}>{discountedPrice.toLocaleString()}원</TextH6B>
