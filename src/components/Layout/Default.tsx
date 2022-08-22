@@ -9,6 +9,8 @@ import Loading from '@components/Shared/Loading';
 import { AppState } from '@store/index';
 import Alert from '@components/Shared/Alert';
 import Toast from '@components/Shared/Toast';
+import BottomSheet from '@components/BottomSheet';
+import { bottomSheetForm } from '@store/bottomSheet';
 
 interface IDefaultLayoutProps {
   children: ReactElement,
@@ -16,6 +18,7 @@ interface IDefaultLayoutProps {
 }
 const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
   const alert = useSelector(alertForm);
+  const bottomSheet = useSelector(bottomSheetForm);
   const toast = useSelector(toastSelector);
   const loadingState = useSelector((state: AppState) => state.loading);
 
@@ -32,44 +35,47 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
   }, []);
 
   return (
-    <Container>
-      <Center>
-        <Loading isShow={loadingState?.isShown}></Loading>
-        {alert && (
-          <Alert
-            alertMessage={alert.alertMessage}
-            alertSubMessage={alert.alertSubMessage}
-            submitBtnText={alert.submitBtnText}
-            closeBtnText={alert.closeBtnText}
-            onSubmit={alert.onSubmit}
-            onClose={alert.onClose}
-            type={alert.type}
-            setSelectedMenu={alert.setSelectedMenu}
-            selectedMenu={alert.selectedMenu}
-          >
-            {alert.children}
-          </Alert>
-        )}
-        <Left>
-          <div className="left-contents">
-            {/* <Image
+    <>
+      <Container>
+        <Center>
+          <Loading isShow={loadingState?.isShown}></Loading>
+          {alert && (
+            <Alert
+              alertMessage={alert.alertMessage}
+              alertSubMessage={alert.alertSubMessage}
+              submitBtnText={alert.submitBtnText}
+              closeBtnText={alert.closeBtnText}
+              onSubmit={alert.onSubmit}
+              onClose={alert.onClose}
+              type={alert.type}
+              setSelectedMenu={alert.setSelectedMenu}
+              selectedMenu={alert.selectedMenu}
+            >
+              {alert.children}
+            </Alert>
+          )}
+          <Left>
+            <div className="left-contents">
+              {/* <Image
                 src="https://s3.ap-northeast-2.amazonaws.com/freshcode/img/seo/main.png"
                 layout="responsive"
                 objectFit="cover"
                 width={512}
               /> */}
-          </div>
-        </Left>
-        <Right>
-          <Header/>
-          {toast.message && <Toast/>}
-          <Main>{children}</Main>
-          <BottomWrapper isShow={!!bottom}>
-            {bottom}
-          </BottomWrapper>
-        </Right>
-      </Center>
-    </Container>
+            </div>
+          </Left>
+          <Right>
+            <Header/>
+            {toast.message && <Toast/>}
+            <Main>{children}</Main>
+            <BottomWrapper isShow={!!bottom}>
+              {bottom}
+            </BottomWrapper>
+          </Right>
+        </Center>
+      </Container>
+      {bottomSheet?.content && <BottomSheet />}
+    </>
   );
 };
 
