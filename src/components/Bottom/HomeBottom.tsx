@@ -98,6 +98,7 @@ const MenuWrapper = styled.div`
 `;
 
 const MenuItem = styled.div`
+  width: 25%;
   display: flex;
   flex-direction: column;
   align-items: center;
