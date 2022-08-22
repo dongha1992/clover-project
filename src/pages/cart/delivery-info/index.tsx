@@ -118,7 +118,6 @@ const DeliverInfoPage = () => {
         });
       }
     } else {
-      dispatch(SET_USER_DELIVERY_TYPE(userSelectDeliveryType));
       if (isSubscription) {
         router.push({
           pathname: '/destination/search',
@@ -129,7 +128,7 @@ const DeliverInfoPage = () => {
           },
         });
       } else {
-        router.push('/destination/search');
+        router.push({ pathname: '/destination/search', query: { deliveryType: userSelectDeliveryType.toUpperCase() } });
       }
     }
   };
@@ -161,7 +160,9 @@ const DeliverInfoPage = () => {
       setUserSelectDeliveryType(value);
     }
   };
-  console.log(tempDestination, 'tempDestination');
+
+  console.log(userDeliveryType, userSelectDeliveryType);
+
   const finishDeliverySetting = async () => {
     const isSpot = userSelectDeliveryType === 'spot';
 
@@ -172,7 +173,6 @@ const DeliverInfoPage = () => {
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
 
     if (destinationId || isMainDestination) {
-      console.log(tempDestination, 'tempDestination 160');
       dispatch(SET_DESTINATION({ ...tempDestination, spotId: tempDestination.spotId }));
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(SET_AFTER_SETTING_DELIVERY());

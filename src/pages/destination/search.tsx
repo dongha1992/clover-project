@@ -24,9 +24,8 @@ const DestinationSearchPage = () => {
   const addressRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
-  const { userDeliveryType } = useSelector(destinationForm);
 
-  const { orderId, isSubscription, destinationId, subsDeliveryType, menuId } = router.query;
+  const { orderId, isSubscription, destinationId, subsDeliveryType, menuId, deliveryType } = router.query;
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     'getDestinationList',
@@ -34,7 +33,7 @@ const DestinationSearchPage = () => {
       const params = {
         page: 1,
         size: 10,
-        delivery: userDeliveryType.toUpperCase(),
+        delivery: deliveryType! as string,
       };
       const { data } = await getDestinationsApi(params);
 
@@ -69,7 +68,6 @@ const DestinationSearchPage = () => {
   };
 
   const selectDestinationByList = (destination: IDestinationsResponse): void => {
-    console.log(destination, 'destination');
     if (orderId) {
       router.push({
         pathname: '/mypage/order-detail/edit/[orderId]',
@@ -101,7 +99,12 @@ const DestinationSearchPage = () => {
           query: { subsDeliveryType, isSubscription: true, menuId },
         });
       } else {
-        router.push('/destination/destination-detail');
+        router.push({
+          pathname: '/destination/destination-detail',
+          query: {
+            deliveryType,
+          },
+        });
       }
     }
   };
@@ -109,7 +112,7 @@ const DestinationSearchPage = () => {
   const beforeSearch = resultAddress && !resultAddress.length;
 
   useEffect(() => {
-    if (!userDeliveryType) {
+    if (!deliveryType) {
       router.replace('/cart');
     }
   }, []);
@@ -133,7 +136,7 @@ const DestinationSearchPage = () => {
           <RecentDelivery
             filteredList={filteredList ?? []}
             onClick={selectDestinationByList}
-            delivery={DELIVERY_TYPE_MAP[userDeliveryType.toUpperCase()]}
+            delivery={DELIVERY_TYPE_MAP[deliveryType as string]}
           />
         ) : (
           <DestinationSearchResult
