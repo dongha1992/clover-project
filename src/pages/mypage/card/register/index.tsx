@@ -425,17 +425,8 @@ const CardRegisterPage = () => {
         </CompanyRegistrationNumberWrapper>
       ) : (
         <BirthdayWrapper>
+          <TextH5B padding="0 0 9px 0">생년월일</TextH5B>
           <BirthDate onChange={changeBirthdayHandler} selected={birthDayObj} />
-          {/* <TextH5B padding="0 0 9px 0">생년월일</TextH5B>
-          <CustomInputWrapper>
-            <input
-              type="text"
-              name="birthdayInput"
-              placeholder="YYYY-MM-DD"
-              onChange={changeBirthdayHandler}
-              value={birthDate}
-            />
-          </CustomInputWrapper> */}
         </BirthdayWrapper>
       )}
       <OtherNameOfCardWrapper>

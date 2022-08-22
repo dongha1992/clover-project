@@ -24,7 +24,7 @@ interface IProps {
 /* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=7214%3A111244 */
 
 const checkTimerLimitHelper = (): TResult => {
-  const { days, currentTime } = getCustomDate(new Date());
+  const { days, currentTime } = getCustomDate();
   const { locationStatus } = useSelector(destinationForm);
 
   // let currentTime;

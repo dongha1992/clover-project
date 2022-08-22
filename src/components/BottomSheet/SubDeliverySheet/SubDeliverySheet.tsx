@@ -32,7 +32,7 @@ const SubDeliverySheet = ({ title, selectedSubDelivery, subDelieryHandler }: IPr
   };
 
   const formatDeliveryInfoToString = (item: any) => {
-    const { dayFormatter } = getCustomDate(new Date(item.deliveryDate));
+    const { dayFormatter } = getCustomDate(item.deliveryDate);
     const deliveryMap: Obj = {
       SPOT: '스팟배송',
       PARCEL: '택배배송',

@@ -302,7 +302,7 @@ const OrderFinishPage = () => {
 
   const { orderMenus, spotName, spotPickupName, location, deliveryDate, deliveryEndTime, deliveryStartTime } =
     orderDetail?.orderDeliveries[0]!;
-  const { dayFormatter } = getCustomDate(new Date(deliveryDate));
+  const { dayFormatter } = getCustomDate(deliveryDate);
   const isSpot = delivery === 'SPOT';
   const isSubOrder = orderDetail?.orderDeliveries[0]!.type === 'SUB';
 

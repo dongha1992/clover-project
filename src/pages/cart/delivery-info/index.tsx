@@ -57,7 +57,8 @@ const DeliverInfoPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { destinationId, isSubscription, subsDeliveryType, selected } = router.query;
+  let { destinationId, isSubscription, subsDeliveryType, selected, deliveryType } = router.query;
+
   const { isTimerTooltip } = useSelector(orderForm);
 
   useEffect(() => {
@@ -97,7 +98,7 @@ const DeliverInfoPage = () => {
   });
 
   // 배송 마감 타이머 체크 + 위치 체크
-  let deliveryType = checkIsValidTimer(checkTimerLimitHelper());
+  let timerDeliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
@@ -118,7 +119,6 @@ const DeliverInfoPage = () => {
         });
       }
     } else {
-      dispatch(SET_USER_DELIVERY_TYPE(userSelectDeliveryType));
       if (isSubscription) {
         router.push({
           pathname: '/destination/search',
@@ -129,7 +129,7 @@ const DeliverInfoPage = () => {
           },
         });
       } else {
-        router.push('/destination/search');
+        router.push({ pathname: '/destination/search', query: { deliveryType: userSelectDeliveryType.toUpperCase() } });
       }
     }
   };
@@ -161,7 +161,7 @@ const DeliverInfoPage = () => {
       setUserSelectDeliveryType(value);
     }
   };
-  console.log(tempDestination, 'tempDestination');
+
   const finishDeliverySetting = async () => {
     const isSpot = userSelectDeliveryType === 'spot';
 
@@ -172,7 +172,6 @@ const DeliverInfoPage = () => {
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
 
     if (destinationId || isMainDestination) {
-      console.log(tempDestination, 'tempDestination 160');
       dispatch(SET_DESTINATION({ ...tempDestination, spotId: tempDestination.spotId }));
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(SET_AFTER_SETTING_DELIVERY());
@@ -433,18 +432,19 @@ const DeliverInfoPage = () => {
 
   const userSelectDeliveryTypeHelper = () => {
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
-    if (userDeliveryType) {
+    if (userDeliveryType && !deliveryType) {
       if (isSubscription) {
         // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
         if (subsDeliveryType === 'SPOT') {
           setUserSelectDeliveryType('spot');
         } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
           if (selected === 'Y' || !selected) {
+            console.log('here by tayler 442');
             setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
           }
         }
       } else {
-        setUserSelectDeliveryType(userDeliveryType);
+        setUserSelectDeliveryType(userDeliveryType?.toLowerCase());
       }
     }
   };
@@ -482,13 +482,13 @@ const DeliverInfoPage = () => {
   const checkTimerShow = () => {
     // 배송 방법 선택과 관련 없이 현재 시간이 배송 마감 30분 전 이면 show
 
-    const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(deliveryType);
+    const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(timerDeliveryType);
 
     if (!isNotTimer) {
-      if (['스팟점심타이머', '스팟저녁타이머'].includes(deliveryType)) {
+      if (['스팟점심타이머', '스팟저녁타이머'].includes(timerDeliveryType)) {
         setTimerDeliveryType('스팟배송');
       } else {
-        setTimerDeliveryType(deliveryType);
+        setTimerDeliveryType(timerDeliveryType);
       }
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
     } else {
@@ -497,7 +497,8 @@ const DeliverInfoPage = () => {
   };
 
   useEffect(() => {
-    const vaildSelectedDestination = userDestination?.delivery?.toUpperCase() === userSelectDeliveryType.toUpperCase();
+    const vaildSelectedDestination = userDestination?.delivery?.toUpperCase() === userSelectDeliveryType?.toUpperCase();
+
     // 배송지 검색한 배송지가 있다면 임시 주소로 저장
     if (userTempDestination) {
       setTempDestination(userTempDestination);
@@ -513,6 +514,7 @@ const DeliverInfoPage = () => {
         setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
         setIsMaindestination(true);
       }
+    } else {
     }
   }, [userTempDestination, recentOrderDelivery, userDestination]);
 
@@ -523,11 +525,16 @@ const DeliverInfoPage = () => {
         setUserSelectDeliveryType('spot');
       } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
         if (selected === 'Y') {
+          console.log('here by tayler 528');
           setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
         }
       }
+    } else {
+      if (deliveryType) {
+        setUserSelectDeliveryType((deliveryType as string).toLowerCase());
+      }
     }
-  }, [isSubscription, subsDeliveryType]);
+  }, [isSubscription, subsDeliveryType, deliveryType]);
 
   useEffect(() => {
     // 배송방법 선택 시 기본 배송지 api 조회
@@ -611,6 +618,7 @@ const DeliverInfoPage = () => {
                 }
 
                 const isSelected = userSelectDeliveryType === item.value;
+
                 return (
                   <MethodGroup key={index}>
                     <RowWrapper>
@@ -735,3 +743,9 @@ const SettingBtnWrapper = styled.div`
 `;
 
 export default DeliverInfoPage;
+
+export async function getServerSideProps(context: any) {
+  return {
+    props: {},
+  };
+}

@@ -20,7 +20,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, del
   const [isShow, setIsShow] = useState<boolean>(true);
   const [isContentHide, setIsContentHide] = useState<boolean>(false);
 
-  const { dayFormatter } = getCustomDate(new Date(review.createdAt));
+  const { dayFormatter } = getCustomDate(review.createdAt);
 
   useEffect(() => {
     const lines = review.content?.split(/\r|\r\n|\n/);

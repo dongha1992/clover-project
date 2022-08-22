@@ -87,7 +87,7 @@ const CalendarSheet = ({
 
   const dispatch = useDispatch();
 
-  const { dates } = getCustomDate(new Date(selectedDeliveryDay));
+  const { dates } = getCustomDate(selectedDeliveryDay);
 
   const submitHandler = () => {
     dispatch(

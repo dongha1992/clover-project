@@ -168,8 +168,9 @@ const PointPage = () => {
       <ScrollView>
         {pointHistory?.length! > 0 ? (
           pointHistory?.map((item: IPointHistories, index: number) => {
+            const customCreatedAt = item.createdAt?.replace(/-/g, '/');
             if (targetIndex === item.id) {
-              const itemYear = new Date(item.createdAt).getFullYear();
+              const itemYear = new Date(customCreatedAt).getFullYear();
               return (
                 <FlexCol key={index}>
                   <BorderLine height={1} />
@@ -179,7 +180,7 @@ const PointPage = () => {
                   <PointItem
                     content={item.content}
                     value={item.value}
-                    createdAt={item.createdAt}
+                    createdAt={customCreatedAt}
                     expiredDate={item.expiredDate}
                     key={index}
                   />
@@ -190,7 +191,7 @@ const PointPage = () => {
               <PointItem
                 content={item.content}
                 value={item.value}
-                createdAt={item.createdAt}
+                createdAt={customCreatedAt}
                 expiredDate={item.expiredDate}
                 key={index}
               />
@@ -208,8 +209,8 @@ const PointPage = () => {
 
 const PointItem = React.forwardRef(
   ({ content, value, createdAt, expiredDate }: any, ref: React.ForwardedRef<HTMLDivElement>) => {
-    const { dayFormatter: formatCreatedAt } = getCustomDate(new Date(createdAt));
-    const { dayFormatter: formatExpiredDate } = getCustomDate(new Date(expiredDate));
+    const { dayFormatter: formatCreatedAt } = getCustomDate(createdAt);
+    const { dayFormatter: formatExpiredDate } = getCustomDate(expiredDate);
 
     return (
       <FlexCol padding="0 0 24px 0" ref={ref}>

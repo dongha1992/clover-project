@@ -47,7 +47,7 @@ const CartActualItem = ({
   });
 
   const { menuDetailAvailabilityMessage, availability, remainingQuantity } = menuDetail?.availabilityInfo;
-  const { years: curYear, months: curMonth, dates: curDay } = getCustomDate(new Date());
+  const { years: curYear, months: curMonth, dates: curDay } = getCustomDate();
 
   const isSold = menuDetail.isSold;
   const isValidHoliday =
