@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, ReactElement } from 'r
 import styled from 'styled-components';
 import Slider from 'react-slick';
 import { Tag } from '@components/Shared/Tag';
-import { TextH2B, TextB3R, TextH5B, TextB2R, TextH4B, TextH6B, TextB1R } from '@components/Shared/Text';
+import { TextH2B, TextB3R, TextH5B, TextB2R, TextH6B, TextB1R } from '@components/Shared/Text';
 import { theme, FlexBetween, FlexStart, textH5 } from '@styles/theme';
 import { StickyTab } from '@components/Shared/TabList';
 import { useDispatch } from 'react-redux';
@@ -10,26 +10,20 @@ import { SPOT_DETAIL_INFO } from '@constants/spot';
 import { DetailBottomStory, DetailBottomStoreInfo } from '@components/Pages/Spot';
 import { getSpotDetail, getSpotsDetailStory } from '@api/spot';
 import { SPOT_ITEM } from '@store/spot';
-import { ISpotsDetail, ISpotStories } from '@model/index';
-import { useSelector } from 'react-redux';
-import { spotSelector } from '@store/spot';
+import { ISpotStories } from '@model/index';
 import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useQuery } from 'react-query';
 import Carousel from '@components/Shared/Carousel';
 import NextImage from 'next/image';
+import DefaultLayout from '@components/Layout/Default';
+import SpotDetailBottom from '@components/Bottom/SpotDetailBottom';
 
-interface IParams {
-  id: number;
-}
-
-const SpotDetailPage = (): ReactElement => {
+const SpotDetailPage = () => {
   const dispatch = useDispatch();
   const tabRef = useRef<HTMLDivElement>(null);
-  // const [spotItem, getSpotItem] = useState<ISpotsDetail>();
   const [selectedTab, setSelectedTab] = useState<string>('/spot/detail/story');
   const [isSticky, setIsStikcy] = useState<boolean>(false);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [stories, setStories] = useState<ISpotStories[]>([]);
   const [page, setPage] = useState<number>(1);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
@@ -114,8 +108,6 @@ const SpotDetailPage = (): ReactElement => {
   );
 
   const sliceLen = spotItem && spotItem.notices?.length > 1;
-  const pickupsLen = spotItem && spotItem.pickups?.length;
-  const imgTotalLen = spotItem && spotItem.images?.length;
 
   useEffect(() => {
     if (router.isReady) {
@@ -167,21 +159,6 @@ const SpotDetailPage = (): ReactElement => {
     }
   };
 
-  const settingsTop = {
-    arrows: false,
-    dots: false,
-    speed: 500,
-    sliderToShow: 1,
-    slidersToScroll: 1,
-    centerMode: false,
-    infinite: true,
-    customPagimg: () => <div />,
-    centerPadding: '20px',
-    afterChange: (indexOfCurrentSlide: number) => {
-      setCurrentIndex(indexOfCurrentSlide);
-    },
-  };
-
   const settingNotice = {
     arrows: false,
     dots: false,
@@ -191,10 +168,6 @@ const SpotDetailPage = (): ReactElement => {
     infinite: false,
     centerPadding: sliceLen ? '30px' : '25px',
   };
-
-  if (isSpotLoading) {
-    return <div>loading...</div>;
-  }
 
   const openImgViewer = (images: any) => {
     dispatch(SET_IMAGE_VIEWER(images));
@@ -214,7 +187,7 @@ const SpotDetailPage = (): ReactElement => {
       <ImageWrapper>
       {
         spotItem?.isTrial ? (
-          <NextImage 
+          <NextImage
             src='/images/fcospot/img_fcospot_default.png'
             width={512}
             height={383}
@@ -238,7 +211,7 @@ const SpotDetailPage = (): ReactElement => {
               프라이빗
             </Tag>
           ) : null}
-          {spotItem?.type !== 'PRIVATE' && placeType() !== null && 
+          {spotItem?.type !== 'PRIVATE' && placeType() !== null &&
             <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale65}>{placeType()}</Tag>}
           {spotItem?.canEat && <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale65}>취식가능</Tag>}
           {spotItem?.canParking && <Tag margin="0 5px 0 0" backgroundColor={theme.greyScale6} color={theme.greyScale65}>주차가능</Tag>}
@@ -351,7 +324,7 @@ const SpotDetailPage = (): ReactElement => {
         </PickUpInfoWrapper>
       </PickupWrapper>
       <SpotEventBannerWrapper onClick={goToSpotNotice}>
-        <NextImage 
+        <NextImage
           src='/images/fcospot/img_banner_fco_info_360_96.png'
           width={512}
           height={110}
@@ -392,13 +365,16 @@ const SpotDetailPage = (): ReactElement => {
   );
 };
 
+SpotDetailPage.getLayout = (page: ReactElement) => {
+  return (<DefaultLayout bottom={<SpotDetailBottom/>}>{page}</DefaultLayout>);
+}
 const Container = styled.main``;
 
 const TopNoticeWrapper = styled.div`
   width: 100%;
   height: 45px;
-  position: fiex;
-  top: 0px;
+  position: fixed;
+  top: 0;
   z-index: 50;
   background: ${theme.brandColor};
   padding: 12px 48px;
@@ -473,4 +449,4 @@ const NonContentWrapper = styled.div`
   align-items: center;
 `;
 
-export default React.memo(SpotDetailPage);
+export default SpotDetailPage;
