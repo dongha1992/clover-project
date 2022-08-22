@@ -32,12 +32,6 @@ export const commonSlice = createSlice({
   name: 'common',
   initialState: INITIAL_STATE,
   reducers: {
-    SET_IMAGE_VIEWER: (state: any, { payload }: PayloadAction<IViewer>) => {
-      state.imagesForViewer = payload;
-    },
-    INIT_IMAGE_VIEWER: (state: any, action: PayloadAction) => {
-      state.imagesForViewer = { url: [], index: 0 };
-    },
     SET_IS_MOBILE: (state: any, { payload }: PayloadAction<boolean>) => {
       state.isMobile = payload;
     },
@@ -66,8 +60,6 @@ export const commonSlice = createSlice({
 });
 
 export const {
-  SET_IMAGE_VIEWER,
-  INIT_IMAGE_VIEWER,
   SET_IS_MOBILE,
   SET_IS_LOADING,
   SET_LOGIN_TYPE,
