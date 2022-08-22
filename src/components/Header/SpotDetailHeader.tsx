@@ -4,11 +4,10 @@ import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { useDispatch, useSelector } from 'react-redux';
-import { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { commonSelector } from '@store/common';
+import { useDispatch } from 'react-redux';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import CartIcon from '@components/Header/Cart';
-import { ShareSheet } from '@components/BottomSheet/ShareSheet';
+import ShareUrl from '@components/ShareUrl';
 
 type TProps = {
   title?: string;
@@ -22,46 +21,20 @@ const SpotDetailHeader = ({ title }: TProps) => {
   const router = useRouter();
 
   const { q_share } = router.query;
-  const { isMobile } = useSelector(commonSelector);
+  const currentUrl = window.location.href;
+  const spotLink = `${currentUrl}&q_share=true`;
 
   useEffect(() => {
     return () => {
       dispatch(INIT_BOTTOM_SHEET());
     };
-  }, []);
+  });
 
   const goBack = (): void => {
     if (q_share) {
       router.push('/spot');
     } else {
       router.back();
-    }
-  };
-
-  const goToShare = () => {
-    const currentUrl = window.location.href;
-    const spotLink = `${currentUrl}&q_share=true`;
-    if (isMobile) {
-      if (navigator.share) {
-        navigator
-          .share({
-            title: '프코스팟 상세 페이지 링크',
-            url: spotLink,
-          })
-          .then(() => {
-            alert('공유가 완료되었습니다.');
-          })
-          .catch(console.error);
-      } else {
-        return 'null';
-      }
-    } else {
-      dispatch(INIT_BOTTOM_SHEET());
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: <ShareSheet customUrl={spotLink} />,
-        })
-      );
     }
   };
 
@@ -77,9 +50,9 @@ const SpotDetailHeader = ({ title }: TProps) => {
         </div>
         <TextH4B padding="2px 0 0 0">{title}</TextH4B>
         <BtnWrapper>
-          <div className="share" onClick={goToShare}>
+          <ShareUrl className="share" title="프코스팟 상세 페이지 링크" linkUrl={spotLink}>
             <SVGIcon name="share" />
-          </div>
+          </ShareUrl>
           <CartIcon onClick={goToCart} />
         </BtnWrapper>
       </Wrapper>

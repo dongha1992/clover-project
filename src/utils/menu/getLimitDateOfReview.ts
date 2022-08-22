@@ -6,9 +6,9 @@ dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
 const getLimitDateOfReview = (deliveryDate: string) => {
-  const { dayFormatter: deliveryAt } = getCustomDate(new Date(deliveryDate));
+  const { dayFormatter: deliveryAt } = getCustomDate(deliveryDate);
   const writeReviewLimit = dayjs(deliveryDate).add(6, 'day').format('YYYY-MM-DD');
-  const { dayFormatter: limitAt } = getCustomDate(new Date(writeReviewLimit));
+  const { dayFormatter: limitAt } = getCustomDate(writeReviewLimit);
 
   const today = dayjs();
   const isAvailable = today.isSameOrBefore(writeReviewLimit, 'day');

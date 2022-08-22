@@ -1,21 +1,17 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { theme, FlexStart, FlexBetween } from '@styles/theme';
-import { TextH5B, TextB3R, TextH6B, TextH4B } from '@components/Shared/Text';
+import { TextH5B, TextB3R, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { SVGIcon } from '@utils/common';
-import { IGetRegistrationStatus, ISpotsInfo } from '@model/index';
+import { IGetRegistrationStatus } from '@model/index';
 import { postSpotsRegistrationsRetrial } from '@api/spot';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
-import { useRouter } from 'next/router';
-import { SET_SPOT_INFO } from '@store/spot';
 import router from 'next/router';
 import { userForm } from '@store/user';
-import { commonSelector } from '@store/common';
-import { SET_BOTTOM_SHEET, INIT_BOTTOM_SHEET } from '@store/bottomSheet';
-import { ShareSheet } from '@components/BottomSheet/ShareSheet';
+import ShareUrl from '@components/ShareUrl';
 
 interface IProps {
   item: IGetRegistrationStatus;
@@ -24,11 +20,11 @@ interface IProps {
 
 const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
   const dispatch = useDispatch();
-  const routers = useRouter();
-  const { isMobile } = useSelector(commonSelector);
   const { me } = useSelector(userForm);
 
   const loginUserId = me?.id!;
+  const currentUrl = window.location.origin;
+  const spotLink = `${currentUrl}/spot/open?trialId=${item.id}`;
 
   const spotType = (type: string | undefined) => {
     switch (type) {
@@ -123,34 +119,6 @@ const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
     });
   };
 
-  const goToSpotShare = (id: number) => {
-    const currentUrl = window.location.origin;
-    const trialSpotId = id;
-    const spotLink = `${currentUrl}/spot/open?trialId=${trialSpotId}`;
-    if (isMobile) {
-      if (navigator.share) {
-        navigator
-          .share({
-            title: '프코스팟 신청 공유 링크',
-            url: spotLink,
-          })
-          .then(() => {
-            alert('공유가 완료되었습니다.');
-          })
-          .catch(console.error);
-      } else {
-        return 'null';
-      }
-    } else {
-      dispatch(INIT_BOTTOM_SHEET());
-      dispatch(
-        SET_BOTTOM_SHEET({
-          content: <ShareSheet customUrl={spotLink} />,
-        })
-      );
-    }
-  };
-
   return (
     <Container>
       <Wrppaer>
@@ -203,15 +171,17 @@ const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
           !item?.rejected &&
           !item?.canRetrial &&
           Number(loginUserId) === item.userId && (
-            <Button
-              border
-              color={theme.black}
-              backgroundColor={theme.white}
-              margin="16px 0 0 0"
-              onClick={() => goToSpotShare(item?.id!)}
-            >
-              오픈 참여 공유하고 포인트 받기
-            </Button>
+            <ShareUrl linkUrl={spotLink} title="프코스팟 신청 공유 링크">
+              <Button
+                border
+                color={theme.black}
+                backgroundColor={theme.white}
+                margin="16px 0 0 0"
+              >
+                오픈 참여 공유하고 포인트 받기
+              </Button>
+            </ShareUrl>
+
           )}
         {item?.type === 'PRIVATE' && item?.step === 'TRIAL' && item?.canRetrial && (
           <Button

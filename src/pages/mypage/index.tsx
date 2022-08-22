@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextB3R, TextH2B, TextH6B, TextH5B, TextH4B } from '@components/Shared/Text';
+import { TextB3R, TextH2B, TextH6B, TextH3B, TextH4B } from '@components/Shared/Text';
 import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween } from '@styles/theme';
 import { getFormatPrice, SVGIcon } from '@utils/common';
 import styled from 'styled-components';
@@ -227,17 +227,17 @@ const MypagePage = () => {
                 <TextH6B color={theme.greyScale65} pointer>
                   사용 가능한 포인트
                 </TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/point')} pointer>
+                <TextH3B onClick={() => router.push('/mypage/point')} pointer>
                   {getFormatPrice(String(userInfo?.availablePoint))} P
-                </TextH5B>
+                </TextH3B>
               </FlexCol>
               <FlexCol width="50%">
                 <TextH6B color={theme.greyScale65} pointer>
                   사용 가능한 쿠폰
                 </TextH6B>
-                <TextH5B onClick={() => router.push('/mypage/coupon')} pointer>
+                <TextH3B onClick={() => router.push('/mypage/coupon')} pointer>
                   {userInfo?.availableCoupons.length} 개
-                </TextH5B>
+                </TextH3B>
               </FlexCol>
             </FlexBetweenStart>
             <BorderLine height={8} />
@@ -249,14 +249,13 @@ const MypagePage = () => {
               showBoard={showBoard}
             />
             <ManageWrapper>
+              <MypageMenu title="후기 작성" link="/mypage/review" />
+              <MypageMenu title="찜한 상품" link="/mypage/dib/general" hideBorder />
+              <BorderLine height={8} />
               <MypageMenu title="프코스팟 관리" link="/mypage/spot-status" />
-              <MypageMenu title="후기 관리" link="/mypage/review" />
-              <MypageMenu title="찜 관리" link="/mypage/dib/general" />
-              <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
-              <MypageMenu title="주소 관리" link="/mypage/address" />
+              <MypageMenu title="배송지 관리" link="/mypage/address" />
               <MypageMenu title="결제 관리" link="/mypage/card" />
-              <MypageMenu title="이벤트" link="/event" />
-              <MypageMenu title="배송 안내" link="/mypage/deliver-infomation" hideBorder />
+              <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
               <ImageWrapper>
                 <Image
                   width={340}
@@ -267,9 +266,13 @@ const MypagePage = () => {
                   alt="Friend invitation banner"
                 />
               </ImageWrapper>
+              <MypageMenu title="이벤트·소식" link="/event" />
+              <MypageMenu title="배송 안내" link="/mypage/delivery-infomation" hideBorder />
               <MypageMenu title="고객센터" link="/mypage/customer-service" />
-              <MypageMenu title="앱설정" link="/mypage/setting" />
-              <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
+              <MypageMenu title="설정" link="/mypage/setting" />
+              <MypageMenu title="약관 및 정책" link="/mypage/term" />
+              <MypageMenu title="버전 정보" link="/mypage/term" hideBorder />
+              <BorderLine height={8} />
               <LogoutWrapper onClick={logoutHandler}>
                 <FlexBetween padding="24px 0">
                   <TextH4B>로그아웃</TextH4B>
@@ -332,8 +335,9 @@ const MypagePage = () => {
                   </a>
                 </Link>
               </ImageWrapper>
+              <MypageMenu title="이벤트·소식" link="/mypage/event" />
+              <MypageMenu title="배송안내" link="/mypage/delivery-infomation" />
               <MypageMenu title="고객센터" link="/mypage/customer-service" />
-              {/* <MypageMenu title="앱설정" link="/mypage/setting" /> */}
               <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
             </ManageWrapper>
           </>

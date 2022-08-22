@@ -18,19 +18,19 @@ export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
     ?.every((item: IMenuDetails) => item.isSold);
 
   const checkedMenusAvailiability = () => {
-    const mainMenusDetailsLen = menu?.menuDetails?.filter(i => i.main);
+    const mainMenusDetailsLen = menu?.menuDetails?.filter((i) => i.main);
     if (mainMenusDetailsLen?.length < 2) {
-      if(mainMenusDetailsLen?.find(i => i.availability?.availability)?.availability?.availability){
+      if (mainMenusDetailsLen?.find((i) => i.availability?.availability)?.availability?.availability) {
         return false; // 게속 판매 가능
       } else {
         return true; // 일시 품절 상태
       }
     } else {
       return false;
-    };
+    }
   };
 
-  const isItemSold = checkIsAllSold || menu.isSold || checkedMenusAvailiability() ;
+  const isItemSold = checkIsAllSold || menu.isSold || checkedMenusAvailiability();
 
   // 오픈 하는지
   const checkIsSoon = (): string => {
@@ -39,13 +39,13 @@ export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
 
     // const isDisplayBadge = diff > 0 && diff <= ONE_WEEK;
     /* TODO: 임시 */
-    const customOpenedAt = openedAt?.replace(/-/g, '/');
+    // const customOpenedAt = openedAt?.replace(/-/g, '/');
     const isDisplayBadge = diff > 0;
-    const isBeforeThanLaunchedAt = today.isSameOrBefore(customOpenedAt, 'day');
+    const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
 
     try {
       if (isBeforeThanLaunchedAt && isDisplayBadge) {
-        const { dayWithTime } = getCustomDate(new Date(customOpenedAt));
+        const { dayWithTime } = getCustomDate(openedAt);
         return dayWithTime;
       } else {
         return '';

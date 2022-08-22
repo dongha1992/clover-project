@@ -21,7 +21,12 @@ import {
 import { SET_ORDER } from '@store/order';
 import { Item, DetailItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
-import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
+import {
+  destinationForm,
+  SET_USER_DELIVERY_TYPE,
+  INIT_TEMP_DESTINATION,
+  SET_TEMP_DESTINATION,
+} from '@store/destination';
 import {
   ISubOrderDelivery,
   IMenuDetailsInCart,
@@ -164,7 +169,6 @@ const CartPage = () => {
           dispatch(SET_CART_LISTS(data));
 
           if (isFirstRender) {
-            // setDisposableList(initMenuOptions(data.cartMenus));
             setHoliday(formatHoliday());
           }
         } catch (error) {
@@ -738,7 +742,8 @@ const CartPage = () => {
 
   const checkHasSubOrderDelivery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
-      const sameDeliveryAddress = isEqual(location, destinationObj?.location);
+      const sameDeliveryAddress = isEqual(location, userDestination?.location!);
+
       return sameDeliveryAddress;
     };
 
@@ -746,7 +751,7 @@ const CartPage = () => {
   };
 
   const checkSameDateSubDelivery = () => {
-    const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
+    const isSpotOrQuick = ['spot', 'quick'].includes(userDeliveryType);
 
     for (const subOrder of subOrderDelivery) {
       const { deliveryDate, deliveryDetail } = subOrder;
@@ -922,7 +927,7 @@ const CartPage = () => {
   const getSpotDiscountPrice = useCallback((): number => {
     const spotDiscount = cartResponse?.discountInfos[0];
     const discoutnedItemsPrice = getItemsPrice() - getItemDiscountPrice();
-    return (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice;
+    return (spotDiscount?.discountRate ?? 0 / 100) * discoutnedItemsPrice;
   }, [checkedMenus]);
 
   const getDeliveryFee = useCallback(() => {
@@ -973,6 +978,7 @@ const CartPage = () => {
       return;
     } else {
       router.push('/cart/delivery-info');
+      dispatch(INIT_TEMP_DESTINATION());
     }
   };
 
@@ -992,6 +998,7 @@ const CartPage = () => {
   const goToOrder = () => {
     if (!me) return;
     if (!destinationObj.destinationId) return;
+
     if (isInvalidDestination) {
       dispatch(
         SET_ALERT({
@@ -1117,7 +1124,7 @@ const CartPage = () => {
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
     if (isSpotOrQuick) {
-      const { currentTime, currentDate } = getCustomDate(new Date());
+      const { currentTime, currentDate } = getCustomDate();
       const isFinishLunch = currentTime >= 9.29;
       const isDisabledLunch = isFinishLunch && currentDate === selectedDeliveryDay;
 
@@ -1174,14 +1181,15 @@ const CartPage = () => {
   }, [checkedMenus]);
 
   const getSubOrderDelivery = async () => {
-    if (me && destinationObj?.delivery) {
+    if (me) {
       const params = {
-        delivery: destinationObj?.delivery!.toUpperCase(),
+        delivery: userDeliveryType.toUpperCase(),
       };
       try {
         const { data } = await getSubOrdersCheckApi(params);
         if (data.code === 200) {
           const result = checkHasSubOrderDelivery(data?.data.orderDeliveries);
+
           setSubOrderDeliery(result);
         }
       } catch (error) {
@@ -1194,7 +1202,6 @@ const CartPage = () => {
     //  첫 렌딩 때 체크
     if (isFirstRender) {
       const canCheckMenus = getCanCheckedMenus(cartItemList);
-      // PERIOD가 false일 경우, isSold = true가 되는지 몰라 일단 방어로직
       const canOrderPeriodMenus = cartItemList.filter((item) => checkPeriodCartMenuStatus(item.menuDetails));
       const filtered = canCheckMenus.filter(
         (item) => !canOrderPeriodMenus?.map((item) => item.menuId).includes(item.menuId)
@@ -1219,7 +1226,7 @@ const CartPage = () => {
 
   useEffect(() => {
     // 스팟 종료 날짜
-    const { dateFormatter: closedDate } = getCustomDate(new Date(destinationObj?.closedDate!));
+    const { dateFormatter: closedDate } = getCustomDate(destinationObj?.closedDate!);
     const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
 
     // 스팟 운영 종료

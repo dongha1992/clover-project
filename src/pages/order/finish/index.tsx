@@ -73,12 +73,18 @@ const OrderFinishPage = () => {
   });
 
   const checkPg = async () => {
+    console.log('pg', pg);
     try {
       if (pg === 'kakao') {
         const kakaoTid = getCookie({ name: 'kakao-tid-clover' });
+        console.log('kakaoTid', kakaoTid);
+        console.log('pgToken', pgToken);
+
         if (pgToken && kakaoTid) {
           const reqBody = { pgToken: pgToken.toString(), tid: kakaoTid };
           const { data } = await postKakaoApproveApi({ orderId: Number(orderId), data: reqBody });
+          console.log('postKakaoApproveApi', data);
+
           if (data.code === 200) {
             setIsPaymentSuccess(true);
             removeCookie({ name: 'kakao-tid-clover' });
@@ -265,6 +271,7 @@ const OrderFinishPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
+      console.log('isReady');
       checkPg();
     }
   }, [router.isReady]);
@@ -295,7 +302,7 @@ const OrderFinishPage = () => {
 
   const { orderMenus, spotName, spotPickupName, location, deliveryDate, deliveryEndTime, deliveryStartTime } =
     orderDetail?.orderDeliveries[0]!;
-  const { dayFormatter } = getCustomDate(new Date(deliveryDate));
+  const { dayFormatter } = getCustomDate(deliveryDate);
   const isSpot = delivery === 'SPOT';
   const isSubOrder = orderDetail?.orderDeliveries[0]!.type === 'SUB';
 

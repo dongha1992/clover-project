@@ -73,26 +73,24 @@ const OrderDetailPage = () => {
     },
     {
       onSuccess: async () => {
-        if (orderDeliveries?.type === 'SUB') {
-          dispatch(
-            SET_BOTTOM_SHEET({
-              content: (
-                <OrderCancelSheet
-                  name={orderDetail?.name!}
-                  url={orderDetail?.image.url!}
-                  payAmount={orderDetail?.payAmount!}
-                  orderId={orderDetail?.id!}
-                />
-              ),
-            })
-          );
-        } else {
-          router.push('/mypage/order-delivery-history');
-        }
-
-        await queryClient.refetchQueries('getOrderLists');
+        // const total = orderDetail?.payAmount! + orderDetail?.point! + orderDetail?.coupon!;
+        dispatch(
+          SET_BOTTOM_SHEET({
+            content: (
+              <OrderCancelSheet
+                name={orderDetail?.name!}
+                url={orderDetail?.image.url!}
+                payAmount={orderDetail?.payAmount!}
+                orderId={orderDetail?.id!}
+              />
+            ),
+          })
+        );
+        await queryClient.refetchQueries('getOrderDetail');
       },
-      onError: async (error: AxiosError) => {},
+      onError: async (error: AxiosError) => {
+        dispatch(SET_ALERT({ alertMessage: '이미 취소된 주문이에요.' }));
+      },
     }
   );
 
@@ -124,7 +122,7 @@ const OrderDetailPage = () => {
   const paidAt = dayjs(orderDetail?.paidAt).format('YYYY-MM-DD HH:mm');
   const orderDeliveries = orderDetail && orderDetail?.orderDeliveries[0]!;
   const { dateFormatter: deliveryAt, dayFormatter: deliveryAtWithDay } = getCustomDate(
-    new Date(orderDetail?.orderDeliveries[0].deliveryDate!)
+    orderDetail?.orderDeliveries[0].deliveryDate!
   );
 
   const deliveryStatus = DELIVERY_STATUS_MAP[orderDeliveries?.status!];
@@ -132,8 +130,8 @@ const OrderDetailPage = () => {
   const isCompleted = orderDeliveries?.status === 'COMPLETED';
   const isCanceled = orderDeliveries?.status === 'CANCELED';
   const isDelivering = orderDeliveries?.status === 'DELIVERING';
-  const canChangeDelivery = orderDeliveries?.status === 'RESERVED';
   const isSubOrder = orderDeliveries?.type === 'SUB';
+  const canChangeDelivery = orderDeliveries?.status === 'RESERVED';
   const hasSubOrder = orderDeliveries?.subOrderDelivery;
   const isSubOrderCanceled = orderDeliveries?.subOrderDelivery?.status === 'CANCELED';
   const deliveryId = orderDeliveries?.id!;
@@ -196,7 +194,7 @@ const OrderDetailPage = () => {
   };
 
   const changeDeliveryInfoHandler = () => {
-    if (!canChangeDelivery || isCanceled) {
+    if (!canChangeDelivery || isCanceled || isSubOrder) {
       return;
     }
 

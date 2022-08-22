@@ -13,6 +13,9 @@ import { SET_ALERT } from '@store/alert';
 import { registerCard, getMainCardLists } from '@api/card';
 import dynamic from 'next/dynamic';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
+import BirthDate from '@components/BirthDate';
+import { IBirthdayObj } from '@pages/signup/optional';
+import { getFormatTime } from '@utils/destination';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
@@ -53,7 +56,11 @@ const CardRegisterPage = () => {
   });
   const [password, setPassword] = useState<string>('');
   const [expireDate, setExpireDate] = useState<string>('');
-  const [birthDate, setBirthdate] = useState<string>('');
+  const [birthDayObj, setBirthdayObj] = useState<IBirthdayObj>({
+    year: 0,
+    month: 0,
+    day: 0,
+  });
   const [isTermCheck, setIsTermCheck] = useState(false);
   const [isMainCard, setIsMainCard] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -149,13 +156,13 @@ const CardRegisterPage = () => {
   };
 
   const changeBirthdayHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    let { value } = e.target as HTMLInputElement;
-    /*TODO: YYYY-MM-DD 포맷 함수 */
+    let { value, name } = e.target as HTMLInputElement;
 
     if (value.length > 10) {
       value = value.slice(0, 10);
     }
-    setBirthdate(value);
+
+    setBirthdayObj({ ...birthDayObj, [name]: Number(value) });
   };
 
   const focusNextInputHandler = (name: string) => {
@@ -229,7 +236,7 @@ const CardRegisterPage = () => {
           return alert('카드비밀번호를 입력해주세요.');
         }
 
-        if (birthDate.length !== 10) {
+        if (!birthDayObj.day || !birthDayObj.month || !birthDayObj.year) {
           return alert('생년월일을 다시 입력해주세요.');
         }
 
@@ -243,6 +250,7 @@ const CardRegisterPage = () => {
 
       const expiredMM = expireDate.slice(0, 2);
       const expiredYY = expireDate.slice(expireDate.length - 2, expireDate.length);
+      const birthDate = `${birthDayObj.year}-${getFormatTime(birthDayObj.month)}-${getFormatTime(birthDayObj.day)}`;
 
       const cardData = {
         password,
@@ -298,13 +306,13 @@ const CardRegisterPage = () => {
         setIsDisabled(false);
       }
     } else {
-      if (number1 && number2 && number3 && number4 && expireDate && password && birthDate && isTermCheck) {
+      if (number1 && number2 && number3 && number4 && expireDate && password && birthDayObj && isTermCheck) {
         setIsDisabled(true);
       } else {
         setIsDisabled(false);
       }
     }
-  }, [card, expireDate, password, birthDate, isTermCheck]);
+  }, [card, expireDate, password, birthDayObj, isTermCheck]);
 
   return (
     <Container>
@@ -401,7 +409,7 @@ const CardRegisterPage = () => {
           </FlexRow>
           <CustomInputWrapper>
             <input
-              type="number"
+              type="password"
               name="passwordInput"
               placeholder="비밀번호 앞 두 자리"
               onChange={changePasswordHandler}
@@ -418,15 +426,7 @@ const CardRegisterPage = () => {
       ) : (
         <BirthdayWrapper>
           <TextH5B padding="0 0 9px 0">생년월일</TextH5B>
-          <CustomInputWrapper>
-            <input
-              type="text"
-              name="birthdayInput"
-              placeholder="YYYY-MM-DD"
-              onChange={changeBirthdayHandler}
-              value={birthDate}
-            />
-          </CustomInputWrapper>
+          <BirthDate onChange={changeBirthdayHandler} selected={birthDayObj} />
         </BirthdayWrapper>
       )}
       <OtherNameOfCardWrapper>

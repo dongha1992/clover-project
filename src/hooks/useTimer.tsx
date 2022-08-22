@@ -17,7 +17,7 @@ const useTimer = () => {
   const { isInitDelay } = useSelector(orderForm);
 
   const getRestTimeTilLimit = (): number => {
-    const { minutes, seconds } = getCustomDate(new Date());
+    const { minutes, seconds } = getCustomDate();
     if (minutes >= 30) {
       return (60 - minutes) * 60 - seconds;
     } else {
