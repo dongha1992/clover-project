@@ -12,7 +12,7 @@ import { breakpoints } from '@utils/common/getMediaQuery';
 const BottomSheet = () => {
   const { sheetRef, contentRef, size } = useBottomSheet();
   const dispatch = useDispatch();
-  const { content, height }: any = useSelector(bottomSheetForm);
+  const { content, height, noneMarginBottom, dimmedHandler }: any = useSelector(bottomSheetForm);
 
   useEffect(() => {
     // sheetRef.current => sheetRef.current?.offsetHeight 수정
@@ -31,13 +31,17 @@ const BottomSheet = () => {
     if (target !== currentTarget) {
       return;
     }
-    dispatch(INIT_BOTTOM_SHEET());
+    if(noneMarginBottom) {
+      dimmedHandler();
+    } else {
+      dispatch(INIT_BOTTOM_SHEET());
+    }
   };
 
   return (
     <Background onClick={closeBottmSheet}>
       <Container ref={sheetRef} height={height}>
-        <BottomSheetContent ref={contentRef}>
+        <BottomSheetContent ref={contentRef} noneMarginBottom={noneMarginBottom}>
           <Content content={content} />
         </BottomSheetContent>
       </Container>
@@ -99,12 +103,12 @@ const Container = styled.div<{ height: number | null }>`
   `};
 `;
 
-const BottomSheetContent = styled.div`
+const BottomSheetContent = styled.div<{noneMarginBottom?: boolean}>`
   width: 100%;
   height: 100%;
   /* overflow: auto; */
   -webkit-overflow-scrolling: touch;
-  margin-bottom: 56px;
+  margin-bottom: ${({noneMarginBottom}) => (noneMarginBottom ? null : '56px')};
   overflow-y: scroll;
 `;
 

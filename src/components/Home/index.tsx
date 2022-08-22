@@ -18,7 +18,6 @@ import Carousel from "@components/Shared/Carousel";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { IMenus } from '@model/index';
-/* TODO: Banner api type만 다른데 여러 번 호출함 -> 리팩토링 필요 */
 
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
@@ -68,7 +67,7 @@ const Home = () => {
   return (
     <Container>
         <Container>
-          <Carousel images={bannerList.map(banner => ({ src: banner.image.url }))} />
+          <Carousel autoPlay images={bannerList.map(banner => ({ src: banner.image.url }))} />
         </Container>
       <SectionWrapper>
         <MainTab />
