@@ -5,12 +5,16 @@ type TProps = {
   content: JSX.Element | null;
   submitHandler?: () => void | null;
   height?: string | null;
+  noneMarginBottom?: boolean;
+  dimmedHandler?: () => void | null;
 };
 
 const initialState: TProps = {
   content: null,
   submitHandler: () => {},
-  height: null
+  height: null,
+  noneMarginBottom: false,
+  dimmedHandler: () => {},
 };
 
 export const style = createSlice({

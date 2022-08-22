@@ -15,6 +15,10 @@ export interface ICarouselImageProps {
 
 interface ICarouselProps {
   images: ICarouselImageProps[] | undefined;
+  noneArrow?: boolean;
+  width?: string;
+  height?: string;
+  autoPlay?: boolean;
 }
 
 const NextArrow = ({ onClick }: any) => {
@@ -33,7 +37,7 @@ const PreviousArrow = ({ onClick }: any) => {
   );
 };
 
-const Carousel = ({ images }: ICarouselProps) => {
+const Carousel = ({ images, noneArrow, width, height, autoPlay }: ICarouselProps) => {
   const [isArrowShow, setIsArrowShow] = useState<boolean>(false);
   const [currentPageNumber, setCurrentPageNumber] = useState(0);
 
@@ -45,7 +49,7 @@ const Carousel = ({ images }: ICarouselProps) => {
     slidersToScroll: 1,
     centerMode: true,
     infinite: true,
-    autoplay: true,
+    autoplay: autoPlay ? true : false,
     autoplaySpeed: 5000,
     afterChange: setCurrentPageNumber,
     centerPadding: '0px',
@@ -56,7 +60,7 @@ const Carousel = ({ images }: ICarouselProps) => {
   return (
     <Container
       onMouseEnter={() => {
-        setIsArrowShow(true);
+        setIsArrowShow(noneArrow ? false : true);
       }}
       onMouseLeave={() => {
         setIsArrowShow(false);
@@ -65,7 +69,14 @@ const Carousel = ({ images }: ICarouselProps) => {
       <Slider {...settings}>
         {images?.map((image: ICarouselImageProps, index: number) => {
           return (
-            <Image src={image.src} alt={image.alt || ''} width="512px" height="512px" layout="responsive" key={index} />
+            <Image 
+              src={image.src} 
+              alt={image.alt || ''} 
+              width={width ? width : "512px"} 
+              height={height ? height : "512px"} 
+              layout="responsive" 
+              key={index}
+            />
           );
         })}
       </Slider>
