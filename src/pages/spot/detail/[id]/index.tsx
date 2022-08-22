@@ -11,13 +11,13 @@ import { DetailBottomStory, DetailBottomStoreInfo } from '@components/Pages/Spot
 import { getSpotDetail, getSpotsDetailStory } from '@api/spot';
 import { SPOT_ITEM } from '@store/spot';
 import { ISpotStories } from '@model/index';
-import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useQuery } from 'react-query';
 import Carousel from '@components/Shared/Carousel';
 import NextImage from 'next/image';
 import DefaultLayout from '@components/Layout/Default';
 import SpotDetailBottom from '@components/Bottom/SpotDetailBottom';
+import { showImageViewer } from '@store/imageViewer';
 
 const SpotDetailPage = () => {
   const dispatch = useDispatch();
@@ -28,7 +28,7 @@ const SpotDetailPage = () => {
   const [page, setPage] = useState<number>(1);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [id, setId] = useState<number>();
+  const id = Number(router.query?.id);
   const HEADER_HEIGHT = 56;
 
   // 스팟 상세 스토리 10개 이상인 경우 무한스크롤
@@ -109,11 +109,6 @@ const SpotDetailPage = () => {
 
   const sliceLen = spotItem && spotItem.notices?.length > 1;
 
-  useEffect(() => {
-    if (router.isReady) {
-      setId(Number(router.query?.id));
-    }
-  }, [router.isReady]);
 
   const selectTabHandler = useCallback(({ link }: string) => {
     setSelectedTab(link);
@@ -169,8 +164,8 @@ const SpotDetailPage = () => {
     centerPadding: sliceLen ? '30px' : '25px',
   };
 
-  const openImgViewer = (images: any) => {
-    dispatch(SET_IMAGE_VIEWER(images));
+  const openImgViewer = (images: string[]) => {
+    dispatch(showImageViewer({images, startIndex: 0, isShow: true}));
   };
 
   const goToSpotNotice = (): void => {
@@ -298,7 +293,7 @@ const SpotDetailPage = () => {
                               color={theme.greyScale65}
                               textDecoration="underline"
                               pointer
-                              onClick={() => openImgViewer(j?.url)}
+                              onClick={() => openImgViewer([j?.url])}
                             >
                               이미지로 보기
                             </TextH6B>
@@ -448,5 +443,18 @@ const NonContentWrapper = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
+}
+
+export async function getStaticProps() {
+  return {
+    props: {},
+  };
+}
 
 export default SpotDetailPage;

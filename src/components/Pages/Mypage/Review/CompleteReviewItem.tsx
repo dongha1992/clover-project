@@ -7,7 +7,8 @@ import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
 import Image from '@components/Shared/Image';
-import ImageViewer from '@components/ImageViewer';
+import { showImageViewer } from '@store/imageViewer';
+import { useDispatch } from 'react-redux';
 
 const MAX_LINE = 5;
 interface IProps {
@@ -19,11 +20,8 @@ interface IProps {
 const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
   const [isContentHide, setIsContentHide] = useState<boolean>(false);
-
   const { dayFormatter } = getCustomDate(review.createdAt);
-  const [isShowImageViewer, setIsShowImageViewer] = useState<boolean>(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { dayFormatter } = getCustomDate(new Date(review.createdAt));
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const lines = review.content?.split(/\r|\r\n|\n/);
@@ -33,14 +31,9 @@ const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: I
     }
   });
 
-  const imageClickHandler = (index: number) => {
-    setCurrentImageIndex(index);
-    setIsShowImageViewer(true);
-  }
-
-  const onCloseModalHandler = () => {
-    setCurrentImageIndex(0);
-    setIsShowImageViewer(false);
+  const imageClickHandler = (startIndex: number) => {
+    const images = review?.reviewImages.map((item: any) => item.url);
+    dispatch(showImageViewer({images, startIndex, isShow: true}));
   }
 
   return (
@@ -157,7 +150,6 @@ const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: I
           </ReviewContent>
         </Wrapper>
       </Container>
-      <ImageViewer images={review?.reviewImages.map((item: any) => item.url)} startIndex={currentImageIndex} isShow={isShowImageViewer} onClose={onCloseModalHandler}></ImageViewer>
     </>
   );
 };

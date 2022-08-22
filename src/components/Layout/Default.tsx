@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { alertForm } from '@store/alert';
 import { toastSelector } from '@store/toast';
 import { useSelector } from 'react-redux';
+import { imageViewerSelector } from '@store/imageViewer';
 import Header from '@components/Header';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import Loading from '@components/Shared/Loading';
@@ -10,6 +11,7 @@ import { AppState } from '@store/index';
 import Alert from '@components/Shared/Alert';
 import Toast from '@components/Shared/Toast';
 import BottomSheet from '@components/BottomSheet';
+import ImageViewer from '@components/ImageViewer';
 import { bottomSheetForm } from '@store/bottomSheet';
 
 interface IDefaultLayoutProps {
@@ -20,6 +22,7 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
   const alert = useSelector(alertForm);
   const bottomSheet = useSelector(bottomSheetForm);
   const toast = useSelector(toastSelector);
+  const imageViewerState = useSelector(imageViewerSelector);
   const loadingState = useSelector((state: AppState) => state.loading);
 
   // set 1vh for all devices
@@ -54,6 +57,11 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
               {alert.children}
             </Alert>
           )}
+          <ImageViewer
+            images={imageViewerState.images}
+            startIndex={imageViewerState.startIndex}
+            isShow={imageViewerState.isShow}
+          />
           <Left>
             <div className="left-contents">
               {/* <Image
