@@ -49,10 +49,10 @@ const DestinationDetailPage = () => {
 
   const dispatch = useDispatch();
 
-  const { orderId, isSubscription, subsDeliveryType, destinationId, menuId } = router.query;
+  const { orderId, isSubscription, subsDeliveryType, destinationId, menuId, deliveryType } = router.query;
 
   // 배송 가능 여부
-  const { tempLocation, availableDestination, userDeliveryType, isCanNotDelivery } = useSelector(destinationForm);
+  const { tempLocation, availableDestination, isCanNotDelivery } = useSelector(destinationForm);
   const destinationDeliveryType = checkDestinationHelper(availableDestination);
 
   // 주문 상세 - 배송지 변경의 경우
@@ -114,7 +114,7 @@ const DestinationDetailPage = () => {
       if (orderId) {
         const reqBody = {
           name,
-          delivery: userDeliveryType?.toUpperCase(),
+          delivery: deliveryType as string,
           deliveryMessage: '',
           main: false,
           receiverName: '',
@@ -188,7 +188,7 @@ const DestinationDetailPage = () => {
 
   const checkHasMainDestination = async () => {
     const params = {
-      delivery: userDeliveryType.toUpperCase(),
+      delivery: deliveryType as string,
     };
 
     try {
@@ -225,10 +225,10 @@ const DestinationDetailPage = () => {
     /* TODO: 리팩토링 필요 */
     const { morning, parcel, quick } = availableDestination;
 
-    const userMorningButParcel = userDeliveryType === 'morning' && !morning && parcel;
-    const userQuickButMorning = userDeliveryType === 'quick' && !quick && morning;
-    const userQuickButParcel = userDeliveryType === 'quick' && !quick && parcel;
-    const onlyMorning = userDeliveryType === 'parcel' && !parcel && morning;
+    const userMorningButParcel = deliveryType === 'morning' && !morning && parcel;
+    const userQuickButMorning = deliveryType === 'quick' && !quick && morning;
+    const userQuickButParcel = deliveryType === 'quick' && !quick && parcel;
+    const onlyMorning = deliveryType === 'parcel' && !parcel && morning;
 
     if (userMorningButParcel || userQuickButMorning || userQuickButParcel || onlyMorning) {
       setIsMaybeChangeType(true);
@@ -259,13 +259,13 @@ const DestinationDetailPage = () => {
 
         default:
           {
-            setDestinationStatusByRule(userDeliveryType);
+            setDestinationStatusByRule(deliveryType);
           }
           break;
       }
     } else {
       setIsMaybeChangeType(false);
-      setDestinationStatusByRule(userDeliveryType);
+      setDestinationStatusByRule(deliveryType as string);
     }
   }, [availableDestination]);
 
