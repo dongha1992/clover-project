@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import router from 'next/router';
+import React, { useState, useEffect, useRef, useCallback, ReactElement } from 'react';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { TextH2B, TextB2R, TextH6B, TextH3B, TextH7B, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
@@ -21,7 +21,6 @@ import { useQuery } from 'react-query';
 import { getMenuDetailApi, getMenuDetailReviewApi, getMenuDetailReviewImageApi, getBestReviewApi } from '@api/menu';
 import { getMenuDisplayPrice } from '@utils/menu';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import axios from 'axios';
 import { Label } from '@components/Pages/Subscription/SubsCardItem';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
 import { Obj } from '@model/index';
@@ -38,6 +37,9 @@ import { getPromotionCodeApi } from '@api/promotion';
 import { getBannersApi } from '@api/banner';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
+import { NextPageWithLayout } from '@pages/_app';
+import DefaultLayout from '@components/Layout/Default';
+import DetailBottom from '@components/Bottom/DetailBottom';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -45,11 +47,7 @@ dayjs.locale('ko');
 const DetailBottomFAQ = dynamic(() => import('@components/Pages/Detail/DetailBottomFAQ'));
 const DetailBottomReview = dynamic(() => import('@components/Pages/Detail/DetailBottomReview'));
 
-interface IProps {
-  menuId: number;
-}
-
-const MenuDetailPage = ({ menuId }: IProps) => {
+const MenuDetailPage: NextPageWithLayout = () => {
   const [isSticky, setIsStikcy] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('/menu/[id]');
   const [thumbnailList, setThumbnailList] = useState<ICarouselImageProps[]>([]);
@@ -63,6 +61,8 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   let timer: any = null;
 
   const dispatch = useDispatch();
+  const router = useRouter();
+  const menuId = Number(router.query.menuId);
 
   const {
     data: menuDetail,
@@ -503,6 +503,10 @@ const MenuDetailPage = ({ menuId }: IProps) => {
   );
 };
 
+MenuDetailPage.getLayout = (page: ReactElement) => {
+  return (<DefaultLayout bottom={<DetailBottom/>}>{page}</DefaultLayout>);
+}
+
 const Container = styled.section``;
 
 const ImgWrapper = styled.div`
@@ -575,27 +579,7 @@ const DeliveryLi = styled.li`
   }
 `;
 
-const MLWrapper = styled.div`
-  display: flex;
-  color: ${theme.greyScale45};
-  font-style: normal;
-  font-weight: normal;
-  font-size: 10px;
-  line-height: 16px;
-  letter-spacing: -0.4px;
-`;
-
 const ProteinWrapper = styled.div``;
-
-const CountWrapper = styled.div`
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  padding: 4px 8px;
-  border-radius: 50%;
-  background: rgba(36, 36, 36, 0.5);
-  border-radius: 24px;
-`;
 
 const ReviewContainer = styled.div`
   background-color: ${theme.greyScale3};
@@ -647,29 +631,16 @@ const DailySaleNumber = styled.div`
 `;
 
 export async function getStaticPaths() {
-  const params = {
-    menuSort: '',
-  };
-
-  const { data } = await axios(`${process.env.API_URL}/menu/v1/menus`, { params });
-
-  const paths = data.data.map((menu: any) => ({
-    params: { menuId: menu.id.toString() },
-  }));
-
   return {
-    paths,
+    paths: [],
     fallback: 'blocking',
   };
 }
 
-export async function getStaticProps({ params }: { params: { menuId: string } }) {
-  const { data } = await axios(`${process.env.API_URL}/menu/v1/menus/${params.menuId}`);
-
+export async function getStaticProps() {
   return {
-    props: { menuId: data.data.id },
-    revalidate: 10,
+    props: {},
   };
 }
 
-export default React.memo(MenuDetailPage);
+export default MenuDetailPage;

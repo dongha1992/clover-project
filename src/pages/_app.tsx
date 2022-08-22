@@ -27,6 +27,7 @@ import { userProfile } from '@api/user';
 import { getCookie } from '@utils/common/cookie';
 import useWebviewListener from '@hooks/useWebviewListener';
 import { NextPage } from 'next';
+import DefaultLayout from '@components/Layout/Default';
 
 declare global {
   interface Window {
@@ -60,7 +61,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
   const store: any = useStore();
   const { me } = useSelector(userForm);
   const isAutoLogin = getCookie({ name: 'autoL' });
-  const getLayout = Component.getLayout ?? ((page) => page)
+  const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>)
 
   useWebviewListener();
 

@@ -19,7 +19,7 @@ const HomePage: NextPageWithLayout = () => {
 };
 
 HomePage.getLayout = (page: ReactElement) => {
-  return (<DefaultLayout bottom={<HomeBottom/>}>{page}</DefaultLayout>)
+  return (<DefaultLayout bottom={<HomeBottom/>}>{page}</DefaultLayout>);
 }
 
 const Container = styled.div`
