@@ -20,21 +20,22 @@ import { DELIVERY_TYPE_MAP } from '@constants/order';
 const DestinationSearchPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
   const [totalCount, setTotalCount] = useState<string>('0');
+  const [selectDeliveryType, setSelectDeliveryType] = useState<string>('');
 
   const addressRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
-  const { userDeliveryType } = useSelector(destinationForm);
 
-  const { orderId, isSubscription, destinationId, subsDeliveryType, menuId } = router.query;
+  const { orderId, isSubscription, destinationId, subsDeliveryType, menuId, deliveryType } = router.query;
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
-    'getDestinationList',
+    ['getDestinationList', selectDeliveryType],
     async () => {
+      console.log(selectDeliveryType, 'selectDeliveryType');
       const params = {
         page: 1,
         size: 10,
-        delivery: userDeliveryType.toUpperCase(),
+        delivery: selectDeliveryType! as string,
       };
       const { data } = await getDestinationsApi(params);
 
@@ -69,7 +70,6 @@ const DestinationSearchPage = () => {
   };
 
   const selectDestinationByList = (destination: IDestinationsResponse): void => {
-    console.log(destination, 'destination');
     if (orderId) {
       router.push({
         pathname: '/mypage/order-detail/edit/[orderId]',
@@ -84,7 +84,10 @@ const DestinationSearchPage = () => {
           query: { subsDeliveryType, isSubscription: true, destinationId: destination.id, menuId },
         });
       } else {
-        router.push({ pathname: '/cart/delivery-info', query: { destinationId: destination.id } });
+        router.push({
+          pathname: '/cart/delivery-info',
+          query: { destinationId: destination.id, deliveryType: selectDeliveryType },
+        });
       }
     }
   };
@@ -101,7 +104,12 @@ const DestinationSearchPage = () => {
           query: { subsDeliveryType, isSubscription: true, menuId },
         });
       } else {
-        router.push('/destination/destination-detail');
+        router.push({
+          pathname: '/destination/destination-detail',
+          query: {
+            deliveryType: selectDeliveryType,
+          },
+        });
       }
     }
   };
@@ -109,8 +117,19 @@ const DestinationSearchPage = () => {
   const beforeSearch = resultAddress && !resultAddress.length;
 
   useEffect(() => {
-    if (!userDeliveryType) {
-      router.replace('/cart');
+    if (router.isReady) {
+      setSelectDeliveryType((deliveryType as string) ?? (subsDeliveryType as string));
+    }
+  }, [router.isReady]);
+
+  useEffect(() => {
+    if (isSubscription) {
+      if (!subsDeliveryType) {
+        router.replace('subscription');
+      }
+      return;
+    } else {
+      if (!deliveryType) router.replace('/cart');
     }
   }, []);
 
@@ -133,7 +152,7 @@ const DestinationSearchPage = () => {
           <RecentDelivery
             filteredList={filteredList ?? []}
             onClick={selectDestinationByList}
-            delivery={DELIVERY_TYPE_MAP[userDeliveryType.toUpperCase()]}
+            delivery={DELIVERY_TYPE_MAP[selectDeliveryType as string]}
           />
         ) : (
           <DestinationSearchResult
@@ -158,10 +177,13 @@ const TextWrapper = styled.div`
   margin-bottom: 24px;
 `;
 
-const CurrentLocBtn = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 16px;
-`;
-
 export default DestinationSearchPage;
+
+// 새로고침 시 query 사라지는 현상 있음
+// https://stackoverflow.com/questions/61891845/is-there-a-way-to-keep-router-query-on-page-refresh-in-nextjs
+
+export async function getServerSideProps(context: any) {
+  return {
+    props: {},
+  };
+}

@@ -37,11 +37,11 @@ interface IResponse {
 }
 
 const CheckDestinationPlace = () => {
-  const { tempLocation, userDeliveryType } = useSelector(destinationForm);
+  const { tempLocation } = useSelector(destinationForm);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { isLocation, isSpot } = router.query;
+  const { isLocation, isSpot, deliveryType, subsDeliveryType } = router.query;
 
   const {
     data: result,
@@ -143,16 +143,16 @@ const CheckDestinationPlace = () => {
       const canQuickAndMorning = quick && morning;
 
       // 배송정보 배송지 검색
-      switch (userDeliveryType) {
+      switch (deliveryType ?? subsDeliveryType) {
         // 유저가 선택한 배송방법과 배송 가능 지역따라 분기
-        case 'morning': {
+        case 'MORNING': {
           if (canEverything || canMorning) {
             return <MorningInfo />;
           } else if (canParcel) {
             return <ParcelInfo />;
           }
         }
-        case 'parcel': {
+        case 'PARCEL': {
           if ((canEverything && parcel) || canParcelAndCanMorning) {
             return <MorningAndPacelInfo />;
           } else if (canParcel) {
@@ -161,7 +161,7 @@ const CheckDestinationPlace = () => {
             return <MorningInfo />;
           }
         }
-        case 'quick': {
+        case 'QUICK': {
           if (canQuickAndMorning) {
             return <QuickAndMorningInfo />;
           } else if (noQuickButCanMorning) {

@@ -462,6 +462,7 @@ export interface IDestination {
   location: ILocation;
   name: string;
   receiverName: string;
+  main: boolean;
   receiverTel: string;
   spotPickup: ISpotPickupInDestinaion;
 }

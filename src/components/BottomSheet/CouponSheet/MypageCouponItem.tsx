@@ -18,7 +18,7 @@ const now = dayjs();
 const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) => {
   const [isShow, setIsShow] = useState(false);
 
-  const { dayFormatter: expiredDate } = getCustomDate(new Date(coupon.expiredDate));
+  const { dayFormatter: expiredDate } = getCustomDate(coupon.expiredDate);
   const isRateDiscount = coupon.criteria === 'RATIO';
 
   const dDay = now.diff(dayjs(coupon.expiredDate), 'day');

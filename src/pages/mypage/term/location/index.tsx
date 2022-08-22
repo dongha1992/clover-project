@@ -9,8 +9,8 @@ import { theme } from '@styles/theme';
 import { terms } from '@api/term';
 import { ITerm } from '@model/index';
 import MarkdownRenderer from '@components/Shared/Markdown';
-import { commonSelector } from '@store/common';
-
+import { commonSelector, SET_VERSION_OF_TERM } from '@store/common';
+import { getTermDate } from '@utils/getTermDate';
 export interface IFormatVersion {
   [key: string]: {
     endedAt: string;
@@ -29,7 +29,7 @@ const LocationTermPage = () => {
   const getTerms = async () => {
     const params = {
       type: 'LOCATION_SERVICE',
-      version: versionOfTerm || null,
+      version: versionOfTerm ?? null,
     };
     try {
       const { data } = await terms(params);
@@ -46,7 +46,7 @@ const LocationTermPage = () => {
           <TermSheet
             title="위치정보 서비스 이용약관"
             versions={termOfUser?.versions!}
-            currentVersion={currentVersion || 2}
+            currentVersion={currentVersion ?? 2}
           />
         ),
       })
@@ -58,13 +58,11 @@ const LocationTermPage = () => {
     setCurrentVersion(versionOfTerm);
   }, [versionOfTerm]);
 
-  const lastestVersion = termOfUser?.versions[termOfUser?.versions.length - 1].version;
-
-  const isLastest = currentVersion === lastestVersion;
-
-  const currentVersionOfDate = termOfUser?.terms.startedAt.split(' ')[0];
-
-  const formatDate = isLastest ? `${currentVersionOfDate} (현재)` : `${currentVersionOfDate}`;
+  useEffect(() => {
+    return () => {
+      dispatch(SET_VERSION_OF_TERM(2));
+    };
+  }, []);
 
   if (!termOfUser) {
     return <div>로딩중</div>;
@@ -75,7 +73,7 @@ const LocationTermPage = () => {
       <Wrapper>
         <InputWrapper onClick={changeVersionHandler}>
           <CustmInput>
-            <TextB2R>{formatDate}</TextB2R>
+            <TextB2R>{getTermDate({ currentVersion, termOfUser })}</TextB2R>
           </CustmInput>
           <div className="svgWrapper">
             <SVGIcon name="triangleDown" />

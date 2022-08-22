@@ -21,7 +21,12 @@ import {
 import { SET_ORDER } from '@store/order';
 import { Item, DetailItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
-import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
+import {
+  destinationForm,
+  SET_USER_DELIVERY_TYPE,
+  INIT_TEMP_DESTINATION,
+  SET_TEMP_DESTINATION,
+} from '@store/destination';
 import {
   ISubOrderDelivery,
   IMenuDetailsInCart,
@@ -973,6 +978,7 @@ const CartPage = () => {
       return;
     } else {
       router.push('/cart/delivery-info');
+      dispatch(INIT_TEMP_DESTINATION());
     }
   };
 
@@ -992,6 +998,7 @@ const CartPage = () => {
   const goToOrder = () => {
     if (!me) return;
     if (!destinationObj.destinationId) return;
+
     if (isInvalidDestination) {
       dispatch(
         SET_ALERT({
@@ -1117,7 +1124,7 @@ const CartPage = () => {
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
     if (isSpotOrQuick) {
-      const { currentTime, currentDate } = getCustomDate(new Date());
+      const { currentTime, currentDate } = getCustomDate();
       const isFinishLunch = currentTime >= 9.29;
       const isDisabledLunch = isFinishLunch && currentDate === selectedDeliveryDay;
 
@@ -1219,7 +1226,7 @@ const CartPage = () => {
 
   useEffect(() => {
     // 스팟 종료 날짜
-    const { dateFormatter: closedDate } = getCustomDate(new Date(destinationObj?.closedDate!));
+    const { dateFormatter: closedDate } = getCustomDate(destinationObj?.closedDate!);
     const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
 
     // 스팟 운영 종료
