@@ -18,6 +18,7 @@ interface IProps {
 
 const CartDisplayItem = ({ checkedMenus, selectCartItemHandler, removeCartDisplayItemHandler, menu }: IProps) => {
   const isSelected = !isNil(checkedMenus?.find((item) => item.menuId === menu.menuId));
+
   const isDisabled = menu.isSold;
 
   return (
@@ -91,10 +92,6 @@ const ImageWrapper = styled.div`
   }
 `;
 
-const RemoveBtnContainer = styled.div`
-  /* position: absolute;
-  right: 12px;
-  top: 12px; */
-`;
+const RemoveBtnContainer = styled.div``;
 
 export default React.memo(CartDisplayItem);

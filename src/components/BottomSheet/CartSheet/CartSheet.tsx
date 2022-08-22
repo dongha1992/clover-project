@@ -20,10 +20,9 @@ import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { Obj, IMenus, IMenuDetails, IGetCart, IMenuDetailsInCart } from '@model/index';
 import { SET_NON_MEMBER_CART_LISTS, INIT_NON_MEMBER_CART_LISTS, DELETE_NON_MEMBER_CART_LISTS } from '@store/cart';
 import { postCartsApi } from '@api/cart';
-import differenceWith from 'lodash-es/differenceWith';
 
 import 'dayjs/locale/ko';
-import { menuSelector } from '@store/menu';
+
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 
@@ -96,8 +95,6 @@ const CartSheet = ({ menuItem }: any) => {
         };
       });
 
-      // const result = checkAlreadyInCart();
-
       const { data } = await postCartsApi(reqBody);
     },
     {
@@ -107,8 +104,9 @@ const CartSheet = ({ menuItem }: any) => {
       onSuccess: async () => {
         showToast({ message: '상품을 장바구니에 담았어요! 😍' });
         dispatch(INIT_BOTTOM_SHEET());
-        await queryClient.refetchQueries('getCartList');
+        await queryClient.invalidateQueries('getCartList');
         await queryClient.refetchQueries('getCartCount');
+        await queryClient.setMutationDefaults('postCartItem', {});
       },
     }
   );
