@@ -52,6 +52,8 @@ const HomeHeader = () => {
               <Tooltip
                 message={mapper[formatAvailableDestination]?.text}
                 width={mapper[formatAvailableDestination]?.width}
+                left="-8px" 
+                top="30px"
               />
             )}
           </AddressWrapper>
