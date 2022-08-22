@@ -234,10 +234,10 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
       };
 
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기(스팟검색)로 넘어온 경우
-      dispatch(SET_USER_DELIVERY_TYPE('spot'));
+      // dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(deliveryInfoDestinationInfo));
       // CHECK_LIST : destinationId 쿼리 지워야 하는지 체크
-      router.push({ pathname: '/cart/delivery-info', query: { isClosed: !!closedDate } });
+      router.push({ pathname: '/cart/delivery-info', query: { isClosed: !!closedDate, deliveryType: 'SPOT' } });
     };
 
     const handleSubsDeliveryType = (pickupInfo: ISpotPickupInfoInDestination) => {
@@ -258,11 +258,11 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
         delivery: 'SPOT',
       };
       dispatch(SET_TEMP_DESTINATION(subsDestinationInfo));
-      dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
+      // dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
 
       router.push({
         pathname: '/cart/delivery-info',
-        query: { isSubscription, subsDeliveryType, menuId },
+        query: { isSubscription, subsDeliveryType, menuId, deliveryType: 'SPOT' },
       });
     };
 
@@ -493,20 +493,20 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
       <FlexCol>
         <ImageWrapper>
           {item.isTrial || item.images?.length! < 0 ? (
-            <NextImage 
-              src='/images/fcospot/img_fcospot_empty.png'
+            <NextImage
+              src="/images/fcospot/img_fcospot_empty.png"
               alt="트라이얼 프코스팟 인 경우 또는 등록된 이미지가 없는 경우의 이미지"
               width={60}
               height={60}
               layout="responsive"
             />
           ) : (
-            <Image 
-              src={item?.images[0].url} 
+            <Image
+              src={item?.images[0].url}
               height={60}
               width={60}
               alt="프코스팟 매장이미지"
-              className='fcospot-img'
+              className="fcospot-img"
               layout="responsive"
             />
           )}
@@ -594,8 +594,8 @@ const ImageWrapper = styled.div<{ map?: boolean }>`
   margin-left: 15px;
   margin-bottom: 10px;
   border-radius: 8px;
-  border: 1px solid ${theme.greyScale6};  
-  .fcospot-img{
+  border: 1px solid ${theme.greyScale6};
+  .fcospot-img {
     width: 100%;
     border-radius: 8px;
   }

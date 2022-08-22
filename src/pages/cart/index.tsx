@@ -21,7 +21,12 @@ import {
 import { SET_ORDER } from '@store/order';
 import { Item, DetailItem } from '@components/Item';
 import { SET_ALERT } from '@store/alert';
-import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
+import {
+  destinationForm,
+  SET_USER_DELIVERY_TYPE,
+  INIT_TEMP_DESTINATION,
+  SET_TEMP_DESTINATION,
+} from '@store/destination';
 import {
   ISubOrderDelivery,
   IMenuDetailsInCart,
@@ -973,6 +978,7 @@ const CartPage = () => {
       return;
     } else {
       router.push('/cart/delivery-info');
+      dispatch(INIT_TEMP_DESTINATION());
     }
   };
 
@@ -992,6 +998,7 @@ const CartPage = () => {
   const goToOrder = () => {
     if (!me) return;
     if (!destinationObj.destinationId) return;
+
     if (isInvalidDestination) {
       dispatch(
         SET_ALERT({
