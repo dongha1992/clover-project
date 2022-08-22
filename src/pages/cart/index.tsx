@@ -72,7 +72,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import 'swiper/css';
-import { latest } from 'immer/dist/internal';
 
 dayjs.locale('ko');
 
@@ -110,7 +109,6 @@ const CartPage = () => {
 
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isClosed } = router.query;
 
   const { isFromDeliveryPage } = useSelector(cartForm);
   const { userDeliveryType, userDestination } = useSelector(destinationForm);
