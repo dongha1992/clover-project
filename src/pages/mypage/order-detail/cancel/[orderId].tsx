@@ -64,6 +64,8 @@ const OrderCancelPage = ({ orderId }: IProps) => {
                 url={subOrder?.image.url!}
                 name={subOrder?.order.name!}
                 payAmount={subOrder?.order.amount!}
+                orderId={orderId}
+                isSubOrder
               />
             ),
           })
@@ -83,7 +85,7 @@ const OrderCancelPage = ({ orderId }: IProps) => {
     }
   );
 
-  const { dayFormatter: deliverAt } = getCustomDate(new Date(subOrder?.deliveryDate!));
+  const { dayFormatter: deliverAt } = getCustomDate(subOrder?.deliveryDate!);
 
   const cancelOrderHandler = () => {
     const deliveryId = orderDetail?.orderDeliveries[0]?.subOrderDelivery.id!;

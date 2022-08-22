@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { customSelect } from '@styles/theme';
+import { customSelect, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { getCustomDate, getFormatTime } from '@utils/destination';
 
@@ -14,7 +14,7 @@ interface IProps {
 const BirthDate = ({ selected, onChange }: IProps) => {
   const [days, setDays] = useState<number[]>([]);
 
-  const { CURRENT_KOR_DATE } = getCustomDate(new Date());
+  const { CURRENT_KOR_DATE } = getCustomDate();
 
   const years = () => {
     let year = CURRENT_KOR_DATE.getFullYear() - 13;

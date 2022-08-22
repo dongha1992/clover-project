@@ -18,12 +18,13 @@ interface IResult {
   CURRENT_KOR_DATE: Date;
 }
 
-const getCustomDate = (inputDate: Date): IResult => {
+const getCustomDate = (inputDate?: string): IResult => {
   /**
    * PC 설정 시간대 상관 없이 한국 표준시 반환
    * locale은 대응하지만 시스템시간 자체를 변경하는 경우는 대응 불가. 이 경우 timestamp API를 이용하여 서버시간을 이용해야 함.
    */
-  const now = inputDate;
+
+  const now = inputDate ? new Date(inputDate.replace(/-/g, '/')) : new Date();
   const utc = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
   const KOR_TIME_DIFF = 9 * 60 * 60 * 1000;
   const CURRENT_KOR_DATE = new Date(utc + KOR_TIME_DIFF);

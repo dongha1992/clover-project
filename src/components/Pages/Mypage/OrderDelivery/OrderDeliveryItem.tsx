@@ -22,8 +22,8 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
   const { name, payAmount, amount } = orderDeliveryItem.order;
   const { url } = orderDeliveryItem.image;
 
-  const { dayFormatter: paidAt } = getCustomDate(new Date(orderDeliveryItem.order.paidAt));
-  const { dayFormatter: deliverAt } = getCustomDate(new Date(deliveryDate));
+  const { dayFormatter: paidAt } = getCustomDate(orderDeliveryItem.order.paidAt);
+  const { dayFormatter: deliverAt } = getCustomDate(deliveryDate);
   /* TODO: 아래 중복 코드 많음 헬퍼함수? */
   const isParcel = delivery === 'PARCEL';
   const deliveryStatus = DELIVERY_STATUS_MAP[status];

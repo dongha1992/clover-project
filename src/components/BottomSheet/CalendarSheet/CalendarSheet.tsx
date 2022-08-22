@@ -14,6 +14,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { editDeliveryDateApi } from '@api/order';
 import { destinationForm } from '@store/destination';
 import { useSelector } from 'react-redux';
+import { useToast } from '@hooks/useToast';
 interface IProps {
   title: string;
   disabledDates: string[];
@@ -36,7 +37,7 @@ const CalendarSheet = ({
 }: IProps) => {
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
   const { userDeliveryType } = useSelector(destinationForm);
-
+  const { showToast } = useToast();
   const queryClient = useQueryClient();
 
   const { mutate: changeDeliveryDateMutation } = useMutation(
@@ -47,6 +48,7 @@ const CalendarSheet = ({
       onSuccess: async () => {
         dispatch(INIT_BOTTOM_SHEET());
         dispatch(INIT_USER_DELIVERY_TYPE());
+        showToast({ message: '배송일 변경을 완료했어요!' });
         await queryClient.refetchQueries('getOrderDetail');
       },
       onError: async (error: any) => {
@@ -85,7 +87,7 @@ const CalendarSheet = ({
 
   const dispatch = useDispatch();
 
-  const { dates } = getCustomDate(new Date(selectedDeliveryDay));
+  const { dates } = getCustomDate(selectedDeliveryDay);
 
   const submitHandler = () => {
     dispatch(

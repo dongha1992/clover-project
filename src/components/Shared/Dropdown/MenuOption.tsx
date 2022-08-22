@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import styled, { css } from 'styled-components';
 import { TextB3R, TextH6B, TextH7B } from '@components/Shared/Text';
 import { FlexBetween, FlexRow, FlexRowStart, theme } from '@styles/theme';
@@ -14,20 +14,14 @@ type TProps = {
 const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
   const { discount, discountedPrice, price } = getMenuOptionPrice(option);
 
-  const messageRender = () => {
-    switch (true) {
-      case option.isSold: {
-        return <TextH7B color={theme.greyScale25}>품절</TextH7B>;
-      }
-      case !!option.personalMaximum: {
-        return <TextH7B color={theme.black}>{`구매 수량 제한 :${option.personalMaximum}개`}</TextH7B>;
-      }
-      default: {
-        return ``;
-      }
-    }
+  const isCheckedFontColor = () => {
+    if (option.isSold || !option.availability?.availability) {
+      return true;
+    } else {
+      return false
+    };
   };
-
+console.log(discount)
   return (
     <OptionList
       onClick={() => {
@@ -38,7 +32,7 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
       availability={!option.availability?.availability}
     >
       <FlexBetween>
-        <TextB3R>{option.name}</TextB3R>
+        <TextB3R color={isCheckedFontColor() ? theme.greyScale25 : theme.black}>{option.name}</TextB3R>
         <FlexRow>
           {!option.isSold && option.availability?.availability && option.personalMaximum && (
             <TextH7B color={theme.black}>{`구매 수량 제한 :${option.personalMaximum}개`}</TextH7B>
@@ -52,15 +46,19 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
       </FlexBetween>
       <FlexRowStart padding="0 0 4px 0"></FlexRowStart>
       <FlexRow>
-        {discount < 0 && (
-          <TextH6B padding="0 0 0 4px" color={!option.isSold || option.availability?.availability ? theme.brandColor : theme.greyScale25}>
-            {discount}%
+        {discount > 0 && (
+          <TextH6B color={!option.isSold || option.availability?.availability ? theme.brandColor : theme.greyScale25}>
+            {discount}%&nbsp;
           </TextH6B>
         )}
-        <TextH6B padding="0 4px 0 0">{discountedPrice.toLocaleString()}원</TextH6B>
-        <TextH6B color={theme.greyScale25} textDecoration="line-through">
-          {price.toLocaleString()}원
-        </TextH6B>
+        <TextH6B padding="0 4px 0 0" color={isCheckedFontColor() ? theme.greyScale25 : theme.black}>{discountedPrice.toLocaleString()}원</TextH6B>
+        {
+          (!option.isSold || option.availability?.availability) && (
+            <TextH6B color={theme.greyScale25} textDecoration="line-through">
+              {price.toLocaleString()}원
+            </TextH6B>
+          )
+        }
       </FlexRow>
     </OptionList>
   );

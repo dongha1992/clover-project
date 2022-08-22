@@ -190,6 +190,7 @@ const ProfilePage = () => {
 
   const getAvailabilityEmail = async () => {
     if (userInfo.email === me?.email) return;
+
     const {
       data: {
         data: { availability },
@@ -371,15 +372,17 @@ const ProfilePage = () => {
 
   const changeMeInfo = async () => {
     if (!isValidName || !isValidNickname) return;
+
     if (!isValidBirthDay) {
       dispatch(SET_ALERT({ alertMessage: '14세 미만은 가입할 수 없어요.' }));
       return;
     }
 
-    if (!emailValidation.isValid) {
+    if (userInfo.email !== me?.email && !emailValidation.isValid) {
       dispatch(SET_ALERT({ alertMessage: emailValidation.message }));
       return;
     }
+
     const hasBirthDate = userInfo.year > 0 && userInfo.month > 0 && userInfo.day > 0;
     const birthDate = `${userInfo.year}-${getFormatTime(userInfo.month)}-${getFormatTime(userInfo.day)}`;
 
@@ -465,8 +468,6 @@ const ProfilePage = () => {
 
   const isKakao = me?.joinType === 'KAKAO';
   const isNotEmail = me?.joinType !== 'EMAIL';
-
-  console.log(isValidNickname, 'isValidNickname');
 
   return (
     <Container>

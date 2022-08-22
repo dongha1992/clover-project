@@ -63,7 +63,7 @@ const Calendar = ({
   const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
 
   const initCalendar = () => {
-    const { years, months, dates } = getCustomDate(new Date());
+    const { years, months, dates } = getCustomDate();
 
     const dateList = [];
     const firstWeek = [];
@@ -126,7 +126,7 @@ const Calendar = ({
 
     // 새벽/택배 17:00 이후 주문 마감
 
-    const { currentTime } = getCustomDate(new Date());
+    const { currentTime } = getCustomDate();
     const today = new Date().getDate();
     const nextDay = new Date().getDate() + 1;
 
@@ -231,7 +231,7 @@ const Calendar = ({
   };
 
   const RenderCalendar = React.memo(({ isShowMoreWeek }: { isShowMoreWeek: boolean }): JSX.Element => {
-    const { years, months, dates } = getCustomDate(new Date());
+    const { years, months, dates } = getCustomDate();
 
     const renderWeeks = () => {
       const weeks: string[] = [];

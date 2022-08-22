@@ -49,10 +49,10 @@ const DestinationDetailPage = () => {
 
   const dispatch = useDispatch();
 
-  const { orderId, isSubscription, subsDeliveryType, destinationId, menuId } = router.query;
+  let { orderId, isSubscription, subsDeliveryType, destinationId, menuId, deliveryType } = router.query;
 
   // 배송 가능 여부
-  const { tempLocation, availableDestination, userDeliveryType, isCanNotDelivery } = useSelector(destinationForm);
+  const { tempLocation, availableDestination, isCanNotDelivery } = useSelector(destinationForm);
   const destinationDeliveryType = checkDestinationHelper(availableDestination);
 
   // 주문 상세 - 배송지 변경의 경우
@@ -112,9 +112,10 @@ const DestinationDetailPage = () => {
 
       // 마이페이지 - 주문상세 - 배송지 변경에서 진입
       if (orderId) {
+        deliveryType = deliveryType as string;
         const reqBody = {
           name,
-          delivery: userDeliveryType?.toUpperCase(),
+          delivery: deliveryType?.toLowerCase(),
           deliveryMessage: '',
           main: false,
           receiverName: '',
@@ -172,7 +173,6 @@ const DestinationDetailPage = () => {
       } else {
         dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
         dispatch(SET_DESTINATION_TYPE(destinationDeliveryType));
-        dispatch(SET_USER_DELIVERY_TYPE(destinationStatusByRule));
         dispatch(INIT_LOCATION_TEMP());
         if (isSubscription) {
           router.push({
@@ -180,7 +180,7 @@ const DestinationDetailPage = () => {
             query: { subsDeliveryType, isSubscription: true, menuId },
           });
         } else {
-          router.replace('/cart/delivery-info');
+          router.replace({ pathname: '/cart/delivery-info', query: { deliveryType: destinationStatusByRule } });
         }
       }
     }
@@ -188,7 +188,7 @@ const DestinationDetailPage = () => {
 
   const checkHasMainDestination = async () => {
     const params = {
-      delivery: userDeliveryType.toUpperCase(),
+      delivery: (deliveryType ?? subsDeliveryType) as string,
     };
 
     try {
@@ -213,22 +213,19 @@ const DestinationDetailPage = () => {
     getLonLanForMap();
   }, []);
 
-  // useEffect(() => {
-  //   if (!latitudeLongitude.latitude || !latitudeLongitude.longitude) router.replace('/cart');
-  // }, []);
-
   useEffect(() => {
     checkHasMainDestination();
   }, []);
 
   useEffect(() => {
     /* TODO: 리팩토링 필요 */
+
     const { morning, parcel, quick } = availableDestination;
 
-    const userMorningButParcel = userDeliveryType === 'morning' && !morning && parcel;
-    const userQuickButMorning = userDeliveryType === 'quick' && !quick && morning;
-    const userQuickButParcel = userDeliveryType === 'quick' && !quick && parcel;
-    const onlyMorning = userDeliveryType === 'parcel' && !parcel && morning;
+    const userMorningButParcel = (deliveryType ?? subsDeliveryType) === 'MORNING' && !morning && parcel;
+    const userQuickButMorning = (deliveryType ?? subsDeliveryType) === 'QUICK' && !quick && morning;
+    const userQuickButParcel = (deliveryType ?? subsDeliveryType) === 'QUICK' && !quick && parcel;
+    const onlyMorning = (deliveryType ?? subsDeliveryType) === 'PARCEL' && !parcel && morning;
 
     if (userMorningButParcel || userQuickButMorning || userQuickButParcel || onlyMorning) {
       setIsMaybeChangeType(true);
@@ -259,13 +256,13 @@ const DestinationDetailPage = () => {
 
         default:
           {
-            setDestinationStatusByRule(userDeliveryType);
+            setDestinationStatusByRule((deliveryType ?? subsDeliveryType) as string);
           }
           break;
       }
     } else {
       setIsMaybeChangeType(false);
-      setDestinationStatusByRule(userDeliveryType);
+      setDestinationStatusByRule((deliveryType ?? subsDeliveryType) as string);
     }
   }, [availableDestination]);
 
@@ -347,3 +344,9 @@ const MapWrapper = styled.div`
 `;
 
 export default DestinationDetailPage;
+
+export async function getServerSideProps(context: any) {
+  return {
+    props: {},
+  };
+}
