@@ -127,7 +127,7 @@ const CartActualItem = ({
     <Container isSold={soldCases}>
       <ContentWrapper>
         <FlexBetween>
-          <TextB3R margin="0 16px 0 0">
+          <TextB3R margin="0 16px 0 0" color={soldCases ? theme.greyScale25 : theme.black}>
             {!menuDetail?.main ? `[선택옵션] ${menuDetail?.name}` : `${menuName} / ${menuDetail?.name}`}
           </TextB3R>
           <div
@@ -150,7 +150,9 @@ const CartActualItem = ({
                 {discount}%
               </TextH5B>
             )}
-            <TextH5B>{getFormatPrice(String(discountedPrice))}원</TextH5B>
+            <TextH5B color={soldCases ? theme.greyScale25 : theme.black}>
+              {getFormatPrice(String(discountedPrice))}원
+            </TextH5B>
           </PriceWrapper>
           <InfoContainer>
             <FlexCol>
