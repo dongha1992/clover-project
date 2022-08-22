@@ -106,7 +106,7 @@ const MyApp = ({ Component, pageProps }: AppProps): JSX.Element => {
 
   useEffect(() => {
     if (typeof window !== undefined) {
-      const md = new MobileDetect(window.navigator.userAgent);
+      const md = new MobileDetect(window.navigator.userAgent); // mobile인지 pc인지 구분
       let mobile = !!md.mobile();
       dispatch(SET_IS_MOBILE(mobile));
     }
