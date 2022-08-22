@@ -46,7 +46,7 @@ import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { getCustomDate } from '@utils/destination';
 import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus, calculatePoint } from '@utils/menu';
-import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { useQuery, useQueryClient, useMutation, useIsMutating } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
 import { getCartsApi, deleteCartsApi, patchCartsApi, postCartsApi } from '@api/cart';
@@ -136,6 +136,7 @@ const CartPage = () => {
   const {
     data: cartResponse,
     isLoading,
+    isFetching,
     isError,
     refetch,
   } = useQuery(
@@ -161,8 +162,8 @@ const CartPage = () => {
       enabled: !!me,
       onSuccess: (data) => {
         try {
-          reorderCartList(data.cartMenus);
           setDisposableList(initMenuOptions(data.cartMenus));
+          reorderCartList(data.cartMenus);
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
 
@@ -326,20 +327,6 @@ const CartPage = () => {
         const sliced = cartItemList.slice();
         const changedCartItemList = changedQuantityHandler(sliced, menuDetailId, quantity);
         reorderCartList(changedCartItemList);
-
-        const menuDetailsCount = changedCartItemList.reduce((total: number, menus: any) => {
-          return menus.menuDetails.reduce((acc: number, cur: any) => {
-            return total + cur.quantity;
-          }, 0);
-        }, 0);
-
-        setDisposableList(
-          disposableList.map((item) => {
-            const plus = type === 'plus';
-            const minimum = item.quantity === menuDetailsCount;
-            return { ...item, quantity: plus ? item.quantity + 1 : !minimum ? item.quantity - 1 : menuDetailsCount };
-          })
-        );
       },
       onError: () => {
         dispatch(SET_ALERT({ alertMessage: '다시 시도해주세요.' }));
@@ -387,6 +374,12 @@ const CartPage = () => {
   //   });
   // };
 
+  const canCheckFilteredMenus = (list: IGetCart[]) => {
+    const canCheckMenus = getCanCheckedMenus(list);
+    const canOrderPeriodMenus = list.filter((item) => checkPeriodCartMenuStatus(item.menuDetails));
+    return canCheckMenus.filter((item) => !canOrderPeriodMenus?.map((item) => item.menuId).includes(item.menuId));
+  };
+
   const formatHoliday = () => {
     const holidays = checkedMenus?.flatMap((item) =>
       item?.menuDetails?.flatMap((detail) => detail?.holiday?.map((holiday) => holiday!))
@@ -427,6 +420,8 @@ const CartPage = () => {
     setCheckedMenus(updatedQuantityCart);
     setCartItemList(data);
   };
+
+  const changeDisposableInMenu = (updatedQuantityCart: IGetCart[]) => {};
 
   const selectCartItemHandler = (menu: IGetCart) => {
     const foundItem = checkedMenus.find((item: IGetCart) => item.menuId === menu.menuId);
@@ -667,7 +662,7 @@ const CartPage = () => {
       const changed = item.menuDetails.map((detail) => {
         if (detail.menuDetailId ?? detail.id === menuDetailId) {
           menuId = item.menuId;
-          return { ...detail, quantity };
+          return { ...detail, quantity, menuDetailOptions: { quantity } };
         } else {
           return detail;
         }
@@ -680,6 +675,7 @@ const CartPage = () => {
         changedCartItemList.push(item);
       }
     });
+
     return changedCartItemList;
   };
 
@@ -1119,6 +1115,21 @@ const CartPage = () => {
     }
   };
 
+  const calculateDisposableByMenus = () => {
+    const menuDetailsCount = checkedMenus.reduce((total: number, menus: any) => {
+      return menus.menuDetails.reduce((acc: number, cur: any) => {
+        return total + cur.quantity;
+      }, 0);
+    }, 0);
+
+    setDisposableList(
+      disposableList.map((item) => {
+        // return { ...item, quantity: plus ? item.quantity + 1 : !minimum ? item.quantity - 1 : menuDetailsCount };
+        return { ...item, quantity: menuDetailsCount };
+      })
+    );
+  };
+
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
     if (isSpotOrQuick) {
@@ -1176,6 +1187,7 @@ const CartPage = () => {
     if (checkedMenus?.length === cartItemList?.length) {
       setIsAllchecked(true);
     }
+    calculateDisposableByMenus();
   }, [checkedMenus]);
 
   const getSubOrderDelivery = async () => {
@@ -1196,21 +1208,18 @@ const CartPage = () => {
     }
   };
 
+  // const isMutating = queryClient.isMutating({ mutationKey: ['postCartItem'], exact: true });
+
   useEffect(() => {
     //  첫 렌딩 때 체크
-    if (isFirstRender) {
-      const canCheckMenus = getCanCheckedMenus(cartItemList);
-      const canOrderPeriodMenus = cartItemList.filter((item) => checkPeriodCartMenuStatus(item.menuDetails));
-      const filtered = canCheckMenus.filter(
-        (item) => !canOrderPeriodMenus?.map((item) => item.menuId).includes(item.menuId)
-      );
 
-      if (cartItemList?.length! > 0 && filtered?.length === cartItemList?.length) {
+    if (isFirstRender) {
+      if (cartItemList?.length! > 0 && canCheckFilteredMenus(cartItemList)?.length === cartItemList?.length) {
         setIsAllchecked(true);
         setCheckedMenus(cartItemList);
       } else {
         setIsAllchecked(false);
-        setCheckedMenus(filtered);
+        setCheckedMenus(canCheckFilteredMenus(cartItemList));
       }
       setIsFirstRender(false);
       getSubOrderDelivery();
