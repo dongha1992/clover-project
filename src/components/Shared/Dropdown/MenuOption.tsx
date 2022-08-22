@@ -53,7 +53,10 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
       <FlexRowStart padding="0 0 4px 0"></FlexRowStart>
       <FlexRow>
         {discount < 0 && (
-          <TextH6B padding="0 0 0 4px" color={!option.isSold || option.availability?.availability ? theme.brandColor : theme.greyScale25}>
+          <TextH6B
+            padding="0 0 0 4px"
+            color={!option.isSold || option.availability?.availability ? theme.brandColor : theme.greyScale25}
+          >
             {discount}%
           </TextH6B>
         )}
@@ -66,7 +69,7 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
   );
 };
 
-const OptionList = styled.li<{ isSold?: boolean, availability?: boolean }>`
+const OptionList = styled.li<{ isSold?: boolean; availability?: boolean }>`
   display: flex;
   flex-direction: column;
   list-style-type: none;
