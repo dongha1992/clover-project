@@ -7,20 +7,23 @@ import { getCustomDate } from '@utils/destination';
 import router from 'next/router';
 import { ICompletionReviews } from '@model/index';
 import Image from '@components/Shared/Image';
+import ImageViewer from '@components/ImageViewer';
 
 const MAX_LINE = 5;
 interface IProps {
   review: ICompletionReviews;
-  clickImgViewHandler: (imgUrlForViwer: string[], index: number) => void;
   goToReviewDetail: ({ url, id, menuId, name }: { url: string; id: number; menuId: number; name: string }) => void;
   deleteReviewHandler: (id: number) => void;
 }
 
-const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, deleteReviewHandler }: IProps) => {
+const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
   const [isContentHide, setIsContentHide] = useState<boolean>(false);
 
   const { dayFormatter } = getCustomDate(review.createdAt);
+  const [isShowImageViewer, setIsShowImageViewer] = useState<boolean>(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { dayFormatter } = getCustomDate(new Date(review.createdAt));
 
   useEffect(() => {
     const lines = review.content?.split(/\r|\r\n|\n/);
@@ -28,7 +31,17 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, del
     if (count >= MAX_LINE || review.content.length >= 280) {
       setIsContentHide(true);
     }
-  }, []);
+  });
+
+  const imageClickHandler = (index: number) => {
+    setCurrentImageIndex(index);
+    setIsShowImageViewer(true);
+  }
+
+  const onCloseModalHandler = () => {
+    setCurrentImageIndex(0);
+    setIsShowImageViewer(false);
+  }
 
   return (
     <>
@@ -116,11 +129,10 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, del
             {review.reviewImages && (
               <ImgWrapper>
                 {review.reviewImages?.map((img: any, index: number) => {
-                  const imgUrlForViwer = review?.reviewImages?.map((item: any) => item.url);
                   return (
                     <ReviewImageWrapper
                       isFirst
-                      onClick={() => imgUrlForViwer && clickImgViewHandler(imgUrlForViwer, index)}
+                      onClick={() => imageClickHandler(index)}
                       key={index}
                     >
                       <Image src={img.url} alt="리뷰이미지" width="72" height="72"></Image>
@@ -145,6 +157,7 @@ const CompleteReviewItem = ({ review, clickImgViewHandler, goToReviewDetail, del
           </ReviewContent>
         </Wrapper>
       </Container>
+      <ImageViewer images={review?.reviewImages.map((item: any) => item.url)} startIndex={currentImageIndex} isShow={isShowImageViewer} onClose={onCloseModalHandler}></ImageViewer>
     </>
   );
 };
@@ -184,7 +197,7 @@ const Rating = styled.div`
 `;
 
 const ReviewBody = styled.div<{ isShow?: boolean }>`
-  margin: 8px 0px;
+  margin: 8px 0;
 
   ${({ isShow }) => {
     if (isShow) {

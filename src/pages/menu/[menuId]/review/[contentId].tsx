@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { ReviewDetailItem } from '@components/Pages/Review';
 import { useDispatch } from 'react-redux';
-import { SET_IMAGE_VIEWER } from '@store/common';
 import { useQuery } from 'react-query';
 import { getReviewDetailApi } from '@api/menu';
 
@@ -30,18 +29,13 @@ const ReviewDetailPage = ({ contentId, menuId }: { contentId: string; menuId: st
     }
   );
 
-  const clickImgViewHandler = (images: string[], index: number) => {
-    const payload = { images, index };
-    dispatch(SET_IMAGE_VIEWER(payload));
-  };
-
   if (isLoading) {
     return <div>로딩중</div>;
   }
 
   return (
     <Container>
-      <ReviewDetailItem review={menuReview} isDetailPage clickImgViewHandler={clickImgViewHandler} />
+      <ReviewDetailItem review={menuReview} isDetailPage />
     </Container>
   );
 };

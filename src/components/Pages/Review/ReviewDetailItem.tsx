@@ -5,18 +5,20 @@ import { Tag } from '@components/Shared/Tag';
 import { theme } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import Image from '@components/Shared/Image';
+import ImageViewer from '@components/ImageViewer';
 
 interface IProps {
   review: any;
   isDetailPage?: boolean;
-  clickImgViewHandler?: (imgUrlForViwer: string[], index: number) => void;
 }
 
 const MAX_LINE = 5;
 
-const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps) => {
+const ReviewDetailItem = ({ review, isDetailPage }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
   const [isContentHide, setIsContentHide] = useState<boolean>(false);
+  const [isShowImageViewer, setIsShowImageViewer] = useState<boolean>(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const lines = review?.content?.split(/\r|\r\n|\n/);
@@ -25,6 +27,16 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
       setIsContentHide(true);
     }
   }, []);
+
+  const imageClickHandler = (index: number) => {
+    setCurrentImageIndex(index);
+    setIsShowImageViewer(true);
+  }
+
+  const onCloseModalHandler = () => {
+    setCurrentImageIndex(0);
+    setIsShowImageViewer(false);
+  }
 
   return (
     <>
@@ -82,11 +94,10 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
               <ImgWrapper>
                 {review?.images?.map((img: any, index: number) => {
                   if (index > 1) return;
-                  const imgUrlForView: string[] = review?.images.map((item: any) => item.url);
                   return (
                     <ReviewImageWrapper
                       isFirst
-                      onClick={() => clickImgViewHandler && clickImgViewHandler(imgUrlForView, index)}
+                      onClick={() => imageClickHandler(index)}
                       key={index}
                     >
                       <Image
@@ -117,6 +128,7 @@ const ReviewDetailItem = ({ review, isDetailPage, clickImgViewHandler }: IProps)
           </ReviewContent>
         </Wrapper>
       </Container>
+      <ImageViewer images={review?.images.map((item: any) => item.url)} startIndex={currentImageIndex} isShow={isShowImageViewer} onClose={onCloseModalHandler}></ImageViewer>
     </>
   );
 };

@@ -9,7 +9,7 @@ import { useMediaQuery } from '@hooks/useMediaQuery';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { wrapper } from '@store/index';
-import { SET_IS_MOBILE, INIT_IMAGE_VIEWER } from '@store/common';
+import { SET_IS_MOBILE } from '@store/common';
 import MobileDetect from 'mobile-detect';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Script from 'next/script';
@@ -133,9 +133,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
     }
     authCheck();
     initKakao();
-    // temp
-    dispatch(INIT_IMAGE_VIEWER());
-  }, []);
+  });
 
   return (
     <>

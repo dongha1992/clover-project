@@ -2,9 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { theme } from '@styles/theme';
-import { TextH5B } from '@components/Shared/Text';
-import { useDispatch } from 'react-redux';
-import { INIT_IMAGE_VIEWER } from '@store/common';
 
 type TProps = {
   children: React.ReactNode;
@@ -13,20 +10,14 @@ type TProps = {
   height?: string;
   padding?: string;
   closeOnclickDimmer?: boolean;
+  isShow?: boolean
 };
 
 const ModalFullScreen = ({ children, style, height, padding }: TProps): JSX.Element => {
-  const dispatch = useDispatch();
-
   const handleClickDimmer = ({ target, currentTarget }: React.MouseEvent<HTMLDivElement>): void => {
     if (target !== currentTarget) {
       return;
     }
-    dispatch(INIT_IMAGE_VIEWER());
-  };
-
-  const closeModal = () => {
-    dispatch(INIT_IMAGE_VIEWER());
   };
 
   return (
