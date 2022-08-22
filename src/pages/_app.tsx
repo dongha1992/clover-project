@@ -59,7 +59,6 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
 
   // const { showToast, hideToast } = useToast();
   const store: any = useStore();
-  const { me } = useSelector(userForm);
   const isAutoLogin = getCookie({ name: 'autoL' });
   const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>)
 
@@ -133,7 +132,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
     }
     authCheck();
     initKakao();
-  });
+  }, []);
 
   return (
     <>

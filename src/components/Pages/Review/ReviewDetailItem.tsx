@@ -26,7 +26,7 @@ const ReviewDetailItem = ({ review, isDetailPage }: IProps) => {
     if (count >= MAX_LINE || review?.content.length >= 280) {
       setIsContentHide(true);
     }
-  });
+  }, []);
 
   const imageClickHandler = (startIndex: number) => {
     const images = review?.images.map((item: any) => item.url);
