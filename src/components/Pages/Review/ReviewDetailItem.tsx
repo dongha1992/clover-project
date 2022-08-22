@@ -5,7 +5,8 @@ import { Tag } from '@components/Shared/Tag';
 import { theme } from '@styles/theme';
 import { TextB3R, TextH5B, TextH6B, TextB2R } from '@components/Shared/Text';
 import Image from '@components/Shared/Image';
-import ImageViewer from '@components/ImageViewer';
+import { showImageViewer } from '@store/imageViewer';
+import { useDispatch } from 'react-redux';
 
 interface IProps {
   review: any;
@@ -17,8 +18,7 @@ const MAX_LINE = 5;
 const ReviewDetailItem = ({ review, isDetailPage }: IProps) => {
   const [isShow, setIsShow] = useState<boolean>(true);
   const [isContentHide, setIsContentHide] = useState<boolean>(false);
-  const [isShowImageViewer, setIsShowImageViewer] = useState<boolean>(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const lines = review?.content?.split(/\r|\r\n|\n/);
@@ -26,16 +26,11 @@ const ReviewDetailItem = ({ review, isDetailPage }: IProps) => {
     if (count >= MAX_LINE || review?.content.length >= 280) {
       setIsContentHide(true);
     }
-  }, []);
+  });
 
-  const imageClickHandler = (index: number) => {
-    setCurrentImageIndex(index);
-    setIsShowImageViewer(true);
-  }
-
-  const onCloseModalHandler = () => {
-    setCurrentImageIndex(0);
-    setIsShowImageViewer(false);
+  const imageClickHandler = (startIndex: number) => {
+    const images = review?.images.map((item: any) => item.url);
+    dispatch(showImageViewer({images, startIndex, isShow: true}));
   }
 
   return (
@@ -128,7 +123,6 @@ const ReviewDetailItem = ({ review, isDetailPage }: IProps) => {
           </ReviewContent>
         </Wrapper>
       </Container>
-      <ImageViewer images={review?.images.map((item: any) => item.url)} startIndex={currentImageIndex} isShow={isShowImageViewer} onClose={onCloseModalHandler}></ImageViewer>
     </>
   );
 };

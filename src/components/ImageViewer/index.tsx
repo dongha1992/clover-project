@@ -5,17 +5,24 @@ import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import ViewerCarousel from './ViewerCarousel';
+import { hideImageViewer } from '@store/imageViewer';
+import { useDispatch } from 'react-redux';
 interface IProps {
   images: string[];
   startIndex?: number;
   isShow?: boolean;
-  onClose: () => void;
 }
 
-const ImageViewer = ({ images=[], startIndex=0, isShow=false, onClose }: IProps) => {
+const ImageViewer = ({ images=[], startIndex=0, isShow=false }: IProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(startIndex);
+  const dispatch = useDispatch();
+
   const onChange = (changedIndex: number) => {
     setCurrentImageIndex(changedIndex);
+  }
+
+  const closeModal = () => {
+    dispatch(hideImageViewer());
   }
 
   return (
@@ -26,7 +33,7 @@ const ImageViewer = ({ images=[], startIndex=0, isShow=false, onClose }: IProps)
           <TextH5B color={theme.white}>
             {currentImageIndex + 1} / {images.length}
           </TextH5B>
-          <div className="close" onClick={onClose}>
+          <div className="close" onClick={closeModal}>
             <SVGIcon name="defaultCancel24White" />
           </div>
         </Header>

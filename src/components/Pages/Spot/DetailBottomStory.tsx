@@ -5,7 +5,6 @@ import { theme, FlexBetween } from '@styles/theme';
 import { Tag } from '@components/Shared/Tag';
 import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
-import { SET_IMAGE_VIEWER } from '@store/common';
 import { postSpotsStoryLike, deleteSpotsStoryLike, getSpotsStoryLike } from '@api/spot';
 import { ISpotStories } from '@model/index';
 import { useSelector } from 'react-redux';
@@ -13,6 +12,7 @@ import { userForm } from '@store/user';
 import router from 'next/router';
 import { SET_ALERT } from '@store/alert';
 import Image from '@components/Shared/Image';
+import { showImageViewer } from '@store/imageViewer';
 
 interface IProps {
   list: ISpotStories;
@@ -24,8 +24,8 @@ const DetailBottomStory = ({ list }: IProps): ReactElement => {
   const [storyLike, setStoryLike] = useState<boolean>();
   const [likeCount, setLikeCount] = useState(list.likeCount);
 
-  const openImgViewer = (images: any) => {
-    dispatch(SET_IMAGE_VIEWER(images));
+  const openImgViewer = (image: string) => {
+    dispatch(showImageViewer({ images: [image], startIndex: 0, isShow: true }));
   };
 
   const getStoryLikeData = async () => {
