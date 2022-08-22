@@ -1,11 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { bottomSheetButton, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import Carousel from "@components/Shared/Carousel";
 import { IBanners } from '@model/index';
-import { useDispatch } from 'react-redux';
-import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 interface IProps {
   bannerList: IBanners[];
@@ -14,7 +12,6 @@ interface IProps {
 }
 
 const HomePopupSheet = ({bannerList, onClick, closeHandler}: IProps): JSX.Element => {
-
   return (
     <Container>
       <ImageWrapper>

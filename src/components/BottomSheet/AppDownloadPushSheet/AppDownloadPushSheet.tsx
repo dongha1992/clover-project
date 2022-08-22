@@ -3,17 +3,14 @@ import styled from 'styled-components';
 import { TextH6B, TextH4B } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
-import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import NextImage from 'next/image';
-import { useDispatch } from 'react-redux';
 
 interface IProps {
   onClick: () => void;
   closeHandler: () => void;
 }
 
-const AppDownloadPushSheet = ({onClick, closeHandler}: IProps) => {
-
+const AppDownloadPushSheet = ({onClick, closeHandler}: IProps): JSX.Element => {
   return (
     <Container>
       <Wrapper>

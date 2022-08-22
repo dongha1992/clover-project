@@ -18,6 +18,7 @@ interface ICarouselProps {
   noneArrow?: boolean;
   width?: string;
   height?: string;
+  autoPlay?: boolean;
 }
 
 const NextArrow = ({ onClick }: any) => {
@@ -36,7 +37,7 @@ const PreviousArrow = ({ onClick }: any) => {
   );
 };
 
-const Carousel = ({ images, noneArrow, width, height }: ICarouselProps) => {
+const Carousel = ({ images, noneArrow, width, height, autoPlay }: ICarouselProps) => {
   const [isArrowShow, setIsArrowShow] = useState<boolean>(false);
   const [currentPageNumber, setCurrentPageNumber] = useState(0);
 
@@ -48,7 +49,7 @@ const Carousel = ({ images, noneArrow, width, height }: ICarouselProps) => {
     slidersToScroll: 1,
     centerMode: true,
     infinite: true,
-    autoplay: true,
+    autoplay: autoPlay ? true : false,
     autoplaySpeed: 5000,
     afterChange: setCurrentPageNumber,
     centerPadding: '0px',
