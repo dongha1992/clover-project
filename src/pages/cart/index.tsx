@@ -162,9 +162,10 @@ const CartPage = () => {
       enabled: !!me,
       onSuccess: (data) => {
         try {
-          checkMenusHandler(data.cartMenus);
+          // checkMenusHandler(data.cartMenus);
+          setCheckedMenus(data.cartMenus);
+          setCartItemList(data.cartMenus);
           setDisposableList(initMenuOptions(data.cartMenus));
-          reorderCartList(data.cartMenus);
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
 
@@ -415,9 +416,10 @@ const CartPage = () => {
   };
 
   const reorderCartList = (data: IGetCart[]) => {
-    // const checkMenusId = checkedMenus?.map((item) => item.menuId);
-    // const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
-    // setCheckedMenus(updatedQuantityCart);
+    const checkMenusId = checkedMenus?.map((item) => item.menuId);
+    const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
+
+    setCheckedMenus(updatedQuantityCart);
     setCartItemList(data);
   };
 
@@ -1116,7 +1118,7 @@ const CartPage = () => {
   const calculateDisposableByMenus = () => {
     const menuDetailsCount = checkedMenus.reduce((total: number, menus: any) => {
       return menus.menuDetails.reduce((acc: number, cur: any) => {
-        return total + cur.quantity;
+        return total + acc + cur.quantity;
       }, 0);
     }, 0);
 
@@ -1158,6 +1160,41 @@ const CartPage = () => {
     }
   }, [selectedDeliveryDay]);
 
+  const getSubOrderDelivery = async () => {
+    if (me) {
+      const params = {
+        delivery: userDeliveryType.toUpperCase(),
+      };
+      try {
+        const { data } = await getSubOrdersCheckApi(params);
+        if (data.code === 200) {
+          const result = checkHasSubOrderDelivery(data?.data.orderDeliveries);
+
+          setSubOrderDeliery(result);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const checkMenusHandler = (data: IGetCart[]) => {
+    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === data.length) {
+      setIsAllchecked(true);
+      setCheckedMenus(data);
+    } else {
+      setIsAllchecked(false);
+      setCheckedMenus(canCheckFilteredMenus(data));
+    }
+  };
+
+  useEffect(() => {
+    if (isFirstRender) {
+      checkMenusHandler(cartItemList);
+    }
+    setIsFirstRender(false);
+  }, [cartItemList]);
+
   useEffect(() => {
     if (calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
@@ -1187,34 +1224,6 @@ const CartPage = () => {
     }
     calculateDisposableByMenus();
   }, [checkedMenus]);
-
-  const getSubOrderDelivery = async () => {
-    if (me) {
-      const params = {
-        delivery: userDeliveryType.toUpperCase(),
-      };
-      try {
-        const { data } = await getSubOrdersCheckApi(params);
-        if (data.code === 200) {
-          const result = checkHasSubOrderDelivery(data?.data.orderDeliveries);
-
-          setSubOrderDeliery(result);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
-
-  const checkMenusHandler = (data: IGetCart[]) => {
-    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === data.length) {
-      setIsAllchecked(true);
-      setCheckedMenus(data);
-    } else {
-      setIsAllchecked(false);
-      setCheckedMenus(canCheckFilteredMenus(data));
-    }
-  };
 
   useEffect(() => {
     getSubOrderDelivery();
@@ -1265,7 +1274,6 @@ const CartPage = () => {
             };
           })
         );
-
         mutateAddCartItem(reqBody);
       }
     }
