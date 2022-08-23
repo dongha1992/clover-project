@@ -3,13 +3,12 @@ import Slider from 'react-slick';
 import styled from 'styled-components';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { SVGIcon } from '@utils/common';
-import { IViewer } from '@store/common';
 import Image from '@components/Shared/Image';
 
 interface IProps {
-  setCountIndex?: React.Dispatch<React.SetStateAction<number>>;
-  currentImg: number;
-  images: IViewer;
+  onChange?: (currentIndex: number) => void;
+  initialSlide: number;
+  images: string[];
 }
 
 const NextArrow = ({ onClick }: any) => {
@@ -28,19 +27,19 @@ const PreviousArrow = ({ onClick }: any) => {
   );
 };
 
-const ViewerCarousel = ({ images, setCountIndex, currentImg }: IProps) => {
+const ViewerCarousel = ({ images, initialSlide, onChange }: IProps) => {
   const [isArrowShow, setIsArrowShow] = useState<boolean>(false);
 
   const settings = {
     arrows: isArrowShow,
     dots: false,
-    initialSlide: currentImg,
+    initialSlide,
     spped: 500,
     sliderToShow: 1,
     slidersToScroll: 1,
     centerMode: true,
     infinite: true,
-    afterChange: (current: number) => setCountIndex && setCountIndex(current),
+    afterChange: onChange,
     centerPadding: '0px',
     nextArrow: <NextArrow />,
     prevArrow: <PreviousArrow />,
@@ -56,7 +55,7 @@ const ViewerCarousel = ({ images, setCountIndex, currentImg }: IProps) => {
       }}
     >
       <Slider {...settings}>
-        {images.images?.map((url: string, index: number) => {
+        {images.map((url: string, index: number) => {
           return (
             <Image
               src={url}
@@ -107,13 +106,13 @@ const Container = styled.div`
   }
   .review-image {
     height:auto!important;
-    min-height: 0px!important;
+    min-height: 0!important;
   }
 `;
 
 const NextArrowWrapper = styled.div`
   position: absolute;
-  right: 0%;
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
   z-index: 1000000;
@@ -122,7 +121,7 @@ const NextArrowWrapper = styled.div`
 const PreviousArrowWrapper = styled.div`
   position: absolute;
   top: 50%;
-  left: 0%;
+  left: 0;
   transform: translateY(-50%);
   z-index: 1000000;
 `;

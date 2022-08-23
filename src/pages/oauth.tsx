@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER, SET_USER_AUTH, SET_USER } from '@store/user';
+import { SET_LOGIN_SUCCESS, SET_USER_AUTH, SET_USER } from '@store/user';
 import { SET_LOGIN_TYPE } from '@store/common';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -65,7 +65,7 @@ const Oauth = () => {
           recommendCode ? router.push(`/mypage/friend`) : router.push('/');
         }
       }
-    } catch ({ response }: any) {
+    } catch ({ response }) {
       const { data: error } = response as any;
 
       if (error.code === 2010) {

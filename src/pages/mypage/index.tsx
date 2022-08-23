@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { TextB3R, TextH2B, TextH6B, TextH3B, TextH4B } from '@components/Shared/Text';
 import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween } from '@styles/theme';
 import { getFormatPrice, SVGIcon } from '@utils/common';
@@ -29,6 +29,9 @@ import { commonSelector } from '@store/common';
 
 import { SET_ALERT } from '@store/alert';
 import useIsApp from '@hooks/useIsApp';
+import DefaultLayout from '@components/Layout/Default';
+import HomeBottom from '@components/Bottom/HomeBottom';
+import { NextPageWithLayout } from '@pages/_app';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -36,9 +39,9 @@ interface IMypageMenu {
   hideBorder?: boolean;
 }
 
-const MypagePage = () => {
+const MypagePage: NextPageWithLayout = () => {
   const dispatch = useDispatch();
-  const { me, isLoginSuccess } = useSelector(userForm);
+  const { me } = useSelector(userForm);
   const { loginType } = useSelector(commonSelector);
   const [subsOrders, setSubsOrders] = useState([]);
   const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
@@ -46,7 +49,7 @@ const MypagePage = () => {
   const [showBoard, setShowBoard] = useState<string>('');
 
   const isApp = useIsApp();
-  const { data: orderList, isLoading } = useQuery(
+  const { data: orderList } = useQuery(
     'getOrderLists',
     async () => {
       const params = {
@@ -57,7 +60,7 @@ const MypagePage = () => {
       return data.data;
     },
     {
-      onSuccess: (data) => {},
+      onSuccess: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!me,
@@ -112,7 +115,7 @@ const MypagePage = () => {
     }
   );
 
-  const { data: friendInvitation, error } = useQuery(
+  const { data: friendInvitation } = useQuery(
     'getInvitationInfo',
     async () => {
       const { data } = await userInvitationApi();
@@ -346,6 +349,10 @@ const MypagePage = () => {
     </Container>
   );
 };
+
+MypagePage.getLayout = (page: ReactElement) => {
+  return (<DefaultLayout bottom={<HomeBottom/>}>{page}</DefaultLayout>)
+}
 
 export const MypageMenu = React.memo(({ title, count, link, hideBorder }: IMypageMenu) => {
   return (

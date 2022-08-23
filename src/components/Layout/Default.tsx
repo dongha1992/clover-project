@@ -1,43 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import styled from 'styled-components';
-import dynamic from 'next/dynamic';
 import { alertForm } from '@store/alert';
 import { toastSelector } from '@store/toast';
-import { bottomSheetForm } from '@store/bottomSheet';
 import { useSelector } from 'react-redux';
+import { imageViewerSelector } from '@store/imageViewer';
 import Header from '@components/Header';
-import Bottom from '@components/Bottom';
 import { breakpoints } from '@utils/common/getMediaQuery';
-import { commonSelector } from '@store/common';
 import Loading from '@components/Shared/Loading';
 import { AppState } from '@store/index';
-// import Alert from '@components/Shared/Alert';
-// import BottomSheet from '@components/BottomSheet';
-// import Toast from '@components/Shared/Toast';
-// import ImageViewer from '@components/ImageViewer';
+import Alert from '@components/Shared/Alert';
+import Toast from '@components/Shared/Toast';
+import BottomSheet from '@components/BottomSheet';
+import ImageViewer from '@components/ImageViewer';
+import { bottomSheetForm } from '@store/bottomSheet';
 
-const Alert = dynamic(() => import('@components/Shared/Alert'), {
-  ssr: false,
-});
-
-const BottomSheet = dynamic(() => import('@components/BottomSheet'), {
-  ssr: false,
-});
-
-const Toast = dynamic(() => import('@components/Shared/Toast'), {
-  ssr: false,
-});
-
-const ImageViewer = dynamic(() => import('@components/ImageViewer'));
-
-const Wrapper: React.FC = ({ children }) => {
+interface IDefaultLayoutProps {
+  children: ReactElement,
+  bottom?: ReactElement
+}
+const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
   const alert = useSelector(alertForm);
   const bottomSheet = useSelector(bottomSheetForm);
   const toast = useSelector(toastSelector);
-  const { imagesForViewer } = useSelector(commonSelector);
+  const imageViewerState = useSelector(imageViewerSelector);
   const loadingState = useSelector((state: AppState) => state.loading);
-
-  const isClickReviewImg = imagesForViewer?.images?.length > 0;
 
   // set 1vh for all devices
   useEffect(() => {
@@ -71,7 +57,11 @@ const Wrapper: React.FC = ({ children }) => {
               {alert.children}
             </Alert>
           )}
-          {isClickReviewImg && <ImageViewer imagesForViewer={imagesForViewer} />}
+          <ImageViewer
+            images={imageViewerState.images}
+            startIndex={imageViewerState.startIndex}
+            isShow={imageViewerState.isShow}
+          />
           <Left>
             <div className="left-contents">
               {/* <Image
@@ -83,10 +73,12 @@ const Wrapper: React.FC = ({ children }) => {
             </div>
           </Left>
           <Right>
-            <Header />
-            {toast.message && <Toast />}
+            <Header/>
+            {toast.message && <Toast/>}
             <Main>{children}</Main>
-            <Bottom />
+            <BottomWrapper isShow={!!bottom}>
+              {bottom}
+            </BottomWrapper>
           </Right>
         </Center>
       </Container>
@@ -102,10 +94,6 @@ const Container = styled.div`
   width: 100%;
   box-sizing: border-box;
   background-color: #f4f4f4;
-  /* width: 100vw;
-  height: 100vh;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch; */
 `;
 
 const Center = styled.div`
@@ -120,8 +108,6 @@ const Center = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
-  /* TODO: background image 어떻게 할까 */
-  /* background-image: url('https://s3.ap-northeast-2.amazonaws.com/freshcode/img/seo/main.png'); */
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center;
@@ -129,7 +115,6 @@ const Center = styled.div`
 `;
 
 const Right = styled.div`
-  /* clip-path: inset(0 0 0 0); */
   position: relative;
   width: 50%;
   max-width: ${breakpoints.mobile}px;
@@ -145,7 +130,6 @@ const Right = styled.div`
 
 const Left = styled.div`
   position: relative;
-  /* z-index: 999; */
   background-color: white;
   width: 50%;
   ${({ theme }) => theme.desktop`  
@@ -159,4 +143,10 @@ const Main = styled.main`
   min-height: calc(100vh - 112px);
 `;
 
-export default Wrapper;
+const BottomWrapper = styled.div<{ isShow: React.ReactNode }>`
+  margin-top: ${({ isShow }) => (isShow ? 56 : 0)}px;
+  display: ${({ isShow }) => (isShow ? '' : 'none')};
+  background-color: white;
+`;
+
+export default DefaultLayout;

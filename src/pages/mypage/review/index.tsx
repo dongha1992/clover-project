@@ -8,7 +8,6 @@ import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getCompleteReviews, getWillWriteReviews, deleteReviewApi } from '@api/menu';
 import { ICompletionReviews, IWillWriteReview } from '@model/index';
 import { useDispatch } from 'react-redux';
-import { SET_IMAGE_VIEWER } from '@store/common';
 import useScrollCheck from '@hooks/useScrollCheck';
 import { SET_MENU_IMAGE } from '@store/review';
 import { useRouter } from 'next/router';
@@ -107,11 +106,6 @@ const ReviewPage = () => {
     setSelectedTab(tabItem.link);
   };
 
-  const clickImgViewHandler = (images: string[], index: number) => {
-    const payload = { images, index };
-    dispatch(SET_IMAGE_VIEWER(payload));
-  };
-
   const deleteReviewHandler = (id: number) => {
     dispatch(
       SET_ALERT({
@@ -169,7 +163,6 @@ const ReviewPage = () => {
                 <CompleteReviewItem
                   key={index}
                   review={review}
-                  clickImgViewHandler={clickImgViewHandler}
                   goToReviewDetail={goToReviewDetail}
                   deleteReviewHandler={deleteReviewHandler}
                 />
