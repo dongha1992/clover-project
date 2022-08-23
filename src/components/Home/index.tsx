@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MainTab from '@components/Home/MainTab';
 import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
-import { TextH5B } from '@components/Shared/Text';
+import { TextH5B, TextH3B } from '@components/Shared/Text';
 import { Item } from '@components/Item';
 import { useDispatch } from 'react-redux';
 import { getBannersApi } from '@api/banner';
@@ -64,7 +64,7 @@ const Home = () => {
   return (
     <Container>
         <Container>
-          <Carousel autoPlay images={bannerList.map(banner => ({ src: banner.image.url }))} />
+          <Carousel height='384px' autoPlay images={bannerList.map(banner => ({ src: banner.image.url }))} />
         </Container>
       <SectionWrapper>
         <MainTab />
@@ -78,7 +78,7 @@ const Home = () => {
                 return (
                   <PromotionWrapper key={idx}>
                     <FlexSpace>
-                      <SectionTitle>{item?.exhibition.title}</SectionTitle>
+                      <TextH3B>{item?.exhibition.title}</TextH3B>
                       <TextH5B
                         onClick={()=> goToPromotion(item?.exhibition.id, item?.exhibition.title)}
                         color={theme.greyScale65}
@@ -102,7 +102,7 @@ const Home = () => {
                 return (
                   <PromotionWrapper key={idx}>
                     <FlexSpace>
-                      <SectionTitle>{item?.exhibition.title}</SectionTitle>
+                      <TextH3B>{item?.exhibition.title}</TextH3B>
                       <TextH5B
                         onClick={() => goToPromotion(item?.exhibition.id, item?.exhibition.title)}
                         color={theme.greyScale65}
@@ -112,7 +112,7 @@ const Home = () => {
                     </FlexSpace>
                     <Image
                       src={item?.exhibition?.image.url}
-                      height="300px"
+                      height="287px"
                       width="512px"
                       layout="responsive"
                       alt="홈 기획전 이미지"
@@ -137,7 +137,7 @@ const Home = () => {
                 <PromotionBanner key={idx} onClick={() => goToPromotion(item.banner.id, item.banner.title)}>
                   <Image
                     src={item?.banner?.image.url}
-                    height="120px"
+                    height="131px"
                     width="512px"
                     layout="responsive"
                     alt="홈 배너형 기획전 이미지"
@@ -162,27 +162,26 @@ const SectionWrapper = styled.section`
 `;
 
 const SectionTitle = styled.div`
-  ${textH3}
-  margin-top: 24px;
-  margin-bottom: 24px;
+  ${textH3};
+  padding: 0 0 24px 0;
 `;
 
 const PromotionBanner = styled.section`
   max-width: 512px;
   width: 100%;
-  margin: 24px 0px;
+  padding: 24px 0px;
   cursor: pointer;
 `;
 
 const PromotionWrapper = styled.section`
   width: 100%;
+  padding: 24px 0;
 `;
 
 const FlexSpace = styled.div`
   display: flex;
   justify-content: space-between;
-  ${homePadding}
-  align-items: center;
+  padding: 0 24px 24px 24px;  
 `;
 
 const SliderWrapper = styled(Swiper)`
