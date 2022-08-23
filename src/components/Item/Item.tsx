@@ -67,12 +67,12 @@ const Item = ({ item, isHorizontal }: TProps) => {
         });
         queryClient.setQueryData(['getMainContents'], (previous: any) => {
           return previous?.map((_item: any) => {
-            _item?.exhibition?.menus.map((_menus: IMenus)=> {
+            _item?.exhibition?.menus.map((_menus: IMenus) => {
               if (_menus.id === item.id) {
                 return { ..._menus, reopenNotificationRequested: false };
               }
-              return _menus;  
-            })
+              return _menus;
+            });
           });
         });
         showToast({ message: '알림 신청을 완료했어요!' });
@@ -241,7 +241,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     <Container onClick={() => goToDetail(item)} isHorizontal={isHorizontal}>
       <ImageWrapper isHorizontal={isHorizontal}>
         <Image
-          src={item?.thumbnail&&item?.thumbnail[0].url}
+          src={item?.thumbnail && item?.thumbnail[0].url}
           alt="상품이미지"
           width={'100%'}
           height={'100%'}
@@ -400,7 +400,7 @@ const ImageWrapper = styled.div<{ isHorizontal?: boolean }>`
 `;
 
 const NameWrapper = styled.div`
-  height: 26px;
+  height: 46px;
   width: 100%;
   margin-bottom: 4px;
 `;

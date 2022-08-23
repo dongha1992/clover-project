@@ -18,10 +18,10 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
     if (option.isSold || !option.availability?.availability) {
       return true;
     } else {
-      return false
-    };
+      return false;
+    }
   };
-console.log(discount)
+  console.log(discount);
   return (
     <OptionList
       onClick={() => {
@@ -51,20 +51,20 @@ console.log(discount)
             {discount}%&nbsp;
           </TextH6B>
         )}
-        <TextH6B padding="0 4px 0 0" color={isCheckedFontColor() ? theme.greyScale25 : theme.black}>{discountedPrice.toLocaleString()}원</TextH6B>
-        {
-          (!option.isSold || option.availability?.availability) && (
-            <TextH6B color={theme.greyScale25} textDecoration="line-through">
-              {price.toLocaleString()}원
-            </TextH6B>
-          )
-        }
+        <TextH6B padding="0 4px 0 0" color={isCheckedFontColor() ? theme.greyScale25 : theme.black}>
+          {discountedPrice.toLocaleString()}원
+        </TextH6B>
+        {(!option.isSold || option.availability?.availability) && (
+          <TextH6B color={theme.greyScale25} textDecoration="line-through">
+            {price.toLocaleString()}원
+          </TextH6B>
+        )}
       </FlexRow>
     </OptionList>
   );
 };
 
-const OptionList = styled.li<{ isSold?: boolean, availability?: boolean }>`
+const OptionList = styled.li<{ isSold?: boolean; availability?: boolean }>`
   display: flex;
   flex-direction: column;
   list-style-type: none;
