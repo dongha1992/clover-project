@@ -6,13 +6,12 @@ import { homePadding, theme } from '@styles/theme';
 import { ReviewOnlyImage } from '@components/Pages/Review';
 import BorderLine from '@components/Shared/BorderLine';
 import { ReviewDetailItem } from '@components/Pages/Review';
-import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { useQuery, useInfiniteQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { ISearchReviews } from '@model/index';
-import { getMenuDetailReviewApi, getMenuDetailReviewImageApi, getMenuDetailApi } from '@api/menu';
-import { menuSelector, SET_MENU_ITEM, INIT_MENU_ITEM } from '@store/menu';
+import { getMenuDetailReviewImageApi, getMenuDetailApi } from '@api/menu';
+import { SET_MENU_ITEM, INIT_MENU_ITEM } from '@store/menu';
 import { userForm } from '@store/user';
 import { useInfiniteMenuReviews } from '@queries/menu';
 import { SET_ALERT } from '@store/alert';
@@ -98,11 +97,6 @@ const TotalReviewPage = ({ menuId }: IProps) => {
     router.push(`/menu/${menuId}/review/${id}`);
   };
 
-  const clickImgViewHandler = (images: string[], index: number) => {
-    const payload = { images, index };
-    dispatch(SET_IMAGE_VIEWER(payload));
-  };
-
   const hasImageReview = reviewsImages?.images?.length! !== 0;
 
   return (
@@ -149,7 +143,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
                 {page.result?.map((review: ISearchReviews, index: number) => {
                   return (
                     <div key={index}>
-                      <ReviewDetailItem review={review} clickImgViewHandler={clickImgViewHandler} />
+                      <ReviewDetailItem review={review} />
                       <BorderLine margin="24px 0 24px 0" height={1} />
                     </div>
                   );

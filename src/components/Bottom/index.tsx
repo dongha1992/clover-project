@@ -11,7 +11,7 @@ const DetailBottom = dynamic(() => import('./DetailBottom'));
 const SpotDetailBottom = dynamic(() => import('./SpotDetailBottom'));
 /*TODO: 페이지 이동 시 이전 route 호출로 렌더 두 번 */
 
-const Bottom = () => {
+const Bottom = ({ children }: any ) => {
   const router = useRouter();
   const [currentPath, setCurrentPath] = useState<string>(router.pathname);
 
@@ -52,7 +52,7 @@ const Bottom = () => {
     [currentPath]
   );
 
-  return <Container isShow={renderComponent(currentPath)}>{renderComponent(currentPath)}</Container>;
+  return <Container isShow={children}>{children}</Container>;
 };
 
 const Container = styled.div<{ isShow: React.ReactNode }>`
@@ -60,4 +60,4 @@ const Container = styled.div<{ isShow: React.ReactNode }>`
   display: ${({ isShow }) => (isShow ? '' : 'none')};
   background-color: white;
 `;
-export default React.memo(Bottom);
+export default Bottom;

@@ -6,7 +6,6 @@ import { homePadding, theme } from '@styles/theme';
 import ReviewOnlyImage from '@components/Pages/Review/ReviewOnlyImage';
 import BorderLine from '@components/Shared/BorderLine';
 import ReviewDetailItem from '@components/Pages/Review/ReviewDetailItem';
-import { SET_IMAGE_VIEWER } from '@store/common';
 import router from 'next/router';
 import { useDispatch } from 'react-redux';
 import { IDetailImage, IPagination } from '@model/index';
@@ -61,11 +60,6 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
     router.push(`/mypage/review`);
   };
 
-  const clickImgViewHandler = (images: string[], index: number) => {
-    const payload = { images, index };
-    dispatch(SET_IMAGE_VIEWER(payload));
-  };
-
   return (
     <Container isSticky={isSticky}>
       {hasImageReviews && (
@@ -101,7 +95,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
               if (index > 10) return;
               return (
                 <div key={index}>
-                  <ReviewDetailItem review={review} clickImgViewHandler={clickImgViewHandler} />
+                  <ReviewDetailItem review={review} />
                   <BorderLine margin="12px 0 24px 0" height={1} />
                 </div>
               );

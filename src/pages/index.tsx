@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import Home from '@components/Home';
 import Footer from '@components/Footer';
-import dynamic from 'next/dynamic';
+import DefaultLayout from '@components/Layout/Default';
+import { NextPageWithLayout } from '@pages/_app';
+import HomeBottom from '@components/Bottom/HomeBottom';
+import PopupWrapper from '@components/Home/PopupWrapper';
 
-const PopupWrapper = dynamic(()=> import('@components/Home/PopupWrapper'));
-
-const HomePage = () => {
+const HomePage: NextPageWithLayout = () => {
   return (
     <Container>
       <PopupWrapper>
@@ -16,6 +17,10 @@ const HomePage = () => {
     </Container>
   );
 };
+
+HomePage.getLayout = (page: ReactElement) => {
+  return (<DefaultLayout bottom={<HomeBottom/>}>{page}</DefaultLayout>);
+}
 
 const Container = styled.div`
   width: 100%;
