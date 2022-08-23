@@ -44,6 +44,7 @@ import {
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { INIT_USER_ORDER_INFO } from '@store/order';
 import { getCustomDate } from '@utils/destination';
 import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus, calculatePoint } from '@utils/menu';
 import { useQuery, useQueryClient, useMutation, useIsMutating } from 'react-query';
@@ -72,6 +73,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import 'swiper/css';
+import { INIT_COUPON } from '@store/coupon';
 
 dayjs.locale('ko');
 
@@ -1282,6 +1284,8 @@ const CartPage = () => {
   useEffect(() => {
     setIsFirstRender(true);
     dispatch(INIT_ACCESS_METHOD());
+    dispatch(INIT_USER_ORDER_INFO());
+    dispatch(INIT_COUPON());
   }, []);
 
   if (isLoading) {
