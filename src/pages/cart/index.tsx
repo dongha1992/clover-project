@@ -162,6 +162,7 @@ const CartPage = () => {
       enabled: !!me,
       onSuccess: (data) => {
         try {
+          checkMenusHandler(data.cartMenus);
           setDisposableList(initMenuOptions(data.cartMenus));
           reorderCartList(data.cartMenus);
           dispatch(INIT_CART_LISTS());
@@ -414,14 +415,11 @@ const CartPage = () => {
   };
 
   const reorderCartList = (data: IGetCart[]) => {
-    const checkMenusId = checkedMenus?.map((item) => item.menuId);
-    const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
-
-    setCheckedMenus(updatedQuantityCart);
+    // const checkMenusId = checkedMenus?.map((item) => item.menuId);
+    // const updatedQuantityCart = data?.filter((item: IGetCart) => checkMenusId.includes(item.menuId));
+    // setCheckedMenus(updatedQuantityCart);
     setCartItemList(data);
   };
-
-  const changeDisposableInMenu = (updatedQuantityCart: IGetCart[]) => {};
 
   const selectCartItemHandler = (menu: IGetCart) => {
     const foundItem = checkedMenus.find((item: IGetCart) => item.menuId === menu.menuId);
@@ -736,7 +734,7 @@ const CartPage = () => {
 
   const checkHasSubOrderDelivery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
-      const sameDeliveryAddress = isEqual(location, userDestination?.location!);
+      const sameDeliveryAddress = isEqual(location, destinationObj?.location!);
 
       return sameDeliveryAddress;
     };
@@ -1208,23 +1206,19 @@ const CartPage = () => {
     }
   };
 
-  // const isMutating = queryClient.isMutating({ mutationKey: ['postCartItem'], exact: true });
+  const checkMenusHandler = (data: IGetCart[]) => {
+    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === data.length) {
+      setIsAllchecked(true);
+      setCheckedMenus(data);
+    } else {
+      setIsAllchecked(false);
+      setCheckedMenus(canCheckFilteredMenus(data));
+    }
+  };
 
   useEffect(() => {
-    //  첫 렌딩 때 체크
-
-    if (isFirstRender) {
-      if (cartItemList?.length! > 0 && canCheckFilteredMenus(cartItemList)?.length === cartItemList?.length) {
-        setIsAllchecked(true);
-        setCheckedMenus(cartItemList);
-      } else {
-        setIsAllchecked(false);
-        setCheckedMenus(canCheckFilteredMenus(cartItemList));
-      }
-      setIsFirstRender(false);
-      getSubOrderDelivery();
-    }
-  }, [cartItemList]);
+    getSubOrderDelivery();
+  }, [destinationObj]);
 
   useEffect(() => {
     getTotalPrice();
