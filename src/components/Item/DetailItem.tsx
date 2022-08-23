@@ -117,20 +117,6 @@ const DetailItem = ({ item, isHorizontal }: TProps) => {
     mutateAddCartItem();
   };
 
-  // const menuLikeHandler = (e: any) => {
-  //   e.stopPropagation();
-  //   if (!me) {
-  //     goToLogin();
-  //     return;
-  //   }
-
-  //   if (item.liked) {
-  //     mutateDeleteMenuLike();
-  //   } else {
-  //     mutatePostMenuLike();
-  //   }
-  // };
-
   const goToDetail = (item: IOrderedMenuDetails) => {
     dispatch(SET_MENU_ITEM(item));
     router.push(`/menu/${item.id}`);

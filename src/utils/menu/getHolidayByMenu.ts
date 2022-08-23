@@ -1,5 +1,5 @@
 export const getHolidayByMenu = (list: number[][]) => {
-  if (list.length === 0) return;
+  if (list?.length === 0) return;
 
   return list
     ?.map((item: number[], index: number) => {
