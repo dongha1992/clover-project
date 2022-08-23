@@ -1,5 +1,4 @@
-import { InfoCard, SubsParcelList, SubsSpotList } from '@components/Pages/Subscription';
-import { MySubsList } from '@components/Pages/Subscription';
+import { InfoCard, MySubsList, SubsParcelList, SubsSpotList } from '@components/Pages/Subscription';
 import { userForm } from '@store/user';
 import { useSelector } from 'react-redux';
 import router from 'next/router';
@@ -12,14 +11,15 @@ import Image from 'next/image';
 import subsMainBanner from '@public/images/subsMainBanner.svg';
 import dayjs from 'dayjs';
 import { parcelDeliveryCompledN, spotDeliveryCompledN, todayN } from '@utils/common';
-import Lottie from 'react-lottie';
-import test from '@public/images/test1.json';
-import { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
+import DefaultLayout from '@components/Layout/Default';
+import HomeBottom from '@components/Bottom/HomeBottom';
+import { NextPageWithLayout } from '@pages/_app';
 
-const SubscriptiopPage = () => {
+const SubscriptiopPage: NextPageWithLayout = () => {
   const { me } = useSelector(userForm);
 
-  const { data: menus, isLoading: isMenusLoading } = useQuery(
+  const { data: menus } = useQuery(
     'getExhibitionMenus',
     async () => {
       const params = { categories: '', keyword: '', type: 'SUBSCRIPTION' };
@@ -30,13 +30,13 @@ const SubscriptiopPage = () => {
     { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
-  const { data: subsList, isLoading: isOrdersLoading } = useQuery(
+  const { data: subsList } = useQuery(
     ['getSubscriptionOrders', 'progress'],
     async () => {
       const params = { days: 365, page: 1, size: 100, type: 'SUBSCRIPTION' };
       const { data } = await getOrdersApi(params);
 
-      let filterData = data.data.orders
+      return data.data.orders
         .map((item: IGetOrders) => {
           item.orderDeliveries.sort(
             (a: IOrderDeliverie, b: IOrderDeliverie) =>
@@ -75,8 +75,6 @@ const SubscriptiopPage = () => {
             return item;
           }
         });
-
-      return filterData;
     },
     {
       refetchOnMount: true,
@@ -86,15 +84,6 @@ const SubscriptiopPage = () => {
       enabled: !!me,
     }
   );
-
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: test,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-    },
-  };
 
   const goToSpot = () => {
     router.push('/subscription/products?tab=spot');
@@ -138,24 +127,16 @@ const SubscriptiopPage = () => {
   );
 };
 
+SubscriptiopPage.getLayout = (page: ReactElement) => {
+  return (<DefaultLayout bottom={<HomeBottom/>}>{page}</DefaultLayout>)
+}
+
 const Container = styled.div`
   padding: 0 0 68px;
 `;
 const Banner = styled.div`
   background-color: #f2f2f2;
   cursor: pointer;
-`;
-const Loading = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999999;
-  background-color: #fff;
 `;
 
 export default SubscriptiopPage;

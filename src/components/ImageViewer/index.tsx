@@ -1,45 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ModalFullScreen } from '@components/Shared/Modal';
-import Carousel from '@components/Shared/Carousel';
 import { TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
-import { useDispatch } from 'react-redux';
-import { INIT_IMAGE_VIEWER } from '@store/common';
 import ViewerCarousel from './ViewerCarousel';
-import { breakpoints } from '@utils/common/getMediaQuery';
-import { IViewer } from '@store/common';
+import { hideImageViewer } from '@store/imageViewer';
+import { useDispatch } from 'react-redux';
 interface IProps {
-  imagesForViewer: IViewer;
+  images: string[];
+  startIndex?: number;
+  isShow?: boolean;
 }
 
-const ImageViewer = ({ imagesForViewer }: IProps) => {
-  const [currentImg, setCurrentImg] = useState(imagesForViewer?.index);
+const ImageViewer = ({ images=[], startIndex=0, isShow=false }: IProps) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(startIndex);
   const dispatch = useDispatch();
 
+  const onChange = (changedIndex: number) => {
+    setCurrentImageIndex(changedIndex);
+  }
+
   const closeModal = () => {
-    dispatch(INIT_IMAGE_VIEWER());
-  };
-
-  console.log(currentImg, 'currentImg');
-
-  const totalImg = imagesForViewer?.images?.length;
+    dispatch(hideImageViewer());
+  }
 
   return (
-    <ModalFullScreen height="300px" padding="10px" style={{ borderRadius: '8px' }}>
+    isShow && (
+    <ModalFullScreen height="300px" padding="10px" style={{ borderRadius: '8px'}}>
       <Container>
         <Header>
           <TextH5B color={theme.white}>
-            {currentImg + 1} / {totalImg}
+            {currentImageIndex + 1} / {images.length}
           </TextH5B>
           <div className="close" onClick={closeModal}>
             <SVGIcon name="defaultCancel24White" />
           </div>
         </Header>
-        <ViewerCarousel images={imagesForViewer} setCountIndex={setCurrentImg} currentImg={currentImg} />
+        <ViewerCarousel images={images} initialSlide={startIndex} onChange={onChange}/>
       </Container>
-    </ModalFullScreen>
+    </ModalFullScreen>) || null
   );
 };
 
