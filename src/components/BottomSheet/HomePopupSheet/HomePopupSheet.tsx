@@ -19,7 +19,7 @@ const HomePopupSheet = ({bannerList, onClick, closeHandler}: IProps): JSX.Elemen
           images={bannerList?.map((banner: IBanners) => ({ src: banner.image.url }))} 
           noneArrow
           width='512px'
-          height='412px' 
+          height='384px' 
         />
       </ImageWrapper>
       <BtnWrapper>

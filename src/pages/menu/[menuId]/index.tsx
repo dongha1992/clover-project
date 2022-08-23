@@ -482,7 +482,13 @@ const MenuDetailPage: NextPageWithLayout = () => {
           {banners?.map((banner, index) => {
             return (
               <AdWrapper key={index}>
-                <Image src={banner.image.url} width="512px" height="100%"></Image>
+                <Image 
+                  src={banner.image.url} 
+                  width="512px" 
+                  height="131px"
+                  layout="responsive"
+                  alt="메뉴 상세 페이지 베너"
+                />
               </AdWrapper>
             );
           })}
@@ -598,9 +604,7 @@ const ReviewSwipeContainer = styled(Swiper)`
 
 const AdWrapper = styled.div`
   width: 100%;
-  height: 96px;
-  /* background-color: #dedede; */
-  margin-bottom: 16px;
+  padding-bottom: 8px;
 `;
 
 const ReviewHeader = styled.div`
