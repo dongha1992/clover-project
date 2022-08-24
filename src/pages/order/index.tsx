@@ -503,6 +503,7 @@ const OrderPage = () => {
   };
 
   const goToRegisteredCard = () => {
+    dispatch(SET_USER_ORDER_INFO(userInputObj));
     router.push('/mypage/card/register');
   };
 
@@ -932,8 +933,6 @@ const OrderPage = () => {
             ...userInputObj,
             deliveryMessageType: userAccessMethod?.value!,
             deliveryMessage: editDeliveryMessage,
-            receiverName: editReceiverName,
-            receiverTel: editReceiverTel,
             coupon,
             point: value ? value : avaliablePoint - (value ?? 0),
           });
