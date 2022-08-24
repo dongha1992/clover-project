@@ -22,8 +22,12 @@ import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-import { commonSelector, INIT_ACCESS_METHOD, SET_ACCESS_METHOD } from '@store/common';
+import { commonSelector, INIT_ACCESS_METHOD, SET_ACCESS_METHOD, SET_IS_LOADING } from '@store/common';
 import { couponForm, INIT_COUPON } from '@store/coupon';
+import { userForm } from '@store/user';
+import { subscriptionForm } from '@store/subscription';
+import { SET_ALERT } from '@store/alert';
+import { orderForm, SET_RECENT_PAYMENT, SET_USER_ORDER_INFO } from '@store/order';
 import {
   ACCESS_METHOD_PLACEHOLDER,
   ACCESS_METHOD_VALUE,
@@ -54,14 +58,9 @@ import {
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
-import { orderForm, SET_RECENT_PAYMENT } from '@store/order';
 import SlideToggle from '@components/Shared/SlideToggle';
 import { SubsInfoBox, SubsOrderItem, SubsOrderList, SubsPaymentMethod } from '@components/Pages/Subscription/payment';
-import { SET_ALERT } from '@store/alert';
 import { setCookie, getUnCommaPrice } from '@utils/common';
-import { SET_IS_LOADING } from '@store/common';
-import { userForm } from '@store/user';
-import { subscriptionForm } from '@store/subscription';
 import { periodMapper } from '@constants/subscription';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
 import useIsApp from '@hooks/useIsApp';
@@ -88,7 +87,7 @@ const OrderPage = () => {
   });
   const [selectedOrderMethod, setSelectedOrderMethod] = useState<string>('NICE_BILLING');
   const [checkForm, setCheckForm] = useState<Obj>({
-    samePerson: { isSelected: true },
+    samePerson: { isSelected: false },
     accessMethodReuse: { isSelected: false },
     alwaysPointAll: { isSelected: false },
     orderMethodReuse: { isSelected: false },
@@ -110,10 +109,11 @@ const OrderPage = () => {
   });
   const isApp = useIsApp();
   const token = getCookie({ name: 'acstk' });
+  const alwaysPointAll = getCookie({ name: 'alwaysPointAll' }) === 'true';
 
   const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
-  const { tempOrder, selectedCard, recentPayment } = useSelector(orderForm);
+  const { tempOrder, selectedCard, recentPayment, userOrderInfo } = useSelector(orderForm);
   const { me } = useSelector(userForm);
 
   const queryClient = useQueryClient();
@@ -192,12 +192,6 @@ const OrderPage = () => {
           // 정기구독은 카드결제만 가능
           setSelectedOrderMethod('NICE_BILLING');
         }
-
-        setUserInputObj({
-          ...userInputObj,
-          receiverName: data?.order.userName!,
-          receiverTel: data?.order.userTel!,
-        });
       },
       onError: (error: any) => {
         if (error?.code === 5005) {
@@ -255,6 +249,8 @@ const OrderPage = () => {
         if (checkForm.orderMethodReuse.isSelected) {
           dispatch(SET_RECENT_PAYMENT(selectedOrderMethod));
         }
+
+        setCookie({ name: 'alwaysPointAll', value: checkForm.alwaysPointAll.isSelected });
 
         if (data.status === 'PROGRESS') {
           router.replace(`/order/finish?orderId=${data.id}`);
@@ -382,6 +378,12 @@ const OrderPage = () => {
               alertMessage: '카드를 등록해주세요.',
             })
           );
+        } else if (error.code === 1999) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '상품 정보가 변경되어 결제를 완료할 수 없어요. 장바구니 확인 후 다시 시도해 주세요.',
+            })
+          );
         } else if (error.code === 5018) {
           dispatch(SET_ALERT({ alertMessage: '결제에 실패했습니다. 다시 시도해주세요.' }));
         } else {
@@ -463,11 +465,11 @@ const OrderPage = () => {
     setUserInputObj({ ...userInputObj, [name]: value });
   };
 
-  const getAllOfPointHandler = () => {
+  const getAllOfPointHandler = (): number => {
     const { point } = previewOrder!;
     const { payAmount } = previewOrder?.order!;
 
-    const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon || 0);
+    const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon ?? 0);
 
     let avaliablePoint = 0;
     if (limitPoint < payAmount) {
@@ -476,7 +478,11 @@ const OrderPage = () => {
       avaliablePoint = payAmount;
     }
 
-    setUserInputObj({ ...userInputObj, point: avaliablePoint });
+    return avaliablePoint;
+  };
+
+  const useAllPointHandler = (): void => {
+    setUserInputObj({ ...userInputObj, point: getAllOfPointHandler() });
   };
 
   const couponHandler = (coupons: ICoupon[]) => {
@@ -488,6 +494,7 @@ const OrderPage = () => {
   };
 
   const goToCardManagemnet = () => {
+    dispatch(SET_USER_ORDER_INFO(userInputObj));
     if (isSubscription) {
       router.push({ pathname: '/mypage/card', query: { isOrder: true, isSubscription: true } });
     } else {
@@ -848,7 +855,7 @@ const OrderPage = () => {
         receiverTel: userTel,
       });
     }
-  }, [checkForm.samePerson.isSelected]);
+  }, [previewOrder, checkForm.samePerson.isSelected]);
 
   useEffect(() => {
     const card = selectedCard
@@ -861,9 +868,16 @@ const OrderPage = () => {
       setSelectedOrderMethod(recentPayment);
     }
 
+    const hasEditInfo =
+      userOrderInfo?.receiverName !== previewOrder?.order.userName ||
+      userOrderInfo?.receiverTel !== previewOrder?.order.userTel;
+
+    const isEdited = !!userOrderInfo && hasEditInfo;
+
     setCheckForm({
       ...checkForm,
       accessMethodReuse: { isSelected: previewOrder?.order?.deliveryMessageReused },
+      samePerson: { isSelected: isEdited ? false : true },
     });
   }, [previewOrder]);
 
@@ -873,16 +887,6 @@ const OrderPage = () => {
       setUserInputObj({ ...userInputObj, coupon, point: value });
     }
   }, [selectedCoupon, previewOrder]);
-
-  useEffect(() => {
-    /* TODO: 항상 전액 사용 어케? */
-
-    const usePointAll = checkForm.alwaysPointAll.isSelected;
-
-    if (usePointAll && previewOrder) {
-      getAllOfPointHandler();
-    }
-  }, [checkForm.alwaysPointAll.isSelected]);
 
   useEffect(() => {
     if (router.isReady && message) {
@@ -903,41 +907,58 @@ const OrderPage = () => {
       const { userName, userTel, receiverName, receiverTel, deliveryMessageReused } = previewOrder?.order!;
       const { deliveryMessage, deliveryMessageType } = previewOrder?.destination;
 
+      const editReceiverName = userOrderInfo?.receiverName ? userOrderInfo?.receiverName : userName!;
+      const editReceiverTel = userOrderInfo?.receiverTel ? userOrderInfo?.receiverTel : userTel!;
+      const editDeliveryMessage = userOrderInfo?.deliveryMessage ? userOrderInfo?.deliveryMessage : deliveryMessage!;
+      const editDeliveryMessageType = userOrderInfo?.deliveryMessageType
+        ? userOrderInfo?.deliveryMessageType
+        : deliveryMessageType!;
+      const avaliablePoint = alwaysPointAll ? getAllOfPointHandler() : 0;
+      const { coupon, value } = checkCouponHandler();
+
       if (isMorning) {
         if (deliveryMessageReused && !userAccessMethod?.value) {
           setUserInputObj({
             ...userInputObj,
-            deliveryMessage: deliveryMessage!,
-            deliveryMessageType: deliveryMessageType!,
-            receiverName: userName,
-            receiverTel: userTel,
+            deliveryMessage: editDeliveryMessage,
+            deliveryMessageType: editDeliveryMessageType,
+            receiverName: editReceiverName,
+            receiverTel: editReceiverTel,
+            coupon,
+            point: value ? value : avaliablePoint - (value ?? 0),
           });
         } else if (userAccessMethod?.value!) {
           setUserInputObj({
             ...userInputObj,
             deliveryMessageType: userAccessMethod?.value!,
-            deliveryMessage: '',
-            receiverName: userName,
-            receiverTel: userTel,
+            deliveryMessage: editDeliveryMessage,
+            receiverName: editReceiverName,
+            receiverTel: editReceiverTel,
+            coupon,
+            point: value ? value : avaliablePoint - (value ?? 0),
           });
         } else {
           setUserInputObj({
             ...userInputObj,
-            receiverName: userName,
-            receiverTel: userTel,
+            receiverName: editReceiverName,
+            receiverTel: editReceiverTel,
+            coupon,
+            point: value ? value : avaliablePoint - (value ?? 0),
           });
         }
       } else {
         setUserInputObj({
           ...userInputObj,
-          receiverName: userName,
-          receiverTel: userTel,
-          deliveryMessage: '',
+          receiverName: editReceiverName,
+          receiverTel: editReceiverTel,
+          coupon,
+          point: value ? value : avaliablePoint - (value ?? 0),
+          deliveryMessage: editDeliveryMessage,
           deliveryMessageType: '',
         });
       }
     }
-  }, [previewOrder, userAccessMethod]);
+  }, [previewOrder, userAccessMethod, userOrderInfo]);
 
   useEffect(() => {
     // 새로고침 시 중복 결제 방어 풀림
@@ -949,9 +970,12 @@ const OrderPage = () => {
   }, []);
 
   useEffect(() => {
-    return () => {
-      dispatch(INIT_COUPON());
-    };
+    if (userOrderInfo) {
+      setUserInputObj(userOrderInfo);
+    }
+    if (alwaysPointAll) {
+      setCheckForm({ ...checkForm, alwaysPointAll: { isSelected: alwaysPointAll } });
+    }
   }, []);
 
   if (preveiwOrderLoading) {
@@ -1095,7 +1119,7 @@ const OrderPage = () => {
           <TextH5B padding="0 0 8px 0">이름</TextH5B>
           <TextInput
             placeholder="이름"
-            value={checkForm.samePerson.isSelected ? previewOrder?.order.userName : userInputObj.receiverName}
+            value={userInputObj.receiverName}
             name="receiverName"
             eventHandler={userInputHandler}
             disabled={tempOrder?.isSubOrderDelivery}
@@ -1108,7 +1132,7 @@ const OrderPage = () => {
             inputType="number"
             placeholder="휴대폰 번호"
             name="receiverTel"
-            value={checkForm.samePerson.isSelected ? previewOrder?.order.userTel : userInputObj.receiverTel}
+            value={userInputObj.receiverTel}
             eventHandler={userInputHandler}
             disabled={tempOrder?.isSubOrderDelivery}
           />
@@ -1311,7 +1335,7 @@ const OrderPage = () => {
               </DeletePoint>
             )}
           </span>
-          <Button width="86px" height="48px" onClick={getAllOfPointHandler}>
+          <Button width="86px" height="48px" onClick={useAllPointHandler}>
             전액 사용
           </Button>
         </FlexRow>
@@ -1352,7 +1376,12 @@ const OrderPage = () => {
               <BorderLine height={1} margin="24px 0" />
               {previewOrder?.cards?.length! > 0 ? (
                 <>
-                  <CardItem onClick={goToCardManagemnet} card={card} cardCount={previewOrder?.cards?.length} />
+                  <CardItem
+                    onClick={goToCardManagemnet}
+                    card={card}
+                    cardCount={previewOrder?.cards?.length}
+                    isFromOrder={true}
+                  />
                 </>
               ) : (
                 <Button border backgroundColor={theme.white} color={theme.black} onClick={goToRegisteredCard}>

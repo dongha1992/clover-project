@@ -90,7 +90,7 @@ const CardManagementPage = () => {
           <TextH4B padding="24px 0">카드 관리</TextH4B>
           {cards.map((card: IGetCard, index: number) => (
             <div key={index}>
-              <CardItem onClick={cardEditHandler} card={card} isFromOrder={isFromOrder} />
+              <CardItem onClick={cardEditHandler} card={card} isFromOrder={isFromOrder} isMypage />
               {cards.length !== index - 1 && <BorderLine height={1} margin="0 0 24px 0" />}
             </div>
           ))}

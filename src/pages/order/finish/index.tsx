@@ -16,26 +16,25 @@ import { CancelOrderInfoBox, FinishOrderItem } from '@components/Pages/Order';
 import { ButtonGroup } from '@components/Shared/Button';
 import { getOrderDetailApi } from '@api/order';
 import { useRouter } from 'next/router';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
-import { ILocation, IOrderDeliveriesInSpot, IOrderDetail } from '@model/index';
+import { ILocation, IOrderDetail } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie, getFormatDate, removeCookie } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { INIT_ACCESS_METHOD, SET_IS_LOADING } from '@store/common';
 import { SubsOrderItem } from '@components/Pages/Subscription/payment';
 import { subscriptionForm } from '@store/subscription';
-import { INIT_ORDER, INIT_CARD } from '@store/order';
+import { INIT_ORDER, INIT_CARD, INIT_USER_ORDER_INFO } from '@store/order';
+import { INIT_COUPON } from '@store/coupon';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 dayjs.locale('ko');
 
 import { SET_ALERT } from '@store/alert';
-import { INIT_COUPON } from '@store/coupon';
 import { useGetOrderDetail } from 'src/queries/order';
-import { cartForm, INIT_CART_LISTS, SET_CART_LISTS, ICartLists } from '@store/cart';
+import { cartForm } from '@store/cart';
 import { periodMapper } from '@constants/subscription';
 
 interface IProps {
@@ -118,6 +117,10 @@ const OrderFinishPage = () => {
       dispatch(INIT_ORDER());
       dispatch(INIT_CARD());
       dispatch(INIT_ACCESS_METHOD());
+      dispatch(INIT_USER_ORDER_INFO());
+      dispatch(INIT_COUPON());
+      removeCookie({ name: 'toss-tid-clover' });
+      removeCookie({ name: 'kakao-tid-clover' });
 
       // 장바구니 품절 상품이 있나 확인
       // TODO: 결제 해서 테스트 해봐야함
@@ -181,7 +184,7 @@ const OrderFinishPage = () => {
               </FlexColEnd>
             </FlexBetweenStart>
             <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
+              <TextH5B>배송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{location.address}</TextB2R>
                 <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
@@ -205,7 +208,7 @@ const OrderFinishPage = () => {
               <TextH5B>베송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{location.address}</TextB2R>
-                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+                <TextB2R>{location.addressDetail}</TextB2R>
               </FlexColEnd>
             </FlexBetweenStart>
           </>
