@@ -21,7 +21,7 @@ const MySubsList = ({ subsList }: IProps) => {
       <Head>
         <TextH3B>내 구독 ({subsList.length})</TextH3B>
         <TextH6B color={theme.greyScale65} pointer textDecoration="underline" onClick={goToSubsMng}>
-          구독 관리
+          구독 내역
         </TextH6B>
       </Head>
       <ScrollHorizonList style={{ backgroundColor: theme.greyScale3 }}>
