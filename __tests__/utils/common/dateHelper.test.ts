@@ -1,10 +1,10 @@
-import { afterDateN, dateN, getDateFormat } from '@utils/common';
+import { afterDateN, dateN, getFormatDate } from '@utils/common';
 import { afterDate, getWeekDay } from '@utils/common/dateHelper';
 
 describe('dateHelper', () => {
   describe('getFormatDate', () => {
     it('return M월 DD일 (요일)', () => {
-      const date = getDateFormat('2022-08-24');
+      const date = getFormatDate('2022-08-24');
       expect(date).toEqual('8월 24일 (수)');
     })
   })
@@ -39,7 +39,7 @@ describe('dateHelper', () => {
 
   describe('getCurrentDate', () => {
     it('return YYYY-MM-DD', () => {
-      const date = getDateFormat('2022-08-24');
+      const date = getFormatDate('2022-08-24');
       expect(date).toEqual('8월 24일 (수)');
     })
   })

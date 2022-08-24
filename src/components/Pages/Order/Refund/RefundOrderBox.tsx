@@ -1,6 +1,6 @@
 import { TextB3R, TextH5B, TextH6B, TextH7B } from '@components/Shared/Text';
 import { FlexBetween, FlexEnd, FlexRow, theme } from '@styles/theme';
-import { getDateFormat, getFormatPrice, SVGIcon } from '@utils/common';
+import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
 import Image from '@components/Shared/Image';
 import router from 'next/router';
 import styled from 'styled-components';
@@ -25,7 +25,7 @@ const RefundOrderBox = ({ subOrder }: IProps) => {
         <FlexBetween padding="0 0 16px">
           <FlexRow>
             <SVGIcon name="delivery" />
-            <TextH5B>{getDateFormat(subOrder.deliveryDate)} 도착예정</TextH5B>
+            <TextH5B>{getFormatDate(subOrder.deliveryDate)} 도착예정</TextH5B>
           </FlexRow>
           <TextH6B pointer textDecoration="underline" color="#757575" onClick={goToOrderDetail}>
             주문상세 보기

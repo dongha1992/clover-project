@@ -13,7 +13,7 @@ import {
   SET_SUBS_INFO_STATE,
 } from '@store/subscription';
 import { theme } from '@styles/theme';
-import { getDateFormat } from '@utils/common';
+import { getFormatDate } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 dayjs.locale('ko');
@@ -95,13 +95,13 @@ const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType, menuId }: IProp
     if (deliveryExpectedDate && pickupDay && userSelectTime) {
       if (subsDeliveryType === 'SPOT') {
         setSubsStartDateText(
-          `${getDateFormat(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay
+          `${getFormatDate(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay
             .sort((a, b) => weeks[a] - weeks[b])
             ?.join('·')} / ${userSelectTime}`
         );
       } else {
         setSubsStartDateText(
-          `${getDateFormat(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay
+          `${getFormatDate(deliveryExpectedDate[0]?.deliveryDate)} / ${pickupDay
             ?.sort((a, b) => weeks[a] - weeks[b])
             .join('·')}`
         );

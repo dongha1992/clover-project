@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { SUBS_DELIVERY_STATUS } from '@constants/subscription';
 import { IGetOrders, IOrderDeliverie } from '@model/index';
-import { getDateFormat } from '@utils/common';
+import { getFormatDate } from '@utils/common';
 import { useEffect, useRef, useState } from 'react';
 
 const useSubsNowDeliveryInfo = (item: IGetOrders) => {
@@ -39,7 +39,7 @@ const useSubsNowDeliveryInfo = (item: IGetOrders) => {
       setDeliveryInfo({
         status: `구독예정`,
         round: `(${item?.subscriptionRound}회차)`,
-        deliveryDate: `${getDateFormat(cardsRef.current[0].deliveryDate)} 시작`,
+        deliveryDate: `${getFormatDate(cardsRef.current[0].deliveryDate)} 시작`,
       });
     } else {
       if (cardsRef.current.length > 1) {
@@ -48,13 +48,13 @@ const useSubsNowDeliveryInfo = (item: IGetOrders) => {
           round: `(배송 ${cardsRef.current.sort((a, b) => a.deliveryRound - b.deliveryRound)[0].deliveryRound}회차 외 ${
             cardsRef.current.length - 1
           }건)`,
-          deliveryDate: `${getDateFormat(cardsRef.current[0].deliveryDate)} 도착예정`,
+          deliveryDate: `${getFormatDate(cardsRef.current[0].deliveryDate)} 도착예정`,
         });
       } else {
         setDeliveryInfo({
           status: SUBS_DELIVERY_STATUS[cardsRef.current[0].status!],
           round: `(배송 ${cardsRef.current[0].deliveryRound}회차)`,
-          deliveryDate: `${getDateFormat(cardsRef.current[0].deliveryDate)} 도착예정`,
+          deliveryDate: `${getFormatDate(cardsRef.current[0].deliveryDate)} 도착예정`,
         });
       }
     }

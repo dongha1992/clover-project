@@ -5,7 +5,7 @@ import { SUBS_STATUS } from '@constants/subscription';
 import useSubsNowDeliveryInfo from '@hooks/subscription/useSubsNowDeliveryInfo';
 import { IGetOrders } from '@model/index';
 import { FlexBetween, FlexRow, FlexRowStart, theme } from '@styles/theme';
-import { getDateFormat, SVGIcon } from '@utils/common';
+import { getFormatDate, SVGIcon } from '@utils/common';
 import Image from '@components/Shared/Image';
 import router from 'next/router';
 import styled from 'styled-components';
@@ -46,7 +46,7 @@ const SubsMngCompleteItem = ({ item }: IProps) => {
         <SVGIcon name="subscription" />{' '}
         <TextH5B padding="0 0 0 4px">
           배송 {`${cards[0]?.deliveryRound}`}회차{cards.length > 1 && ` 외 ${cards.length - 1}건`} -{' '}
-          {getDateFormat(cards[0]?.deliveryDate)} 도착
+          {getFormatDate(cards[0]?.deliveryDate)} 도착
         </TextH5B>
       </FlexRow>
       <FlexRowStart>
@@ -62,8 +62,8 @@ const SubsMngCompleteItem = ({ item }: IProps) => {
         <InfoBox>
           <TextB2R padding="0 0 4px">간편하게 비건식단</TextB2R>
           <TextB3R className="date" color="#717171">
-            <b>구독 {item?.subscriptionRound}회차</b> - {getDateFormat(item?.firstDeliveryDate)} ~{' '}
-            {getDateFormat(item?.lastDeliveryDate)}
+            <b>구독 {item?.subscriptionRound}회차</b> - {getFormatDate(item?.firstDeliveryDate)} ~{' '}
+            {getFormatDate(item?.lastDeliveryDate)}
           </TextB3R>
         </InfoBox>
       </FlexRowStart>
