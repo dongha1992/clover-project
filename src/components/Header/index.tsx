@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { Obj } from '@model/index';
 import { CATEGORY_TITLE_MAP } from '@constants/menu';
-import { SET_SCROLL } from '@store/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import useScrollCheck from '@hooks/useScrollCheck';

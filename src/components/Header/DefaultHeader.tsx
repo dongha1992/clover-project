@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
@@ -7,7 +7,6 @@ import { breakpoints } from '@utils/common/getMediaQuery';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
-import { useQuery, useQueryClient } from 'react-query';
 import { Obj } from '@model/index';
 
 type TProps = {
@@ -114,7 +113,10 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px 24px;
+  width: 100%;
+  height: 100%;
+  padding: 0 24px;
+  /* padding: 16px 24px; */
   .arrow {
     cursor: pointer;
     > svg {

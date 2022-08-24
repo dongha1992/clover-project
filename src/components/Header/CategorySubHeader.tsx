@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 import { TextH4B } from '@components/Shared/Text';
@@ -6,14 +6,9 @@ import { useRouter } from 'next/router';
 import { CATEGORY } from '@constants/search';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { useDispatch } from 'react-redux';
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import CartSheet from '@components/BottomSheet/CartSheet/CartSheet';
 import CartIcon from '@components/Header/Cart';
-import { CategoryFilter } from '@components/Pages/Category';
 import TabList from '@components/Shared/TabList/TabList';
-import { useSelector } from 'react-redux';
-import { INIT_CATEGORY_FILTER, filterSelector, SET_MENU_TAB } from '@store/filter';
-import { FlexCol } from '@styles/theme';
+import { INIT_CATEGORY_FILTER, SET_MENU_TAB } from '@store/filter';
 
 type TProps = {
   title?: string;
@@ -100,8 +95,11 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0 24px;
   /* margin: 16px 24px; */
-  padding: 16px 24px;
+  /* padding: 16px 24px; */
   background-color: white;
   .arrow {
     cursor: pointer;
