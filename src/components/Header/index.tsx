@@ -132,7 +132,7 @@ const Header = () => {
       '/subscription/register': '구독하기',
       '/subscription/register/diet-info': '전체 식단 정보',
       '/subscription/[detailId]/diet-info': '전체 식단 정보',
-      '/mypage/subscription': '구독관리',
+      '/mypage/subscription': '구독 내역',
       '/subscription/[detailId]': '구독상세',
       '/subscription/[detailId]/cancel': '주문취소',
       '/subscription/[detailId]/sub-cancel': '주문취소',

@@ -119,6 +119,8 @@ const OrderFinishPage = () => {
       dispatch(INIT_ACCESS_METHOD());
       dispatch(INIT_USER_ORDER_INFO());
       dispatch(INIT_COUPON());
+      removeCookie({ name: 'toss-tid-clover' });
+      removeCookie({ name: 'kakao-tid-clover' });
 
       // 장바구니 품절 상품이 있나 확인
       // TODO: 결제 해서 테스트 해봐야함

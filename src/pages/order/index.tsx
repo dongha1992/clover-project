@@ -249,9 +249,9 @@ const OrderPage = () => {
         if (checkForm.orderMethodReuse.isSelected) {
           dispatch(SET_RECENT_PAYMENT(selectedOrderMethod));
         }
-        if (checkForm.alwaysPointAll.isSelected) {
-          setCookie({ name: 'alwaysPointAll', value: 'true' });
-        }
+
+        setCookie({ name: 'alwaysPointAll', value: checkForm.alwaysPointAll.isSelected });
+
         if (data.status === 'PROGRESS') {
           router.replace(`/order/finish?orderId=${data.id}`);
           return;
@@ -470,15 +470,19 @@ const OrderPage = () => {
     const { payAmount } = previewOrder?.order!;
 
     const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon ?? 0);
-    console.log(limitPoint);
+
     let avaliablePoint = 0;
     if (limitPoint < payAmount) {
       avaliablePoint = limitPoint;
     } else {
       avaliablePoint = payAmount;
     }
-    setUserInputObj({ ...userInputObj, point: avaliablePoint });
+
     return avaliablePoint;
+  };
+
+  const useAllPointHandler = (): void => {
+    setUserInputObj({ ...userInputObj, point: getAllOfPointHandler() });
   };
 
   const couponHandler = (coupons: ICoupon[]) => {
@@ -914,7 +918,6 @@ const OrderPage = () => {
 
       if (isMorning) {
         if (deliveryMessageReused && !userAccessMethod?.value) {
-          console.log('917');
           setUserInputObj({
             ...userInputObj,
             deliveryMessage: editDeliveryMessage,
@@ -922,10 +925,9 @@ const OrderPage = () => {
             receiverName: editReceiverName,
             receiverTel: editReceiverTel,
             coupon,
-            point: value ? value : avaliablePoint,
+            point: value ? value : avaliablePoint - (value ?? 0),
           });
         } else if (userAccessMethod?.value!) {
-          console.log('926');
           setUserInputObj({
             ...userInputObj,
             deliveryMessageType: userAccessMethod?.value!,
@@ -933,27 +935,25 @@ const OrderPage = () => {
             receiverName: editReceiverName,
             receiverTel: editReceiverTel,
             coupon,
-            point: value ? value : avaliablePoint,
+            point: value ? value : avaliablePoint - (value ?? 0),
           });
         } else {
-          console.log('935');
           setUserInputObj({
             ...userInputObj,
             receiverName: editReceiverName,
             receiverTel: editReceiverTel,
             coupon,
-            point: value ? value : avaliablePoint,
+            point: value ? value : avaliablePoint - (value ?? 0),
           });
         }
       } else {
-        console.log('943');
         setUserInputObj({
           ...userInputObj,
           receiverName: editReceiverName,
           receiverTel: editReceiverTel,
           coupon,
-          point: value ? value : avaliablePoint,
-          deliveryMessage: '',
+          point: value ? value : avaliablePoint - (value ?? 0),
+          deliveryMessage: editDeliveryMessage,
           deliveryMessageType: '',
         });
       }
@@ -1335,7 +1335,7 @@ const OrderPage = () => {
               </DeletePoint>
             )}
           </span>
-          <Button width="86px" height="48px" onClick={getAllOfPointHandler}>
+          <Button width="86px" height="48px" onClick={useAllPointHandler}>
             전액 사용
           </Button>
         </FlexRow>
