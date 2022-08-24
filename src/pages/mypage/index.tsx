@@ -38,7 +38,6 @@ interface IMypageMenu {
   link: string;
   hideBorder?: boolean;
 }
-
 const MypagePage: NextPageWithLayout = () => {
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);

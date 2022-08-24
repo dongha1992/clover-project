@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextH5B } from '@components/Shared/Text';
 import { Select, MenuOption } from '@components/Shared/Dropdown';
 import { theme, bottomSheetButton } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { useSelector, useDispatch } from 'react-redux';
-import { cartForm, SET_CART_LISTS } from '@store/cart';
+import { cartForm } from '@store/cart';
 import { orderForm, SET_TIMER_STATUS } from '@store/order';
 import CartSheetItem from './CartSheetItem';
 import { Button } from '@components/Shared/Button';
@@ -16,15 +16,16 @@ import { CheckTimerByDelivery } from '@components/CheckTimer';
 import { calculateArrival, getCustomDate, checkTimerLimitHelper } from '@utils/destination';
 import { filter, map, pipe, toArray } from '@fxts/core';
 import dayjs from 'dayjs';
-import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { Obj, IMenus, IMenuDetails, IGetCart, IMenuDetailsInCart } from '@model/index';
-import { SET_NON_MEMBER_CART_LISTS, INIT_NON_MEMBER_CART_LISTS, DELETE_NON_MEMBER_CART_LISTS } from '@store/cart';
+import { useQueryClient, useMutation } from 'react-query';
+import { IMenuDetails, IGetCart, IMenuDetailsInCart } from '@model/index';
+import { SET_NON_MEMBER_CART_LISTS } from '@store/cart';
 import { postCartsApi } from '@api/cart';
 
 import 'dayjs/locale/ko';
 
 import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
+import { destinationForm } from '@store/destination';
 
 dayjs.locale('ko');
 
@@ -75,9 +76,9 @@ const CartSheet = ({ menuItem }: any) => {
 
   const dispatch = useDispatch();
 
-  const { cartLists, nonMemberCartLists } = useSelector(cartForm);
+  const { nonMemberCartLists } = useSelector(cartForm);
   const { isTimerTooltip } = useSelector(orderForm);
-  // const { menuItem } = useSelector(menuSelector);
+  const { locationStatus } = useSelector(destinationForm);
   const { me } = useSelector(userForm);
 
   const queryClient = useQueryClient();
@@ -111,7 +112,7 @@ const CartSheet = ({ menuItem }: any) => {
     }
   );
 
-  const deliveryType = checkTimerLimitHelper();
+  const deliveryType = checkTimerLimitHelper(locationStatus);
 
   const canSpotLunchAndDinnerToday = deliveryType === '스팟점심';
   const canSpotLunchAndDinnerTomorrow = deliveryType === '스팟점심N일';
