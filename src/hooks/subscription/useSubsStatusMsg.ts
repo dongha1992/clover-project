@@ -1,4 +1,4 @@
-import { getDateFormat } from '@utils/common';
+import { getFormatDate } from '@utils/common';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
@@ -17,7 +17,7 @@ export const useSubsStatusMsg = (item: any) => {
         // 구독주문 생성 후, 구독 결제 전, 결제실패나 해지사유가 없을때
 
         setSubsStatusBoldMsg(`구독 ${item.subscriptionRound}회차 ${item.subscriptionDiscountRate}% 할인!`);
-        setSubsStatusMsg(`${getDateFormat(item.subscriptionPaymentDate)} 결제되는 구독 식단을 확인해 주세요!`);
+        setSubsStatusMsg(`${getFormatDate(item.subscriptionPaymentDate)} 결제되는 구독 식단을 확인해 주세요!`);
       } else if (
         (item.status === 'UNPAID' && item?.unsubscriptionType === 'DISABLED_DESTINATION') ||
         item?.unsubscriptionType === 'DISABLED_MENU' ||
@@ -41,18 +41,18 @@ export const useSubsStatusMsg = (item: any) => {
         switch (item.unsubscriptionType) {
           case 'DISABLED_DESTINATION':
             setSubsStatusMsg(
-              `이용 중인 배송지로 배송이 불가하여 ${getDateFormat(
+              `이용 중인 배송지로 배송이 불가하여 ${getFormatDate(
                 item.lastDeliveryDateOrigin
               )} 자동으로 구독 해지될 예정이에요.`
             );
             break;
           case 'DISABLED_MENU':
             setSubsStatusMsg(
-              `구독 식단이 종료되어 ${getDateFormat(item.lastDeliveryDateOrigin)} 자동으로 구독 해지될 예정이에요.`
+              `구독 식단이 종료되어 ${getFormatDate(item.lastDeliveryDateOrigin)} 자동으로 구독 해지될 예정이에요.`
             );
             break;
           case 'USER_CANCEL':
-            setSubsStatusMsg(`${getDateFormat(item.lastDeliveryDateOrigin)} 구독 해지될 예정이에요.`);
+            setSubsStatusMsg(`${getFormatDate(item.lastDeliveryDateOrigin)} 구독 해지될 예정이에요.`);
             break;
         }
       } else {
@@ -64,11 +64,11 @@ export const useSubsStatusMsg = (item: any) => {
             break;
           case 'DISABLED_DESTINATION':
             setSubsStatusBoldMsg('결제 실패!');
-            setSubsStatusMsg(`${getDateFormat(item.lastDeliveryDateOrigin)} 자동으로 구독 해지될 예정이에요.`);
+            setSubsStatusMsg(`${getFormatDate(item.lastDeliveryDateOrigin)} 자동으로 구독 해지될 예정이에요.`);
             break;
           case 'PAYMENT_FAILED':
             setSubsStatusBoldMsg('결제 실패!');
-            setSubsStatusMsg(`${getDateFormat(item.lastDeliveryDateOrigin)} 자동으로 구독 해지될 예정이에요.`);
+            setSubsStatusMsg(`${getFormatDate(item.lastDeliveryDateOrigin)} 자동으로 구독 해지될 예정이에요.`);
             break;
         }
       }
