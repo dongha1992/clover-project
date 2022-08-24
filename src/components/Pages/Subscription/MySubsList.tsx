@@ -25,7 +25,7 @@ const MySubsList = ({ subsList }: IProps) => {
         </TextH6B>
       </Head>
       <ScrollHorizonList style={{ backgroundColor: theme.greyScale3 }}>
-        <ListContainer slidesPerView={'auto'} spaceBetween={16} mousewheel={true} modules={[Mousewheel]}>
+        <ListContainer slidesPerView={'auto'} spaceBetween={16}>
           {subsList.map((item: IGetOrders, index: number) => (
             <SwiperSlide key={index}>
               <SubsCardItem item={item} />

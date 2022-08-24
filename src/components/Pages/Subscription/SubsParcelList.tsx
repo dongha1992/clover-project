@@ -23,7 +23,7 @@ const SubsParcelList = ({ menus, moreClickHandler }: IProps) => {
       </TitleBox>
       <ListBox>
         <ScrollHorizonList>
-          <SubsList slidesPerView={'auto'} spaceBetween={16} mousewheel={true} modules={[Mousewheel]}>
+          <SubsList slidesPerView={'auto'} spaceBetween={16}>
             {menus?.map(
               (item, index) =>
                 (item.subscriptionDeliveries?.includes('PARCEL') ||
