@@ -26,7 +26,7 @@ describe('dateHelper', () => {
   describe('afterDate', () => {
     it('return X일후 YYYYMMDD 날짜', () => {
       const date = afterDate('2022-08-24', 1);
-      expect(date).toEqual('2022-08-25T00:00:00+09:00');
+      expect(date).toEqual('2022-08-25');
     })
   })
 
