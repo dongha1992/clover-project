@@ -353,7 +353,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
                 <TextB2R>{DELIVERY_TYPE_MAP[selectedAddress?.delivery!]}</TextB2R>
               </FlexBetween>
               <FlexBetweenStart>
-                <TextH5B>베송지</TextH5B>
+                <TextH5B>배송지</TextH5B>
                 <FlexColEnd>
                   <TextB2R>{selectedAddress?.location?.address}</TextB2R>
                   <TextB2R>{selectedAddress?.location?.addressDetail}</TextB2R>
