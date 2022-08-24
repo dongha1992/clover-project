@@ -87,7 +87,7 @@ const OrderPage = () => {
   });
   const [selectedOrderMethod, setSelectedOrderMethod] = useState<string>('NICE_BILLING');
   const [checkForm, setCheckForm] = useState<Obj>({
-    samePerson: { isSelected: true },
+    samePerson: { isSelected: false },
     accessMethodReuse: { isSelected: false },
     alwaysPointAll: { isSelected: false },
     orderMethodReuse: { isSelected: false },
@@ -378,6 +378,12 @@ const OrderPage = () => {
               alertMessage: '카드를 등록해주세요.',
             })
           );
+        } else if (error.code === 1999) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '상품 정보가 변경되어 결제를 완료할 수 없어요. 장바구니 확인 후 다시 시도해 주세요.',
+            })
+          );
         } else if (error.code === 5018) {
           dispatch(SET_ALERT({ alertMessage: '결제에 실패했습니다. 다시 시도해주세요.' }));
         } else {
@@ -463,15 +469,15 @@ const OrderPage = () => {
     const { point } = previewOrder!;
     const { payAmount } = previewOrder?.order!;
 
-    const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon || 0);
-
+    const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon ?? 0);
+    console.log(limitPoint);
     let avaliablePoint = 0;
     if (limitPoint < payAmount) {
       avaliablePoint = limitPoint;
     } else {
       avaliablePoint = payAmount;
     }
-
+    setUserInputObj({ ...userInputObj, point: avaliablePoint });
     return avaliablePoint;
   };
 
@@ -838,7 +844,7 @@ const OrderPage = () => {
 
     if (previewOrder?.order && isSelected) {
       const { userName, userTel } = previewOrder?.order;
-      console.log(userName, userTel, '838');
+
       setUserInputObj({
         ...userInputObj,
         receiverName: userName,
@@ -858,13 +864,16 @@ const OrderPage = () => {
       setSelectedOrderMethod(recentPayment);
     }
 
-    const isEditInfo =
-      userInputObj.receiverName !== previewOrder?.order.userName ||
-      userInputObj.receiverTel !== previewOrder.order.userTel;
+    const hasEditInfo =
+      userOrderInfo?.receiverName !== previewOrder?.order.userName ||
+      userOrderInfo?.receiverTel !== previewOrder?.order.userTel;
+
+    const isEdited = !!userOrderInfo && hasEditInfo;
 
     setCheckForm({
       ...checkForm,
       accessMethodReuse: { isSelected: previewOrder?.order?.deliveryMessageReused },
+      samePerson: { isSelected: isEdited ? false : true },
     });
   }, [previewOrder]);
 
@@ -963,6 +972,9 @@ const OrderPage = () => {
   useEffect(() => {
     if (userOrderInfo) {
       setUserInputObj(userOrderInfo);
+    }
+    if (alwaysPointAll) {
+      setCheckForm({ ...checkForm, alwaysPointAll: { isSelected: alwaysPointAll } });
     }
   }, []);
 
@@ -1302,7 +1314,7 @@ const OrderPage = () => {
               <Checkbox
                 className="checkBox"
                 onChange={() => checkFormHanlder('alwaysPointAll')}
-                isSelected={alwaysPointAll ? alwaysPointAll : checkForm.alwaysPointAll.isSelected}
+                isSelected={checkForm.alwaysPointAll.isSelected}
               />
               <TextB2R padding="0 0 0 8px">항상 전액 사용</TextB2R>
             </FlexRow>
