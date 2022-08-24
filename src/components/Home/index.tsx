@@ -186,7 +186,7 @@ const FlexSpace = styled.div`
 
 const SliderWrapper = styled(Swiper)`
   width: auto;
-  padding: 24px;
+  padding: 24px 24px 0 24px;
   .swiper-slide {
     width: 120px;
   }

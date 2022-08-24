@@ -185,12 +185,12 @@ const SpotDetailPage = () => {
           <NextImage
             src='/images/fcospot/img_fcospot_default.png'
             width='512px'
-            height='384px'
+            height='287px'
             alt="트라이얼 프코스팟 인 경우 또는 등록된 이미지가 없는 경우의 이미지"
             layout="responsive"
           />
         ) : (
-          <Carousel height='384px' images={spotItem?.images?.map(banner => ({ src: banner.url }))} />
+          <Carousel height='287px' images={spotItem?.images?.map(banner => ({ src: banner.url }))} />
         )
       }
       </ImageWrapper>
@@ -324,6 +324,7 @@ const SpotDetailPage = () => {
           width={512}
           height={131}
           alt="프코스팟 상세 페이지 중간 배너"
+          layout="responsive" 
         />
       </SpotEventBannerWrapper>
       {/* <BorderLine height={8} ref={tabRef} /> */}
