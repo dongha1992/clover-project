@@ -1,7 +1,7 @@
 import SlideToggle from '@components/Shared/SlideToggle';
 import { TextB1R, TextB2R, TextH6B } from '@components/Shared/Text';
 import { FlexBetween, FlexRow } from '@styles/theme';
-import { getDateFormat, SVGIcon } from '@utils/common';
+import { getFormatDate, SVGIcon } from '@utils/common';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -25,7 +25,7 @@ const EntireDietItem = ({ item, index }: IProps) => {
             배송 {item?.deliveryRound ?? index + 1}
             회차
           </b>{' '}
-          - {getDateFormat(item.deliveryDate)}
+          - {getFormatDate(item.deliveryDate)}
         </TextB1R>
         <div className={`svgBox ${toggleState ? 'down' : ''}`}>
           <SVGIcon name="triangleDown" />

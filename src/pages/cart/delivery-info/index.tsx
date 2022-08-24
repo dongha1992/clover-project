@@ -491,7 +491,7 @@ const DeliverInfoPage = () => {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
     } else {
       dispatch(INIT_TIMER({ isInitDelay: true })); //타이머 정지
-      dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
+      dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
     }
   };
 

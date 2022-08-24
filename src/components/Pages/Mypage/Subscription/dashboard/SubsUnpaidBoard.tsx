@@ -1,6 +1,6 @@
 import { TextB2R } from '@components/Shared/Text';
 import { theme } from '@styles/theme';
-import { getDateFormat } from '@utils/common';
+import { getFormatDate } from '@utils/common';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -13,7 +13,7 @@ const SubsUnpaidBoard = ({ subscriptionPaymentDate }: IProps) => {
   return (
     <BoardContainer>
       <TextB2R>
-        <b>{getDateFormat(subscriptionPaymentDate)}</b> 결제될 구독 식단을 확인해 주세요.
+        <b>{getFormatDate(subscriptionPaymentDate)}</b> 결제될 구독 식단을 확인해 주세요.
       </TextB2R>
     </BoardContainer>
   );

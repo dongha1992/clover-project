@@ -1,4 +1,4 @@
-import { getDateFormat } from '@utils/common';
+import { getFormatDate } from '@utils/common';
 import { useEffect, useState } from 'react';
 
 const useSubsPaymentFail = (
@@ -36,7 +36,7 @@ const useSubsPaymentFail = (
         type === 'USER_CANCEL'
       ) {
         setSubsFailType('close');
-        setTooltipMsg(`${getDateFormat(lastDeliveryDate)} 정기구독이 해지될 예정이에요.`);
+        setTooltipMsg(`${getFormatDate(lastDeliveryDate)} 정기구독이 해지될 예정이에요.`);
       }
     }
   }, [isSubscribing, lastDeliveryDate, subscriptionPeriod, type]);
