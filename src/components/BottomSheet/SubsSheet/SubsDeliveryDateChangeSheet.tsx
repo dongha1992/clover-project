@@ -8,7 +8,7 @@ import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_SUBS_MANAGE, subscriptionForm } from '@store/subscription';
 import { fixedBottom, FlexRow, theme } from '@styles/theme';
-import { getFormatDate, SVGIcon } from '@utils/common';
+import { getDateFormat, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -45,7 +45,7 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
 
   useEffect(() => {
     if (selectDate) {
-      setChangeDate(getFormatDate(selectDate));
+      setChangeDate(getDateFormat(selectDate));
     }
   }, [selectDate]);
 
@@ -145,7 +145,7 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
           children: (
             <FlexRow padding="0 0 16px 0">
               <TextH5B padding="1px 4px 0 0" color={theme.brandColor}>
-                {getFormatDate(item.deliveryDate)}
+                {getDateFormat(item.deliveryDate)}
               </TextH5B>
               <SVGIcon name="arrowRightBrand" />
               <TextH5B padding="1px 0 0 4px" color={theme.brandColor}>
@@ -175,7 +175,7 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
           children: (
             <FlexRow padding="0 0 16px 0">
               <TextH5B padding="1px 4px 0 0" color={theme.brandColor}>
-                {getFormatDate(item.deliveryDate)}
+                {getDateFormat(item.deliveryDate)}
               </TextH5B>
               <SVGIcon name="arrowRightBrand" />
               <TextH5B padding="1px 0 0 4px" color={theme.brandColor}>
@@ -205,7 +205,7 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
           children: (
             <FlexRow padding="0 0 16px 0">
               <TextH5B padding="1px 4px 0 0" color={theme.brandColor}>
-                {getFormatDate(item.deliveryDate)}
+                {getDateFormat(item.deliveryDate)}
               </TextH5B>
               <SVGIcon name="arrowRightBrand" />
               <TextH5B padding="1px 0 0 4px" color={theme.brandColor}>
@@ -235,7 +235,7 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
           children: (
             <FlexRow padding="0 0 16px 0">
               <TextH5B padding="1px 4px 0 0" color={theme.brandColor}>
-                {getFormatDate(item.deliveryDate)}
+                {getDateFormat(item.deliveryDate)}
               </TextH5B>
               <SVGIcon name="arrowRightBrand" />
               <TextH5B padding="1px 0 0 4px" color={theme.brandColor}>
@@ -276,7 +276,7 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
       <DateChangeDayBox>
         <li>
           <TextB3R padding="0 0 4px">배송 {item?.deliveryRound ?? 1}회차 - 변경 전</TextB3R>
-          <TextH4B>{getFormatDate(item.deliveryDate)}</TextH4B>
+          <TextH4B>{getDateFormat(item.deliveryDate)}</TextH4B>
         </li>
         <li>
           <TextB3R padding="0 0 4px">배송 {item?.deliveryRound ?? 1}회차 - 변경 후</TextB3R>

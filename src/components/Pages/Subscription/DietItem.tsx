@@ -1,5 +1,5 @@
 import { TextB1R, TextB2R, TextH6B } from '@components/Shared/Text';
-import { getFormatDate, SVGIcon } from '@utils/common';
+import { getDateFormat, SVGIcon } from '@utils/common';
 import { useState } from 'react';
 import styled from 'styled-components';
 import 'dayjs/locale/ko';
@@ -26,7 +26,7 @@ const DietItem = ({ item, index }: IProps) => {
             배송 {index + 1}
             회차
           </b>{' '}
-          - {getFormatDate(item.deliveryDate)}
+          - {getDateFormat(item.deliveryDate)}
         </TextB1R>
         <div className={`svgBox ${toggleState ? 'down' : ''}`}>
           <SVGIcon name="triangleDown" />

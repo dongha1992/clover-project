@@ -4,7 +4,7 @@ import { TextB3R, TextH4B, TextH5B, TextH6B } from '@components/Shared/Text';
 import { IResponse } from '@model/index';
 import { useDeleteOrderCancel } from '@queries/order';
 import { FlexBetween, FlexRow, theme } from '@styles/theme';
-import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
+import { getDateFormat, getFormatPrice, SVGIcon } from '@utils/common';
 import Image from '@components/Shared/Image';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
@@ -50,7 +50,7 @@ const CancelFailList = ({ cancelFailList }: IProps) => {
           <FlexBetween padding="0 0 16px">
             <FlexRow>
               <SVGIcon name="delivery" />
-              <TextH5B>{getFormatDate(item.deliveryDate)} 도착예정</TextH5B>
+              <TextH5B>{getDateFormat(item.deliveryDate)} 도착예정</TextH5B>
             </FlexRow>
             <TextH6B
               pointer

@@ -1,19 +1,19 @@
-image: node:14
+image: node:16
 
 pipelines:
   branches:
     dev:
       - step:
-          name: Build and Code Lint
+          name: Build and Test
           caches:
             - node
           script:
             - npm install
             - npm run build:dev
-            - npm run lint
+            - npm run test
             - apt update && apt install zip
             # Exclude files to be ignored
-            - zip -r app-$BITBUCKET_BUILD_NUMBER.zip . -x *.git* bitbucket-pipelines.yml node_modules\*
+            - zip -r app-$BITBUCKET_BUILD_NUMBER.zip . -x *.git* bitbucket-pipelines.yml node_modules\* __tests__
           artifacts:
             - '*.zip'
 
@@ -27,7 +27,7 @@ pipelines:
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
                 APPLICATION_NAME: 'clover-web'
-                ENVIRONMENT_NAME: 'clover-web-dev'
+                ENVIRONMENT_NAME: 'clover-web-dev-v2'
                 ZIP_FILE: app-$BITBUCKET_BUILD_NUMBER.zip
                 S3_BUCKET: 'elasticbeanstalk-deployment-clover'
                 # DESCRIPTION: '<string>' # Optional.
