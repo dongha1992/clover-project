@@ -88,7 +88,7 @@ const PromotionPage = () => {
                         </FlexSpace>
                         <Image
                           src={item.image.url}
-                          height="300px"
+                          height="287px"
                           width="512px"
                           layout="responsive"
                           alt="기획전 목록"
