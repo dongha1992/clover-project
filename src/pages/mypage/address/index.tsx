@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { TabList } from '@components/Shared/TabList';
 import { PickupItem } from '@components/Pages/Mypage/Address';
@@ -18,8 +18,8 @@ const TAB_LIST = [
 ];
 
 const AddressManagementPage = () => {
+  const { isSpot } = router.query;
   const [selectedTab, setSelectedTab] = useState('/pickup');
-  // const { isScroll } = useSelector(commonSelector);
   const isScroll = useScrollCheck();
 
   const dispatch = useDispatch();
@@ -59,6 +59,10 @@ const AddressManagementPage = () => {
   const goToSpotEdit = ({ id, spotPickupId }: { id: number; spotPickupId: number }) => {
     router.push({ pathname: `/mypage/address/edit/${id}`, query: { spotPickupId } });
   };
+
+  useEffect(() => {
+    setSelectedTab(isSpot === 'true' ? '/pickup' : '/delivery');
+  }, [router.isReady]);
 
   if (isLoading) {
     return <div>로딩</div>;

@@ -205,7 +205,6 @@ const MenuDetailPage: NextPageWithLayout = () => {
       );
     } else {
       refetch().then((res) => {
-        console.log(res, 'res');
         if (!res.isLoading) {
           const data = res.data;
           dispatch(
@@ -314,6 +313,12 @@ const MenuDetailPage: NextPageWithLayout = () => {
       dispatch(SET_MENU_ITEM(menuDetail));
     }
   }, [menuDetail]);
+
+  useEffect(() => {
+    if (router.isReady) {
+      setSelectedTab(router.query.tab ? '/menu/detail/review' : '/menu/[id]');
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     return () => {
@@ -482,9 +487,9 @@ const MenuDetailPage: NextPageWithLayout = () => {
           {banners?.map((banner, index) => {
             return (
               <AdWrapper key={index}>
-                <Image 
-                  src={banner.image.url} 
-                  width="512px" 
+                <Image
+                  src={banner.image.url}
+                  width="512px"
                   height="131px"
                   layout="responsive"
                   alt="메뉴 상세 페이지 베너"
@@ -510,8 +515,8 @@ const MenuDetailPage: NextPageWithLayout = () => {
 };
 
 MenuDetailPage.getLayout = (page: ReactElement) => {
-  return (<DefaultLayout bottom={<DetailBottom/>}>{page}</DefaultLayout>);
-}
+  return <DefaultLayout bottom={<DetailBottom />}>{page}</DefaultLayout>;
+};
 
 const Container = styled.section``;
 
