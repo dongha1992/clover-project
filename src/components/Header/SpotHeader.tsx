@@ -17,30 +17,35 @@ const SpotHeader = () => {
   const { spotsPosition } = useSelector(spotSelector);
   const { userLocation } = useSelector(destinationForm);
   const [distance, setDistance] = useState<number>(0);
-  const { location: currentLocation, error: currentError, currentArrowed, handlerCurrentPosition } = useCurrentLocation();
+  const {
+    location: currentLocation,
+    error: currentError,
+    currentArrowed,
+    handlerCurrentPosition,
+  } = useCurrentLocation();
 
   useEffect(() => {
     if (userLocation?.emdNm) {
       handlerCurrentPosition();
-    };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotsPosition.latitude, spotsPosition.longitude]);
 
-  useEffect(()=> {
+  useEffect(() => {
     getLocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentLocation])
+  }, [currentLocation]);
 
   const getLocation = async () => {
-    if(currentLocation) {
+    if (currentLocation) {
       const distance = getComputeDistance(
         spotsPosition.latitude,
         spotsPosition.longitude,
         currentLocation.latitude!,
-        currentLocation.longitude!,
+        currentLocation.longitude!
       );
-      setDistance(distance);  
-    };
+      setDistance(distance);
+    }
   };
 
   const goToCart = () => {
@@ -65,9 +70,7 @@ const SpotHeader = () => {
         <Left onClick={goToLocation}>
           <SVGIcon name="location" />
           <AddressWrapper>
-            <TextH5B>
-              {userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}
-            </TextH5B>
+            <TextH5B>{userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}</TextH5B>
             {distance >= 3 && <Tooltip message="현재 위치가 맞나요?" width="141px" left="-5px" top="29px" />}
           </AddressWrapper>
         </Left>
@@ -105,11 +108,14 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 0 24px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 16px 24px;
+  /* margin: 16px 24px; */
 `;
 
 const AddressWrapper = styled.div`
@@ -117,6 +123,7 @@ const AddressWrapper = styled.div`
 `;
 
 const Left = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   cursor: pointer;
