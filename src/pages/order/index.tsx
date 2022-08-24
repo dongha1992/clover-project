@@ -459,7 +459,7 @@ const OrderPage = () => {
     setUserInputObj({ ...userInputObj, [name]: value });
   };
 
-  const getAllOfPointHandler = () => {
+  const getAllOfPointHandler = (): number => {
     const { point } = previewOrder!;
     const { payAmount } = previewOrder?.order!;
 
@@ -472,7 +472,7 @@ const OrderPage = () => {
       avaliablePoint = payAmount;
     }
 
-    setUserInputObj({ ...userInputObj, point: avaliablePoint });
+    return avaliablePoint;
   };
 
   const couponHandler = (coupons: ICoupon[]) => {
@@ -835,7 +835,7 @@ const OrderPage = () => {
 
   useEffect(() => {
     const { isSelected } = checkForm.samePerson;
-    console.log(isSelected, 'isSelected');
+
     if (previewOrder?.order && isSelected) {
       const { userName, userTel } = previewOrder?.order;
       console.log(userName, userTel, '838');
@@ -876,16 +876,6 @@ const OrderPage = () => {
   }, [selectedCoupon, previewOrder]);
 
   useEffect(() => {
-    /* TODO: 항상 전액 사용 어케? */
-
-    const usePointAll = checkForm.alwaysPointAll.isSelected;
-
-    if (usePointAll && previewOrder) {
-      getAllOfPointHandler();
-    }
-  }, [checkForm.alwaysPointAll.isSelected]);
-
-  useEffect(() => {
     if (router.isReady && message) {
       try {
         let preDecode = decodeURIComponent(message as string).replace(/ /g, '+');
@@ -910,7 +900,7 @@ const OrderPage = () => {
       const editDeliveryMessageType = userOrderInfo?.deliveryMessageType
         ? userOrderInfo?.deliveryMessageType
         : deliveryMessageType!;
-
+      const avaliablePoint = alwaysPointAll ? getAllOfPointHandler() : 0;
       const { coupon, value } = checkCouponHandler();
 
       if (isMorning) {
@@ -923,7 +913,7 @@ const OrderPage = () => {
             receiverName: editReceiverName,
             receiverTel: editReceiverTel,
             coupon,
-            point: value,
+            point: value ? value : avaliablePoint,
           });
         } else if (userAccessMethod?.value!) {
           console.log('926');
@@ -934,7 +924,7 @@ const OrderPage = () => {
             receiverName: editReceiverName,
             receiverTel: editReceiverTel,
             coupon,
-            point: value,
+            point: value ? value : avaliablePoint,
           });
         } else {
           console.log('935');
@@ -943,7 +933,7 @@ const OrderPage = () => {
             receiverName: editReceiverName,
             receiverTel: editReceiverTel,
             coupon,
-            point: value,
+            point: value ? value : avaliablePoint,
           });
         }
       } else {
@@ -953,7 +943,7 @@ const OrderPage = () => {
           receiverName: editReceiverName,
           receiverTel: editReceiverTel,
           coupon,
-          point: value,
+          point: value ? value : avaliablePoint,
           deliveryMessage: '',
           deliveryMessageType: '',
         });
