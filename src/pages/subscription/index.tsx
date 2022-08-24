@@ -121,7 +121,13 @@ const SubscriptiopPage: NextPageWithLayout = () => {
       <SubsParcelList menus={menus!} moreClickHandler={goToDawn} />
 
       <Banner onClick={goToSubsInformation}>
-        <Image src={subsMainBanner} alt="웰컴이미지" width={360} height={96} layout="responsive" objectFit="cover" />
+        <Image 
+          src='/images/subsMainBanner.svg'
+          alt="웰컴이미지" 
+          width={512} 
+          height={131} 
+          layout="responsive" 
+        />
       </Banner>
     </Container>
   );
