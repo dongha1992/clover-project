@@ -76,6 +76,7 @@ const Container = styled.footer`
   display: flex;
   flex-direction: column;
   background-color: ${({ theme }) => theme.greyScale3};
+  margin-top: 24px;
 `;
 
 const TimeInfoWrapper = styled.div`
