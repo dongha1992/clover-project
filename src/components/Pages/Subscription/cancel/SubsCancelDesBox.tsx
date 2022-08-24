@@ -11,7 +11,7 @@ const SubsCancelDesBox = () => {
         완료되었어요.
       </TextH2B>
       <TextB2R color={theme.greyScale65} padding="16px 0 0">
-        마이 {'>'} 구독 관리에서 <br />
+        마이 {'>'} 구독 내역에서 <br />
         취소 내역을 확인하실 수 있어요
       </TextB2R>
     </DescriptionBox>

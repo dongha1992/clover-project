@@ -22,7 +22,7 @@ const CardItem = ({ onClick, card, cardCount, isFromOrder, isMypage }: IProps) =
       case isFromOrder:
         return '변경하기';
       default:
-        return '편집';
+        return '수정';
     }
   };
   return (

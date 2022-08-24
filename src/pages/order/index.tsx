@@ -109,6 +109,7 @@ const OrderPage = () => {
   });
   const isApp = useIsApp();
   const token = getCookie({ name: 'acstk' });
+  const alwaysPointAll = getCookie({ name: 'alwaysPointAll' }) === 'true';
 
   const { userAccessMethod, isLoading, isMobile } = useSelector(commonSelector);
   const { selectedCoupon } = useSelector(couponForm);
@@ -248,7 +249,9 @@ const OrderPage = () => {
         if (checkForm.orderMethodReuse.isSelected) {
           dispatch(SET_RECENT_PAYMENT(selectedOrderMethod));
         }
-
+        if (checkForm.alwaysPointAll.isSelected) {
+          setCookie({ name: 'alwaysPointAll', value: 'true' });
+        }
         if (data.status === 'PROGRESS') {
           router.replace(`/order/finish?orderId=${data.id}`);
           return;
@@ -1309,7 +1312,7 @@ const OrderPage = () => {
               <Checkbox
                 className="checkBox"
                 onChange={() => checkFormHanlder('alwaysPointAll')}
-                isSelected={checkForm.alwaysPointAll.isSelected}
+                isSelected={alwaysPointAll ? alwaysPointAll : checkForm.alwaysPointAll.isSelected}
               />
               <TextB2R padding="0 0 0 8px">항상 전액 사용</TextB2R>
             </FlexRow>

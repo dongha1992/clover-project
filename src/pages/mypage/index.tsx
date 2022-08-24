@@ -270,7 +270,7 @@ const MypagePage: NextPageWithLayout = () => {
                 />
               </ImageWrapper>
               <MypageMenu title="이벤트·소식" link="/event" />
-              <MypageMenu title="배송 안내" link="/mypage/delivery-infomation" hideBorder />
+              <MypageMenu title="배송안내" link="/mypage/delivery-infomation" hideBorder />
               <MypageMenu title="고객센터" link="/mypage/customer-service" />
               <MypageMenu title="설정" link="/mypage/setting" />
               <MypageMenu title="약관 및 정책" link="/mypage/term" />
@@ -351,8 +351,8 @@ const MypagePage: NextPageWithLayout = () => {
 };
 
 MypagePage.getLayout = (page: ReactElement) => {
-  return (<DefaultLayout bottom={<HomeBottom/>}>{page}</DefaultLayout>)
-}
+  return <DefaultLayout bottom={<HomeBottom />}>{page}</DefaultLayout>;
+};
 
 export const MypageMenu = React.memo(({ title, count, link, hideBorder }: IMypageMenu) => {
   return (

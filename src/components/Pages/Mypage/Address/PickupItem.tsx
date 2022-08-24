@@ -107,7 +107,7 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
             textDecoration="underline"
             onClick={() => goToEdit({ id: item?.id!, spotPickupId: item?.spotPickup?.id! })}
           >
-            편집
+            수정
           </TextH6B>
         </FlexBetween>
         <TextB3R padding="4px 0 4px 0">{location?.address}</TextB3R>
