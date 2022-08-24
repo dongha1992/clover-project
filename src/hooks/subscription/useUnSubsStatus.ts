@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
-import { todayN, subsClosedDateN } from '@utils/common';
+import { dateN, afterDateN } from '@utils/common';
 
 dayjs.locale('ko');
 
@@ -51,7 +51,7 @@ const useUnSubsStatus = (
             break;
 
           default:
-            if (subsClosedDateN(subscriptionPaymentDate) <= todayN()) {
+            if (afterDateN(subscriptionPaymentDate,2) <= dateN()) {
               setUnSubsStatus('closed');
             } else {
               setUnSubsStatus('closeReserved');

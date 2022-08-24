@@ -17,9 +17,6 @@ import { dateN, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { getSpotDistanceUnit } from '@utils/spot';
-import { weeks } from '@constants/delivery-info';
-import { dayOfWeek } from '@utils/common/getFormatDate';
-import useSubsSpotOpenCheck from '@hooks/subscription/useSubsSpotOpenCheck';
 import Image from '@components/Shared/Image';
 import NextImage from 'next/image';
 
