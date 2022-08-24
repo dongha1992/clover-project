@@ -1,7 +1,5 @@
 import getCustomDate from './getCustomDate';
-import { getFormatTime } from '@utils/destination';
-import { useSelector } from 'react-redux';
-import { destinationForm } from '@store/destination';
+import { TLocationType } from '@utils/destination/checkDestinationHelper';
 
 export type TResult =
   | '스팟점심타이머'
@@ -14,18 +12,14 @@ export type TResult =
   | '스팟점심'
   | '스팟점심N일'
   | string;
-interface IProps {
-  currentTime?: number;
-}
 
 // 위치없음, 스팟배송 가능 지역은 타임라인 같음
 
 /* 현재 시간 관련하여 배송 마감 타이머 / 배송 정보 롤링 체크 */
 /* 관련 피그마 https://www.figma.com/file/JoJXAkWwkDIiQutsxL170J/FC_App2.0_UI?node-id=7214%3A111244 */
 
-const checkTimerLimitHelper = (): TResult => {
+const checkTimerLimitHelper = (locationStatus: TLocationType): TResult => {
   const { days, currentTime } = getCustomDate();
-  const { locationStatus } = useSelector(destinationForm);
 
   // let currentTime;
   /* 스팟 런치 테스트 */

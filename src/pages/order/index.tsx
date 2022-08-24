@@ -15,7 +15,7 @@ import {
 import { TextB2R, TextH4B, TextB3R, TextH6B, TextH5B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import Checkbox from '@components/Shared/Checkbox';
-import { getCookie, getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
+import { getCookie, getDateFormat, getFormatPrice, SVGIcon } from '@utils/common';
 import { DeliveryDateBox, GeneralMenusPriceBox, OrderItem, CancelOrderInfoBox } from '@components/Pages/Order';
 import TextInput from '@components/Shared/TextInput';
 import { useRouter } from 'next/router';
@@ -1146,8 +1146,8 @@ const OrderPage = () => {
             subscriptionRound={previewOrder.order.subscriptionRound}
             deliveryDayLength={subsInfo?.deliveryDay?.length!}
             deliveryDay={subsInfo?.deliveryDay?.join('·')!}
-            datePeriodFirst={getFormatDate(subsInfo?.datePeriod![0])!}
-            datePeriodLast={getFormatDate(subsInfo?.datePeriod![1])!}
+            datePeriodFirst={getDateFormat(subsInfo?.datePeriod![0])!}
+            datePeriodLast={getDateFormat(subsInfo?.datePeriod![1])!}
             subscriptionPeriod={previewOrder.order.subscriptionPeriod}
           />
           <BorderLine height={8} />
