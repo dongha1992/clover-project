@@ -19,7 +19,7 @@ const SubsDashboard = ({ subsOrders, subsUnpaidOrders, subsCloseOrders, showBoar
     <DashBoardBox>
       <FlexCol onClick={() => router.push('/mypage/subscription')} pointer>
         <FlexBetween>
-          <TextH4B>구독 관리</TextH4B>
+          <TextH4B>구독 내역</TextH4B>
           <FlexRow>
             <TextB2R padding="0 8px 0 0" pointer>
               {subsOrders.length} 건

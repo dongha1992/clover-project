@@ -24,7 +24,7 @@ const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
             {item.main && <Tag>기본 배송지</Tag>}
           </FlexRow>
           <TextH6B pointer color={theme.greyScale65} textDecoration="underline" onClick={() => goToEdit(item.id!)}>
-            편집
+            수정
           </TextH6B>
         </FlexBetween>
         <FlexRow padding="4px 0 0 0">
