@@ -219,8 +219,8 @@ const OrderPage = () => {
       const { point, payAmount, deliveryMessage, receiverName, receiverTel, coupon, deliveryMessageReused, ...rest } =
         previewOrder?.order!;
 
-      const hasMsg = userInputObj?.deliveryMessage.length !== 0;
-      const hasMsgType = userInputObj.deliveryMessageType.length !== 0;
+      const hasMsg = userInputObj?.deliveryMessage?.length !== 0;
+      const hasMsgType = userInputObj?.deliveryMessageType?.length !== 0;
 
       dispatch(SET_IS_LOADING(true));
 
@@ -973,6 +973,7 @@ const OrderPage = () => {
     if (userOrderInfo) {
       setUserInputObj(userOrderInfo);
     }
+
     if (alwaysPointAll) {
       setCheckForm({ ...checkForm, alwaysPointAll: { isSelected: alwaysPointAll } });
     }

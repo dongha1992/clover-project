@@ -252,6 +252,8 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
     refetch();
   };
 
+  console.log(data);
+
   const editAddressHandler = () => {
     if (cheekBeforeEdit()) {
       mutationEditAddress();
@@ -283,7 +285,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
 
   useEffect(() => {
     setIsDefaultSpot(data?.main!);
-  }, []);
+  }, [data]);
 
   if (isLoading) {
     return <div>로딩중</div>;
@@ -304,7 +306,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
             <TextInput
               placeholder="이름"
               name="receiverName"
-              value={deliveryEditObj?.receiverName}
+              value={deliveryEditObj?.receiverName ?? ''}
               eventHandler={changeInputHandler}
             />
           </FlexCol>
@@ -313,7 +315,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
             <TextInput
               placeholder="휴대폰 번호"
               name="receiverTel"
-              value={deliveryEditObj?.receiverTel}
+              value={deliveryEditObj?.receiverTel ?? ''}
               eventHandler={changeInputHandler}
             />
           </FlexCol>

@@ -272,7 +272,7 @@ const OrderDetailPage = () => {
       );
       return;
     }
-    console.log(orderDeliveries, 'orderDeliveries');
+
     if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       dispatch(
         SET_ALERT({
