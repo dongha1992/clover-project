@@ -24,7 +24,8 @@ const Tooltip = ({ message, top, width, bottom, left, isBottom }: ITooltip): JSX
     setIsTooltipOpen(true);
   };
 
-  const hideToolTip = (): void => {
+  const hideToolTip = (e: any): void => {
+    e.stopPropagation();
     setIsTooltipOpen(false);
   };
 
