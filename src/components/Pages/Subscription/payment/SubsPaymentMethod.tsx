@@ -6,7 +6,7 @@ import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import CardItem from '@components/Pages/Mypage/Card/CardItem';
 import { IGetCard } from '@model/index';
-import { getDateFormat } from '@utils/common';
+import { getFormatDate } from '@utils/common';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 dayjs.locale('ko');
@@ -73,7 +73,7 @@ const SubsPaymentMethod = ({ goToCardManagemnet, card, subscriptionPaymentDate }
         </ul>
       </ExBox>
       <TextH5B padding="10px 0" backgroundColor={theme.brandColor} color="#fff" center>
-        {getDateFormat(dayjs().format('YYYY-MM-DD'))} 구독 1회차 결제가 진행됩니다.
+        {getFormatDate(dayjs().format('YYYY-MM-DD'))} 구독 1회차 결제가 진행됩니다.
       </TextH5B>
     </SubsPaymentMethodContainer>
   );
