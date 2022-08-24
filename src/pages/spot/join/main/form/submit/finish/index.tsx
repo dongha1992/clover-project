@@ -56,8 +56,8 @@ const FinishPage = () => {
       <FinishImgWrapper>
         <NextImage 
           src='/images/fcospot/img_fcospot_add_main.png'
-          width={'512px'}
-          height={'203px'}
+          width='512px'
+          height='287px'
           alt="프코스팟 신청 완료 페이지 이미지"   
           className='finish-img'
           layout="responsive"
@@ -68,8 +68,8 @@ const FinishPage = () => {
           <SpotNoticeWrapper onClick={goToSpotNotice}>
             <NextImage 
               src='/images/fcospot/img_banner_fco_info_360_96.png'
-              width={'512px'}
-              height={'110px'}
+              width='512px'
+              height='131px'
               alt="프코스팟 신청 완료 페이지 이미지"
               className='banner-img'
               layout="responsive"
