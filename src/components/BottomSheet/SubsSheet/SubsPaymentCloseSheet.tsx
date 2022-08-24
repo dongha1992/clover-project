@@ -1,7 +1,7 @@
 import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { theme } from '@styles/theme';
-import { getFormatDate } from '@utils/common';
+import { getDateFormat } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 interface IProps {
@@ -21,7 +21,7 @@ const SubsCloseSheet = ({ unsubscriptionMessage, lastDeliveryDateOrigin }: IProp
       </TextB2R>
       <ul className="infoBox">
         <li>
-          <TextH5B color={theme.greyScale65}>정기구독 해지일 : {getFormatDate(lastDeliveryDateOrigin)}</TextH5B>
+          <TextH5B color={theme.greyScale65}>정기구독 해지일 : {getDateFormat(lastDeliveryDateOrigin)}</TextH5B>
         </li>
         <li>
           <TextH5B color={theme.greyScale65}>구독 해지 사유 : {unsubscriptionMessage}</TextH5B>
