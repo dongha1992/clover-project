@@ -4,7 +4,7 @@ import { TextB1R, TextB2R, TextH5B } from '@components/Shared/Text';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
 import { theme } from '@styles/theme';
-import { getFormatDate } from '@utils/common';
+import { getDateFormat } from '@utils/common';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -110,7 +110,7 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
       <OptionBox>
         <DeliveryInfoBox>
           <TextB1R padding="0 0 8px">
-            <b>배송 {selectCount}회차</b> - {getFormatDate(selectDate)}
+            <b>배송 {selectCount}회차</b> - {getDateFormat(selectDate)}
           </TextB1R>
           <TextB2R color={theme.greyScale65}>상품이 품절되면 대체상품이 발송됩니다.</TextB2R>
         </DeliveryInfoBox>

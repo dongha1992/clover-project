@@ -1,7 +1,7 @@
 import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { subscriptionForm } from '@store/subscription';
 import { FlexBetween } from '@styles/theme';
-import { getFormatDate } from '@utils/common';
+import { getDateFormat } from '@utils/common';
 import { cloneDeep } from 'lodash-es';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -15,7 +15,7 @@ const SubsOrderList = () => {
         {menus?.map((item: any, index: number) => (
           <li key={index}>
             <TextH5B padding="0 0 16px">
-              배송 {index + 1}회차 - {getFormatDate(item.deliveryDate)}
+              배송 {index + 1}회차 - {getDateFormat(item.deliveryDate)}
             </TextH5B>
             {item.menuTableItems
               ?.sort((a: any, b: any) => b.main - a.main)

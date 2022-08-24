@@ -3,14 +3,11 @@ import getValues from './getValues';
 import getMediaQuery from './getMediaQuery';
 import getImageSize from './getImageSize';
 import {
-  getFormatDate,
-  spotDeliveryCompledN,
-  parcelDeliveryCompledN,
-  todayN,
-  subsClosedDateN,
-  subsClosedDate,
+  getDateFormat,
+  afterDateN,
+  afterDate,
   dateN,
-} from './getFormatDate';
+} from './dateHelper';
 import getFormatPrice from './getFormatPrice';
 import { setCookie, getCookie, removeCookie } from './cookie';
 import getValidBirthday from './getValidBirthday';
@@ -24,12 +21,9 @@ export {
   setCookie,
   getCookie,
   removeCookie,
-  getFormatDate,
-  spotDeliveryCompledN,
-  parcelDeliveryCompledN,
-  todayN,
-  subsClosedDateN,
-  subsClosedDate,
+  getDateFormat,
+  afterDateN,
+  afterDate,
   getFormatPrice,
   getValidBirthday,
   getUnCommaPrice,

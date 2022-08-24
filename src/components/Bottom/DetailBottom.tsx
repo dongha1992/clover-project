@@ -15,7 +15,7 @@ import { CartSheet } from '@components/BottomSheet/CartSheet';
 import { menuSelector } from '@store/menu';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useRouter } from 'next/router';
-import { INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
+import { destinationForm, INIT_DESTINATION, INIT_TEMP_DESTINATION } from '@store/destination';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { SUBS_INIT } from '@store/subscription';
 import { checkMenuStatus } from '@utils/menu/checkMenuStatus';
@@ -44,7 +44,9 @@ const DetailBottom = () => {
   const [subsDiscount, setSubsDiscount] = useState<string>();
   const { showToast, hideToast } = useToast();
 
-  const deliveryType = checkTimerLimitHelper();
+  const { locationStatus } = useSelector(destinationForm);
+
+  const deliveryType = checkTimerLimitHelper(locationStatus);
 
   const { mutate: mutatePostMenuLike } = useMutation(
     async () => {
