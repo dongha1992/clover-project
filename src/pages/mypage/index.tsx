@@ -260,14 +260,17 @@ const MypagePage: NextPageWithLayout = () => {
               <MypageMenu title="결제 관리" link="/mypage/card" />
               <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
               <ImageWrapper>
-                <Image
-                  width={340}
-                  height={96}
-                  layout="responsive"
-                  objectFit="cover"
-                  src="/banner/mypage_banner.jpg"
-                  alt="Friend invitation banner"
-                />
+                <Link href="/mypage/friend">
+                  <a>
+                    <Image
+                      height="131px"
+                      width="512px"
+                      layout="responsive"
+                      src="/banner/mypage_banner.jpg"
+                      alt="Friend invitation banner"
+                    />
+                  </a>
+                </Link>
               </ImageWrapper>
               <MypageMenu title="이벤트·소식" link="/event" />
               <MypageMenu title="배송안내" link="/mypage/delivery-infomation" hideBorder />
@@ -314,10 +317,9 @@ const MypagePage: NextPageWithLayout = () => {
                 <Link href="/mypage/friend">
                   <a>
                     <Image
-                      width={360}
-                      height={96}
+                      height="131px"
+                      width="512px"
                       layout="responsive"
-                      objectFit="cover"
                       src={newUserImg}
                       alt="new member event"
                     />
@@ -328,10 +330,9 @@ const MypagePage: NextPageWithLayout = () => {
                 <Link href="/mypage/friend">
                   <a>
                     <Image
-                      width={360}
-                      height={96}
+                      height="131px"
+                      width="512px"
                       layout="responsive"
-                      objectFit="cover"
                       src={friendPushEventImg}
                       alt="Friend invitation banner"
                     />
