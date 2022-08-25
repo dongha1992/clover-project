@@ -418,13 +418,19 @@ const OrderPage = () => {
     if (checkForm.samePerson.isSelected) {
       setCheckForm({ ...checkForm, samePerson: { isSelected: false } });
     }
-
     setUserInputObj({ ...userInputObj, [name]: value });
   };
 
   const checkFormHanlder = (name: string) => {
     if (tempOrder?.isSubOrderDelivery && name === 'samePerson') {
       return;
+    }
+    if (!checkForm.samePerson.isSelected && name === 'samePerson') {
+      setUserInputObj({
+        ...userInputObj,
+        receiverName: userName,
+        receiverTel: userTel,
+      });
     }
     setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
   };
@@ -845,42 +851,28 @@ const OrderPage = () => {
   };
 
   useEffect(() => {
-    const { isSelected } = checkForm.samePerson;
+    if (previewOrder) {
+      const card = selectedCard
+        ? previewOrder?.cards.find((c) => c.id === selectedCard)
+        : previewOrder?.cards.find((c) => c.main);
 
-    if (previewOrder?.order && isSelected) {
-      const { userName, userTel, receiverName, receiverTel } = previewOrder?.order;
+      setCard(card!);
 
-      setUserInputObj({
-        ...userInputObj,
-        receiverName: receiverName ? receiverName : userName,
-        receiverTel: receiverTel ? receiverTel : userTel,
+      if (recentPayment) {
+        setSelectedOrderMethod(recentPayment);
+      }
+
+      const isEdited =
+        userInputObj.receiverName !== previewOrder?.order.userName ||
+        userInputObj.receiverTel !== previewOrder?.order.userTel;
+
+      setCheckForm({
+        ...checkForm,
+        accessMethodReuse: { isSelected: previewOrder?.order?.deliveryMessageReused },
+        samePerson: { isSelected: isEdited ? false : true },
       });
     }
-  }, [previewOrder, checkForm.samePerson.isSelected]);
-
-  useEffect(() => {
-    const card = selectedCard
-      ? previewOrder?.cards.find((c) => c.id === selectedCard)
-      : previewOrder?.cards.find((c) => c.main);
-
-    setCard(card!);
-
-    if (recentPayment) {
-      setSelectedOrderMethod(recentPayment);
-    }
-
-    const hasEditInfo =
-      userOrderInfo?.receiverName !== (previewOrder?.order.userName || previewOrder?.order.receiverName) ||
-      userOrderInfo?.receiverTel !== (previewOrder?.order.userTel || previewOrder?.order.receiverTel);
-
-    const isEdited = !!userOrderInfo && hasEditInfo;
-
-    setCheckForm({
-      ...checkForm,
-      accessMethodReuse: { isSelected: previewOrder?.order?.deliveryMessageReused },
-      samePerson: { isSelected: isEdited ? false : true },
-    });
-  }, [previewOrder]);
+  }, [previewOrder, userInputObj]);
 
   useEffect(() => {
     if (previewOrder) {
@@ -888,19 +880,6 @@ const OrderPage = () => {
       setUserInputObj({ ...userInputObj, coupon, point: value });
     }
   }, [selectedCoupon, previewOrder]);
-
-  useEffect(() => {
-    if (router.isReady && message) {
-      try {
-        let preDecode = decodeURIComponent(message as string).replace(/ /g, '+');
-        const cancleMsg = decodeURIComponent(escape(window.atob(preDecode)));
-
-        dispatch(SET_ALERT({ alertMessage: cancleMsg }));
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     if (previewOrder) {
@@ -966,6 +945,19 @@ const OrderPage = () => {
       }
     }
   }, [previewOrder, userAccessMethod, userOrderInfo]);
+
+  useEffect(() => {
+    if (router.isReady && message) {
+      try {
+        let preDecode = decodeURIComponent(message as string).replace(/ /g, '+');
+        const cancleMsg = decodeURIComponent(escape(window.atob(preDecode)));
+
+        dispatch(SET_ALERT({ alertMessage: cancleMsg }));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     // 새로고침 시 중복 결제 방어 풀림
