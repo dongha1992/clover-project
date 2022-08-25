@@ -18,7 +18,7 @@ const PopupWrapper = ({children}: IProps): JSX.Element => {
   const isApp = useIsApp();
   const { isMobile } = useSelector(commonSelector);
   const pathnameHome = window.location.pathname.indexOf('/') !== -1;
-  
+  const dynamicLink = 'https://freshcodeclover.page.link/DtUc';
   const { 
     data: fetchBanner, 
     error: popupBannerError 
@@ -44,7 +44,7 @@ const PopupWrapper = ({children}: IProps): JSX.Element => {
       if (isMobile && !isApp && (JSON.parse(getLookAroundKey!) === null || JSON.parse(getLookAroundKey!) < currentData)) {
         dispatch(
           SET_BOTTOM_SHEET({
-            content: <AppDownloadPushSheet closeHandler={lookAroundHandler} onClick={goToAppLink} />,
+            content: <AppDownloadPushSheet closeHandler={lookAroundHandler} href={dynamicLink} />,
             noneMarginBottom: true,
             dimmedHandler: () => {
               lookAroundHandler();
@@ -73,7 +73,9 @@ const PopupWrapper = ({children}: IProps): JSX.Element => {
     dispatch(INIT_BOTTOM_SHEET());
   };
 
-  const goToAppLink = () => {};
+  const goToAppLink = () => {
+
+  };
 
   const lookAroundHandler = () => {
     let midnight = new Date();
