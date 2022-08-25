@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import {
-  theme,
-  FlexBetween,
-  FlexCol,
-  FlexRow,
-  homePadding,
-  FlexBetweenStart,
-  FlexColEnd,
-  fixedBottom,
-} from '@styles/theme';
+import { theme, FlexBetween, FlexCol, FlexRow, homePadding, FlexBetweenStart, FlexColEnd } from '@styles/theme';
 import { TextH4B, TextH5B, TextB2R, TextB3R, TextH6B } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import Checkbox from '@components/Shared/Checkbox';
@@ -72,7 +63,6 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
   const isParcel = selectedAddress?.delivery === 'PARCEL';
   const isSpot = selectedAddress?.delivery === 'SPOT';
   const isMorning = selectedAddress?.delivery === 'MORNING';
-  const isQuick = selectedAddress?.delivery === 'QUICK';
 
   const { data, isLoading } = useQuery(
     ['getAddressDetail'],
@@ -84,7 +74,6 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
       onSuccess: (data) => {
         setSelectedAddress(data);
 
-        const isMorning = data?.delivery === 'MORNING';
         const userAccessMethodMap = pipe(
           ACCESS_METHOD,
           indexBy((item) => item.value)
@@ -213,6 +202,10 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
       return false;
     }
 
+    if (deliveryEditObj?.deliveryName.length === 0) {
+      dispatch(SET_ALERT({ alertMessage: '배송지명을 입력해주세요.' }));
+      return false;
+    }
     const noAccessMethod = !deliveryEditObj?.deliveryMessageType;
 
     switch (true) {
