@@ -25,6 +25,7 @@ const now = dayjs();
 
 const PickupItem = ({ item, goToCart, goToEdit, name: userName, tel }: IProps) => {
   const { spotPickup, main, location, name, receiverName, receiverTel } = item;
+
   const mapper: Obj = {
     PRIVATE: {
       name: '프라이빗',
@@ -114,10 +115,10 @@ const PickupItem = ({ item, goToCart, goToEdit, name: userName, tel }: IProps) =
         <TextB3R padding="4px 0 4px 0">{location?.address}</TextB3R>
         <FlexRow padding="0 0 0 0">
           <TextB3R color={theme.greyScale65} padding="">
-            {receiverName ?? userName}
+            {receiverName || userName}
           </TextB3R>
           <Col />
-          <TextB3R color={theme.greyScale65}>{receiverTel ?? tel}</TextB3R>
+          <TextB3R color={theme.greyScale65}>{receiverTel || tel}</TextB3R>
         </FlexRow>
       </FlexCol>
       {renderSpotMsg()}
