@@ -20,7 +20,7 @@ import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
 import { ILocation, IOrderDetail } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
-import { getCookie, getDateFormat, removeCookie } from '@utils/common';
+import { getCookie, getFormatDate, removeCookie } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { INIT_ACCESS_METHOD, SET_IS_LOADING } from '@store/common';
 import { SubsOrderItem } from '@components/Pages/Subscription/payment';
@@ -375,8 +375,8 @@ const OrderFinishPage = () => {
             <FlexColEnd>
               <TextB2R>정기구독 {subscriptionRound}회차</TextB2R>
               <TextB3R color="#717171">
-                {getDateFormat(orderDeliveries[0].deliveryDate)} ~{' '}
-                {getDateFormat(orderDeliveries[orderDeliveries.length - 1].deliveryDate)}
+                {getFormatDate(orderDeliveries[0].deliveryDate)} ~{' '}
+                {getFormatDate(orderDeliveries[orderDeliveries.length - 1].deliveryDate)}
               </TextB3R>
             </FlexColEnd>
           </FlexBetweenStart>
@@ -384,7 +384,7 @@ const OrderFinishPage = () => {
             <TextH5B>구독 시작일시</TextH5B>
             <FlexColEnd>
               <TextB2R>
-                {getDateFormat(orderDeliveries[0].deliveryDate)} {orderDeliveries[0].deliveryStartTime}-
+                {getFormatDate(orderDeliveries[0].deliveryDate)} {orderDeliveries[0].deliveryStartTime}-
                 {orderDeliveries[0].deliveryEndTime}
               </TextB2R>
               <TextB3R color="#717171" className="textRight">

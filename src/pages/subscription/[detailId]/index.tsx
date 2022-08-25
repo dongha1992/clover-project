@@ -20,7 +20,7 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
 import { userForm } from '@store/user';
 import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexEnd, FlexRow, theme } from '@styles/theme';
-import { getDateFormat, getFormatPrice, SVGIcon } from '@utils/common';
+import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
 import { calculatePoint } from '@utils/menu';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
@@ -216,9 +216,9 @@ const SubsDetailPage = () => {
         subscriptionRound={orderDetail?.subscriptionRound!}
         deliveryDayLength={deliveryDay?.length}
         deliveryDay={deliveryDay?.join('·')}
-        datePeriodFirst={getDateFormat(orderDetail?.orderDeliveries[0].deliveryDate)!}
+        datePeriodFirst={getFormatDate(orderDetail?.orderDeliveries[0].deliveryDate)!}
         datePeriodLast={
-          getDateFormat(orderDetail?.orderDeliveries[orderDetail?.orderDeliveries.length - 1].deliveryDate)!
+          getFormatDate(orderDetail?.orderDeliveries[orderDetail?.orderDeliveries.length - 1].deliveryDate)!
         }
         subscriptionPeriod={orderDetail?.subscriptionPeriod}
       />

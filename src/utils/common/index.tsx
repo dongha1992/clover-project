@@ -3,7 +3,7 @@ import getValues from './getValues';
 import getMediaQuery from './getMediaQuery';
 import getImageSize from './getImageSize';
 import {
-  getDateFormat,
+  getFormatDate,
   afterDateN,
   afterDate,
   dateN,
@@ -21,7 +21,7 @@ export {
   setCookie,
   getCookie,
   removeCookie,
-  getDateFormat,
+  getFormatDate,
   afterDateN,
   afterDate,
   getFormatPrice,

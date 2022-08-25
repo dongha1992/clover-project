@@ -1,6 +1,6 @@
 import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { FlexRow, theme } from '@styles/theme';
-import { afterDate, getDateFormat, SVGIcon } from '@utils/common';
+import { afterDate, getFormatDate, SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 
 interface IProps {
@@ -12,7 +12,7 @@ interface IProps {
 
 const ClosedGuideBox = ({ type, isChanged, unsubscriptionMessage, subscriptionPaymentDate }: IProps) => {
   const subsClosedDate = (subscriptionPaymentDate: string) => {
-    return getDateFormat(afterDate(subscriptionPaymentDate, 2))
+    return getFormatDate(afterDate(subscriptionPaymentDate, 2))
   }
   return (
     <ClosedGuidContainer>
@@ -41,7 +41,7 @@ const ClosedGuideBox = ({ type, isChanged, unsubscriptionMessage, subscriptionPa
         <li>
           {!isChanged ? (
             <TextH5B color={theme.brandColor}>
-              최종 결제일시 : {getDateFormat(subscriptionPaymentDate)} 오후 9시
+              최종 결제일시 : {getFormatDate(subscriptionPaymentDate)} 오후 9시
             </TextH5B>
           ) : (
             <TextH5B color={theme.brandColor}>정기구독 해지일 : {subsClosedDate(subscriptionPaymentDate)}</TextH5B>

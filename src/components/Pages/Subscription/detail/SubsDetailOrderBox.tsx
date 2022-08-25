@@ -9,7 +9,7 @@ import { MenuImgBox, MenuLi, MenuTextBox, MenuUl } from '@pages/subscription/reg
 import { useGetOrderDetail } from '@queries/order';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { FlexBetween, FlexBetweenStart, FlexCol, FlexColEnd, FlexRow, theme } from '@styles/theme';
-import { getDateFormat, getFormatPrice, SVGIcon } from '@utils/common';
+import { getFormatDate, getFormatPrice, SVGIcon } from '@utils/common';
 import Image from '@components/Shared/Image';
 import router from 'next/router';
 import { useState } from 'react';
@@ -74,7 +74,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
       <FlexCol padding="24px 24px">
         <FlexBetween className="box" onClick={toggleClickHandler}>
           <TextH4B color={`${item?.status === 'CANCELED' && '#C8C8C8'}`}>
-            배송 {item?.deliveryRound ?? 1}회차 - {getDateFormat(item.deliveryDate)}{' '}
+            배송 {item?.deliveryRound ?? 1}회차 - {getFormatDate(item.deliveryDate)}{' '}
             {item?.status === 'COMPLETED' ? '도착' : '도착예정'}{' '}
             {item?.deliveryDateChangeCount > 0 && <span className="deliveryChange">(배송일변경)</span>}
           </TextH4B>
