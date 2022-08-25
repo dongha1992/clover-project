@@ -5,7 +5,6 @@ import { TextB3R, TextH5B, TextH6B } from '@components/Shared/Text';
 import { Tag } from '@components/Shared/Tag';
 import { Button } from '@components/Shared/Button';
 import { IDestinationsResponse } from '@model/index';
-import { Obj } from '@model/index';
 import { DeliveryTag } from '@components/Shared/Tag';
 interface IProps {
   item: IDestinationsResponse;
@@ -35,10 +34,10 @@ const DeliveryItem = ({ item, goToCart, goToEdit, name, tel }: IProps) => {
         </FlexRow>
         <FlexRow padding="5px 0 0 0">
           <TextB3R color={theme.greyScale65} padding="">
-            {item.receiverName ?? name}
+            {item.receiverName || name}
           </TextB3R>
           <Col />
-          <TextB3R color={theme.greyScale65}>{item.receiverTel ?? tel}</TextB3R>
+          <TextB3R color={theme.greyScale65}>{item.receiverTel || tel}</TextB3R>
         </FlexRow>
       </FlexCol>
       <Button
