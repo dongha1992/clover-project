@@ -132,7 +132,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
     {
       onSuccess: async () => {
         dispatch(INIT_ACCESS_METHOD());
-        router.push('/mypage/address');
+        router.push({ pathname: '/mypage/address', query: { isSpot: spotPickupId ? 'true' : 'false' } });
         await queryClient.refetchQueries('getDestinationList');
       },
       onError: async (error: any) => {},
@@ -164,7 +164,11 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
             alertMessage: '내용을 수정했어요!',
             submitBtnText: '확인',
             onSubmit: () => {
-              router.push('/mypage/address');
+              console.log(selectedSpotPickupId, 'selectedSpotPickupId');
+              router.push({
+                pathname: '/mypage/address',
+                query: { isSpot: spotPickupId ? 'true' : 'false' },
+              });
             },
           })
         );
