@@ -1,16 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TextH6B, TextH4B } from '@components/Shared/Text';
-import { theme } from '@styles/theme';
-import { Button } from '@components/Shared/Button';
+import { theme, textH5 } from '@styles/theme';
+// import { Button } from '@components/Shared/Button';
 import NextImage from 'next/image';
+import Link from 'next/link';
 
 interface IProps {
-  onClick: () => void;
   closeHandler: () => void;
+  href: string;
 }
 
-const AppDownloadPushSheet = ({onClick, closeHandler}: IProps): JSX.Element => {
+const AppDownloadPushSheet = ({href, closeHandler}: IProps): JSX.Element => {
   return (
     <Container>
       <Wrapper>
@@ -25,17 +26,15 @@ const AppDownloadPushSheet = ({onClick, closeHandler}: IProps): JSX.Element => {
           />
         </ImageWrapper>
         <TextH4B center padding='16px 0 16px 0'>{'프레시코드 앱 다운로드 받고\n더 많은 혜택 얻어 가세요'}</TextH4B>
-        <Button
-          onClick={onClick}
-          color={theme.white}
-          backgroundColor={theme.black}
-        >
-          앱으로 볼래요
-        </Button>
+        <Link href={href} passHref> 
+          <Button>
+            앱으로 볼래요
+          </Button>
+        </Link>
         <TextH6B
           onClick={closeHandler}
           pointer 
-          padding='8px 0 0 0' 
+          padding='16px 0 0 0' 
           color={theme.greyScale65} 
           textDecoration='underline'
         >
@@ -61,6 +60,20 @@ const Wrapper = styled.div`
 
 const ImageWrapper = styled.div`
   width: 52px;
+`;
+
+const Button = styled.div`
+  width: 100%;
+  height: 48px;
+  color: ${theme.white};
+  background: ${theme.black};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  border: none;
+  ${textH5};
+  cursor: pointer;
 `;
 
 export default AppDownloadPushSheet;
