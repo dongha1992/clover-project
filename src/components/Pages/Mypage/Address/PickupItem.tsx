@@ -15,15 +15,16 @@ dayjs.locale('ko');
 
 interface IProps {
   item: IDestinationsResponse;
+  name: string;
+  tel: string;
   goToCart: (item: IDestinationsResponse) => void;
   goToEdit: ({ id, spotPickupId }: { id: number; spotPickupId: number }) => void;
 }
 
 const now = dayjs();
 
-const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
+const PickupItem = ({ item, goToCart, goToEdit, name: userName, tel }: IProps) => {
   const { spotPickup, main, location, name, receiverName, receiverTel } = item;
-  const { me } = useSelector(userForm);
   const mapper: Obj = {
     PRIVATE: {
       name: '프라이빗',
@@ -111,15 +112,13 @@ const PickupItem = ({ item, goToCart, goToEdit }: IProps) => {
           </TextH6B>
         </FlexBetween>
         <TextB3R padding="4px 0 4px 0">{location?.address}</TextB3R>
-        {receiverName && receiverTel && (
-          <FlexRow padding="0 0 0 0">
-            <TextB3R color={theme.greyScale65} padding="">
-              {receiverName}
-            </TextB3R>
-            <Col />
-            <TextB3R color={theme.greyScale65}>{receiverTel}</TextB3R>
-          </FlexRow>
-        )}
+        <FlexRow padding="0 0 0 0">
+          <TextB3R color={theme.greyScale65} padding="">
+            {receiverName ?? userName}
+          </TextB3R>
+          <Col />
+          <TextB3R color={theme.greyScale65}>{receiverTel ?? tel}</TextB3R>
+        </FlexRow>
       </FlexCol>
       {renderSpotMsg()}
       <Button

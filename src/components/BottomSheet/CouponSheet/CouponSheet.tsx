@@ -89,8 +89,6 @@ const CouponSheet = ({ coupons }: IProps) => {
     );
   };
 
-  const checkIsExpired = () => {};
-
   const downloadAllCoupon = async () => {
     if (!me) {
       goToLogin();

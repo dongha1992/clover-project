@@ -27,7 +27,6 @@ const ReviewPage = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // const { isScroll } = useSelector(commonSelector);
   const isScroll = useScrollCheck();
 
   const {
@@ -79,6 +78,7 @@ const ReviewPage = () => {
       },
     }
   );
+
   useEffect(() => {
     const offsetTop = ref?.current?.offsetTop! - 70;
     window.scrollTo({
@@ -89,10 +89,10 @@ const ReviewPage = () => {
   }, [selectedTab]);
 
   useEffect(() => {
-    if (router.query.tab) {
-      setSelectedTab((router.query.tab as string) ? (router.query.tab as string) : 'willWrite');
+    if (router.isReady) {
+      setSelectedTab((router.query.tab as string) ? (router.query.tab as string) : '/willWrite');
     }
-  }, []);
+  }, [router.isReady]);
 
   const goToReviewDetail = useCallback(
     ({ url, id, menuId, name }: { url: string; id: number; menuId: number; name: string }) => {

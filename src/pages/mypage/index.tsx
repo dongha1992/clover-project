@@ -275,8 +275,8 @@ const MypagePage: NextPageWithLayout = () => {
               <MypageMenu title="배송안내" link="/mypage/delivery-infomation" hideBorder />
               <MypageMenu title="고객센터" link="/mypage/customer-service" />
               <MypageMenu title="설정" link="/mypage/setting" />
-              <MypageMenu title="약관 및 정책" link="/mypage/term" />
-              <MypageMenu title="버전 정보" link="/mypage/term" hideBorder />
+              <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
+              {/* <MypageMenu title="버전 정보" link="/mypage/term" hideBorder /> */}
               <BorderLine height={8} />
               <LogoutWrapper onClick={logoutHandler}>
                 <FlexBetween padding="24px 0">
@@ -315,13 +315,7 @@ const MypagePage: NextPageWithLayout = () => {
               <ImageWrapper>
                 <Link href="/mypage/friend">
                   <a>
-                    <Image
-                      height="131px"
-                      width="512px"
-                      layout="responsive"
-                      src={newUserImg}
-                      alt="new member event"
-                    />
+                    <Image height="131px" width="512px" layout="responsive" src={newUserImg} alt="new member event" />
                   </a>
                 </Link>
               </ImageWrapper>

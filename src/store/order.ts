@@ -58,7 +58,6 @@ export const order = createSlice({
       state.recentPayment = action.payload;
     },
     SET_USER_ORDER_INFO: (state: any, action: PayloadAction<IUserOrderInfo>) => {
-      console.log(action.payload, '@@');
       state.userOrderInfo = action.payload;
     },
     INIT_USER_ORDER_INFO: (state: any, action: PayloadAction) => {

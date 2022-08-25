@@ -369,8 +369,8 @@ export const customInput = css`
   appearance: none;
   outline: none;
   border-radius: 8px;
-  color: black;
   background-color: white;
+  color: black;
 `;
 
 export const customInputWrapper = css`
