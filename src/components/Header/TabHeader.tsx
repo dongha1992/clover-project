@@ -30,7 +30,6 @@ const TabHeader = ({ title }: TProps) => {
   }, []);
 
   const goBack = (): void => {
-    /* TODO: 맵핑해서 router 변경 조건 만들어야함 */
     if (router.asPath === '/login/find-account/password' || router.asPath === '/login/find-account/email') {
       router.push('/login');
     } else if (router.pathname.split('/').includes('detail')) {
@@ -39,6 +38,8 @@ const TabHeader = ({ title }: TProps) => {
       router.back();
     }
   };
+
+  console.log(title, 'title');
 
   const clickTabHandler = useCallback(
     (tabItem: any) => {
@@ -59,7 +60,7 @@ const TabHeader = ({ title }: TProps) => {
 
   const mapper: Obj = {
     '이메일/비밀번호 찾기': FIND_ACCOUNT,
-    '찜 관리': DIB_MENU,
+    '찜한 상품': DIB_MENU,
   };
 
   const FIND_ACCOUNT_LIST = title && mapper[title];

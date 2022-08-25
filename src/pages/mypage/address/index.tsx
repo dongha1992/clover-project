@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { TabList } from '@components/Shared/TabList';
 import { PickupItem } from '@components/Pages/Mypage/Address';
@@ -8,9 +8,10 @@ import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
 import { fixedTab, flexCenter } from '@styles/theme';
 import { useQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SET_DESTINATION, SET_USER_DELIVERY_TYPE } from '@store/destination';
 import useScrollCheck from '@hooks/useScrollCheck';
+import { userForm } from '@store/user';
 
 const TAB_LIST = [
   { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
@@ -18,11 +19,12 @@ const TAB_LIST = [
 ];
 
 const AddressManagementPage = () => {
+  const { isSpot } = router.query;
   const [selectedTab, setSelectedTab] = useState('/pickup');
-  // const { isScroll } = useSelector(commonSelector);
   const isScroll = useScrollCheck();
 
   const dispatch = useDispatch();
+  const { me } = useSelector(userForm);
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     ['getDestinationList', selectedTab],
@@ -60,6 +62,10 @@ const AddressManagementPage = () => {
     router.push({ pathname: `/mypage/address/edit/${id}`, query: { spotPickupId } });
   };
 
+  useEffect(() => {
+    setSelectedTab(isSpot === 'true' ? '/pickup' : '/delivery');
+  }, [router.isReady]);
+
   if (isLoading) {
     return <div>로딩</div>;
   }
@@ -73,10 +79,24 @@ const AddressManagementPage = () => {
         <Wrapper>
           {selectedTab === '/pickup'
             ? filteredList?.map((item: any, index: number) => (
-                <PickupItem key={index} item={item} goToCart={goToCart} goToEdit={goToSpotEdit} />
+                <PickupItem
+                  key={index}
+                  item={item}
+                  goToCart={goToCart}
+                  goToEdit={goToSpotEdit}
+                  name={me?.name!}
+                  tel={me?.tel!}
+                />
               ))
             : filteredList?.map((item: IDestinationsResponse, index: number) => (
-                <DeliveryItem key={index} item={item} goToCart={goToCart} goToEdit={goToEdit} />
+                <DeliveryItem
+                  key={index}
+                  item={item}
+                  goToCart={goToCart}
+                  goToEdit={goToEdit}
+                  name={me?.name!}
+                  tel={me?.tel!}
+                />
               ))}
         </Wrapper>
       ) : (

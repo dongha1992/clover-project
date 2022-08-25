@@ -205,7 +205,7 @@ const OrderFinishPage = () => {
               </FlexColEnd>
             </FlexBetweenStart>
             <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
+              <TextH5B>배송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{location.address}</TextB2R>
                 <TextB2R>{location.addressDetail}</TextB2R>
@@ -228,10 +228,10 @@ const OrderFinishPage = () => {
               </FlexColEnd>
             </FlexBetweenStart>
             <FlexBetweenStart>
-              <TextH5B>베송지</TextH5B>
+              <TextH5B>배송지</TextH5B>
               <FlexColEnd>
                 <TextB2R>{location.address}</TextB2R>
-                <TextB3R color={theme.greyScale65}>{location.addressDetail}</TextB3R>
+                <TextB2R>{location.addressDetail}</TextB2R>
               </FlexColEnd>
             </FlexBetweenStart>
           </>

@@ -219,8 +219,8 @@ const OrderPage = () => {
       const { point, payAmount, deliveryMessage, receiverName, receiverTel, coupon, deliveryMessageReused, ...rest } =
         previewOrder?.order!;
 
-      const hasMsg = userInputObj?.deliveryMessage.length !== 0;
-      const hasMsgType = userInputObj.deliveryMessageType.length !== 0;
+      const hasMsg = userInputObj?.deliveryMessage?.length !== 0;
+      const hasMsgType = userInputObj?.deliveryMessageType?.length !== 0;
 
       dispatch(SET_IS_LOADING(true));
 
@@ -503,6 +503,7 @@ const OrderPage = () => {
   };
 
   const goToRegisteredCard = () => {
+    dispatch(SET_USER_ORDER_INFO(userInputObj));
     router.push('/mypage/card/register');
   };
 
@@ -847,12 +848,12 @@ const OrderPage = () => {
     const { isSelected } = checkForm.samePerson;
 
     if (previewOrder?.order && isSelected) {
-      const { userName, userTel } = previewOrder?.order;
+      const { userName, userTel, receiverName, receiverTel } = previewOrder?.order;
 
       setUserInputObj({
         ...userInputObj,
-        receiverName: userName,
-        receiverTel: userTel,
+        receiverName: receiverName ? receiverName : userName,
+        receiverTel: receiverTel ? receiverTel : userTel,
       });
     }
   }, [previewOrder, checkForm.samePerson.isSelected]);
@@ -869,8 +870,8 @@ const OrderPage = () => {
     }
 
     const hasEditInfo =
-      userOrderInfo?.receiverName !== previewOrder?.order.userName ||
-      userOrderInfo?.receiverTel !== previewOrder?.order.userTel;
+      userOrderInfo?.receiverName !== (previewOrder?.order.userName || previewOrder?.order.receiverName) ||
+      userOrderInfo?.receiverTel !== (previewOrder?.order.userTel || previewOrder?.order.receiverTel);
 
     const isEdited = !!userOrderInfo && hasEditInfo;
 
@@ -907,8 +908,16 @@ const OrderPage = () => {
       const { userName, userTel, receiverName, receiverTel, deliveryMessageReused } = previewOrder?.order!;
       const { deliveryMessage, deliveryMessageType } = previewOrder?.destination;
 
-      const editReceiverName = userOrderInfo?.receiverName ? userOrderInfo?.receiverName : userName!;
-      const editReceiverTel = userOrderInfo?.receiverTel ? userOrderInfo?.receiverTel : userTel!;
+      const editReceiverName = userOrderInfo?.receiverName
+        ? userOrderInfo?.receiverName
+        : receiverName!
+        ? receiverName
+        : userName;
+      const editReceiverTel = userOrderInfo?.receiverTel
+        ? userOrderInfo?.receiverTel
+        : receiverTel
+        ? receiverTel
+        : userTel;
       const editDeliveryMessage = userOrderInfo?.deliveryMessage ? userOrderInfo?.deliveryMessage : deliveryMessage!;
       const editDeliveryMessageType = userOrderInfo?.deliveryMessageType
         ? userOrderInfo?.deliveryMessageType
@@ -932,8 +941,6 @@ const OrderPage = () => {
             ...userInputObj,
             deliveryMessageType: userAccessMethod?.value!,
             deliveryMessage: editDeliveryMessage,
-            receiverName: editReceiverName,
-            receiverTel: editReceiverTel,
             coupon,
             point: value ? value : avaliablePoint - (value ?? 0),
           });
@@ -973,6 +980,7 @@ const OrderPage = () => {
     if (userOrderInfo) {
       setUserInputObj(userOrderInfo);
     }
+
     if (alwaysPointAll) {
       setCheckForm({ ...checkForm, alwaysPointAll: { isSelected: alwaysPointAll } });
     }
