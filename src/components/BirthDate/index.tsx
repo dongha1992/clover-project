@@ -90,16 +90,19 @@ const Container = styled.div`
   justify-content: space-between;
   color: black;
 `;
+
 const YearWrapper = styled.div`
   position: relative;
   ${customSelect}
   margin-right: 10px;
 `;
+
 const MonthWrapper = styled.div`
   position: relative;
   ${customSelect}
   margin-right: 10px;
 `;
+
 const DayWrapper = styled.div`
   position: relative;
   ${customSelect};
