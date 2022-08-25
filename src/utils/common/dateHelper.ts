@@ -10,7 +10,7 @@ export const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
 import dayjs from 'dayjs';
 
-export const getDateFormat = (value: any) => {
+export const getFormatDate = (value: any) => {
   return `${dayjs(value).format('M')}월 ${dayjs(value).format('D')}일 (${dayjs(value).format('dd')})`;
 };
 
