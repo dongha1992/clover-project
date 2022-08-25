@@ -923,7 +923,8 @@ const CartPage = () => {
   const getSpotDiscountPrice = useCallback((): number => {
     const spotDiscount = cartResponse?.discountInfos[0];
     const discoutnedItemsPrice = getItemsPrice() - getItemDiscountPrice();
-    return (spotDiscount?.discountRate ?? 0 / 100) * discoutnedItemsPrice;
+
+    return (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice ?? 0;
   }, [checkedMenus]);
 
   const getDeliveryFee = useCallback(() => {
