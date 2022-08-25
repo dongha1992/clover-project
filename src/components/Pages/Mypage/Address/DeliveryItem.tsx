@@ -9,11 +9,13 @@ import { Obj } from '@model/index';
 import { DeliveryTag } from '@components/Shared/Tag';
 interface IProps {
   item: IDestinationsResponse;
+  name: string;
+  tel: string;
   goToCart: (item: IDestinationsResponse) => void;
   goToEdit: (id: number) => void;
 }
 
-const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
+const DeliveryItem = ({ item, goToCart, goToEdit, name, tel }: IProps) => {
   return (
     <Container>
       <FlexCol>
@@ -33,10 +35,10 @@ const DeliveryItem = ({ item, goToCart, goToEdit }: IProps) => {
         </FlexRow>
         <FlexRow padding="5px 0 0 0">
           <TextB3R color={theme.greyScale65} padding="">
-            {item.name}
+            {item.receiverName ?? name}
           </TextB3R>
           <Col />
-          <TextB3R color={theme.greyScale65}>{item.receiverTel}</TextB3R>
+          <TextB3R color={theme.greyScale65}>{item.receiverTel ?? tel}</TextB3R>
         </FlexRow>
       </FlexCol>
       <Button
