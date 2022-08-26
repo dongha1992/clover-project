@@ -1153,6 +1153,7 @@ const CartPage = () => {
         });
       });
     });
+
     setDisposableList(editDisposableList);
   };
 

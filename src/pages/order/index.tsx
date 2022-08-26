@@ -428,8 +428,8 @@ const OrderPage = () => {
     if (!checkForm.samePerson.isSelected && name === 'samePerson') {
       setUserInputObj({
         ...userInputObj,
-        receiverName: userName,
-        receiverTel: userTel,
+        receiverName: previewOrder?.order.userName!,
+        receiverTel: previewOrder?.order.userTel!,
       });
     }
     setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
@@ -983,8 +983,6 @@ const OrderPage = () => {
   }
 
   const {
-    userName,
-    userTel,
     userEmail,
     delivery,
     deliveryDetail,
@@ -1072,7 +1070,7 @@ const OrderPage = () => {
           <TextH4B>주문자 정보</TextH4B>
           <ShowBtnWrapper>
             {!showSectionObj.showCustomerInfoSection && (
-              <TextB2R padding="0 13px 0 0">{`${userName}, ${userTel}`}</TextB2R>
+              <TextB2R padding="0 13px 0 0">{`${previewOrder?.order?.userName}, ${previewOrder?.order?.userTel}`}</TextB2R>
             )}
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
@@ -1081,15 +1079,15 @@ const OrderPage = () => {
           <CustomInfoList>
             <FlexBetween>
               <TextH5B>보내는 사람</TextH5B>
-              <TextB2R>{userName}</TextB2R>
+              <TextB2R>{previewOrder?.order.userName}</TextB2R>
             </FlexBetween>
             <FlexBetween margin="16px 0">
               <TextH5B>휴대폰 전화</TextH5B>
-              <TextB2R>{userTel}</TextB2R>
+              <TextB2R>{previewOrder?.order.userTel}</TextB2R>
             </FlexBetween>
             <FlexBetween>
               <TextH5B>이메일</TextH5B>
-              <TextB2R>{userEmail}</TextB2R>
+              <TextB2R>{previewOrder?.order.userEmail}</TextB2R>
             </FlexBetween>
           </CustomInfoList>
         </SlideToggle>
@@ -1170,9 +1168,9 @@ const OrderPage = () => {
             )}
           </FlexBetween>
           <DeliveryDateBox
-            location={location}
-            delivery={delivery}
-            deliveryDetail={deliveryDetail}
+            location={previewOrder?.order?.location!}
+            delivery={previewOrder?.order.delivery!}
+            deliveryDetail={previewOrder?.order.deliveryDetail!}
             dayFormatter={dayFormatter}
             destinationName={previewOrder?.destination.name!}
             spotPickupName={spotPickupName}
