@@ -14,6 +14,9 @@ interface IState {
     isSamePerson: boolean;
     receiverName: string;
     receiverTel: string;
+    deliveryMessage: string;
+    deliveryMessageType: string;
+    selectedMethod: any;
   };
   tempEditDestination: IDestinationsResponse | null;
   tempEditSpot: IEditSpot | null;
@@ -24,6 +27,9 @@ const INITIAL_STATE: IState = {
     isSamePerson: true,
     receiverName: '',
     receiverTel: '',
+    deliveryMessage: '',
+    deliveryMessageType: '',
+    selectedMethod: {},
   },
   tempEditDestination: null,
   tempEditSpot: null,
@@ -41,6 +47,9 @@ export const mypageSlice = createSlice({
         isSamePerson: true,
         receiverName: '',
         receiverTel: '',
+        deliveryMessage: '',
+        deliveryMessageType: '',
+        selectedMethod: {},
       };
     },
     // 유저가 서버에 등록하지 않은 검색한 배송지 변경 시 배송지 정보

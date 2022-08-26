@@ -327,7 +327,7 @@ const CartPage = () => {
     {
       onSuccess: async (params) => {
         const { menuDetailId, quantity, type } = params!;
-        calculateDisposableByMenus(type);
+        calculateDisposableByMenus(type, menuDetailId);
         const sliced = cartItemList.slice();
         const changedCartItemList = changedQuantityHandler(sliced, menuDetailId, quantity);
         reorderCartList(changedCartItemList);
@@ -408,7 +408,7 @@ const CartPage = () => {
         });
       });
     });
-    console.log(editDisposableList, 'editDisposableList');
+
     return editDisposableList;
   };
 
@@ -664,7 +664,13 @@ const CartPage = () => {
       const changed = item.menuDetails.map((detail) => {
         if (detail.menuDetailId ?? detail.id === menuDetailId) {
           menuId = item.menuId;
-          return { ...detail, quantity, menuDetailOptions: { quantity } };
+          return {
+            ...detail,
+            quantity,
+            menuDetailOptions: detail.menuDetailOptions?.map((item) => {
+              return { ...item, quantity };
+            }),
+          };
         } else {
           return detail;
         }
@@ -1118,21 +1124,36 @@ const CartPage = () => {
     }
   };
 
-  const calculateDisposableByMenus = (type: string) => {
+  const calculateDisposableByMenus = (type: string, menuDetailId: number) => {
     const plus = type === 'plus';
+    const found = checkedMenus.find((details) => details.menuDetails.find((item) => item.id === menuDetailId));
+    console.log(found, 'found');
+    if (found) {
+      setDisposableList(
+        disposableList.map((item) => {
+          if (!plus && item.quantity < 2) return { ...item, quantity: 1 };
+          return { ...item, quantity: plus ? item.quantity + 1 : item.quantity - 1 };
+        })
+      );
+    }
+  };
 
-    const menuDetailsCount = checkedMenus.reduce((total: number, menus: any) => {
-      return menus.menuDetails.reduce((acc: number, cur: any) => {
-        return total + acc + cur.quantity;
-      }, 0);
-    }, 0);
-
-    setDisposableList(
-      disposableList.map((item) => {
-        if (!plus && item.quantity < 2) return { ...item, quantity: 1 };
-        return { ...item, quantity: plus ? item.quantity + 1 : item.quantity - 1 };
-      })
-    );
+  const addDisposableItems = () => {
+    const checkedDisposable = getCookie({ name: 'disposableChecked' });
+    let editDisposableList: any = [];
+    checkedMenus?.forEach((item: any) => {
+      item.menuDetails?.forEach((menuDetail: any) => {
+        editDisposableList = menuDetail.menuDetailOptions?.map((detail: any) => {
+          const found = editDisposableList?.find((item: any) => item.id === detail.id);
+          const isSelected = checkedDisposable ? checkedDisposable.includes(detail.id) : true;
+          if (found) {
+            return { ...detail, quantity: found.quantity + detail.quantity, isSelected };
+          }
+          return { ...detail, isSelected };
+        });
+      });
+    });
+    setDisposableList(editDisposableList);
   };
 
   useEffect(() => {
@@ -1227,6 +1248,7 @@ const CartPage = () => {
     if (checkedMenus?.length === cartItemList?.length) {
       setIsAllchecked(true);
     }
+    addDisposableItems();
   }, [checkedMenus]);
 
   useEffect(() => {
@@ -1538,8 +1560,8 @@ const CartPage = () => {
               </Tag>
               <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
               <TextH6B>
-                {calculatePoint({ rate: me?.grade.benefit.accrualRate!, total: totalAmount + getDeliveryFee() })}P (
-                {me?.grade.benefit.accrualRate}%) 적립 예정
+                {calculatePoint({ rate: me?.grade.benefit.accumulationRate!, total: totalAmount + getDeliveryFee() })}P
+                ({me?.grade.benefit.accumulationRate}%) 적립 예정
               </TextH6B>
             </FlexEnd>
           )}
