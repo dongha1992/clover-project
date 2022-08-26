@@ -59,7 +59,7 @@ const RefundOrderBox = ({ subOrder }: IProps) => {
         </Badge>
         <TextH6B>
           {calculatePoint({
-            rate: me?.grade.benefit.accrualRate!,
+            rate: me?.grade.benefit.accumulationRate!,
             total: subOrder.order.refundCoupon + subOrder.order.refundPoint + subOrder.order.refundPayAmount,
           })}
           P 적립 취소 예정
