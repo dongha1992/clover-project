@@ -1,4 +1,3 @@
-import { TabList } from '@components/Shared/TabList';
 import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { useEffect, useState } from 'react';
@@ -139,7 +138,9 @@ const NotiPage = () => {
                 filterHandler(elem);
               }}
             >
-              <TextB2R whiteSpace="nowrap">{elem.name}</TextB2R>
+              <TextB2R whiteSpace="nowrap" color={elem.selected ? '#fff' : '#242424'}>
+                {elem.name}
+              </TextB2R>
             </FilterItem>
           ))}
         </FilterList>
