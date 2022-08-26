@@ -224,7 +224,7 @@ export interface IUserInfoResponse {
 }
 
 export interface IUserGrade {
-  benefit: { accrualRate: number };
+  benefit: { accumulationRate: number };
   insufficientAmount?: number;
   isLast?: boolean;
   level: number;

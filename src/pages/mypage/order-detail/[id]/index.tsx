@@ -536,10 +536,10 @@ const OrderDetailPage = () => {
           <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
           <TextH6B>
             {calculatePoint({
-              rate: me?.grade.benefit.accrualRate!,
+              rate: me?.grade.benefit.accumulationRate!,
               total: payAmount + point,
             })}
-            P ({me?.grade.benefit.accrualRate}%) 적립 예정
+            P ({me?.grade.benefit.accumulationRate}%) 적립 예정
           </TextH6B>
         </FlexEnd>
       </TotalPriceWrapper>
