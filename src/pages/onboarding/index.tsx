@@ -240,7 +240,7 @@ const OnBoarding: NextPage = () => {
           <TextH6B
             color={theme.greyScale65}
             textDecoration="underline"
-            padding="32px 0 0 0"
+            padding="24px 0 0 0"
             onClick={goToHomeWithoutLogin}
             pointer
           >
@@ -253,14 +253,15 @@ const OnBoarding: NextPage = () => {
 };
 
 const Container = styled.main`
-  position: fixed;
+  display: flex;
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   top: 0;
   right: 0;
   left: calc(50%);
   z-index: 100;
-  height: 100vh;
+  height: calc(100vh - 56px);
+  align-items: center;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
@@ -284,25 +285,23 @@ const Container = styled.main`
 `;
 
 const Wrapper = styled.div`
-  padding-top: 32px;
-  position: absolute;
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
   width: 100%;
+  height: 100%;
   z-index: 101;
 `;
 
 const BrandImg = styled.div`
   width: 100%;
-  height: 320px;
+  height: 234px;
   background-color: ${theme.greyScale3};
 `;
 
 const ButtonWrapper = styled.div`
   position: relative;
-  padding: 0 32px 32px 32px;
+  padding: 8px 32px 32px 32px;
   width: 100%;
   display: flex;
   flex-direction: column;
