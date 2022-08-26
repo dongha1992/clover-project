@@ -117,7 +117,6 @@ const WelcomeSheet = ({ recommendCode }: IProps) => {
     <Container isMobile={isMobile}>
       <Header>
         <FlexEnd
-          margin="40px 0 0 0"
           onClick={() => {
             if (router.query.returnPath) {
               router.push(`/login?returnPath=${encodeURIComponent(String(router.query.returnPath))}`);
@@ -131,23 +130,25 @@ const WelcomeSheet = ({ recommendCode }: IProps) => {
         </FlexEnd>
       </Header>
       <Body>
-        <FlexCol>
+        <FlexCol padding="24px 24px 0" className="bodyTop">
           <TextH2B>
             <span className="brandColor">{me?.nickname ?? me?.name}</span>님,
           </TextH2B>
           <TextH2B>프레시코드 회원이 되신걸</TextH2B>
           <TextH2B>진심으로 축하드려요!</TextH2B>
           <TextB2R padding="17px 0 0 0">신규회원 특별 혜택으로가볍게 시작해보세요.</TextB2R>
-          <ImageWrapper>
-            <Image
-              src={welcomeImg}
-              alt="웰컴이미지"
-              width={'100%'}
-              height={'100%'}
-              layout="responsive"
-              objectFit="cover"
-            />
-          </ImageWrapper>
+          <div className="imgBox">
+            <ImageWrapper>
+              <Image
+                src={welcomeImg}
+                alt="웰컴이미지"
+                width={'100%'}
+                height={'100%'}
+                layout="responsive"
+                objectFit="cover"
+              />
+            </ImageWrapper>
+          </div>
         </FlexCol>
         <PromotionWrapper>
           <TextH5B padding="0 0 8px 0">친구 초대 및 쿠폰/프로모션 코드 등록하기</TextH5B>
@@ -170,9 +171,11 @@ const WelcomeSheet = ({ recommendCode }: IProps) => {
 };
 
 const Container = styled.div<{ isMobile: boolean }>`
-  ${homePadding};
-
-  ${({ isMobile }) => {
+  height: calc(100vh - 56px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  /* ${({ isMobile }) => {
     if (isMobile) {
       return css`
         height: 100%;
@@ -182,12 +185,29 @@ const Container = styled.div<{ isMobile: boolean }>`
         height: 91vh;
       `;
     }
-  }}
+  }} */
 `;
 const Header = styled.div`
-  height: 80px;
+  height: 56px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
 `;
 const Body = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  .bodyTop {
+    flex: 1;
+  }
+  .imgBox {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
   > div {
     > div {
       > span {
