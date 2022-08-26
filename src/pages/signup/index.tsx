@@ -118,7 +118,7 @@ const SignupPage = () => {
               마케팅 정보 수신 동의 시 2,000원 할인 쿠폰 지급!
               <br /> (1인 최대 1회 지급)
             </TextB3R>
-            <FlexRow>
+            {/* <FlexRow>
               <FlexRow>
                 <Checkbox onChange={() => checkTermHandler(3)} isSelected={checkTermList.includes(3)} />
                 <TextB2R {...textPaddingStyle}>이메일</TextB2R>
@@ -127,7 +127,7 @@ const SignupPage = () => {
                 <Checkbox onChange={() => checkTermHandler(4)} isSelected={checkTermList.includes(4)} />
                 <TextB2R {...textPaddingStyle}>SNS</TextB2R>
               </FlexRow>
-            </FlexRow>
+            </FlexRow> */}
           </PaddingWrapper>
         </FlexCol>
       </Wrapper>
