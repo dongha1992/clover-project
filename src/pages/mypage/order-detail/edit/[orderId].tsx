@@ -261,6 +261,11 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   };
 
   const checkBeforeEdit = (): boolean => {
+    if (deliveryEditObj.receiverName.length === 0 || deliveryEditObj.receiverTel.length === 0) {
+      dispatch(SET_ALERT({ alertMessage: '받는 사람 정보를 입력해주세요.' }));
+      return false;
+    }
+
     if (orderDetail?.delivery === 'MORNING') {
       const noAccessMethod = !deliveryEditObj?.deliveryMessageType;
       const noMsg = !deliveryEditObj?.deliveryMessage?.length;

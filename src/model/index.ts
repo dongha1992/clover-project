@@ -1254,6 +1254,7 @@ export interface IOrderDetailInOrderDeliveries {
   spotPickupId: number;
   spotPickupName: string;
   spotPickupType: string;
+  hasReview: boolean;
   status: string;
   orderMenus: IOrderMenus[];
   type: string;
@@ -1480,6 +1481,8 @@ export interface IOrderDetail {
   subscriptionRound?: number;
   subscriptionPeriod?: string;
   canCancel: boolean;
+  accumulatedPoint: number;
+  expectedPoint: number;
 }
 
 export interface IGetOrderDetailResponse {
