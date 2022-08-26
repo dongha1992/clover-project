@@ -321,14 +321,16 @@ const SubsRegisterPage = () => {
             />
           )}
           <BottomButton onClick={onSubscribe}>
-            <TextH5B>구독하기</TextH5B>
+            <TextH5B color="#fff">구독하기</TextH5B>
           </BottomButton>
         </>
       )}
     </Container>
   );
 };
-const Container = styled.div``;
+const Container = styled.div`
+  padding-bottom: 56px;
+`;
 const InfoBox = styled.div`
   width: 100%;
   display: flex;

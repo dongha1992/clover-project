@@ -31,7 +31,7 @@ const BottomSheet = () => {
     if (target !== currentTarget) {
       return;
     }
-    if(noneMarginBottom) {
+    if (noneMarginBottom) {
       dimmedHandler();
     } else {
       dispatch(INIT_BOTTOM_SHEET());
@@ -103,12 +103,12 @@ const Container = styled.div<{ height: number | null }>`
   `};
 `;
 
-const BottomSheetContent = styled.div<{noneMarginBottom?: boolean}>`
+const BottomSheetContent = styled.div<{ noneMarginBottom?: boolean }>`
   width: 100%;
   height: 100%;
   /* overflow: auto; */
   -webkit-overflow-scrolling: touch;
-  margin-bottom: ${({noneMarginBottom}) => (noneMarginBottom ? null : '56px')};
+  padding-bottom: ${({ noneMarginBottom }) => (noneMarginBottom ? null : '56px')};
   overflow-y: scroll;
 `;
 

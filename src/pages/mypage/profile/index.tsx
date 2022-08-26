@@ -113,7 +113,7 @@ const ProfilePage = () => {
       onSuccess: async () => {
         dispatch(
           SET_ALERT({
-            alertMessage: '수정을 성공하였습니다.',
+            alertMessage: '수정을 완료했어요!',
             onSubmit: () => {
               if (router.query.returnPath) {
                 const editReturnPath = `${router.query.returnPath}?isReopen=true`;

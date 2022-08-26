@@ -52,7 +52,7 @@ const HomeHeader = () => {
               <Tooltip
                 message={mapper[formatAvailableDestination]?.text}
                 width={mapper[formatAvailableDestination]?.width}
-                left="-8px" 
+                left="-8px"
                 top="30px"
               />
             )}
@@ -104,11 +104,14 @@ const Container = styled.div<{ isBottomSheet?: boolean }>`
 `;
 
 const Wrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 0 24px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 16px 24px;
+  /* margin: 16px 24px; */
 `;
 
 const AddressWrapper = styled.div`
@@ -116,6 +119,7 @@ const AddressWrapper = styled.div`
 `;
 
 const Left = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   cursor: pointer;
