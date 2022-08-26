@@ -64,7 +64,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
 
   const [isSamePerson, setIsSamePerson] = useState(false);
   const [deliveryEditObj, setDeliveryEditObj] = useState<any>({
-    selectedMethod: {},
+    selectedMethod: null,
     location: {},
     deliveryMessageType: '',
     deliveryMessage: '',
@@ -116,7 +116,9 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
       );
 
       setDeliveryEditObj({
-        selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
+        selectedMethod: tempOrderInfo.selectedMethod
+          ? tempOrderInfo.selectedMethod
+          : userAccessMethodMap[orderDetail?.deliveryMessageType!],
         deliveryMessageType: tempOrderInfo?.deliveryMessageType
           ? tempOrderInfo?.deliveryMessageType
           : orderDetail?.deliveryMessageType!,
@@ -307,11 +309,8 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   };
 
   const changeDeliveryPlace = () => {
-    const userAccessMethodMap = pipe(
-      ACCESS_METHOD,
-      indexBy((item) => item.value)
-    );
     const isCancel = !!data?.unsubscriptionType;
+
     dispatch(
       SET_TEMP_ORDER_INFO({
         isSamePerson: false,
@@ -319,7 +318,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
         receiverTel: deliveryEditObj.receiverTel,
         deliveryMessage: deliveryEditObj.deliveryMessage,
         deliveryMessageType: deliveryEditObj.deliveryMessageType,
-        selectedMethod: userAccessMethodMap[deliveryEditObj?.deliveryMessageType!],
+        selectedMethod: deliveryEditObj.selectedMethod,
       })
     );
     if (data.type === 'SUBSCRIPTION') {

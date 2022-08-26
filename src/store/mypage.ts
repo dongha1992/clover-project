@@ -29,7 +29,7 @@ const INITIAL_STATE: IState = {
     receiverTel: '',
     deliveryMessage: '',
     deliveryMessageType: '',
-    selectedMethod: {},
+    selectedMethod: null,
   },
   tempEditDestination: null,
   tempEditSpot: null,
@@ -49,7 +49,7 @@ export const mypageSlice = createSlice({
         receiverTel: '',
         deliveryMessage: '',
         deliveryMessageType: '',
-        selectedMethod: {},
+        selectedMethod: null,
       };
     },
     // 유저가 서버에 등록하지 않은 검색한 배송지 변경 시 배송지 정보
