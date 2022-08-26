@@ -58,7 +58,9 @@ const Container = styled.div`
   justify-content: space-between;
 `;
 
-const PaddingWrapper = styled.div``;
+const PaddingWrapper = styled.div`
+  padding: 0 24px;
+`;
 
 const TimeInfoWrapper = styled.div`
   margin-top: 12px;

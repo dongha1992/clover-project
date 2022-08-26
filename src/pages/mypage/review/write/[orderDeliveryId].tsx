@@ -57,10 +57,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  const {
-    data,
-    isLoading,
-  } = useQuery(
+  const { data, isLoading } = useQuery(
     'getMenuDetail',
     async () => {
       const { data } = await getMenuDetailApi(menuId);
@@ -128,23 +125,23 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
 
   const onUploadStartHandler = () => {
     setImageUploading(true);
-  }
+  };
 
   const onUploadFinishHandler = () => {
     setImageUploading(false);
-  }
+  };
 
   const fileUploadErrorHandler = (alertMessage: string) => {
     dispatch(SET_ALERT({ alertMessage }));
-  }
+  };
 
   const uploadSuccessHandler = (url: string) => {
-    setReviewImages(imageList => [...imageList, url]);
-  }
+    setReviewImages((imageList) => [...imageList, url]);
+  };
 
   const removePreviewImgHandler = (index: number) => {
     const filterImages = reviewImages.filter((img, idx) => idx !== index);
-    setReviewImages(filterImages)
+    setReviewImages(filterImages);
   };
 
   const finishWriteReview = async () => {
@@ -246,17 +243,19 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
         </FlexRow>
         <FlexRow>
           <TextB3R color={theme.systemRed} margin="6px 0 0 0">
-            자사 제품과 무관한 사진 첨부 시 통보 없이 후기 삭제 및 포인트 회수가 진행 될 수 있습니다.
+            1장 당 20MB 이하 (jpg, png), 파일명은 255자 이하로 자사 제품의 사진만 등록해 주세요.
           </TextB3R>
         </FlexRow>
         <FlexRow>
           <ReviewImageUpload
-            onError={fileUploadErrorHandler} onSuccess={uploadSuccessHandler}
-            onStart={onUploadStartHandler} onFinish={onUploadFinishHandler} disabled={reviewImages.length > 1}/>
+            onError={fileUploadErrorHandler}
+            onSuccess={uploadSuccessHandler}
+            onStart={onUploadStartHandler}
+            onFinish={onUploadFinishHandler}
+            disabled={reviewImages.length > 1}
+          />
           {reviewImages.map((img: string, index: number) => {
-            return (
-              <ReviewImagePreview key={index} image={img} onRemove={()=> removePreviewImgHandler(index)}/>
-            );
+            return <ReviewImagePreview key={index} image={img} onRemove={() => removePreviewImgHandler(index)} />;
           })}
         </FlexRow>
       </UploadPhotoWrapper>
