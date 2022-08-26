@@ -271,8 +271,6 @@ const OrderPage = () => {
         }
 
         processOrder(data);
-        // 완료되면 쿠폰 초기화
-        dispatch(INIT_COUPON());
       },
       onError: (error: any) => {
         if (error.code === 1122) {
@@ -858,6 +856,8 @@ const OrderPage = () => {
         }
       }
     }
+
+    dispatch(SET_USER_ORDER_INFO({ ...userInputObj, selectedOrderMethod }));
   };
 
   useEffect(() => {
@@ -911,52 +911,55 @@ const OrderPage = () => {
       const editDeliveryMessageType = userOrderInfo?.deliveryMessageType
         ? userOrderInfo?.deliveryMessageType
         : deliveryMessageType!;
+
       const avaliablePoint = alwaysPointAll ? getAllOfPointHandler() : 0;
       const { coupon, value } = checkCouponHandler();
 
+      setUserInputObj({
+        ...userInputObj,
+        receiverName: editReceiverName,
+        receiverTel: editReceiverTel,
+        coupon,
+        point: value ? value : avaliablePoint - (value ?? 0),
+      });
+
+      setSelectedOrderMethod(userOrderInfo?.selectedOrderMethod ?? selectedOrderMethod);
+    }
+  }, [previewOrder, userOrderInfo]);
+
+  useEffect(() => {
+    if (previewOrder) {
+      const isMorning = ['MORNING'].includes(previewOrder?.order?.delivery!);
+      const { deliveryMessageReused } = previewOrder?.order!;
+      const { deliveryMessage, deliveryMessageType } = previewOrder?.destination!;
+
+      const editDeliveryMessage = userOrderInfo?.deliveryMessage ? userOrderInfo?.deliveryMessage : deliveryMessage!;
+      const editDeliveryMessageType = userOrderInfo?.deliveryMessageType
+        ? userOrderInfo?.deliveryMessageType
+        : deliveryMessageType!;
       if (isMorning) {
         if (deliveryMessageReused && !userAccessMethod?.value) {
           setUserInputObj({
             ...userInputObj,
             deliveryMessage: editDeliveryMessage,
             deliveryMessageType: editDeliveryMessageType,
-            receiverName: editReceiverName,
-            receiverTel: editReceiverTel,
-            coupon,
-            point: value ? value : avaliablePoint - (value ?? 0),
           });
         } else if (userAccessMethod?.value!) {
           setUserInputObj({
             ...userInputObj,
             deliveryMessageType: userAccessMethod?.value!,
             deliveryMessage: editDeliveryMessage,
-            coupon,
-            point: value ? value : avaliablePoint - (value ?? 0),
-          });
-        } else {
-          setUserInputObj({
-            ...userInputObj,
-            receiverName: editReceiverName,
-            receiverTel: editReceiverTel,
-            coupon,
-            point: value ? value : avaliablePoint - (value ?? 0),
           });
         }
       } else {
         setUserInputObj({
           ...userInputObj,
-          receiverName: editReceiverName,
-          receiverTel: editReceiverTel,
-          coupon,
-          point: value ? value : avaliablePoint - (value ?? 0),
           deliveryMessage: editDeliveryMessage,
           deliveryMessageType: '',
         });
       }
-
-      setSelectedOrderMethod(userOrderInfo?.selectedOrderMethod ?? selectedOrderMethod);
     }
-  }, [previewOrder, userAccessMethod, userOrderInfo]);
+  }, [userAccessMethod]);
 
   useEffect(() => {
     if (router.isReady && message) {
