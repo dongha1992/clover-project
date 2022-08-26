@@ -394,7 +394,7 @@ const SubsSetInfoPage = () => {
         </Button>
       </DateSetting>
       <BottomButton disabled={subsStartDate ? false : true} onClick={goToRegisterCheck}>
-        <TextH5B>다음</TextH5B>
+        <TextH5B color={subsStartDate ? '#fff' : `${theme.greyScale25}`}>다음</TextH5B>
       </BottomButton>
     </Container>
   );
@@ -462,6 +462,7 @@ const BottomButton = styled.button`
   cursor: pointer;
   background-color: ${theme.black};
   color: #fff;
+
   &:disabled {
     background-color: ${theme.greyScale6};
     color: ${theme.greyScale25};

@@ -54,10 +54,12 @@ const Container = styled.div`
 const Wrapper = styled.div`
   position: relative;
   display: flex;
+  width: 100%;
   height: 100%;
+  padding: 0 24px;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  /* padding: 16px 24px; */
 `;
 
 const Left = styled.div`
