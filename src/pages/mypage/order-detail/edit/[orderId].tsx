@@ -64,7 +64,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
 
   const [isSamePerson, setIsSamePerson] = useState(false);
   const [deliveryEditObj, setDeliveryEditObj] = useState<any>({
-    selectedMethod: {},
+    selectedMethod: null,
     location: {},
     deliveryMessageType: '',
     deliveryMessage: '',
@@ -116,7 +116,9 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
       );
 
       setDeliveryEditObj({
-        selectedMethod: userAccessMethodMap[orderDetail?.deliveryMessageType!],
+        selectedMethod: tempOrderInfo.selectedMethod
+          ? tempOrderInfo.selectedMethod
+          : userAccessMethodMap[orderDetail?.deliveryMessageType!],
         deliveryMessageType: tempOrderInfo?.deliveryMessageType
           ? tempOrderInfo?.deliveryMessageType
           : orderDetail?.deliveryMessageType!,
@@ -259,6 +261,11 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   };
 
   const checkBeforeEdit = (): boolean => {
+    if (deliveryEditObj.receiverName.length === 0 || deliveryEditObj.receiverTel.length === 0) {
+      dispatch(SET_ALERT({ alertMessage: '받는 사람 정보를 입력해주세요.' }));
+      return false;
+    }
+
     if (orderDetail?.delivery === 'MORNING') {
       const noAccessMethod = !deliveryEditObj?.deliveryMessageType;
       const noMsg = !deliveryEditObj?.deliveryMessage?.length;
@@ -307,11 +314,8 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   };
 
   const changeDeliveryPlace = () => {
-    const userAccessMethodMap = pipe(
-      ACCESS_METHOD,
-      indexBy((item) => item.value)
-    );
     const isCancel = !!data?.unsubscriptionType;
+
     dispatch(
       SET_TEMP_ORDER_INFO({
         isSamePerson: false,
@@ -319,7 +323,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
         receiverTel: deliveryEditObj.receiverTel,
         deliveryMessage: deliveryEditObj.deliveryMessage,
         deliveryMessageType: deliveryEditObj.deliveryMessageType,
-        selectedMethod: userAccessMethodMap[deliveryEditObj?.deliveryMessageType!],
+        selectedMethod: deliveryEditObj.selectedMethod,
       })
     );
     if (data.type === 'SUBSCRIPTION') {
