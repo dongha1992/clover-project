@@ -11,11 +11,12 @@ interface IProps {
   coupon: ICoupon;
   selectCouponHandler: (coupon: ICoupon) => void;
   isSelected: boolean;
+  isMypage?: boolean;
 }
 
 const now = dayjs();
 
-const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) => {
+const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected, isMypage }: IProps) => {
   const [isShow, setIsShow] = useState(false);
 
   const { dayFormatter: expiredDate } = getCustomDate(coupon.expiredDate);
@@ -25,7 +26,7 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected }: IProps) =
 
   const isMoreThenOneMenu = coupon?.descriptions?.join().includes('특정 상품');
   const tagetIndex = coupon?.descriptions?.findIndex((item) => item.includes('특정 상품'));
-  const canNotUse = !coupon.canUse;
+  const canNotUse = !coupon.canUse && !isMypage;
   const tagColorSet = canNotUse ? theme.greyScale6 : theme.brandColor5;
   const priceColorSet = canNotUse ? theme.greyScale25 : theme.brandColor;
   const tagNameColorSet = canNotUse ? theme.greyScale45 : theme.brandColor;

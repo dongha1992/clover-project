@@ -216,8 +216,17 @@ const OrderPage = () => {
     async () => {
       /*TODO: 모델 수정해야함 */
 
-      const { point, payAmount, deliveryMessage, receiverName, receiverTel, coupon, deliveryMessageReused, ...rest } =
-        previewOrder?.order!;
+      const {
+        point,
+        payAmount,
+        deliveryMessage,
+        deliveryMessageType,
+        receiverName,
+        receiverTel,
+        coupon,
+        deliveryMessageReused,
+        ...rest
+      } = previewOrder?.order!;
 
       const hasMsg = userInputObj?.deliveryMessage?.length !== 0;
       const hasMsgType = userInputObj?.deliveryMessageType?.length !== 0;
@@ -241,7 +250,6 @@ const OrderPage = () => {
       };
 
       const { data } = await createOrderApi(reqBody);
-
       return data;
     },
     {
@@ -440,7 +448,7 @@ const OrderPage = () => {
     const { payAmount } = previewOrder?.order!;
 
     let uncommaValue = Number(getUnCommaPrice(val));
-    const limitPoint = Math.min(payAmount, point) - (userInputObj.coupon! || 0);
+    const limitPoint = Math.min(payAmount - userInputObj.coupon! ?? 0, point);
 
     if (uncommaValue >= limitPoint) {
       uncommaValue = limitPoint > 0 ? limitPoint : 0;
@@ -475,7 +483,8 @@ const OrderPage = () => {
     const { point } = previewOrder!;
     const { payAmount } = previewOrder?.order!;
 
-    const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon ?? 0);
+    // const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon ?? 0);
+    const limitPoint = Math.min(payAmount - userInputObj.coupon ?? 0, point);
 
     let avaliablePoint = 0;
     if (limitPoint < payAmount) {
@@ -500,7 +509,7 @@ const OrderPage = () => {
   };
 
   const goToCardManagemnet = () => {
-    dispatch(SET_USER_ORDER_INFO(userInputObj));
+    dispatch(SET_USER_ORDER_INFO({ ...userInputObj, selectedOrderMethod }));
     if (isSubscription) {
       router.push({ pathname: '/mypage/card', query: { isOrder: true, isSubscription: true } });
     } else {
@@ -509,7 +518,7 @@ const OrderPage = () => {
   };
 
   const goToRegisteredCard = () => {
-    dispatch(SET_USER_ORDER_INFO(userInputObj));
+    dispatch(SET_USER_ORDER_INFO({ ...userInputObj, selectedOrderMethod }));
     router.push('/mypage/card/register');
   };
 
@@ -742,6 +751,7 @@ const OrderPage = () => {
     const isUsePoint = userInputObj.point > 0;
 
     const value = isUsePoint && usePointOverAmount ? userInputObj.point - coupon : userInputObj.point;
+
     return { value, coupon };
   };
 
@@ -859,7 +869,7 @@ const OrderPage = () => {
       setCard(card!);
 
       if (recentPayment) {
-        setSelectedOrderMethod(recentPayment);
+        setSelectedOrderMethod(userOrderInfo?.selectedOrderMethod ?? recentPayment);
       }
 
       const isEdited =
@@ -943,6 +953,8 @@ const OrderPage = () => {
           deliveryMessageType: '',
         });
       }
+
+      setSelectedOrderMethod(userOrderInfo?.selectedOrderMethod ?? selectedOrderMethod);
     }
   }, [previewOrder, userAccessMethod, userOrderInfo]);
 
