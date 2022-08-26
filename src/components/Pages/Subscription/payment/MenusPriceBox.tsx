@@ -173,18 +173,17 @@ const MenusPriceBox = ({
         <TextB3R>
           구매 시
           <b>
-            {' '}
             {getFormatPrice(
               String(
                 calculatePoint({
-                  rate: grade.benefit.accrualRate!,
+                  rate: grade.benefit.accumulationRate!,
                   total: disposable
                     ? menuPrice + menuOption1?.price + menuOption2?.price + deliveryPrice - menuDiscount
                     : menuPrice + deliveryPrice - menuDiscount,
                 })
               )
             )}
-            P ({grade.benefit.accrualRate}%) 적립 예정
+            P ({grade.benefit.accumulationRate}%) 적립 예정
           </b>
         </TextB3R>
       </FlexEnd>
