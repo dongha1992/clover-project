@@ -33,8 +33,8 @@ const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: I
 
   const imageClickHandler = (startIndex: number) => {
     const images = review?.reviewImages.map((item: any) => item.url);
-    dispatch(showImageViewer({images, startIndex, isShow: true}));
-  }
+    dispatch(showImageViewer({ images, startIndex, isShow: true }));
+  };
 
   return (
     <>
@@ -74,7 +74,7 @@ const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: I
                   }
                 }}
               >
-                {review.editable ? '편집' : '삭제'}
+                {review.editable ? '수정' : '삭제'}
               </TextH6B>
             </FlexBetweenStart>
             <ReviewHeader>
@@ -123,11 +123,7 @@ const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: I
               <ImgWrapper>
                 {review.reviewImages?.map((img: any, index: number) => {
                   return (
-                    <ReviewImageWrapper
-                      isFirst
-                      onClick={() => imageClickHandler(index)}
-                      key={index}
-                    >
+                    <ReviewImageWrapper isFirst onClick={() => imageClickHandler(index)} key={index}>
                       <Image src={img.url} alt="리뷰이미지" width="72" height="72"></Image>
                     </ReviewImageWrapper>
                   );

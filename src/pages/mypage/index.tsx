@@ -38,7 +38,6 @@ interface IMypageMenu {
   link: string;
   hideBorder?: boolean;
 }
-
 const MypagePage: NextPageWithLayout = () => {
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);
@@ -260,21 +259,24 @@ const MypagePage: NextPageWithLayout = () => {
               <MypageMenu title="결제 관리" link="/mypage/card" />
               <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
               <ImageWrapper>
-                <Image
-                  width={340}
-                  height={96}
-                  layout="responsive"
-                  objectFit="cover"
-                  src="/banner/mypage_banner.jpg"
-                  alt="Friend invitation banner"
-                />
+                <Link href="/mypage/friend">
+                  <a>
+                    <Image
+                      height="131px"
+                      width="512px"
+                      layout="responsive"
+                      src="/banner/mypage_banner.jpg"
+                      alt="Friend invitation banner"
+                    />
+                  </a>
+                </Link>
               </ImageWrapper>
               <MypageMenu title="이벤트·소식" link="/event" />
-              <MypageMenu title="배송 안내" link="/mypage/delivery-infomation" hideBorder />
+              <MypageMenu title="배송안내" link="/mypage/delivery-infomation" hideBorder />
               <MypageMenu title="고객센터" link="/mypage/customer-service" />
               <MypageMenu title="설정" link="/mypage/setting" />
-              <MypageMenu title="약관 및 정책" link="/mypage/term" />
-              <MypageMenu title="버전 정보" link="/mypage/term" hideBorder />
+              <MypageMenu title="약관 및 정책" link="/mypage/term" hideBorder />
+              {/* <MypageMenu title="버전 정보" link="/mypage/term" hideBorder /> */}
               <BorderLine height={8} />
               <LogoutWrapper onClick={logoutHandler}>
                 <FlexBetween padding="24px 0">
@@ -313,14 +315,7 @@ const MypagePage: NextPageWithLayout = () => {
               <ImageWrapper>
                 <Link href="/mypage/friend">
                   <a>
-                    <Image
-                      width={360}
-                      height={96}
-                      layout="responsive"
-                      objectFit="cover"
-                      src={newUserImg}
-                      alt="new member event"
-                    />
+                    <Image height="131px" width="512px" layout="responsive" src={newUserImg} alt="new member event" />
                   </a>
                 </Link>
               </ImageWrapper>
@@ -328,10 +323,9 @@ const MypagePage: NextPageWithLayout = () => {
                 <Link href="/mypage/friend">
                   <a>
                     <Image
-                      width={360}
-                      height={96}
+                      height="131px"
+                      width="512px"
                       layout="responsive"
-                      objectFit="cover"
                       src={friendPushEventImg}
                       alt="Friend invitation banner"
                     />
@@ -351,8 +345,8 @@ const MypagePage: NextPageWithLayout = () => {
 };
 
 MypagePage.getLayout = (page: ReactElement) => {
-  return (<DefaultLayout bottom={<HomeBottom/>}>{page}</DefaultLayout>)
-}
+  return <DefaultLayout bottom={<HomeBottom />}>{page}</DefaultLayout>;
+};
 
 export const MypageMenu = React.memo(({ title, count, link, hideBorder }: IMypageMenu) => {
   return (

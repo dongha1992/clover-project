@@ -12,8 +12,6 @@ type TProps = {
   isMobile?: boolean;
 };
 
-/* TODO: Header props으로 svg만 추가 */
-
 const MenuDetailHeader = ({ title }: TProps) => {
   const router = useRouter();
   const { isSpot } = router.query;

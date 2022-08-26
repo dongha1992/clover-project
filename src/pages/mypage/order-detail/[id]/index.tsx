@@ -6,7 +6,6 @@ import { SVGIcon } from '@utils/common';
 import { OrderItem } from '@components/Pages/Order';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
-import { Obj } from '@model/index';
 import { useToast } from '@hooks/useToast';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,9 +30,9 @@ import { userForm } from '@store/user';
 import { INIT_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION, INIT_TEMP_EDIT_SPOT } from '@store/mypage';
 
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
-import { getTotalPayment } from '@utils/getTotalPayment';
 import { AxiosError } from 'axios';
 import { INIT_ACCESS_METHOD } from '@store/common';
+
 // temp
 
 const disabledDates: any = [];
@@ -272,7 +271,7 @@ const OrderDetailPage = () => {
       );
       return;
     }
-    console.log(orderDeliveries, 'orderDeliveries');
+
     if (hasSubOrder && !isSubOrder && !isSubOrderCanceled) {
       dispatch(
         SET_ALERT({
@@ -609,19 +608,6 @@ const OrderDetailPage = () => {
                 </FlexBetween>
               )}
             </RefundContainer>
-            <FlexEnd padding="11px 0 0 0">
-              <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                {me?.grade?.name!}
-              </Tag>
-              <TextB3R padding="0 0 0 3px">환불 시 </TextB3R>
-              <TextH6B>
-                {calculatePoint({
-                  rate: me?.grade.benefit.accrualRate!,
-                  total: refundCoupon + refundPoint + refundPayAmount,
-                })}
-                P ({me?.grade.benefit.accrualRate}%) 환불 예정
-              </TextH6B>
-            </FlexEnd>
           </RefundInfoWrapper>
         </>
       )}

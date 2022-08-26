@@ -10,7 +10,7 @@ import { IGetOrders, IOrderDeliverie } from '@model/index';
 import Image from 'next/image';
 import subsMainBanner from '@public/images/subsMainBanner.svg';
 import dayjs from 'dayjs';
-import { parcelDeliveryCompledN, spotDeliveryCompledN, todayN } from '@utils/common';
+import { dateN, afterDateN } from '@utils/common';
 import React, { ReactElement, useEffect, useState } from 'react';
 import DefaultLayout from '@components/Layout/Default';
 import HomeBottom from '@components/Bottom/HomeBottom';
@@ -52,14 +52,14 @@ const SubscriptiopPage: NextPageWithLayout = () => {
             item.subscriptionPeriod === 'UNLIMITED' &&
             !item.isSubscribing &&
             !!item.unsubscriptionType &&
-            todayN() > Number(dayjs(item.subscriptionPaymentDate).add(2, 'day').format('YYYYMMDD'))
+            dateN() > Number(dayjs(item.subscriptionPaymentDate).add(2, 'day').format('YYYYMMDD'))
           ) {
             return;
           } else if (
             item.subscriptionPeriod !== 'UNLIMITED' &&
             item.status === 'COMPLETED' &&
             item.delivery === 'SPOT' &&
-            spotDeliveryCompledN(item.lastDeliveryDate!) < todayN() + 1
+            dateN(item.lastDeliveryDate!) < dateN() + 1
           ) {
             // 단기구독(스팟) 완료후 구독정보카드 하루유지
             return item;
@@ -67,7 +67,7 @@ const SubscriptiopPage: NextPageWithLayout = () => {
             item.subscriptionPeriod !== 'UNLIMITED' &&
             item.status === 'COMPLETED' &&
             (item.delivery === 'PARCEL' || item.delivery === 'MORNING') &&
-            parcelDeliveryCompledN(item.lastDeliveryDate!) < todayN() + 1
+            afterDateN(item.lastDeliveryDate!, 1) < dateN() + 1
           ) {
             // 단기구독(새벽/택배) 완료후 구독정보카드 하루유지
             return item;
@@ -121,7 +121,13 @@ const SubscriptiopPage: NextPageWithLayout = () => {
       <SubsParcelList menus={menus!} moreClickHandler={goToDawn} />
 
       <Banner onClick={goToSubsInformation}>
-        <Image src={subsMainBanner} alt="웰컴이미지" width={360} height={96} layout="responsive" objectFit="cover" />
+        <Image 
+          src='/images/subsMainBanner.svg'
+          alt="웰컴이미지" 
+          width={512} 
+          height={131} 
+          layout="responsive" 
+        />
       </Banner>
     </Container>
   );

@@ -19,17 +19,18 @@ import {
 import { destinationForm } from '@store/destination';
 import { postDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { CheckTimerByDelivery } from '@components/CheckTimer';
-import { checkTimerLimitHelper, checkIsValidTimer } from '@utils/destination';
-import { orderForm, SET_TIMER_STATUS } from '@store/order';
+import { checkTimerLimitHelper, checkIsValidTimer, getTargetDelivery } from '@utils/destination';
+import { INIT_TIMER, orderForm, SET_TIMER_STATUS } from '@store/order';
 import { useRouter } from 'next/router';
 import { DELIVERY_METHOD } from '@constants/delivery-info';
 import { IDestinationsResponse } from '@model/index';
 import { PickupPlaceBox, DeliveryPlaceBox } from '@components/Pages/Cart';
 import { SET_ALERT } from '@store/alert';
 import { getOrderListsApi } from '@api/order';
-import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { useQuery } from 'react-query';
 import { SET_SUBS_DELIVERY_EXPECTED_DATE, SET_SUBS_INFO_STATE, SET_SUBS_START_DATE } from '@store/subscription';
 import { useMenuDetail } from '@queries/menu';
+import { getCurrentDate } from '@utils/common/dateHelper';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -96,9 +97,6 @@ const DeliverInfoPage = () => {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
-
-  // 배송 마감 타이머 체크 + 위치 체크
-  let timerDeliveryType = checkIsValidTimer(checkTimerLimitHelper());
 
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
@@ -481,17 +479,18 @@ const DeliverInfoPage = () => {
 
   const checkTimerShow = () => {
     // 배송 방법 선택과 관련 없이 현재 시간이 배송 마감 30분 전 이면 show
-
-    const isNotTimer = ['스팟저녁', '새벽택배', '새벽택배N일', '스팟점심', '스팟점심N일'].includes(timerDeliveryType);
-
-    if (!isNotTimer) {
-      if (['스팟점심타이머', '스팟저녁타이머'].includes(timerDeliveryType)) {
+    const timerResult = checkTimerLimitHelper(locationStatus);
+    if(checkIsValidTimer(getCurrentDate(), timerResult)) {
+      dispatch(INIT_TIMER({ isInitDelay: false })); //타이머 시작
+      const timerDeliveryType = getTargetDelivery(timerResult)
+      if (['스팟점심', '스팟저녁'].includes(timerDeliveryType)) {
         setTimerDeliveryType('스팟배송');
       } else {
         setTimerDeliveryType(timerDeliveryType);
       }
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: true }));
     } else {
+      dispatch(INIT_TIMER({ isInitDelay: true })); //타이머 정지
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
     }
   };
