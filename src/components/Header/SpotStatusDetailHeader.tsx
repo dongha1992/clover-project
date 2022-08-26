@@ -68,10 +68,13 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 16px 24px;
+  padding: 0 24px;
+  /* margin: 16px 24px; */
   .arrow {
     cursor: pointer;
     > svg {

@@ -40,10 +40,12 @@ const LoginPage = () => {
       const password = passwordRef.current?.value.toString();
 
       const emailVaildCheck = EMAIL_REGX.test(email);
-      const passwordVaildCheck = password.length > 7 && password.length < 20;
+      const passwordVaildCheck = password.length > 3 && password.length < 20;
 
       if (emailVaildCheck && passwordVaildCheck) {
         setIsValid(true);
+      } else {
+        setIsValid(false);
       }
     }
   };

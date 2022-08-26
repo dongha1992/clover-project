@@ -108,11 +108,13 @@ const SignupOptionalPage = () => {
           return res?.data;
         });
         dispatch(SET_USER(userInfo.data));
-        dispatch(
-          SET_BOTTOM_SHEET({
-            content: <WelcomeSheet recommendCode={recommendCode as string} />,
-          })
-        );
+        setTimeout(() => {
+          dispatch(
+            SET_BOTTOM_SHEET({
+              content: <WelcomeSheet recommendCode={recommendCode as string} />,
+            })
+          );
+        }, 100);
         localStorage.removeItem('appleToken');
       }
     } catch (error: any) {

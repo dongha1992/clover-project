@@ -10,7 +10,6 @@ import { breakpoints } from '@utils/common/getMediaQuery';
 import { TextH4B } from '@components/Shared/Text';
 import { Obj } from '@model/index';
 import { useQueryClient } from 'react-query';
-// import { TabList } from '@components/Shared/TabList';
 
 const TabList = dynamic(() => import('../Shared/TabList/TabList'));
 
@@ -105,9 +104,11 @@ const Wrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
   height: 56px;
   justify-content: center;
-  padding: 16px 24px;
+  padding: 0 24px;
+  /* padding: 16px 24px; */
   .arrow {
     cursor: pointer;
     > svg {
