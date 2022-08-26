@@ -205,7 +205,6 @@ const MenuDetailPage: NextPageWithLayout = () => {
       );
     } else {
       refetch().then((res) => {
-        console.log(res, 'res');
         if (!res.isLoading) {
           const data = res.data;
           dispatch(
@@ -314,6 +313,12 @@ const MenuDetailPage: NextPageWithLayout = () => {
       dispatch(SET_MENU_ITEM(menuDetail));
     }
   }, [menuDetail]);
+
+  useEffect(() => {
+    if (router.isReady) {
+      setSelectedTab(router.query.tab ? '/menu/detail/review' : '/menu/[id]');
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     return () => {
@@ -482,7 +487,13 @@ const MenuDetailPage: NextPageWithLayout = () => {
           {banners?.map((banner, index) => {
             return (
               <AdWrapper key={index}>
-                <Image src={banner.image.url} width="512px" height="100%"></Image>
+                <Image
+                  src={banner.image.url}
+                  width="512px"
+                  height="131px"
+                  layout="responsive"
+                  alt="메뉴 상세 페이지 베너"
+                />
               </AdWrapper>
             );
           })}
@@ -504,8 +515,8 @@ const MenuDetailPage: NextPageWithLayout = () => {
 };
 
 MenuDetailPage.getLayout = (page: ReactElement) => {
-  return (<DefaultLayout bottom={<DetailBottom/>}>{page}</DefaultLayout>);
-}
+  return <DefaultLayout bottom={<DetailBottom />}>{page}</DefaultLayout>;
+};
 
 const Container = styled.section``;
 
@@ -598,9 +609,7 @@ const ReviewSwipeContainer = styled(Swiper)`
 
 const AdWrapper = styled.div`
   width: 100%;
-  height: 96px;
-  /* background-color: #dedede; */
-  margin-bottom: 16px;
+  padding-bottom: 8px;
 `;
 
 const ReviewHeader = styled.div`

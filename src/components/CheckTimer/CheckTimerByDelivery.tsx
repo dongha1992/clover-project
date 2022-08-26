@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { TimerTooltip } from '@components/Shared/Tooltip';
 import { Obj } from '@model/index';
-import { checkTimerLimitHelper, checkIsValidTimer } from '@utils/destination';
+import { checkTimerLimitHelper, checkIsValidTimer, getTargetDelivery } from '@utils/destination';
 import useTimer from '@hooks/useTimer';
 import { TextH6B, TextB2R, TextH5B } from '@components/Shared/Text';
 import { theme, FlexRow } from '@styles/theme';
+import { useDispatch, useSelector } from 'react-redux';
+import { destinationForm } from '@store/destination';
+import { INIT_TIMER } from '@store/order';
+import { getCurrentDate } from '@utils/common/dateHelper';
 
 interface IProps {
   isTooltip?: boolean;
@@ -21,10 +25,17 @@ const msgMapper: Obj = {
 const CheckTimerByDelivery = ({ isTooltip, isCartSheet }: IProps) => {
   const [targetDelivery, setTargetDelivery] = useState<string>('');
   const [timerMsg, setTimerMsg] = useState('');
-
+  const dispatch = useDispatch();
   const { timer } = useTimer();
+  const { locationStatus } = useSelector(destinationForm);
+  const timerResult = checkTimerLimitHelper(locationStatus);
+  if(checkIsValidTimer(getCurrentDate(), timerResult)) {
+    dispatch(INIT_TIMER({ isInitDelay: false })); //타이머 시작
+  }else {
+    dispatch(INIT_TIMER({ isInitDelay: true })); //타이머 정지
+  }
 
-  let deliveryType = checkIsValidTimer(checkTimerLimitHelper()).replace('타이머', '');
+  const deliveryType = getTargetDelivery(timerResult)
   console.log(deliveryType, 'deliveryType');
 
   const msgHandler = () => {

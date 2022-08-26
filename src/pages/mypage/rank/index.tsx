@@ -107,12 +107,12 @@ const RankPage = () => {
       </BrandColor5>
       <PaddingWrapper>
         {userGrade?.userGrades.map((item, index) => {
-          return <RankInfo name={item.name} desc={item.description} key={index} />;
+          let isLast = false;
+          if (index === userGrade?.userGrades.length - 1) {
+            isLast = true;
+          }
+          return <RankInfo name={item.name} desc={item.description} key={index} isLast={isLast} />;
         })}
-        {/* <RankInfo name="신규회원" desc="전월 구매내역이 없는 고객" benefit2="신규회원혜택 사용 가능" />
-        <RankInfo name="프코팡" desc="전월 5만원 미만 구매고객" benefit1="적립금 0.5%" />
-        <RankInfo name="프코팡팡" desc="전월 5만원 이상 20만원 미만 구매고객" benefit1="적립금 1%" />
-        <RankInfo name="프코팡팡팡" desc="전월 20만원 이상 구매고객" benefit1="적립금 1.5%" isLast /> */}
       </PaddingWrapper>
       <PleaseCheck>
         <TextH5B color={theme.greyScale65} padding="24px 0 0 0">

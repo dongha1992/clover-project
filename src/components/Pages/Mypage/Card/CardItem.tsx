@@ -11,9 +11,20 @@ interface IProps {
   card?: IGetCard;
   cardCount?: number;
   isFromOrder?: boolean;
+  isMypage?: boolean;
 }
 
-const CardItem = ({ onClick, card, cardCount, isFromOrder }: IProps) => {
+const CardItem = ({ onClick, card, cardCount, isFromOrder, isMypage }: IProps) => {
+  const buttonTitle = () => {
+    switch (true) {
+      case isFromOrder && isMypage:
+        return '선택';
+      case isFromOrder:
+        return '변경하기';
+      default:
+        return '수정';
+    }
+  };
   return (
     <RegisteredCardWrapper>
       <FlexBetweenStart>
@@ -27,22 +38,9 @@ const CardItem = ({ onClick, card, cardCount, isFromOrder }: IProps) => {
             </FlexRow>
           </FlexCol>
         </FlexRowStart>
-
-        {isFromOrder ? (
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)} pointer>
-            선택
-          </TextH6B>
-        ) : (
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)} pointer>
-            편집
-          </TextH6B>
-        )}
-
-        {/* {cardCount && cardCount >= 2 && (
-          <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)}>
-            변경하기
-          </TextH6B>
-        )} */}
+        <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={() => onClick(card!)} pointer>
+          {buttonTitle()}
+        </TextH6B>
       </FlexBetweenStart>
     </RegisteredCardWrapper>
   );

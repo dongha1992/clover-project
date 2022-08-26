@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '.';
 import { IOrderPreviewRequest } from '@model/index';
 
+interface IUserOrderInfo {}
 interface TProps {
   orderType: string;
   isTimerTooltip: boolean;
@@ -10,6 +11,7 @@ interface TProps {
   tempOrder: IOrderPreviewRequest | null;
   selectedCard: number | null;
   recentPayment: string;
+  userOrderInfo: any;
 }
 
 const initialState: TProps = {
@@ -20,6 +22,7 @@ const initialState: TProps = {
   tempOrder: null,
   selectedCard: null,
   recentPayment: '',
+  userOrderInfo: null,
 };
 
 export const order = createSlice({
@@ -45,7 +48,6 @@ export const order = createSlice({
     INIT_ORDER: (state: any, action: PayloadAction) => {
       state.tempOrder = null;
     },
-
     SET_CARD: (state: any, action: PayloadAction<number | null>) => {
       state.selectedCard = action.payload;
     },
@@ -54,6 +56,12 @@ export const order = createSlice({
     },
     SET_RECENT_PAYMENT: (state: any, action: PayloadAction<string>) => {
       state.recentPayment = action.payload;
+    },
+    SET_USER_ORDER_INFO: (state: any, action: PayloadAction<IUserOrderInfo>) => {
+      state.userOrderInfo = action.payload;
+    },
+    INIT_USER_ORDER_INFO: (state: any, action: PayloadAction) => {
+      state.userOrderInfo = null;
     },
   },
 });
@@ -66,6 +74,8 @@ export const {
   INIT_CARD,
   INIT_ORDER,
   SET_RECENT_PAYMENT,
+  SET_USER_ORDER_INFO,
+  INIT_USER_ORDER_INFO,
 } = order.actions;
 export const orderForm = (state: AppState): TProps => state.order;
 export default order.reducer;

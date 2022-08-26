@@ -44,6 +44,7 @@ import {
 import { isNil, isEqual } from 'lodash-es';
 import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { INIT_USER_ORDER_INFO } from '@store/order';
 import { getCustomDate } from '@utils/destination';
 import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus, calculatePoint } from '@utils/menu';
 import { useQuery, useQueryClient, useMutation, useIsMutating } from 'react-query';
@@ -72,6 +73,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import 'swiper/css';
+import { INIT_COUPON } from '@store/coupon';
 
 dayjs.locale('ko');
 
@@ -325,7 +327,7 @@ const CartPage = () => {
     {
       onSuccess: async (params) => {
         const { menuDetailId, quantity, type } = params!;
-
+        calculateDisposableByMenus(type);
         const sliced = cartItemList.slice();
         const changedCartItemList = changedQuantityHandler(sliced, menuDetailId, quantity);
         reorderCartList(changedCartItemList);
@@ -406,7 +408,7 @@ const CartPage = () => {
         });
       });
     });
-
+    console.log(editDisposableList, 'editDisposableList');
     return editDisposableList;
   };
 
@@ -921,7 +923,8 @@ const CartPage = () => {
   const getSpotDiscountPrice = useCallback((): number => {
     const spotDiscount = cartResponse?.discountInfos[0];
     const discoutnedItemsPrice = getItemsPrice() - getItemDiscountPrice();
-    return (spotDiscount?.discountRate ?? 0 / 100) * discoutnedItemsPrice;
+
+    return (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice ?? 0;
   }, [checkedMenus]);
 
   const getDeliveryFee = useCallback(() => {
@@ -1115,7 +1118,9 @@ const CartPage = () => {
     }
   };
 
-  const calculateDisposableByMenus = () => {
+  const calculateDisposableByMenus = (type: string) => {
+    const plus = type === 'plus';
+
     const menuDetailsCount = checkedMenus.reduce((total: number, menus: any) => {
       return menus.menuDetails.reduce((acc: number, cur: any) => {
         return total + acc + cur.quantity;
@@ -1124,8 +1129,8 @@ const CartPage = () => {
 
     setDisposableList(
       disposableList.map((item) => {
-        // return { ...item, quantity: plus ? item.quantity + 1 : !minimum ? item.quantity - 1 : menuDetailsCount };
-        return { ...item, quantity: menuDetailsCount };
+        if (!plus && item.quantity < 2) return { ...item, quantity: 1 };
+        return { ...item, quantity: plus ? item.quantity + 1 : item.quantity - 1 };
       })
     );
   };
@@ -1222,7 +1227,6 @@ const CartPage = () => {
     if (checkedMenus?.length === cartItemList?.length) {
       setIsAllchecked(true);
     }
-    calculateDisposableByMenus();
   }, [checkedMenus]);
 
   useEffect(() => {
@@ -1282,6 +1286,8 @@ const CartPage = () => {
   useEffect(() => {
     setIsFirstRender(true);
     dispatch(INIT_ACCESS_METHOD());
+    dispatch(INIT_USER_ORDER_INFO());
+    dispatch(INIT_COUPON());
   }, []);
 
   if (isLoading) {

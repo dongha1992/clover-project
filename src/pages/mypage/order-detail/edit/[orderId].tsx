@@ -19,7 +19,7 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { dateN, SVGIcon } from '@utils/common';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { getOrderDetailApi, editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
+import { editDeliveryDestinationApi, editSpotDestinationApi } from '@api/order';
 import { useRouter } from 'next/router';
 import {
   ACCESS_METHOD_PLACEHOLDER,
@@ -28,7 +28,7 @@ import {
   DELIVERY_TYPE_MAP,
   DELIVERY_TIME_MAP,
 } from '@constants/order';
-import { commonSelector, INIT_ACCESS_METHOD } from '@store/common';
+import { commonSelector } from '@store/common';
 import {
   mypageSelector,
   INIT_TEMP_ORDER_INFO,
@@ -44,6 +44,7 @@ import { useGetOrderDetail } from 'src/queries/order';
 import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { userForm } from '@store/user';
 
 /* TODO: 서버/store 값 state에서 통일되게 관리, spot 주소쪽 */
 interface IProps {
@@ -59,8 +60,9 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   const { userAccessMethod } = useSelector(commonSelector);
   const { tempEditDestination, tempEditSpot, tempOrderInfo } = useSelector(mypageSelector);
   const { applyAll } = useSelector(destinationForm);
+  const { me } = useSelector(userForm);
 
-  const [isSamePerson, setIsSamePerson] = useState(tempOrderInfo?.isSamePerson);
+  const [isSamePerson, setIsSamePerson] = useState(false);
   const [deliveryEditObj, setDeliveryEditObj] = useState<any>({
     selectedMethod: {},
     location: {},
@@ -138,10 +140,12 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isMorning = orderDetail?.delivery === 'MORNING';
 
+  const { name, tel } = me!;
+
   const { mutateAsync: mutationDeliveryInfo } = useMutation(
     async (reqBody: any) => {
       const deliveryId = orderDetail?.id!;
-      console.log(deliveryEditObj, 'deliveryEditObj');
+
       if (!isSpot) {
         const { selectedMethod, ...rest } = reqBody;
         const { data } = await editDeliveryDestinationApi({
@@ -300,6 +304,13 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
 
   const changeDeliveryPlace = () => {
     const isCancel = !!data?.unsubscriptionType;
+    dispatch(
+      SET_TEMP_ORDER_INFO({
+        isSamePerson: false,
+        receiverName: deliveryEditObj.receiverName,
+        receiverTel: deliveryEditObj.receiverTel,
+      })
+    );
     if (data.type === 'SUBSCRIPTION') {
       dispatch(
         SET_BOTTOM_SHEET({
@@ -325,19 +336,12 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
         },
       });
     } else {
-      router.push({ pathname: '/destination/search', query: { orderId, destinationId } });
+      router.push({
+        pathname: '/destination/search',
+        query: { orderId, destinationId, deliveryType: orderDetail?.delivery },
+      });
       dispatch(SET_USER_DELIVERY_TYPE(orderDetail?.delivery.toLowerCase()!));
     }
-  };
-
-  const onBlur = () => {
-    dispatch(
-      SET_TEMP_ORDER_INFO({
-        isSamePerson: false,
-        receiverName: deliveryEditObj.receiverName,
-        receiverTel: deliveryEditObj.receiverTel,
-      })
-    );
   };
 
   useEffect(() => {
@@ -365,16 +369,18 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   }, [tempEditSpot]);
 
   useEffect(() => {
+    const isChanged = deliveryEditObj?.receiverName !== name || deliveryEditObj?.receiverTel !== tel;
+    setIsSamePerson(!isChanged ? true : false);
+  }, [deliveryEditObj]);
+
+  useEffect(() => {
     if (isSamePerson && orderDetail) {
       setDeliveryEditObj({
         ...deliveryEditObj,
-        receiverName: orderDetail?.receiverName,
-        receiverTel: orderDetail?.receiverTel,
+        receiverName: name,
+        receiverTel: tel,
       });
       dispatch(INIT_TEMP_ORDER_INFO());
-    }
-    if (!isSamePerson) {
-      dispatch(SET_TEMP_ORDER_INFO({ ...tempOrderInfo, isSamePerson: false }));
     }
   }, [isSamePerson, orderDetail]);
 
@@ -396,7 +402,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
               name="receiverName"
               value={deliveryEditObj.receiverName || ''}
               eventHandler={changeInputHandler}
-              onBlur={onBlur}
+              // onBlur={onBlur}
             />
           </FlexCol>
           <FlexCol>
@@ -406,7 +412,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
               name="receiverTel"
               value={deliveryEditObj.receiverTel || ''}
               eventHandler={changeInputHandler}
-              onBlur={onBlur}
+              // onBlur={onBlur}
             />
           </FlexCol>
         </ReceiverInfoWrapper>

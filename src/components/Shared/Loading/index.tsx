@@ -1,19 +1,11 @@
 import styled from 'styled-components';
-import Lottie from 'react-lottie';
-import test from '@public/images/test1.json';
+import Lottie from "lottie-react";
+import loadingAnimation from '@public/images/loading.json';
 
 export const Loading = ({isShow=false}) => {
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: test,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-    },
-  };
   return (
     <Overlay style={{display: isShow ? 'flex' : 'none'}}>
-      <Lottie options={defaultOptions} height={100} width={100} />
+      <Lottie animationData={loadingAnimation} style={{ width: 100, height: 100 }} />
     </Overlay>
   );
 };

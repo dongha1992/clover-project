@@ -1,6 +1,6 @@
 import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { FlexRow, theme } from '@styles/theme';
-import { getFormatDate, subsClosedDate, SVGIcon } from '@utils/common';
+import { afterDate, getFormatDate, SVGIcon } from '@utils/common';
 import styled from 'styled-components';
 
 interface IProps {
@@ -11,6 +11,9 @@ interface IProps {
 }
 
 const ClosedGuideBox = ({ type, isChanged, unsubscriptionMessage, subscriptionPaymentDate }: IProps) => {
+  const subsClosedDate = (subscriptionPaymentDate: string) => {
+    return getFormatDate(afterDate(subscriptionPaymentDate, 2))
+  }
   return (
     <ClosedGuidContainer>
       <FlexRow padding="0 0 8px">

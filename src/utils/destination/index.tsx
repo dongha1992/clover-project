@@ -3,6 +3,7 @@ import checkIsValidTimer from './checkIsValidTimer';
 import checkTimerLimitHelper from './checkTimerLimitHelper';
 import checkDestinationHelper from './checkDestinationHelper';
 import calculateArrival from './calculateArrival';
+import getTargetDelivery from './getTargetDelivery';
 import { getFormatTimeStr, getFormatTime } from './getFormatTime';
 
 export {
@@ -13,4 +14,5 @@ export {
   checkIsValidTimer,
   checkDestinationHelper,
   calculateArrival,
+  getTargetDelivery
 };

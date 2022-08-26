@@ -18,7 +18,7 @@ const PopupWrapper = ({ children }: IProps): JSX.Element => {
   const isApp = useIsApp();
   const { isMobile } = useSelector(commonSelector);
   const pathnameHome = window.location.pathname.indexOf('/') !== -1;
-
+  const dynamicLink = 'https://freshcodeclover.page.link/DtUc';
   const { data: fetchBanner, error: popupBannerError } = useQuery(
     'getPopupBannerList',
     async () => {
@@ -46,7 +46,7 @@ const PopupWrapper = ({ children }: IProps): JSX.Element => {
         ) {
           dispatch(
             SET_BOTTOM_SHEET({
-              content: <AppDownloadPushSheet closeHandler={lookAroundHandler} onClick={goToAppLink} />,
+              content: <AppDownloadPushSheet closeHandler={lookAroundHandler} href={dynamicLink} />,
               noneMarginBottom: true,
               dimmedHandler: () => {
                 lookAroundHandler();

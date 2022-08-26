@@ -45,10 +45,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
 
-  const {
-    data: selectedReviewDetail,
-    isLoading,
-  } = useQuery(
+  const { data: selectedReviewDetail, isLoading } = useQuery(
     'getReviewDetail',
     async () => {
       const params = {
@@ -146,24 +143,24 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   const onUploadStartHandler = () => {
     setImageUploading(true);
     dispatch(show());
-  }
+  };
 
   const onUploadFinishHandler = () => {
     setImageUploading(false);
     dispatch(hide());
-  }
+  };
 
   const fileUploadErrorHandler = (alertMessage: string) => {
     dispatch(SET_ALERT({ alertMessage }));
-  }
+  };
 
   const uploadSuccessHandler = (url: string) => {
-    setReviewImages(imageList => [...imageList, url]);
-  }
+    setReviewImages((imageList) => [...imageList, url]);
+  };
 
   const removePreviewImgHandler = (index: number) => {
     const filterImages = reviewImages.filter((img, idx) => idx !== index);
-    setReviewImages(filterImages)
+    setReviewImages(filterImages);
   };
 
   const finishWriteReview = async () => {
@@ -209,7 +206,6 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   if (isLoading) {
     return <div>로딩</div>;
   }
-  console.log('selectedReviewDetail', selectedReviewDetail);
 
   return (
     <Container>
@@ -286,13 +282,15 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
         </FlexRow>
         <FlexRow>
           <ReviewImageUpload
-            onError={fileUploadErrorHandler} onSuccess={uploadSuccessHandler}
-            onStart={onUploadStartHandler} onFinish={onUploadFinishHandler} disabled={reviewImages.length > 1}/>
+            onError={fileUploadErrorHandler}
+            onSuccess={uploadSuccessHandler}
+            onStart={onUploadStartHandler}
+            onFinish={onUploadFinishHandler}
+            disabled={reviewImages.length > 1}
+          />
           {reviewImages.map((img: string, index: number) => {
-              return (
-                <ReviewImagePreview key={index} image={img} onRemove={()=> removePreviewImgHandler(index)}/>
-              );
-            })}
+            return <ReviewImagePreview key={index} image={img} onRemove={() => removePreviewImgHandler(index)} />;
+          })}
         </FlexRow>
       </UploadPhotoWrapper>
       <PointInfoWrapper>

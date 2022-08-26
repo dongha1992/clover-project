@@ -113,8 +113,7 @@ const DetailBottomStory = ({ list }: IProps): ReactElement => {
               <ImageWrapper key={idx} onClick={() => openImgViewer(i.url)}>
                 <Image 
                   src={i?.url} 
-                  height='512'
-                  width='176'
+                  height='287px'
                   layout="responsive"
                   alt="프코스팟 상세 페이지 스토리 이미지"
                   className='fcospot-img'

@@ -65,7 +65,7 @@ const SubsPaymentMethod = ({ goToCardManagemnet, card, subscriptionPaymentDate }
             <TextB3R color={theme.greyScale65}>다음 결제 시점까지 식단을 확인하고 취소할 수 있습니다.</TextB3R>
           </li>
           <li>
-            <TextB3R color={theme.greyScale65}>구독 관리에서 다음 결제정보를 변경할 수 있습니다.</TextB3R>
+            <TextB3R color={theme.greyScale65}>구독 내역에서 다음 결제정보를 변경할 수 있습니다.</TextB3R>
           </li>
           <li>
             <TextB3R color={theme.greyScale65}>등록된 카드의 잔액 부족 시 구독이 취소될 수 있습니다.</TextB3R>
