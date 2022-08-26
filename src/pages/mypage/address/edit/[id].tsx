@@ -51,7 +51,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
     deliveryMessageType: '',
     spotPickupId: null,
     isAccessInit: false,
-    selectedMethod: {},
+    selectedMethod: null,
   });
 
   const dispatch = useDispatch();
@@ -215,10 +215,10 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
           deliveryEditObj?.deliveryMessageType === 'FREE' ||
           deliveryEditObj?.deliveryMessageType === 'DELIVERY_SECURITY_OFFICE';
 
-        if (noMsg) {
+        if (!isFreeAccess && noMsg) {
           dispatch(SET_ALERT({ alertMessage: '메시지를 입력해주세요.' }));
           return false;
-        } else if (!isFreeAccess && noAccessMethod) {
+        } else if (noAccessMethod) {
           dispatch(SET_ALERT({ alertMessage: '츨입방법을 입력해주세요' }));
           return false;
         } else {
@@ -246,7 +246,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
       ...deliveryEditObj,
       deliveryMessage: '',
       deliveryMessageType: '',
-      selectedMethod: {},
+      selectedMethod: null,
       isAccessInit: !deliveryEditObj.isAccessInit,
     });
     dispatch(INIT_ACCESS_METHOD());

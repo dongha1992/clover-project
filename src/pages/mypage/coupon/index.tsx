@@ -119,6 +119,7 @@ const CouponManagementPage = () => {
                 key={index}
                 selectCouponHandler={selectCouponHandler}
                 isSelected={selectedCoupon?.id === coupon.id}
+                isMypage
               />
             ))}
           </FlexCol>

@@ -27,6 +27,7 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
   /* TODO: 아래 중복 코드 많음 헬퍼함수? */
   const isParcel = delivery === 'PARCEL';
   const deliveryStatus = DELIVERY_STATUS_MAP[status];
+
   const deliveryDetail = DELIVERY_TIME_MAP[orderDeliveryItem.deliveryDetail];
   const isCompleted = deliveryStatus === '배송완료';
   const isCanceled = deliveryStatus === '주문취소';
@@ -55,7 +56,9 @@ const OrderDeliveryItem = ({ orderDeliveryItem, buttonHandler }: IProps) => {
           {!isCanceled && (
             <>
               <SVGIcon name="deliveryTruckIcon" />
-              <TextH5B padding="2px 0 0 4px">{deliverAt} 도착예정</TextH5B>
+              <TextH5B padding="2px 0 0 4px">
+                {deliverAt} {isCompleted ? '도착' : '도착예정'}
+              </TextH5B>
             </>
           )}
         </FlexRow>

@@ -122,14 +122,8 @@ const GeneralMenusPriceBox = ({
         <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
           {grade?.name!}
         </Tag>
-        <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
-        <TextH6B>
-          {calculatePoint({
-            rate: grade.benefit.accumulationRate!,
-            total: total + userInputObj.point,
-          })}
-          P ({grade.benefit.accumulationRate}%) 적립 예정
-        </TextH6B>
+        <TextB3R padding="0 0 0 3px">결제 금액의 </TextB3R>
+        <TextH6B>{grade?.benefit?.accumulationRate * 100}% 적립</TextH6B>
       </FlexEnd>
     </TotalPriceWrapper>
   );

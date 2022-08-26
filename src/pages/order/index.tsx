@@ -216,8 +216,17 @@ const OrderPage = () => {
     async () => {
       /*TODO: 모델 수정해야함 */
 
-      const { point, payAmount, deliveryMessage, receiverName, receiverTel, coupon, deliveryMessageReused, ...rest } =
-        previewOrder?.order!;
+      const {
+        point,
+        payAmount,
+        deliveryMessage,
+        deliveryMessageType,
+        receiverName,
+        receiverTel,
+        coupon,
+        deliveryMessageReused,
+        ...rest
+      } = previewOrder?.order!;
 
       const hasMsg = userInputObj?.deliveryMessage?.length !== 0;
       const hasMsgType = userInputObj?.deliveryMessageType?.length !== 0;
@@ -241,7 +250,6 @@ const OrderPage = () => {
       };
 
       const { data } = await createOrderApi(reqBody);
-
       return data;
     },
     {
@@ -428,8 +436,8 @@ const OrderPage = () => {
     if (!checkForm.samePerson.isSelected && name === 'samePerson') {
       setUserInputObj({
         ...userInputObj,
-        receiverName: userName,
-        receiverTel: userTel,
+        receiverName: previewOrder?.order.userName!,
+        receiverTel: previewOrder?.order.userTel!,
       });
     }
     setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
@@ -440,7 +448,7 @@ const OrderPage = () => {
     const { payAmount } = previewOrder?.order!;
 
     let uncommaValue = Number(getUnCommaPrice(val));
-    const limitPoint = Math.min(payAmount, point) - (userInputObj.coupon! || 0);
+    const limitPoint = Math.min(payAmount - userInputObj.coupon! ?? 0, point);
 
     if (uncommaValue >= limitPoint) {
       uncommaValue = limitPoint > 0 ? limitPoint : 0;
@@ -475,7 +483,8 @@ const OrderPage = () => {
     const { point } = previewOrder!;
     const { payAmount } = previewOrder?.order!;
 
-    const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon ?? 0);
+    // const limitPoint = Math.min(payAmount, point) - (point === 0 ? 0 : userInputObj.coupon ?? 0);
+    const limitPoint = Math.min(payAmount - userInputObj.coupon ?? 0, point);
 
     let avaliablePoint = 0;
     if (limitPoint < payAmount) {
@@ -500,7 +509,7 @@ const OrderPage = () => {
   };
 
   const goToCardManagemnet = () => {
-    dispatch(SET_USER_ORDER_INFO(userInputObj));
+    dispatch(SET_USER_ORDER_INFO({ ...userInputObj, selectedOrderMethod }));
     if (isSubscription) {
       router.push({ pathname: '/mypage/card', query: { isOrder: true, isSubscription: true } });
     } else {
@@ -509,7 +518,7 @@ const OrderPage = () => {
   };
 
   const goToRegisteredCard = () => {
-    dispatch(SET_USER_ORDER_INFO(userInputObj));
+    dispatch(SET_USER_ORDER_INFO({ ...userInputObj, selectedOrderMethod }));
     router.push('/mypage/card/register');
   };
 
@@ -742,6 +751,7 @@ const OrderPage = () => {
     const isUsePoint = userInputObj.point > 0;
 
     const value = isUsePoint && usePointOverAmount ? userInputObj.point - coupon : userInputObj.point;
+
     return { value, coupon };
   };
 
@@ -859,7 +869,7 @@ const OrderPage = () => {
       setCard(card!);
 
       if (recentPayment) {
-        setSelectedOrderMethod(recentPayment);
+        setSelectedOrderMethod(userOrderInfo?.selectedOrderMethod ?? recentPayment);
       }
 
       const isEdited =
@@ -943,6 +953,8 @@ const OrderPage = () => {
           deliveryMessageType: '',
         });
       }
+
+      setSelectedOrderMethod(userOrderInfo?.selectedOrderMethod ?? selectedOrderMethod);
     }
   }, [previewOrder, userAccessMethod, userOrderInfo]);
 
@@ -983,8 +995,6 @@ const OrderPage = () => {
   }
 
   const {
-    userName,
-    userTel,
     userEmail,
     delivery,
     deliveryDetail,
@@ -1072,7 +1082,7 @@ const OrderPage = () => {
           <TextH4B>주문자 정보</TextH4B>
           <ShowBtnWrapper>
             {!showSectionObj.showCustomerInfoSection && (
-              <TextB2R padding="0 13px 0 0">{`${userName}, ${userTel}`}</TextB2R>
+              <TextB2R padding="0 13px 0 0">{`${previewOrder?.order?.userName}, ${previewOrder?.order?.userTel}`}</TextB2R>
             )}
             <SVGIcon name={showSectionObj.showCustomerInfoSection ? 'triangleUp' : 'triangleDown'} />
           </ShowBtnWrapper>
@@ -1081,15 +1091,15 @@ const OrderPage = () => {
           <CustomInfoList>
             <FlexBetween>
               <TextH5B>보내는 사람</TextH5B>
-              <TextB2R>{userName}</TextB2R>
+              <TextB2R>{previewOrder?.order.userName}</TextB2R>
             </FlexBetween>
             <FlexBetween margin="16px 0">
               <TextH5B>휴대폰 전화</TextH5B>
-              <TextB2R>{userTel}</TextB2R>
+              <TextB2R>{previewOrder?.order.userTel}</TextB2R>
             </FlexBetween>
             <FlexBetween>
               <TextH5B>이메일</TextH5B>
-              <TextB2R>{userEmail}</TextB2R>
+              <TextB2R>{previewOrder?.order.userEmail}</TextB2R>
             </FlexBetween>
           </CustomInfoList>
         </SlideToggle>
@@ -1170,9 +1180,9 @@ const OrderPage = () => {
             )}
           </FlexBetween>
           <DeliveryDateBox
-            location={location}
-            delivery={delivery}
-            deliveryDetail={deliveryDetail}
+            location={previewOrder?.order?.location!}
+            delivery={previewOrder?.order.delivery!}
+            deliveryDetail={previewOrder?.order.deliveryDetail!}
             dayFormatter={dayFormatter}
             destinationName={previewOrder?.destination.name!}
             spotPickupName={spotPickupName}
