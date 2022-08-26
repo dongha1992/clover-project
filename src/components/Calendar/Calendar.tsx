@@ -62,6 +62,9 @@ const Calendar = ({
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
   const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
 
+  const selectedDay = sessionStorage.getItem('selectedDay');
+  console.log(selectedDay, 'selectedDay');
+
   const initCalendar = () => {
     const { years, months, dates } = getCustomDate();
 
@@ -186,7 +189,7 @@ const Calendar = ({
 
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
     if (!isSheet) {
-      changeDeliveryDate(firstActiveDate);
+      changeDeliveryDate(selectedDay ?? firstActiveDate);
     }
 
     setCustomDisabledDate(mergedDisabledDate);

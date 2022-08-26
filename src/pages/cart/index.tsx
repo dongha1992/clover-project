@@ -975,6 +975,7 @@ const CartPage = () => {
   };
 
   const goToDeliveryInfo = () => {
+    sessionStorage.setItem('selectedDay', selectedDeliveryDay);
     // 합배송 선택한 경우
     if (subDeliveryId) {
       displayAlertForSubDelivery({ type: 'route' });
@@ -1077,6 +1078,7 @@ const CartPage = () => {
     };
 
     dispatch(SET_ORDER(reqBody));
+    sessionStorage.removeItem('selectedDay');
     setPemanentedDisposableItem();
 
     router.push('/order');
