@@ -341,7 +341,7 @@ const SubsDetailPage = () => {
                   {getFormatPrice(
                     String(
                       calculatePoint({
-                        rate: me?.grade.benefit.accrualRate!,
+                        rate: me?.grade.benefit.accumulationRate!,
                         total:
                           orderDetail?.menuAmount +
                           optionsPrice.option1.price +

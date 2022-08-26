@@ -125,10 +125,10 @@ const GeneralMenusPriceBox = ({
         <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
         <TextH6B>
           {calculatePoint({
-            rate: grade.benefit.accrualRate!,
+            rate: grade.benefit.accumulationRate!,
             total: total + userInputObj.point,
           })}
-          P ({grade.benefit.accrualRate}%) 적립 예정
+          P ({grade.benefit.accumulationRate}%) 적립 예정
         </TextH6B>
       </FlexEnd>
     </TotalPriceWrapper>
