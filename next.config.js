@@ -8,6 +8,7 @@ module.exports = () => {
       SERVICE_URL: process.env.SERVICE_URL,
       API_URL: process.env.API_URL,
       IMAGE_SERVER_URL: process.env.IMAGE_SERVER_URL,
+      NEXT_PUBLIC_GOOGLE_ANALYTICS: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS,
     },
   };
 };
