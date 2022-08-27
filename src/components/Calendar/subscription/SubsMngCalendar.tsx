@@ -13,7 +13,7 @@ const SubsMngCalendar = ({ orderDeliveries }: IProps) => {
   const dispatch = useDispatch();
   const { subsManage } = useSelector(subscriptionForm);
   const today = dayjs().format('YYYY-MM-DD');
-  const [value, setValue] = useState<Date>();
+  const [value, setValue] = useState<Date>(new Date(dayjs(orderDeliveries[0].deliveryDate).format('YYYY-MM-DD')));
   const [minDate, setMinDate] = useState<Date>(new Date(orderDeliveries[0]?.deliveryDate));
   const [maxDate, setMaxDate] = useState<Date>(new Date(orderDeliveries[orderDeliveries.length - 1]?.deliveryDate));
   const [deliveryChange, setDeliveryChange] = useState([]);
@@ -31,8 +31,8 @@ const SubsMngCalendar = ({ orderDeliveries }: IProps) => {
       setValue(new Date(subsManage?.changeDate));
       dateSelect(subsManage?.changeDate);
     } else {
-      setValue(new Date(dayjs(orderDeliveries[0].deliveryDate).format('YYYY-MM-DD')));
-      dateSelect(dayjs(orderDeliveries[0].deliveryDate).format('YYYY-MM-DD'));
+      // setValue(new Date(dayjs(orderDeliveries[0].deliveryDate).format('YYYY-MM-DD')));
+      dateSelect(dayjs(value).format('YYYY-MM-DD'));
     }
 
     // TODO(young): 계속 forEach가 곳곳에서 쓰이고 있는게 좋은지...?? 리팩토링 필요해보임
