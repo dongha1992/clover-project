@@ -40,7 +40,7 @@ interface ICalendar {
   disabledDates: string[];
   subOrderDelivery?: ISubOrderDelivery[];
   selectedDeliveryDay: string;
-  changeDeliveryDate: (value: string) => void;
+  changeDeliveryDate: ({ value, isChanged }: { value: string; isChanged: boolean }) => void;
   goToSubDeliverySheet?: (id: number) => void;
   lunchOrDinner?: ILunchOrDinner[];
   isSheet?: boolean;
@@ -111,7 +111,7 @@ const Calendar = ({
       goToSubDeliverySheet && goToSubDeliverySheet(selectedSubDelivery?.id);
     }
 
-    changeDeliveryDate(value);
+    changeDeliveryDate({ value, isChanged: false });
   };
 
   const formatDisabledDate = (dateList: IDateObj[]): string[] => {
@@ -195,7 +195,7 @@ const Calendar = ({
       const defaultActiveDate = selectedDay ?? firstActiveDate;
       // 배송 타입 변경 후 선택 날짜가 배송 불가일 때
       console.log(isDisabledDate ? firstActiveDate : defaultActiveDate, '---1----');
-      changeDeliveryDate(selectedDay ?? firstActiveDate);
+      changeDeliveryDate({ value: selectedDay ?? firstActiveDate, isChanged: isDisabledDate });
     }
 
     setCustomDisabledDate(mergedDisabledDate);
