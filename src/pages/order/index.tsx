@@ -611,7 +611,7 @@ const OrderPage = () => {
       payForm!.action = `${process.env.API_URL}/order/v1/orders/${orderId}/nicepay-approve`;
 
       let payFormMobile: any = document.getElementById('payFormMobile')!;
-      payFormMobile.innerHTML = 'https://web.nicepay.co.kr/v3/v3Payment.jsp';
+      payFormMobile.innerHTML = 'https://web.nicepay.co.kr/v3/smart/smartPayment.jsp';
 
       const response: Obj = data.data;
 
