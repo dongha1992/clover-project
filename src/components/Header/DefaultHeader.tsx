@@ -19,7 +19,6 @@ const DefaultHeader = ({ title }: TProps) => {
 
   const { isSubscription, menuId, returnPath, isOrder, tab, isSpot } = router.query;
   const { menuItem, reviewImagesCount } = useSelector(menuSelector);
-  const { reviewCount } = menuItem;
 
   const spotForm = router.pathname === '/spot/join/main/form';
   const loginPage = router.pathname === '/login';
@@ -41,8 +40,8 @@ const DefaultHeader = ({ title }: TProps) => {
   const cart = router.pathname === '/cart';
 
   const countMap: Obj = {
-    '/menu/[menuId]/review/total': reviewCount,
-    '/menu/[menuId]/review/photo': reviewImagesCount,
+    '/menu/[menuId]/review/total': menuItem?.reviewCount ?? 0,
+    '/menu/[menuId]/review/photo': reviewImagesCount ?? 0,
   };
 
   const goBack = (): void => {
@@ -93,7 +92,7 @@ const DefaultHeader = ({ title }: TProps) => {
     }
   };
 
-  if (totalReview && !reviewCount) {
+  if (totalReview && !menuItem?.reviewCount) {
     return <div>로딩</div>;
   }
 
