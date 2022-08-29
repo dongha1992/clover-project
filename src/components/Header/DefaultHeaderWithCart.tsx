@@ -13,9 +13,13 @@ type TProps = {
 const DefaultHeaderWithCart = ({ title }: TProps) => {
   const router = useRouter();
 
+  const searchPage = router.pathname === '/search';
+  const orderDetailPage = router.pathname === '/mypage/order-detail/[id]';
   const goBack = (): void => {
-    if (router.pathname === '/search') {
+    if (searchPage) {
       router.push('/');
+    } else if (orderDetailPage) {
+      router.query.isFinish ? router.push('/') : router.back();
     } else {
       router.back();
     }
