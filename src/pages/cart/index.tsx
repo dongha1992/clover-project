@@ -1315,6 +1315,7 @@ const CartPage = () => {
     dispatch(INIT_COUPON());
   }, []);
 
+  console.log(cartResponse?.discountInfos);
   if (isLoading) {
     return <div>로딩</div>;
   }
