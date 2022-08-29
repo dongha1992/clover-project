@@ -937,6 +937,7 @@ const OrderPage = () => {
       const editDeliveryMessageType = userOrderInfo?.deliveryMessageType
         ? userOrderInfo?.deliveryMessageType
         : deliveryMessageType!;
+
       if (isMorning) {
         if (deliveryMessageReused && !userAccessMethod?.value) {
           setUserInputObj({
@@ -959,7 +960,7 @@ const OrderPage = () => {
         });
       }
     }
-  }, [userAccessMethod]);
+  }, [previewOrder, userAccessMethod]);
 
   useEffect(() => {
     if (router.isReady && message) {

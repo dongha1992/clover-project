@@ -1126,7 +1126,7 @@ const CartPage = () => {
   const calculateDisposableByMenus = (type: string, menuDetailId: number) => {
     const plus = type === 'plus';
     const found = checkedMenus.find((details) => details.menuDetails.find((item) => item.id === menuDetailId));
-    console.log(found, 'found');
+
     if (found) {
       setDisposableList(
         disposableList.map((item) => {
@@ -1312,7 +1312,6 @@ const CartPage = () => {
     dispatch(INIT_COUPON());
   }, []);
 
-  console.log(cartResponse?.discountInfos);
   if (isLoading) {
     return <div>로딩</div>;
   }

@@ -119,7 +119,7 @@ const DetailItem = ({ item, isHorizontal }: TProps) => {
 
   const goToDetail = (item: IOrderedMenuDetails) => {
     dispatch(SET_MENU_ITEM(item));
-    router.push(`/menu/${item.id}`);
+    router.push(`/menu/${item.menu.id}`);
   };
 
   const goToLogin = () => {
