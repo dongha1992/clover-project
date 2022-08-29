@@ -714,18 +714,18 @@ const CartPage = () => {
     return;
   };
 
-  const changeDeliveryDate = (dateValue: string) => {
-    const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === dateValue);
+  const changeDeliveryDate = ({ value, isChanged }: { value: string; isChanged: boolean }) => {
+    const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === value);
 
     if (!canSubDelivery && subDeliveryId) {
       const callback = () => {
-        setSelectedDeliveryDay(dateValue);
+        setSelectedDeliveryDay(value);
         setSubDeliveryId(null);
       };
       displayAlertForSubDelivery({ callback });
       return;
     }
-    setSelectedDeliveryDay(dateValue);
+    setSelectedDeliveryDay(value);
   };
 
   const subDelieryHandler = (deliveryId: number) => {

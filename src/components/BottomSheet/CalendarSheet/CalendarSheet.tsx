@@ -102,7 +102,7 @@ const CalendarSheet = ({
     );
   };
 
-  const changeDeliveryDate = (value: string) => {
+  const changeDeliveryDate = ({ value, isChanged }: { value: string; isChanged: boolean }) => {
     setSelectedDeliveryDay(value);
   };
 
