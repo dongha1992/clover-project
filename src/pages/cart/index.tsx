@@ -716,7 +716,16 @@ const CartPage = () => {
 
   const changeDeliveryDate = ({ value, isChanged }: { value: string; isChanged: boolean }) => {
     const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === value);
-
+    console.log(value);
+    if (value.length === 0) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '선택한 배송지로 가능한 날짜가 없어요. 배송지를 변경해주세요.',
+          onSubmit: () => scrollToTop(),
+        })
+      );
+      return;
+    }
     if (isChanged) {
       dispatch(
         SET_ALERT({
