@@ -1076,8 +1076,7 @@ export interface IUserInputObj {
   receiverName: string;
   receiverTel: string;
   point: number;
-  deliveryMessage: string;
-  deliveryMessageType: string;
+
   coupon: number;
 }
 export interface ICreateOrderRequest {
