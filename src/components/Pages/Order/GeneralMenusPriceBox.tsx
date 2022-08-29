@@ -43,7 +43,7 @@ const GeneralMenusPriceBox = ({
       <BorderLine height={1} margin="16px 0" />
       <FlexBetween padding="8px 0 0 0">
         <TextH5B>총 할인 금액</TextH5B>
-        <TextB2R>{getFormatPrice(String(totalDiscount))}원</TextB2R>
+        <TextB2R>{totalDiscount ? `-${getFormatPrice(String(totalDiscount))}` : 0}원</TextB2R>
       </FlexBetween>
       {menuDiscount > 0 && (
         <FlexBetween padding="8px 0 0 0">

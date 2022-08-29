@@ -79,7 +79,7 @@ const OrderDeliveryHistoryPage = () => {
         dispatch(SET_ALERT({ alertMessage: '장바구니 담기에 실패했어요' }));
       },
       onSuccess: async () => {
-        showToast({ message: '상품을 장바구니에 담았어요! 😭' });
+        showToast({ message: '상품을 장바구니에 담았어요! 😍' });
         await queryClient.refetchQueries('getCartList');
         await queryClient.refetchQueries('getCartCount');
       },
