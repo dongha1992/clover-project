@@ -29,7 +29,6 @@ import {
 } from '@store/destination';
 import {
   ISubOrderDelivery,
-  IMenuDetailsInCart,
   IGetCart,
   ILunchOrDinner,
   IDeliveryObj,
@@ -47,7 +46,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { INIT_USER_ORDER_INFO } from '@store/order';
 import { getCustomDate } from '@utils/destination';
 import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus, calculatePoint } from '@utils/menu';
-import { useQuery, useQueryClient, useMutation, useIsMutating } from 'react-query';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
 import { getCartsApi, deleteCartsApi, patchCartsApi, postCartsApi } from '@api/cart';
@@ -118,8 +117,6 @@ const CartPage = () => {
   const { nonMemberCartLists } = useSelector(cartForm);
 
   const queryClient = useQueryClient();
-
-  const { showToast, hideToast } = useToast();
 
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async (reqBody: ICreateCartRequest[]) => {
