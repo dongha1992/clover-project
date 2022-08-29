@@ -89,6 +89,7 @@ const SubsMngCalendar = ({ orderDeliveries }: IProps) => {
         formatDay={(locale, date) => dayjs(date).format('D')}
         tileContent={titleContent}
         tileDisabled={tileDisabled}
+        locale="ko"
       />
     </SubsCalendarContainer>
   );
