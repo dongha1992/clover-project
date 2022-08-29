@@ -194,8 +194,8 @@ const Calendar = ({
     if (!isSheet) {
       const defaultActiveDate = selectedDay ?? firstActiveDate;
       // 배송 타입 변경 후 선택 날짜가 배송 불가일 때
-      console.log(isDisabledDate ? firstActiveDate : defaultActiveDate, '---1----');
-      changeDeliveryDate({ value: selectedDay ?? firstActiveDate, isChanged: isDisabledDate });
+
+      changeDeliveryDate({ value: isDisabledDate ? firstActiveDate : defaultActiveDate, isChanged: isDisabledDate });
     }
 
     setCustomDisabledDate(mergedDisabledDate);
