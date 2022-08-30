@@ -12,7 +12,6 @@ const MyPageHeader = () => {
 
   const goToCart = () => {
     router.push('/cart');
-    sessionStorage.removeItem('selectedDay');
   };
   const goToNoti = () => {
     router.push('/mypage/noti');
