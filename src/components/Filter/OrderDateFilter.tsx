@@ -3,10 +3,9 @@ import { OrderFilter } from '@components/Filter/components';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
 import { ORDER_DATE_RADIO_CHECKBOX } from '@constants/filter';
-import { theme, bottomSheetButton } from '@styles/theme';
+import { bottomSheetButton } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { useDispatch } from 'react-redux';
-import { SET_ORDER_LIST_FILTER } from '@store/common';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 interface IProps {
