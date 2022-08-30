@@ -18,9 +18,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { IMenus } from '@model/index';
 
-import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
-import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
-
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
   const [mainContents, setMainContents] = useState<any[]>([]);
@@ -59,10 +56,6 @@ const Home = () => {
     dispatch(SET_EVENT_TITLE(title ? title : '기획전'));
     router.push(`/promotion/detail/${id}`);
   };
-
-  useEffect(() => {
-    dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
-  }, []);
 
   if (isLoadingExhibition) {
     return <div>로딩</div>;
