@@ -40,6 +40,7 @@ const SpotDetailHeader = ({ title }: TProps) => {
 
   const goToCart = () => {
     router.push('/cart');
+    sessionStorage.removeItem('selectedDay');
   };
 
   return (

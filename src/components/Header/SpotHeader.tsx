@@ -50,6 +50,7 @@ const SpotHeader = () => {
 
   const goToCart = () => {
     router.push('/cart');
+    sessionStorage.removeItem('selectedDay');
   };
 
   const goToLocation = (): void => {

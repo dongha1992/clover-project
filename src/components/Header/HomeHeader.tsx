@@ -31,6 +31,7 @@ const HomeHeader = () => {
 
   const goToCart = () => {
     router.push('/cart');
+    sessionStorage.removeItem('selectedDay');
   };
 
   const goToLocation = () => {

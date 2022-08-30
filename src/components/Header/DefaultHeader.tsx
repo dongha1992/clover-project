@@ -61,6 +61,7 @@ const DefaultHeader = ({ title }: TProps) => {
     } else if (cartDelivery) {
       if (!isSubscription) {
         router.replace('/cart');
+        sessionStorage.removeItem('selectedDay');
       } else {
         router.replace({ pathname: '/subscription/set-info', query: router.query });
       }

@@ -183,24 +183,20 @@ const Calendar = ({
     const firstActiveDate = filteredActiveDates[0]?.value;
     const isDisabledDate = mergedDisabledDate.includes(selectedDay!);
 
-    checkHasSubInActiveDates(dateList, mergedDisabledDate);
-
-    /*
-    케이스1. 스팟 -> 새벽 ==> selectedDay, 8/29 -> firstActiveDate 8/30
-    케이스2  퀵 -> 택배 ==> selectedDay, 9/3 -> firstActiveDate 8/30
-    */
-
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
     if (!isSheet) {
       const defaultActiveDate = selectedDay || firstActiveDate;
       // 배송 타입 변경 후 선택 날짜가 배송 불가일 때
       changeDeliveryDate({ value: isDisabledDate ? firstActiveDate : defaultActiveDate, isChanged: isDisabledDate });
     }
-
+    checkHasSubInActiveDates(dateList, mergedDisabledDate);
     setCustomDisabledDate(mergedDisabledDate);
-
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
-    if (filteredActiveDates.length > ACTIVE_DAY_OF_WEEK) {
+    checkShowMoreWeek(filteredActiveDates);
+  };
+
+  const checkShowMoreWeek = (list: IDateObj[]) => {
+    if (list?.length > ACTIVE_DAY_OF_WEEK) {
       setIsShowMoreWeek(false);
     } else {
       setIsShowMoreWeek(true);
