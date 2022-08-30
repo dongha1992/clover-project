@@ -12,11 +12,14 @@ import Image from '@components/Shared/Image';
 import BorderLine from '@components/Shared/BorderLine';
 import { useRouter } from 'next/router';
 import { getMainPromotionContentsApi } from '@api/promotion';
-import { SET_EVENT_TITLE , INIT_EVENT_TITLE } from '@store/event';
-import Carousel from "@components/Shared/Carousel";
+import { SET_EVENT_TITLE, INIT_EVENT_TITLE } from '@store/event';
+import Carousel from '@components/Shared/Carousel';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { IMenus } from '@model/index';
+
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
@@ -24,7 +27,7 @@ const Home = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  useEffect(()=> {
+  useEffect(() => {
     dispatch(INIT_EVENT_TITLE());
   });
 
@@ -47,9 +50,9 @@ const Home = () => {
     async () => {
       const { data } = await getMainPromotionContentsApi();
       setMainContents(data.data.mainContents);
-      return data.data.mainContents.find(i => i.exhibition?.type === 'MD_RECOMMENDED')?.exhibition.menus;
+      return data.data.mainContents.find((i) => i.exhibition?.type === 'MD_RECOMMENDED')?.exhibition.menus;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false, }
+    { refetchOnMount: true, refetchOnWindowFocus: false }
   );
 
   const goToPromotion = (id: number, title: string) => {
@@ -57,34 +60,39 @@ const Home = () => {
     router.push(`/promotion/detail/${id}`);
   };
 
+  useEffect(() => {
+    dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet /> }));
+  }, []);
+
   if (isLoadingExhibition) {
     return <div>로딩</div>;
-  };
+  }
 
   return (
     <Container>
-        <Container>
-          <Carousel height='384px' autoPlay images={bannerList.map(banner => ({ src: banner.image.url }))} />
-        </Container>
+      <Container>
+        <Carousel height="384px" autoPlay images={bannerList.map((banner) => ({ src: banner.image.url }))} />
+      </Container>
       <SectionWrapper>
         <MainTab />
         <BorderLine height={1} margin="24px 0 24px 0" />
       </SectionWrapper>
-      {
-        mainContents?.length! > 0
-          ? mainContents?.map((item: any, idx: number) => {
-            if(item?.type === 'EXHIBITION') {
-              if(item?.exhibition.type === 'MD_RECOMMENDED') {
+      {mainContents?.length! > 0
+        ? mainContents?.map((item: any, idx: number) => {
+            if (item?.type === 'EXHIBITION') {
+              if (item?.exhibition.type === 'MD_RECOMMENDED') {
                 return (
                   <PromotionWrapper key={idx}>
                     <FlexSpace>
                       <TextH3B>{item?.exhibition.title}</TextH3B>
                       <TextH5B
-                        onClick={()=> goToPromotion(item?.exhibition.id, item?.exhibition.title)}
+                        onClick={() => goToPromotion(item?.exhibition.id, item?.exhibition.title)}
                         color={theme.greyScale65}
-                        textDecoration='underline'
+                        textDecoration="underline"
                         pointer
-                      >더보기</TextH5B>
+                      >
+                        더보기
+                      </TextH5B>
                     </FlexSpace>
                     <SectionWrapper>
                       <FlexWrapWrapper>
@@ -97,7 +105,7 @@ const Home = () => {
                       </FlexWrapWrapper>
                     </SectionWrapper>
                   </PromotionWrapper>
-                )
+                );
               } else if (item?.exhibition.type === 'GENERAL_MENU') {
                 return (
                   <PromotionWrapper key={idx}>
@@ -106,9 +114,11 @@ const Home = () => {
                       <TextH5B
                         onClick={() => goToPromotion(item?.exhibition.id, item?.exhibition.title)}
                         color={theme.greyScale65}
-                        textDecoration='underline'
+                        textDecoration="underline"
                         pointer
-                      >더보기</TextH5B>
+                      >
+                        더보기
+                      </TextH5B>
                     </FlexSpace>
                     <Image
                       src={item?.exhibition?.image.url}
@@ -118,19 +128,17 @@ const Home = () => {
                       alt="홈 기획전 이미지"
                     />
                     <SliderWrapper slidesPerView={'auto'} spaceBetween={25} speed={500}>
-                      {
-                        item?.exhibition.menus?.map((item: IMenus, index: number) => {
-                          if (index > 9) return;
-                          return(
-                            <SwiperSlide className="swiper-slide" key={index}>
-                              <Item item={item} isHorizontal />
-                            </SwiperSlide>
-                          )
-                        })
-                      }
+                      {item?.exhibition.menus?.map((item: IMenus, index: number) => {
+                        if (index > 9) return;
+                        return (
+                          <SwiperSlide className="swiper-slide" key={index}>
+                            <Item item={item} isHorizontal />
+                          </SwiperSlide>
+                        );
+                      })}
                     </SliderWrapper>
                   </PromotionWrapper>
-                )
+                );
               }
             } else if (item?.type === 'BANNER') {
               return (
@@ -143,11 +151,10 @@ const Home = () => {
                     alt="홈 배너형 기획전 이미지"
                   />
                 </PromotionBanner>
-              )
+              );
             }
           })
-          : null
-      }
+        : null}
     </Container>
   );
 };
@@ -159,11 +166,6 @@ const Container = styled.div`
 const SectionWrapper = styled.section`
   ${homePadding}
   width: 100%;
-`;
-
-const SectionTitle = styled.div`
-  ${textH3};
-  padding: 0 0 24px 0;
 `;
 
 const PromotionBanner = styled.section`
@@ -181,7 +183,7 @@ const PromotionWrapper = styled.section`
 const FlexSpace = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 0 24px 24px 24px;  
+  padding: 0 24px 24px 24px;
 `;
 
 const SliderWrapper = styled(Swiper)`

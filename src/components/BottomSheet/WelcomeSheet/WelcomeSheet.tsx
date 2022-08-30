@@ -133,7 +133,7 @@ const WelcomeSheet = ({ recommendCode }: IProps) => {
         </FlexEnd>
       </Header>
       <Body>
-        <FlexCol>
+        <FlexCol padding="0 24px 24px 24px">
           <TextH2B>
             <span className="brandColor">{me?.nickname ?? me?.name}</span>님,
           </TextH2B>
@@ -172,8 +172,6 @@ const WelcomeSheet = ({ recommendCode }: IProps) => {
 };
 
 const Container = styled.div<{ isMobile: boolean }>`
-  ${homePadding};
-
   ${({ isMobile }) => {
     if (isMobile) {
       return css`
@@ -187,7 +185,8 @@ const Container = styled.div<{ isMobile: boolean }>`
   }}
 `;
 const Header = styled.div`
-  height: 80px;
+  height: 30px;
+  padding-right: 24px;
 `;
 const Body = styled.div`
   > div {
