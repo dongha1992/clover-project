@@ -969,7 +969,7 @@ const OrderPage = () => {
         console.error(error);
       }
     }
-  }, []);
+  }, [router.isReady]);
 
   useEffect(() => {
     // 새로고침 시 중복 결제 방어 풀림

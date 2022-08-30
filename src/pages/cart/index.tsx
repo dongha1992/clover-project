@@ -29,7 +29,6 @@ import {
 } from '@store/destination';
 import {
   ISubOrderDelivery,
-  IMenuDetailsInCart,
   IGetCart,
   ILunchOrDinner,
   IDeliveryObj,
@@ -47,7 +46,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { INIT_USER_ORDER_INFO } from '@store/order';
 import { getCustomDate } from '@utils/destination';
 import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus, calculatePoint } from '@utils/menu';
-import { useQuery, useQueryClient, useMutation, useIsMutating } from 'react-query';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
 import { getCartsApi, deleteCartsApi, patchCartsApi, postCartsApi } from '@api/cart';
@@ -118,8 +117,6 @@ const CartPage = () => {
   const { nonMemberCartLists } = useSelector(cartForm);
 
   const queryClient = useQueryClient();
-
-  const { showToast, hideToast } = useToast();
 
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async (reqBody: ICreateCartRequest[]) => {
@@ -717,18 +714,37 @@ const CartPage = () => {
     return;
   };
 
-  const changeDeliveryDate = (dateValue: string) => {
-    const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === dateValue);
+  const changeDeliveryDate = ({ value, isChanged }: { value: string; isChanged: boolean }) => {
+    const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === value);
+    console.log(value);
+    if (value.length === 0) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '선택한 배송지로 가능한 날짜가 없어요. 배송지를 변경해주세요.',
+          onSubmit: () => scrollToTop(),
+        })
+      );
+      return;
+    }
+    if (isChanged) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: '설정한 배송지로 가능한 날짜를 확인해주세요.',
+          onSubmit: () => setSelectedDeliveryDay(value),
+        })
+      );
+      return;
+    }
 
     if (!canSubDelivery && subDeliveryId) {
       const callback = () => {
-        setSelectedDeliveryDay(dateValue);
+        setSelectedDeliveryDay(value);
         setSubDeliveryId(null);
       };
       displayAlertForSubDelivery({ callback });
       return;
     }
-    setSelectedDeliveryDay(dateValue);
+    setSelectedDeliveryDay(value);
   };
 
   const subDelieryHandler = (deliveryId: number) => {
@@ -975,6 +991,7 @@ const CartPage = () => {
   };
 
   const goToDeliveryInfo = () => {
+    sessionStorage.setItem('selectedDay', selectedDeliveryDay);
     // 합배송 선택한 경우
     if (subDeliveryId) {
       displayAlertForSubDelivery({ type: 'route' });
@@ -1077,6 +1094,7 @@ const CartPage = () => {
     };
 
     dispatch(SET_ORDER(reqBody));
+    sessionStorage.removeItem('selectedDay');
     setPemanentedDisposableItem();
 
     router.push('/order');
@@ -1127,7 +1145,7 @@ const CartPage = () => {
   const calculateDisposableByMenus = (type: string, menuDetailId: number) => {
     const plus = type === 'plus';
     const found = checkedMenus.find((details) => details.menuDetails.find((item) => item.id === menuDetailId));
-    console.log(found, 'found');
+
     if (found) {
       setDisposableList(
         disposableList.map((item) => {
@@ -1313,7 +1331,6 @@ const CartPage = () => {
     dispatch(INIT_COUPON());
   }, []);
 
-  console.log(cartResponse?.discountInfos);
   if (isLoading) {
     return <div>로딩</div>;
   }
