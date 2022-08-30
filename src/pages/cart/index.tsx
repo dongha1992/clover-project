@@ -62,6 +62,7 @@ import {
   CartDiscountBox,
   CartDeliveryFeeBox,
   NutritionBox,
+  SpotPickupAvailability,
 } from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ, INITIAL_NUTRITION, INITIAL_DELIVERY_DETAIL } from '@constants/cart';
 import { INIT_ACCESS_METHOD } from '@store/common';
@@ -105,6 +106,8 @@ const CartPage = () => {
   });
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [holiday, setHoliday] = useState<string[]>([]);
+  const [isCheckedEventSpot, setIsCheckedEventSpot] = useState<boolean>(false);
+  const [isCheckedPickupAvailability, setIsCheckedPickupAvailability] = useState<boolean>(false);
 
   const calendarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -168,6 +171,7 @@ const CartPage = () => {
           setCheckedMenus(data.cartMenus);
           setCartItemList(data.cartMenus);
           setDisposableList(initMenuOptions(data.cartMenus));
+          setIsCheckedEventSpot(data.discountInfos[0].discountRate > 0);
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
 
@@ -1223,7 +1227,7 @@ const CartPage = () => {
   }, [cartItemList]);
 
   useEffect(() => {
-    if (calendarRef && isFromDeliveryPage) {
+    if ((userDeliveryType !== 'spot') && calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
       window.scrollTo({
         behavior: 'smooth',
@@ -1313,19 +1317,36 @@ const CartPage = () => {
     dispatch(INIT_COUPON());
   }, []);
 
-  console.log(cartResponse?.discountInfos);
   if (isLoading) {
     return <div>로딩</div>;
   }
 
   return (
     <Container ref={containerRef}>
+      {
+        isCheckedEventSpot && (
+          <TopNoticeWrapper>
+            <TextH5B color={theme.white}>이벤트 프코스팟 주문은 픽업장소 변경이 불가해요.</TextH5B>
+          </TopNoticeWrapper>
+        )
+      }
       {me ? (
-        <DeliveryTypeAndLocation
-          goToDeliveryInfo={goToDeliveryInfo}
-          deliveryType={destinationObj.delivery!}
-          deliveryDestination={destinationObj}
-        />
+        <DeliveryTypeWrapper>
+          <DeliveryTypeAndLocation
+            goToDeliveryInfo={goToDeliveryInfo}
+            deliveryType={destinationObj.delivery!}
+            deliveryDestination={destinationObj}
+          />
+          {
+            userDeliveryType === 'spot' && (
+              <SpotPickupAvailability 
+                userDeliveryType={userDeliveryType}
+                setIsCheckedPickupAvailability={setIsCheckedPickupAvailability}
+                pickupId={userDestination?.spotPickup?.id}
+              />
+            )
+          }
+        </DeliveryTypeWrapper>
       ) : (
         <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
           <Left>
@@ -1574,6 +1595,19 @@ const CartPage = () => {
 const Container = styled.div`
   width: 100%;
   margin-bottom: 50px;
+  position: relative;
+`;
+
+const TopNoticeWrapper = styled.div`
+  width: 100%;
+  height: 45px;
+  position: reletive;
+  top: 0;
+  background: ${theme.brandColor};
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const EmptyContainer = styled.div`
@@ -1583,11 +1617,19 @@ const EmptyContainer = styled.div`
   height: 50vh;
 `;
 
+const DeliveryTypeWrapper = styled.div`
+  width: 100%;
+`;
+
 const DeliveryMethodAndPickupLocation = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 24px 24px 0 24px;
   cursor: pointer;
+`;
+
+const SpotPickupCheckingWrapper = styled.div`
+
 `;
 
 const Left = styled.div`
