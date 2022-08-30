@@ -43,6 +43,7 @@ const CategorySubHeader = ({ title }: TProps) => {
 
   const goToCart = () => {
     router.push('/cart');
+    sessionStorage.removeItem('selectedDay');
   };
 
   const getQuery = (path: string) => {
