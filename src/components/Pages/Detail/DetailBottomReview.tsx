@@ -28,11 +28,10 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
   const { menuItem } = useSelector(menuSelector);
   const { me } = useSelector(userForm);
 
-  const { menuReviews } = reviews;
   const hasImageReviews = reviewsImages?.images?.length !== 0;
-  const hasReviews = menuReviews.length !== 0;
+  const hasReviews = reviews?.menuReviews?.length !== 0;
 
-  const { rating, reviewCount } = menuItem;
+  // const { rating, reviewCount } = menuItem;
 
   const goToReviewImages = useCallback(() => {
     router.push(`/menu/${menuId}/review/photo?tab=review`);
@@ -43,7 +42,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
   };
 
   const goToReviewDetail = (id: number) => {
-    router.push(`/menu/${menuId}/review/${id}`);
+    router.push(`/menu/${menuId}/review/${id}?tab=review`);
   };
 
   const goToWriteReview = () => {
@@ -68,8 +67,8 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
             reviewsImages={reviewsImages?.images!}
             goToReviewImages={goToReviewImages}
             goToReviewDetail={goToReviewDetail}
-            averageRating={rating}
-            totalReviews={reviewCount}
+            averageRating={menuItem?.rating}
+            totalReviews={menuItem?.reviewCount}
           />
         </Wrapper>
       )}
@@ -91,7 +90,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
         <>
           <BorderLine height={8} />
           <ReviewWrapper>
-            {menuReviews?.map((review: any, index: number) => {
+            {reviews?.menuReviews?.map((review: any, index: number) => {
               if (index > 10) return;
               return (
                 <div key={index}>
@@ -101,7 +100,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
               );
             })}
             <Button backgroundColor={theme.white} color={theme.black} border borderRadius="8" onClick={goToTotalReview}>
-              {reviewCount}개 후기 전체보기
+              {menuItem?.reviewCount}개 후기 전체보기
             </Button>
           </ReviewWrapper>
         </>

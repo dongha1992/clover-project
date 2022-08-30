@@ -25,6 +25,7 @@ const DefaultHeader = ({ title }: TProps) => {
   const oauth = router.pathname === '/oauth';
   const totalReview = router.pathname === '/menu/[menuId]/review/total';
   const totalPhotoReview = router.pathname === '/menu/[menuId]/review/photo';
+  const reviewDetail = '/menu/[menuId]/review/[contentId]';
   const finishOrder = router.pathname === '/order/finish';
   const orderDetail = router.pathname === '/mypage/order-detail/[id]';
   const subsCancel = router.pathname === '/subscription/[detailId]/cancel/complete';
@@ -80,7 +81,7 @@ const DefaultHeader = ({ title }: TProps) => {
       router.replace({ pathname: '/mypage/review', query: { tab: '/completed' } });
     } else if (cardEdit) {
       isOrder ? router.back() : router.push({ pathname: '/mypage' });
-    } else if (totalReview || totalPhotoReview || reviewPage) {
+    } else if (totalReview || totalPhotoReview || reviewPage || reviewDetail) {
       tab ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } }) : router.back();
     } else if (addressPage) {
       isSpot ? router.replace({ pathname: '/mypage' }) : router.back();

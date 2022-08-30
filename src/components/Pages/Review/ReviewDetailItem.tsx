@@ -30,8 +30,8 @@ const ReviewDetailItem = ({ review, isDetailPage }: IProps) => {
 
   const imageClickHandler = (startIndex: number) => {
     const images = review?.images.map((item: any) => item.url);
-    dispatch(showImageViewer({images, startIndex, isShow: true}));
-  }
+    dispatch(showImageViewer({ images, startIndex, isShow: true }));
+  };
 
   return (
     <>
@@ -90,18 +90,8 @@ const ReviewDetailItem = ({ review, isDetailPage }: IProps) => {
                 {review?.images?.map((img: any, index: number) => {
                   if (index > 1) return;
                   return (
-                    <ReviewImageWrapper
-                      isFirst
-                      onClick={() => imageClickHandler(index)}
-                      key={index}
-                    >
-                      <Image
-                        src={img.url}
-                        alt="리뷰이미지"
-                        width={'100%'}
-                        height={'100%'}
-                        className="rounded"
-                      />
+                    <ReviewImageWrapper isFirst onClick={() => imageClickHandler(index)} key={index}>
+                      <Image src={img.url} alt="리뷰이미지" width={'100%'} height={'100%'} className="rounded" />
                     </ReviewImageWrapper>
                   );
                 })}
