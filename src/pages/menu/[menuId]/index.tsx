@@ -80,6 +80,7 @@ const MenuDetailPage: NextPageWithLayout = () => {
       onSuccess: (data) => {
         dispatch(SET_MENU_ITEM(data));
       },
+
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!menuId,

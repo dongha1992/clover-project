@@ -9,7 +9,7 @@ import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
 import { Tag } from '@components/Shared/Tag';
 import { IAuthObj, Obj } from '@model/index';
-import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER } from '@store/user';
+import { SET_LOGIN_SUCCESS, SET_SIGNUP_USER, userForm } from '@store/user';
 import { useSelector, useDispatch } from 'react-redux';
 import { commonSelector, SET_LOGIN_TYPE } from '@store/common';
 import { SET_USER_AUTH, SET_USER } from '@store/user';
@@ -40,12 +40,21 @@ const OnBoarding: NextPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { loginType } = useSelector(commonSelector);
+  const { me } = useSelector(userForm);
   const [returnPath, setReturnPath] = useState<string | string[]>('');
 
   const onKaKao = useKakaoLogin();
   const onApple = useAppleLogin();
 
   const { recommendCode } = router.query;
+
+  useEffect(() => {
+    if (me && recommendCode) {
+      router.push('/mypage');
+    } else if (me) {
+      router.push('/');
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     setReturnPath(router.query.returnPath || '/');

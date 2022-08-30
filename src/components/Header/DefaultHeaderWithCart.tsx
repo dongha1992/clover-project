@@ -5,13 +5,14 @@ import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
-
+import { useDispatch, useSelector } from 'react-redux';
 type TProps = {
   title?: string;
 };
 
 const DefaultHeaderWithCart = ({ title }: TProps) => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const searchPage = router.pathname === '/search';
   const orderDetailPage = router.pathname === '/mypage/order-detail/[id]';
