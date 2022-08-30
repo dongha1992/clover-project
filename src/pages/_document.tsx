@@ -20,7 +20,7 @@ class MyDocument extends Document<IProps> {
           {this.props.styleTags}
           <meta charSet="utf-8" />
           <link
-            href="https://fonts.googleapis.com/css2?family=Alata&family=Noto+Sans+KR:wght@300;400;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
             rel="stylesheet"
           />
         </Head>
