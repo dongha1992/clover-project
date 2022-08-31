@@ -2,10 +2,14 @@ import styled from 'styled-components';
 import Lottie from "lottie-react";
 import loading_spinner_Animation from '@public/images/loading_spinner.json';
 
-export const Spnnier = () => {
+interface IProps {
+  width: number;
+  height: number;
+}
+export const Spnnier = ({width, height}: IProps) => {
   return (
     <Overlay>
-      <Lottie animationData={loading_spinner_Animation} style={{ width: 18, height: 18 }} />
+      <Lottie animationData={loading_spinner_Animation} style={{ width, height }} />
     </Overlay>
   );
 };

@@ -19,7 +19,7 @@ const SpotPickupAvailability = ({
       case isLoadingPickup: 
         return (
           <>
-            <Spinner />
+            <Spinner width={18} height={18} />
             <TextB3R padding='1px 0 0 4px' color={theme.greyScale65}>사용 가능한 보관함을 확인 중이에요.</TextB3R>
           </>
         )
