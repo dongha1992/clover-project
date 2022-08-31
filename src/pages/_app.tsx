@@ -28,6 +28,8 @@ import { getCookie } from '@utils/common/cookie';
 import useWebviewListener from '@hooks/useWebviewListener';
 import { NextPage } from 'next';
 import DefaultLayout from '@components/Layout/Default';
+import { INIT_ALERT } from '@store/alert';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 declare global {
   interface Window {
@@ -40,12 +42,12 @@ declare global {
 }
 
 export type NextPageWithLayout = NextPage & {
-  getLayout?: (page: ReactElement) => ReactNode
-}
+  getLayout?: (page: ReactElement) => ReactNode;
+};
 
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout
-}
+  Component: NextPageWithLayout;
+};
 
 const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
   const dispatch = useDispatch();
@@ -60,7 +62,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
   // const { showToast, hideToast } = useToast();
   const store: any = useStore();
   const isAutoLogin = getCookie({ name: 'autoL' });
-  const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>)
+  const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
   useWebviewListener();
 
@@ -68,11 +70,22 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
     queryClient.current = new QueryClient({
       defaultOptions: {
         queries: {
-          retry: false
+          retry: false,
         },
       },
     });
   }
+
+  useEffect(() => {
+    router.events.on('routeChangeStart', routerEvent);
+
+    return () => router.events.off('routeChangeStart', routerEvent);
+  }, []);
+
+  const routerEvent = () => {
+    if (store.getState().alert) dispatch(INIT_ALERT());
+    if (store.getState().bottomSheet.content) dispatch(INIT_BOTTOM_SHEET());
+  };
 
   const authCheck = async () => {
     try {
@@ -123,7 +136,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
   useEffect(() => {
     if (typeof window !== undefined) {
       const md = new MobileDetect(window.navigator.userAgent);
@@ -179,10 +192,10 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
       <QueryClientProvider client={queryClient.current}>
         <ThemeProvider theme={{ ...theme, ...getMediaQuery, isWithContentsSection, isMobile }}>
           <GlobalStyle />
-            <PersistGate persistor={store.__persistor}>
-              <ReactQueryDevtools initialIsOpen={false} />
-              {getLayout(<Component {...pageProps} />)}
-            </PersistGate>
+          <PersistGate persistor={store.__persistor}>
+            <ReactQueryDevtools initialIsOpen={false} />
+            {getLayout(<Component {...pageProps} />)}
+          </PersistGate>
         </ThemeProvider>
         <form
           name="payForm"
