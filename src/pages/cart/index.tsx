@@ -75,6 +75,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import 'swiper/css';
 import { INIT_COUPON } from '@store/coupon';
+import { getPickupAvailabilityApi } from '@api/spot';
 
 dayjs.locale('ko');
 
@@ -107,7 +108,6 @@ const CartPage = () => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [holiday, setHoliday] = useState<string[]>([]);
   const [isCheckedEventSpot, setIsCheckedEventSpot] = useState<boolean>(false);
-  const [isCheckedPickupAvailability, setIsCheckedPickupAvailability] = useState<boolean>(false);
 
   const calendarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -123,6 +123,8 @@ const CartPage = () => {
   const queryClient = useQueryClient();
 
   const { showToast, hideToast } = useToast();
+  const pickupId = userDestination?.spotPickupId;
+  const pickupType = userDestination?.spotPickupType;
 
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async (reqBody: ICreateCartRequest[]) => {
@@ -251,7 +253,7 @@ const CartPage = () => {
       enabled: !!me,
     }
   );
-
+ 
   const { data: likeMenusList, isLoading: likeLoading } = useQuery(
     ['getLikeMenus', 'GENERAL'],
     async () => {
@@ -318,6 +320,39 @@ const CartPage = () => {
       refetchOnWindowFocus: false,
       cacheTime: 0,
       enabled: !!me && !!userDestination,
+    }
+  );
+  
+  const {
+    data: pickUpAvailability,
+    error,
+    isLoading: isLoadingPickup,
+  } = useQuery(
+    'getPickupAvailability',
+    async () => {
+      const { data } = await getPickupAvailabilityApi(pickupId!);
+      return data.data.isAvailability;
+    },
+    {
+      onSuccess: async (data) => {
+        if(!data) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '현재 사용 가능한 보관함이 없어요.\n다른 프코스팟을 이용해 주세요.',
+              submitBtnText: '확인',
+            })
+          );    
+        }
+      },
+      onError: ({ response }: any) => {
+        const { data: error } = response as any;
+
+        dispatch(SET_ALERT({ alertMessage: error?.message }));
+        return;
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!pickupId,
     }
   );
 
@@ -1005,6 +1040,7 @@ const CartPage = () => {
   const goToOrder = () => {
     if (!me) return;
     if (!destinationObj.destinationId) return;
+    if (isLoadingPickup || !pickUpAvailability) return;
 
     if (isInvalidDestination) {
       dispatch(
@@ -1100,6 +1136,14 @@ const CartPage = () => {
           로그인을 해주세요
         </Button>
       );
+    }
+
+    if (isLoadingPickup || !pickUpAvailability){
+      return (
+        <Button borderRadius="0" height="100%" disabled={!pickUpAvailability}>
+          배송정보를 설정해 주세요
+        </Button>
+      )
     }
 
     if (destinationObj.delivery && destinationObj.destinationId) {
@@ -1338,11 +1382,11 @@ const CartPage = () => {
             deliveryDestination={destinationObj}
           />
           {
-            userDeliveryType === 'spot' && (
+            userDeliveryType === 'spot' && 
+            (pickupType === 'GS_LOCKER' || pickupType === 'KORAIL_LOCKER') && (
               <SpotPickupAvailability 
-                userDeliveryType={userDeliveryType}
-                setIsCheckedPickupAvailability={setIsCheckedPickupAvailability}
-                pickupId={userDestination?.spotPickup?.id}
+                pickUpAvailability={pickUpAvailability}
+                isLoadingPickup={isLoadingPickup}
               />
             )
           }

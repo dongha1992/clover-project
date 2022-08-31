@@ -961,6 +961,18 @@ const OrderPage = () => {
     }
   }, [userAccessMethod]);
 
+  useEffect(()=> {
+    if (previewOrder?.order?.delivery === 'SPOT' 
+    && previewOrder.destination?.spotPickup.type !=='PICKUP') {
+      dispatch(
+        SET_ALERT({
+          alertMessage: 'GS BOX25, 코레일 무인보관함 등\n외부 보관함은 주문 예약제로 운영되어\n픽업장소 및 날짜 변경이 불가해요.',
+          submitBtnText: '확인',
+        })
+      );      
+    };
+  }, []);
+
   useEffect(() => {
     if (router.isReady && message) {
       try {
