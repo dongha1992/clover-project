@@ -198,6 +198,8 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
                 id: destinationId,
                 spotId: item.id,
                 availableTime: pickUpTime,
+                spotPickupType: pickupInfo?.type,
+                spotPickupId: pickupInfo?.id,
               })
             );
             dispatch(SET_USER_DELIVERY_TYPE('spot'));

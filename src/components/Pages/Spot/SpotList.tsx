@@ -106,6 +106,8 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               id: destinationId,
               spotId: list.id,
               availableTime: pickUpTime,
+              spotPickupType: pickupInfo.type,
+              spotPickupId: pickupInfo.id,
             })
           );
           dispatch(SET_USER_DELIVERY_TYPE('spot'));
