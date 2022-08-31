@@ -1,4 +1,8 @@
 import useCalendarTitleContent from '@hooks/subscription/useCalendarTitleContent';
+import { afterDateN, dateN } from '@utils/common';
+import { beforeDateN } from '@utils/common/dateHelper';
+import 'dayjs/locale/ko';
+dayjs.locale('ko');
 import dayjs from 'dayjs';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
@@ -51,6 +55,8 @@ const SubsDateMngCalendar = ({
   // 택배 : 화 ~ 토 비활성(일,월)
   // 스팟 : 월 ~ 금 비활성(일,토)
 
+  console.log('===', dayjs().set('hour', 2).toDate());
+
   const tileDisabled = ({ date, view }: { date: any; view: any }) => {
     if (date.getDay() === 6) {
       // 토요일 비활성화(스팟)
@@ -67,14 +73,24 @@ const SubsDateMngCalendar = ({
       }
     }
 
-    // TODO(young) : 배송일 변경은 무조건 오늘+1로 통일하는게 어떤지
-    // 오늘 + 1 이후부터
-    // origin 첫번째 배송일 ~ origin 마지막 배송일 + 7
+    // 오늘 7시 이후 비활성화
+    if (dateN(date) === dateN(today) && Number(dayjs().format('Hmm')) > 700) {
+      return true;
+    }
+
+    // 새벽/택배 D-1 7시 이후 비활성화
+    if (
+      (deliveryType === 'PARCEL' || deliveryType === 'MORNING') &&
+      beforeDateN(date, 1) === dateN(today) &&
+      Number(dayjs().format('Hmm')) > 700
+    ) {
+      return true;
+    }
 
     if (
-      Number(dayjs(date).format('YYYYMMDD')) > Number(today.replaceAll('-', '')) &&
-      Number(firstDeliveryDate.replaceAll('-', '')) <= Number(dayjs(date).format('YYYYMMDD')) &&
-      Number(dayjs(lastDeliveryDate).add(7, 'day').format('YYYYMMDD')) >= Number(dayjs(date).format('YYYYMMDD'))
+      dateN(date) >= dateN(today) &&
+      dateN(firstDeliveryDate) <= dateN(date) &&
+      afterDateN(lastDeliveryDate, 7) >= dateN(date)
     ) {
       return false;
     } else {
