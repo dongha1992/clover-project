@@ -5,6 +5,7 @@ import { breakpoints } from '@utils/common/getMediaQuery';
 import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
 import { theme } from '@styles/theme';
+import { useGetNotiInfo } from '@queries/notification';
 
 const textStyle = {
   padding: '4px 0 0 0',
@@ -40,6 +41,11 @@ const BOTTOM_MENU = [
 const Bottom = (): ReactElement => {
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<string>('/category');
+  const { data } = useGetNotiInfo('notiInfo', {
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
+  });
 
   useEffect(() => {
     const queryString = router.asPath;
@@ -55,7 +61,9 @@ const Bottom = (): ReactElement => {
       <MenuWrapper>
         {BOTTOM_MENU.map((menu, index) => (
           <MenuItem onClick={() => goToPage(menu.link)} key={index}>
-            <SVGIcon name={selectedTab === menu.link ? menu.activeSvg : menu.svg} />
+            <div className={`svgBox ${menu.id === 4 && data > 0 ? 'on' : ''}`}>
+              <SVGIcon name={selectedTab === menu.link ? menu.activeSvg : menu.svg} />
+            </div>
             {selectedTab === menu.link ? (
               <TextH7B {...textStyle}>{menu.text}</TextH7B>
             ) : (
@@ -103,6 +111,19 @@ const MenuItem = styled.div`
   flex-direction: column;
   align-items: center;
   cursor: pointer;
+  .svgBox {
+    position: relative;
+    &.on::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 4px;
+      border-radius: 4px;
+      background-color: ${theme.brandColor};
+    }
+  }
 `;
 
 export default React.memo(Bottom);
