@@ -40,7 +40,7 @@ interface ICalendar {
   disabledDates: string[];
   subOrderDelivery?: ISubOrderDelivery[];
   selectedDeliveryDay: string;
-  changeDeliveryDate: (value: string) => void;
+  changeDeliveryDate: ({ value, isChanged }: { value: string; isChanged: boolean }) => void;
   goToSubDeliverySheet?: (id: number) => void;
   lunchOrDinner?: ILunchOrDinner[];
   isSheet?: boolean;
@@ -61,6 +61,8 @@ const Calendar = ({
   const [isShowMoreWeek, setIsShowMoreWeek] = useState<boolean>(false);
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
   const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
+
+  const selectedDay = sessionStorage.getItem('selectedDay');
 
   const initCalendar = () => {
     const { years, months, dates } = getCustomDate();
@@ -109,7 +111,7 @@ const Calendar = ({
       goToSubDeliverySheet && goToSubDeliverySheet(selectedSubDelivery?.id);
     }
 
-    changeDeliveryDate(value);
+    changeDeliveryDate({ value, isChanged: false });
   };
 
   const formatDisabledDate = (dateList: IDateObj[]): string[] => {
@@ -174,25 +176,27 @@ const Calendar = ({
     return tempDisabledDate;
   };
 
-  /* 배송지를 선택 안 하고(최근 주문 이력으로) 주문시 userDeliveryType이 state에 저장돼서 useCallback 사용 */
-
   const checkActiveDates = (dateList: IDateObj[], firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
     const firstActiveDate = filteredActiveDates[0]?.value;
-
-    checkHasSubInActiveDates(dateList, mergedDisabledDate);
+    const isDisabledDate = mergedDisabledDate.includes(selectedDay!);
 
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
     if (!isSheet) {
-      changeDeliveryDate(firstActiveDate);
+      const defaultActiveDate = selectedDay || firstActiveDate;
+      // 배송 타입 변경 후 선택 날짜가 배송 불가일 때
+      changeDeliveryDate({ value: isDisabledDate ? firstActiveDate : defaultActiveDate, isChanged: isDisabledDate });
     }
-
+    checkHasSubInActiveDates(dateList, mergedDisabledDate);
     setCustomDisabledDate(mergedDisabledDate);
-
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
-    if (filteredActiveDates.length > ACTIVE_DAY_OF_WEEK) {
+    checkShowMoreWeek(filteredActiveDates);
+  };
+
+  const checkShowMoreWeek = (list: IDateObj[]) => {
+    if (list?.length > ACTIVE_DAY_OF_WEEK) {
       setIsShowMoreWeek(false);
     } else {
       setIsShowMoreWeek(true);

@@ -19,8 +19,8 @@ const DefaultHeader = ({ title }: TProps) => {
 
   const { isSubscription, menuId, returnPath, isOrder, tab, isSpot } = router.query;
   const { menuItem, reviewImagesCount } = useSelector(menuSelector);
-  const { reviewCount } = menuItem;
 
+  const spotForm = router.pathname === '/spot/join/main/form';
   const loginPage = router.pathname === '/login';
   const oauth = router.pathname === '/oauth';
   const totalReview = router.pathname === '/menu/[menuId]/review/total';
@@ -28,6 +28,7 @@ const DefaultHeader = ({ title }: TProps) => {
   const finishOrder = router.pathname === '/order/finish';
   const orderDetail = router.pathname === '/mypage/order-detail/[id]';
   const subsCancel = router.pathname === '/subscription/[detailId]/cancel/complete';
+  const subsDetail = router.pathname === '/subscription/[detailId]';
   const subsSubCancel = router.pathname === '/subscription/[detailId]/sub-cancel/complete';
   const subsInfo = router.pathname === '/subscription/set-info';
   const addressEdit = router.pathname === '/mypage/address/edit/[id]';
@@ -36,14 +37,15 @@ const DefaultHeader = ({ title }: TProps) => {
   const reviewPage = router.pathname === '/mypage/review';
   const addressPage = router.pathname === '/mypage/address';
   const cartDelivery = router.pathname === '/cart/delivery-info';
+  const cart = router.pathname === '/cart';
 
   const countMap: Obj = {
-    '/menu/[menuId]/review/total': reviewCount,
-    '/menu/[menuId]/review/photo': reviewImagesCount,
+    '/menu/[menuId]/review/total': menuItem?.reviewCount ?? 0,
+    '/menu/[menuId]/review/photo': reviewImagesCount ?? 0,
   };
 
   const goBack = (): void => {
-    if (router.pathname === '/spot/join/main/form') {
+    if (spotForm) {
       dispatch(
         SET_ALERT({
           alertMessage: `입력한 내용은 저장되지 않아요.\n신청을 취소하시겠어요?`,
@@ -64,7 +66,7 @@ const DefaultHeader = ({ title }: TProps) => {
       }
     } else if (subsInfo) {
       router.back();
-    } else if (router.pathname === '/subscription/[detailId]') {
+    } else if (subsDetail) {
       returnPath ? router.replace('/subscription') : router.back();
     } else if (orderDetail) {
       if (router.query.isFinish) {
@@ -82,12 +84,15 @@ const DefaultHeader = ({ title }: TProps) => {
       tab ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } }) : router.back();
     } else if (addressPage) {
       isSpot ? router.replace({ pathname: '/mypage' }) : router.back();
+    } else if (cart) {
+      sessionStorage.removeItem('selectedDay');
+      router.back();
     } else {
       router.back();
     }
   };
 
-  if (totalReview && !reviewCount) {
+  if (totalReview && !menuItem?.reviewCount) {
     return <div>로딩</div>;
   }
 
