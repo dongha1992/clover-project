@@ -126,6 +126,7 @@ const OrderDetailPage = () => {
 
   const deliveryStatus = DELIVERY_STATUS_MAP[orderDeliveries?.status!];
   const deliveryDetail = DELIVERY_TIME_MAP[orderDetail?.deliveryDetail!];
+
   const isCompleted = orderDeliveries?.status === 'COMPLETED';
   const isCanceled = orderDeliveries?.status === 'CANCELED';
   const isDelivering = orderDeliveries?.status === 'DELIVERING';
@@ -136,6 +137,9 @@ const OrderDetailPage = () => {
   const deliveryId = orderDeliveries?.id!;
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
+  const hasReview = orderDeliveries?.hasReview;
+
+  const isBeforeCompleted = isDelivering || canChangeDelivery;
 
   const showSectionHandler = () => {
     setIsShowOrderItemSection(!isShowOrderItemSection);
@@ -190,6 +194,10 @@ const OrderDetailPage = () => {
 
   const goToCart = () => {
     mutateAddCartItem();
+  };
+
+  const goToReivew = () => {
+    router.push('/mypage/review');
   };
 
   const changeDeliveryInfoHandler = () => {
@@ -355,6 +363,8 @@ const OrderDetailPage = () => {
     payMethod,
     refundCoupon,
     refundMenuQuantity,
+    expectedPoint,
+    accumulatedPoint,
   } = orderDetail!;
 
   const {
@@ -395,7 +405,7 @@ const OrderDetailPage = () => {
           )}
           <TextH4B color={isCanceled ? theme.greyScale65 : theme.black}>{deliveryStatus}</TextH4B>
           <TextB1R padding="0 0 0 4px" color={isCanceled ? theme.greyScale25 : ''}>
-            {deliveryAt} 도착예정
+            {deliveryAt} {isCompleted ? '도착' : '도착 예정'}
           </TextB1R>
         </FlexRow>
         {isParcel && <FlexRow>{deliveryDescriptionRenderer(status)}</FlexRow>}
@@ -410,7 +420,16 @@ const OrderDetailPage = () => {
         </FlexBetween>
         <OrderListWrapper isShow={isShowOrderItemSection} status={deliveryStatus}>
           {orderMenus?.map((menu: IOrderMenus, index: number) => {
-            return <OrderItem menu={menu} key={index} isDeliveryComplete={isCompleted} isCanceled={isCanceled} />;
+            return (
+              <OrderItem
+                menu={menu}
+                key={index}
+                isDeliveryComplete={isCompleted}
+                isCanceled={isCanceled}
+                goToReivew={goToReivew}
+                hasReview={hasReview}
+              />
+            );
           })}
           <Button backgroundColor={theme.white} color={theme.black} border margin="8px 0 0 0" onClick={goToCart}>
             장바구니 담기
@@ -529,19 +548,22 @@ const OrderDetailPage = () => {
           <TextH4B>최종 결제금액</TextH4B>
           <TextH4B>{getFormatPrice(String(payAmount))}원</TextH4B>
         </FlexBetween>
-        <FlexEnd padding="11px 0 0 0">
-          <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-            {me?.grade?.name!}
-          </Tag>
-          <TextB3R padding="0 0 0 3px">구매 시 </TextB3R>
-          <TextH6B>
-            {calculatePoint({
-              rate: me?.grade.benefit.accumulationRate!,
-              total: payAmount + point,
-            })}
-            P ({me?.grade.benefit.accumulationRate}%) 적립 예정
-          </TextH6B>
-        </FlexEnd>
+        {expectedPoint > 0 && isBeforeCompleted && (
+          <FlexEnd padding="11px 0 0 0">
+            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+              {me?.grade?.name!}
+            </Tag>
+            <TextH6B padding="0 0 0 4px">{expectedPoint}P 적립 예정</TextH6B>
+          </FlexEnd>
+        )}
+        {expectedPoint > 0 && accumulatedPoint > 0 && (isCompleted || isCanceled) && (
+          <FlexEnd padding="11px 0 0 0">
+            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+              {me?.grade?.name!}
+            </Tag>
+            <TextH6B padding="0 0 0 4px">{accumulatedPoint}P 적립 완료</TextH6B>
+          </FlexEnd>
+        )}
       </TotalPriceWrapper>
       {isCanceled && (
         <>
@@ -597,16 +619,16 @@ const OrderDetailPage = () => {
                   <TextB2R>{getFormatPrice(String(refundPayAmount))}원</TextB2R>
                 </FlexBetween>
               )}
-              <FlexBetween padding="8px 0 0 0">
-                <TextB2R>환불 쿠폰</TextB2R>
-                <TextB2R>{coupon ? `1개` : `0개`}</TextB2R>
-              </FlexBetween>
               {refundPoint > 0 && (
                 <FlexBetween padding="8px 0 0 0">
                   <TextB2R>환불 포인트</TextB2R>
                   <TextB2R>{getFormatPrice(String(refundPoint))}원</TextB2R>
                 </FlexBetween>
               )}
+              <FlexBetween padding="8px 0 0 0">
+                <TextB2R>환불 쿠폰</TextB2R>
+                <TextB2R>{coupon ? `1개` : `0개`}</TextB2R>
+              </FlexBetween>
             </RefundContainer>
           </RefundInfoWrapper>
         </>
