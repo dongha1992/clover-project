@@ -237,7 +237,7 @@ const MenuDetailPage: NextPageWithLayout = () => {
         window.scrollTo({
           behavior: 'smooth',
           left: 0,
-          top: offsetTop,
+          top: offsetTop - 70,
         });
       }
     }, 100);

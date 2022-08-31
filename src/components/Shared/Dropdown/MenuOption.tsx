@@ -21,7 +21,7 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
       return false;
     }
   };
-  console.log(discount);
+
   return (
     <OptionList
       onClick={() => {

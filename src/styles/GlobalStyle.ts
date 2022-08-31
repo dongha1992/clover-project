@@ -21,12 +21,15 @@ const GlobalStyle = createGlobalStyle`
         /* font: inherit; */
         vertical-align: baseline;
         font-family: 'Noto Sans KR', sans-serif;
+        /* transform: rotate(-0.001deg) */
     }
     /* HTML5 display-role reset for older browsers */
     article, aside, details, figcaption, figure, 
     footer, header, hgroup, menu, nav, section {
         display: block;
     }
+
+
 
     @media(max-width:512px){
         body{

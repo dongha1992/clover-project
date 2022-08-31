@@ -370,7 +370,6 @@ export const customInput = css`
   outline: none;
   border-radius: 8px;
   background-color: white;
-  color: black;
 `;
 
 export const customInputWrapper = css`
@@ -388,6 +387,9 @@ export const customSelect = css`
     height: 100%;
     ${customInput}
     ${textBody2}
+    option {
+      color: red;
+    }
   }
 `;
 
