@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { TextB3R } from '@components/Shared/Text';
 import { theme, homePadding} from '@styles/theme';
 import  SVGIcon  from '@utils/common/SVGIcon';
+import Spinner from '@components/Shared/Spinner';
 
 interface IProps {
   isLoadingPickup: boolean;
@@ -18,8 +19,8 @@ const SpotPickupAvailability = ({
       case isLoadingPickup: 
         return (
           <>
-            {/* 로딩 들어갈 자리 */}
-            <TextB3R color={theme.brandColor}>사용 가능한 보관함을 확인 중이에요.</TextB3R>
+            <Spinner />
+            <TextB3R padding='1px 0 0 4px' color={theme.greyScale65}>사용 가능한 보관함을 확인 중이에요.</TextB3R>
           </>
         )
       case pickUpAvailability:
