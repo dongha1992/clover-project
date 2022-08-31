@@ -3,12 +3,13 @@ import SubsCalendar from '@components/Calendar/subscription/SubsCalendar';
 import SubsDateMngCalendar from '@components/Calendar/subscription/SubsDateMngCalendar';
 import { TextB2R, TextB3R, TextH4B, TextH5B } from '@components/Shared/Text';
 import useSubDeliveryDates from '@hooks/subscription/useSubDeliveryDates';
+import { useToast } from '@hooks/useToast';
 import { IOrderDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SET_SUBS_MANAGE, subscriptionForm } from '@store/subscription';
 import { fixedBottom, FlexRow, theme } from '@styles/theme';
-import { getFormatDate, SVGIcon } from '@utils/common';
+import { dateN, getFormatDate, SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -19,9 +20,8 @@ import styled from 'styled-components';
 
 interface IProps {
   item: any;
-  setToggleState: any;
 }
-const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
+const SubsDeliveryDateChangeSheet = ({ item }: IProps) => {
   // TODO(young) : 임시로 subscription/set-info에서 캘린더 선택에서 등록한 데이터 사용 추후 교체 해야됨
   const dispatch = useDispatch();
   const router = useRouter();
@@ -30,12 +30,7 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
   const [selectDate, setSelectDate] = useState<Date | undefined>();
   const [deliveryComplete, setDeliveryComplete] = useState(['2022-06-20']);
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    return () => {
-      setToggleState(false);
-    };
-  }, []);
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (router.isReady) {
@@ -77,11 +72,13 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
       onSuccess: async () => {
         await queryClient.invalidateQueries(['getOrderDetail', 'subscription', detailId]);
         dispatch(SET_SUBS_MANAGE({ changeDate: dayjs(selectDate).format('YYYY-MM-DD') }));
+        dispatch(INIT_BOTTOM_SHEET());
+        showToast({ message: '배송일 변경을 완료했어요!' });
       },
       onError: async (error: any) => {
         dispatch(
           SET_ALERT({
-            alertMessage: error.message,
+            alertMessage: `선택하신 날짜는 상품 품절, 배송 휴무\n등의 이유로 변경할 수 없어요.`,
             submitBtnText: '확인',
           })
         );
@@ -158,7 +155,6 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
           closeBtnText: '취소',
           onSubmit: () => {
             changeDeliveryDateMutation();
-            dispatch(INIT_BOTTOM_SHEET());
           },
         })
       );
@@ -188,7 +184,6 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
           closeBtnText: '취소',
           onSubmit: () => {
             changeDeliveryDateMutation();
-            dispatch(INIT_BOTTOM_SHEET());
           },
         })
       );
@@ -218,7 +213,6 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
           closeBtnText: '취소',
           onSubmit: () => {
             changeDeliveryDateMutation();
-            dispatch(INIT_BOTTOM_SHEET());
           },
         })
       );
@@ -275,12 +269,16 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
       </RemainCountBox>
       <DateChangeDayBox>
         <li>
-          <TextB3R padding="0 0 4px">배송 {item?.deliveryRound ?? 1}회차 - 변경 전</TextB3R>
-          <TextH4B>{getFormatDate(item.deliveryDate)}</TextH4B>
+          <TextB3R color="#fff" padding="0 0 4px">
+            배송 {item?.deliveryRound ?? 1}회차 - 변경 전
+          </TextB3R>
+          <TextH4B color="#fff">{getFormatDate(item.deliveryDate)}</TextH4B>
         </li>
         <li>
-          <TextB3R padding="0 0 4px">배송 {item?.deliveryRound ?? 1}회차 - 변경 후</TextB3R>
-          <TextH4B>{changeDate}</TextH4B>
+          <TextB3R color="#fff" padding="0 0 4px">
+            배송 {item?.deliveryRound ?? 1}회차 - 변경 후
+          </TextB3R>
+          <TextH4B color="#fff">{changeDate}</TextH4B>
         </li>
       </DateChangeDayBox>
 
@@ -308,8 +306,13 @@ const SubsDeliveryDateChangeSheet = ({ item, setToggleState }: IProps) => {
         <TextB3R className="ex">품절이나 시즌오프 등의 상품은 기간 제한이 있을 수 있습니다.</TextB3R>
         <TextB3R className="ex">합배송 상품의 경우 함께 이동됩니다.</TextB3R>
       </DateChangeExBox>
-      <BottomButton disabled={selectDate ? false : true} onClick={deliveryChangeHandler}>
-        <TextH5B>배송일 변경하기</TextH5B>
+      <BottomButton
+        disabled={dateN(String(selectDate)) !== dateN(item?.deliveryDate) ? false : true}
+        onClick={deliveryChangeHandler}
+      >
+        <TextH5B color={dateN(String(selectDate)) !== dateN(item?.deliveryDate) ? '#fff' : theme.greyScale25}>
+          배송일 변경하기
+        </TextH5B>
       </BottomButton>
     </Container>
   );
