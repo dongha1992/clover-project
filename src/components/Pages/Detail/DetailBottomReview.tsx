@@ -31,11 +31,9 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
   const hasImageReviews = reviewsImages?.images?.length !== 0;
   const hasReviews = reviews?.menuReviews?.length !== 0;
 
-  // const { rating, reviewCount } = menuItem;
-
-  const goToReviewImages = useCallback(() => {
+  const goToReviewImages = () => {
     router.push(`/menu/${menuId}/review/photo?tab=review`);
-  }, []);
+  };
 
   const goToTotalReview = () => {
     router.push(`/menu/${menuId}/review/total?tab=review`);
