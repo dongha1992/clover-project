@@ -61,7 +61,8 @@ const DefaultHeader = ({ title }: TProps) => {
       router.replace('/onboarding');
     } else if (cartDelivery) {
       if (!isSubscription) {
-        router.replace('/cart');
+        // router.replace('/cart');
+        router.back();
       } else {
         router.replace({ pathname: '/subscription/set-info', query: router.query });
       }
