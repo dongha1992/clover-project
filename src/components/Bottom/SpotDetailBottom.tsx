@@ -120,6 +120,8 @@ const SpotDetailBottom = () => {
                 id: destinationId,
                 spotId: spotDetail?.id,
                 availableTime: pickUpTime,
+                spotPickupType: pickupInfo.type,
+                spotPickupId: pickupInfo.id,
               })
             );
             dispatch(SET_USER_DELIVERY_TYPE('spot'));
@@ -132,6 +134,7 @@ const SpotDetailBottom = () => {
     };
 
     const goToDeliveryInfo = (pickupInfo: ISpotPickupInfoInDestination) => {
+      // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
       const destinationInfo = {
         name: spotDetail?.name!,
         location: {
@@ -145,8 +148,6 @@ const SpotDetailBottom = () => {
         spaceType: spotDetail?.type,
         spotPickupId: pickupInfo.id!,
       };
-
-      // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       router.push({

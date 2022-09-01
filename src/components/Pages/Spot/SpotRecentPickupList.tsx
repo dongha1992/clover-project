@@ -173,8 +173,9 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       main: false,
       availableTime: recentPickupTime!,
       spaceType: item?.spotPickup?.spot.type!,
-      spotPickupId: item?.spotPickup?.id,
       closedDate: closedDate,
+      spotPickupType: item?.spotPickup?.type,
+      spotPickupId: item?.spotPickup?.id,
     };
 
     const goToCart = () => {
