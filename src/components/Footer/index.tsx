@@ -7,9 +7,19 @@ import { SITE_INFO_TITLE } from '@constants/footer';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { theme } from '@styles/theme';
 import SlideToggle from '@components/Shared/SlideToggle';
+import useIsApp from '@hooks/useIsApp';
 
 const Footer = () => {
   const [isShow, setIsShow] = useState(false);
+  const isApp = useIsApp();
+
+  const openChat = () => {
+    if (isApp) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ cmd: 'webview-permission-microphone-check' }));
+    };
+    window.ChannelIO('showMessenger');
+  };
 
   return (
     <Container>
@@ -20,7 +30,9 @@ const Footer = () => {
         <TextB2R color={theme.greyScale65}>공휴일 휴무</TextB2R>
       </TimeInfoWrapper>
       <ButtonWrapper>
-        <Button width="148px">채팅문의</Button>
+        <Button width="148px" onClick={openChat}>
+          채팅문의
+        </Button>
       </ButtonWrapper>
       <FlexWrapper onClick={() => setIsShow(!isShow)}>
         <TextH5B padding="0px 9px 0 0">사업자 정보</TextH5B>

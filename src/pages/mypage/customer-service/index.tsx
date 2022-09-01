@@ -1,17 +1,27 @@
-import { homePadding } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
-import { MypageMenu } from '../index';
 import { Button } from '@components/Shared/Button';
 import { TextH5B, TextB2R, TextH4B } from '@components/Shared/Text';
 import { FlexCol, theme, FlexBetween, FlexRow } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
+import useIsApp from '@hooks/useIsApp';
 
 const customServicePage = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const isApp = useIsApp();
+
   const goToLink = (link: string) => {
     // TODO: ios, 안드로이드, window 나눠야함
     window.open(link, '_blank');
   };
+
+  const openChat = () => {
+    if (isApp) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-permission-microphone-check' }));
+    };
+    window.ChannelIO('showMessenger');
+  };
+
   return (
     <Container>
       <PaddingWrapper>
@@ -44,7 +54,9 @@ const customServicePage = () => {
           <TextB2R color={theme.greyScale65}>공휴일 휴무</TextB2R>
         </TimeInfoWrapper>
         <ButtonWrapper>
-          <Button width="148px">채팅문의</Button>
+          <Button width="148px" onClick={openChat} >
+            채팅문의
+          </Button>
         </ButtonWrapper>
       </FlexCol>
     </Container>
