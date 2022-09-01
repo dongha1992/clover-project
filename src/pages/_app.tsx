@@ -30,6 +30,7 @@ import { NextPage } from 'next';
 import DefaultLayout from '@components/Layout/Default';
 import { INIT_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { hideImageViewer } from '@store/imageViewer';
 import * as ga from '../lib/ga';
 
 declare global {
@@ -87,6 +88,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
   const routerEvent = () => {
     if (store.getState().alert) dispatch(INIT_ALERT());
     if (store.getState().bottomSheet.content) dispatch(INIT_BOTTOM_SHEET());
+    if (store.getState().imageViewer.images.length !== 0) dispatch(hideImageViewer());
   };
 
   const authCheck = async () => {

@@ -231,6 +231,7 @@ const CartPage = () => {
 
               setDestinationObj({
                 ...destinationObj,
+                name: data.data.name,
                 delivery: response.delivery.toLowerCase(),
                 destinationId,
                 location: data.data?.location ? data.data?.location : null,
@@ -937,6 +938,7 @@ const CartPage = () => {
     const disposablePrice = getDisposableItem()?.price;
     const totalDiscountPrice = getTotalDiscountPrice();
     const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
+
     setTotalAmount(tempTotalAmout);
   }, [checkedMenus, disposableList]);
 
@@ -957,7 +959,7 @@ const CartPage = () => {
     const spotDiscount = cartResponse?.discountInfos[0];
     const discoutnedItemsPrice = getItemsPrice() - getItemDiscountPrice();
 
-    return (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice ?? 0;
+    return spotDiscount?.discountRate ? (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice ?? 0 : 0;
   }, [checkedMenus]);
 
   const getDeliveryFee = useCallback(() => {
