@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 
 const useSubDeliveryDates = (orderDeliveries: any) => {
-  console.log('useSubDeliveryDates');
-
   const [subDates, setSubDates] = useState<any>([]);
 
   useEffect(() => {

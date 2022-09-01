@@ -51,7 +51,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
   const deliveryDateChangeHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <SubsDeliveryDateChangeSheet item={item} setToggleState={setToggleState} />,
+        content: <SubsDeliveryDateChangeSheet item={item} />,
       })
     );
   };
