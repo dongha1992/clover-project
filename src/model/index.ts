@@ -1056,6 +1056,41 @@ export interface IFilters {
   name: string;
 }
 
+/* NOTIFICATION */
+
+export type TNotiType = 'ORDER' | 'SPOT' | 'ACTIVITY' | 'POINT' | 'COUPON' | 'BENEFIT';
+export interface IGetNotiInfoResponse {
+  code: number;
+  message: string;
+  data: IGetNotiInfo;
+}
+export interface IGetNotiInfo {
+  uncheckedCount: number;
+}
+export interface IGetNotisRequest {
+  page: number;
+  size: number;
+  type?: TNotiType | string;
+}
+
+export interface IGetNotisResponse {
+  code: number;
+  message: string;
+  data: {
+    notifications: IGetNoti[];
+    pagination: IPagination;
+  };
+}
+
+export interface IGetNoti {
+  id: number;
+  type: TNotiType;
+  title: string;
+  content: string;
+  checked: boolean;
+  createdAt: string;
+}
+
 /* ORDER */
 
 export type TOrderType = 'GENERAL' | 'SUBSCRIPTION';
@@ -1078,8 +1113,7 @@ export interface IUserInputObj {
   receiverName: string;
   receiverTel: string;
   point: number;
-  deliveryMessage: string;
-  deliveryMessageType: string;
+
   coupon: number;
 }
 export interface ICreateOrderRequest {

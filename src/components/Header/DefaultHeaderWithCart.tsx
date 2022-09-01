@@ -5,17 +5,22 @@ import { TextH4B } from '@components/Shared/Text';
 import { useRouter } from 'next/router';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import CartIcon from '@components/Header/Cart';
-
+import { useDispatch, useSelector } from 'react-redux';
 type TProps = {
   title?: string;
 };
 
 const DefaultHeaderWithCart = ({ title }: TProps) => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
+  const searchPage = router.pathname === '/search';
+  const orderDetailPage = router.pathname === '/mypage/order-detail/[id]';
   const goBack = (): void => {
-    if (router.pathname === '/search') {
+    if (searchPage) {
       router.push('/');
+    } else if (orderDetailPage) {
+      router.query.isFinish ? router.push('/') : router.back();
     } else {
       router.back();
     }

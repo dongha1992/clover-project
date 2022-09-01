@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 
 const MyPageHeader = () => {
   const { isLoginSuccess } = useSelector(userForm);
+
   const goToCart = () => {
     router.push('/cart');
   };
