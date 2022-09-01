@@ -38,6 +38,7 @@ const DefaultHeader = ({ title }: TProps) => {
   const reviewPage = router.pathname === '/mypage/review';
   const addressPage = router.pathname === '/mypage/address';
   const cartDelivery = router.pathname === '/cart/delivery-info';
+  const destinationSearch = router.pathname === '/destination/search';
   const cart = router.pathname === '/cart';
 
   const countMap: Obj = {
@@ -61,8 +62,8 @@ const DefaultHeader = ({ title }: TProps) => {
       router.replace('/onboarding');
     } else if (cartDelivery) {
       if (!isSubscription) {
-        // router.replace('/cart');
-        router.back();
+        router.replace('/cart');
+        // router.back();
       } else {
         router.replace({ pathname: '/subscription/set-info', query: router.query });
       }

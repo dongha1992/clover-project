@@ -34,7 +34,7 @@ const RankPage = () => {
       onSuccess: (data) => {},
     }
   );
-  console.log(userGrade, 'userGrade');
+
   return (
     <Container>
       {isLoginSuccess ? (
