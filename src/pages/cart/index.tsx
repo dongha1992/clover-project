@@ -252,7 +252,7 @@ const CartPage = () => {
       enabled: !!me,
     }
   );
- 
+
   const { data: likeMenusList, isLoading: likeLoading } = useQuery(
     ['getLikeMenus', 'GENERAL'],
     async () => {
@@ -321,7 +321,7 @@ const CartPage = () => {
       enabled: !!me && !!userDestination,
     }
   );
-  
+
   const {
     data: pickUpAvailability,
     error,
@@ -334,13 +334,13 @@ const CartPage = () => {
     },
     {
       onSuccess: async (data) => {
-        if(!data) {
+        if (!data) {
           dispatch(
             SET_ALERT({
               alertMessage: '현재 사용 가능한 보관함이 없어요.\n다른 프코스팟을 이용해 주세요.',
               submitBtnText: '확인',
             })
-          );    
+          );
         }
       },
       onError: ({ response }: any) => {
@@ -735,7 +735,7 @@ const CartPage = () => {
 
   const changeDeliveryDate = ({ value, isChanged }: { value: string; isChanged: boolean }) => {
     const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === value);
-    console.log(value);
+
     if (value.length === 0) {
       dispatch(
         SET_ALERT({
@@ -1129,12 +1129,12 @@ const CartPage = () => {
       );
     }
 
-    if (isLoadingPickup || !pickUpAvailability){
+    if (isLoadingPickup || !pickUpAvailability) {
       return (
         <Button borderRadius="0" height="100%" disabled={!pickUpAvailability}>
           배송정보를 설정해 주세요
         </Button>
-      )
+      );
     }
 
     if (destinationObj.delivery && destinationObj.destinationId) {
@@ -1307,7 +1307,7 @@ const CartPage = () => {
   }, [cartItemList]);
 
   useEffect(() => {
-    if ((userDeliveryType !== 'spot') && calendarRef && isFromDeliveryPage) {
+    if (userDeliveryType !== 'spot' && calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
       window.scrollTo({
         behavior: 'smooth',
@@ -1354,20 +1354,17 @@ const CartPage = () => {
     dispatch(INIT_COUPON());
   }, []);
 
-  console.log(i++);
   if (isLoading) {
     return <div>로딩</div>;
   }
 
   return (
     <Container ref={containerRef}>
-      {
-        isCheckedEventSpot && (
-          <TopNoticeWrapper>
-            <TextH5B color={theme.white}>이벤트 프코스팟 주문은 픽업장소 변경이 불가해요.</TextH5B>
-          </TopNoticeWrapper>
-        )
-      }
+      {isCheckedEventSpot && (
+        <TopNoticeWrapper>
+          <TextH5B color={theme.white}>이벤트 프코스팟 주문은 픽업장소 변경이 불가해요.</TextH5B>
+        </TopNoticeWrapper>
+      )}
       {me ? (
         <DeliveryTypeWrapper>
           <DeliveryTypeAndLocation
@@ -1375,15 +1372,9 @@ const CartPage = () => {
             deliveryType={destinationObj.delivery!}
             deliveryDestination={destinationObj}
           />
-          {
-            userDeliveryType === 'spot' && 
-            (pickupType === 'GS_LOCKER' || pickupType === 'KORAIL_LOCKER') && (
-              <SpotPickupAvailability 
-                pickUpAvailability={pickUpAvailability}
-                isLoadingPickup={isLoadingPickup}
-              />
-            )
-          }
+          {userDeliveryType === 'spot' && (pickupType === 'GS_LOCKER' || pickupType === 'KORAIL_LOCKER') && (
+            <SpotPickupAvailability pickUpAvailability={pickUpAvailability} isLoadingPickup={isLoadingPickup} />
+          )}
         </DeliveryTypeWrapper>
       ) : (
         <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
@@ -1666,9 +1657,7 @@ const DeliveryMethodAndPickupLocation = styled.div`
   cursor: pointer;
 `;
 
-const SpotPickupCheckingWrapper = styled.div`
-
-`;
+const SpotPickupCheckingWrapper = styled.div``;
 
 const Left = styled.div`
   display: flex;

@@ -159,7 +159,7 @@ const DestinationDetailPage = () => {
               });
             }
           } else {
-            router.push('/cart');
+            router.replace('/cart');
           }
         } catch (error) {
           if (isSubscription) {
