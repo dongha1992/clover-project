@@ -1,6 +1,6 @@
-import { useInfiniteQuery, QueryFunction } from 'react-query';
+import { useInfiniteQuery, QueryFunction, QueryKey } from 'react-query';
 
-export const useInfinite = (key: string, fetchDatas: QueryFunction) => {
+export const useInfinite = (key: QueryKey, fetchDatas: QueryFunction) => {
   return useInfiniteQuery(key, fetchDatas, {
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage.totalPage >= lastPage.nextPage) {
