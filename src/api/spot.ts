@@ -20,6 +20,7 @@ import {
   IGetRegistrationSearchResponse,
   IGetSpotPickupsResponse,
   ISpotsAllListResponse,
+  ISpotPickupAvailabilityResponse,
 } from '@model/index';
 
 // 스팟 정보 조회
@@ -158,4 +159,9 @@ export const getSpotPickups = (spotId: number): Promise<AxiosResponse<IGetSpotPi
 // 스팟 전체 리스트 조회
 export const getSpotsAllListApi = (params: IParamsSpots): Promise<AxiosResponse<ISpotsAllListResponse>> => {
   return Api.get('/spot/v1/spots', { params });
+};
+
+// 장바구니 - 스팟 보관함 사용 가능 여부 체크 
+export const getPickupAvailabilityApi = (spotPickupId: number): Promise<AxiosResponse<ISpotPickupAvailabilityResponse>> => {
+  return Api.get(`/spot/v1/pickups/${spotPickupId}/availability`, { params: spotPickupId });
 };

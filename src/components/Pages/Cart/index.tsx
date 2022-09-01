@@ -8,6 +8,7 @@ import CartDiscountBox from './CartDiscountBox';
 import CartPriceBox from './CartPriceBox';
 import CartDisposableBox from './CartDisposableBox';
 import NutritionBox from './NutritionBox';
+import SpotPickupAvailability from './SpotPickupAvailability';
 
 export {
   CartDisposableBox,
@@ -20,4 +21,5 @@ export {
   CartDisplayItem,
   DeliveryTypeAndLocation,
   NutritionBox,
+  SpotPickupAvailability,
 };

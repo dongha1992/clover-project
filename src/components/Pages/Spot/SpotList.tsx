@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB3R, TextH6B, TextB2R, TextH4B, TextH5B, TextH7B } from '@components/Shared/Text';
 import { theme, FlexCol, FlexRow } from '@styles/theme';
@@ -9,7 +9,7 @@ import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { useToast } from '@hooks/useToast';
 import { ISpotsDetail, ISpotPickupInfoInDestination } from '@model/index';
-import { getSpotLike, postSpotRegistrationsRecruiting } from '@api/spot';
+import { postSpotRegistrationsRecruiting } from '@api/spot';
 import { cartForm } from '@store/cart';
 import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION, SET_TEMP_DESTINATION } from '@store/destination';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -34,12 +34,10 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
   const { id } = list;
   const routers = useRouter();
   const dispatch = useDispatch();
-  const { isDelivery, orderId } = routers.query;
+  const { orderId } = routers.query;
   const { isLoginSuccess } = useSelector(userForm);
-  const { cartLists } = useSelector(cartForm);
-  const { userLocation, userTempDestination } = useSelector(destinationForm);
+  const { userLocation } = useSelector(destinationForm);
   const { spotPickupId } = useSelector(spotSelector);
-  const { showToast, hideToast } = useToast();
 
   const userLocationLen = !!userLocation.emdNm?.length;
   const pickUpTime = `${list.lunchDeliveryStartTime}-${list.lunchDeliveryEndTime} / ${list.dinnerDeliveryStartTime}-${list.dinnerDeliveryEndTime}`;
@@ -108,6 +106,8 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               id: destinationId,
               spotId: list.id,
               availableTime: pickUpTime,
+              spotPickupType: pickupInfo.type,
+              spotPickupId: pickupInfo.id,
             })
           );
           dispatch(SET_USER_DELIVERY_TYPE('spot'));
@@ -242,7 +242,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               }
               <LikeWrapper type="normal" onClick={(e) => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
-                <TextB3R padding="4px 0 0 1px">{list?.likeCount}</TextB3R>
+                <TextB3R padding="2px 0 0 0">{list?.likeCount}</TextB3R>
               </LikeWrapper>
             </LocationInfoWrapper>
           </Container>
