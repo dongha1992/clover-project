@@ -26,9 +26,13 @@ export const afterDate = (date: string, day: number): string => {
   return dayjs(date).add(day, 'day').format(DEFAULT_DATE_FORMAT);
 };
 
+export const beforeDateN = (date: string, day: number): number => {
+  return Number(dayjs(date).subtract(day, 'day').format(NUMBER_TYPE_DATE_FORMAT));
+};
+
 export const getWeekDay = (date?: string) => {
   return DAYS[dayjs(date).day()];
-}
+};
 
 export const getCurrentDate = () => {
   return dayjs().format(DEFAULT_DATE_FORMAT);

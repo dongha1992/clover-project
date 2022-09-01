@@ -34,6 +34,7 @@ const SpotHeader = () => {
   useEffect(() => {
     getLocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => setDistance(0);
   }, [currentLocation]);
 
   const getLocation = async () => {
