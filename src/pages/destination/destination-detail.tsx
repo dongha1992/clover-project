@@ -115,7 +115,7 @@ const DestinationDetailPage = () => {
         deliveryType = deliveryType as string;
         const reqBody = {
           name,
-          delivery: deliveryType?.toLowerCase(),
+          delivery: deliveryType,
           deliveryMessage: '',
           main: false,
           receiverName: '',
@@ -202,7 +202,15 @@ const DestinationDetailPage = () => {
   };
 
   const goToSearch = () => {
-    orderId ? router.replace(`/destination/search?orderId=${orderId}`) : router.replace('/destination/search');
+    orderId
+      ? router.replace({
+          pathname: `/destination/search`,
+          query: { orderId, deliveryType },
+        })
+      : router.replace({
+          pathname: '/destination/search',
+          query: { deliveryType },
+        });
   };
 
   const goToHome = () => {
