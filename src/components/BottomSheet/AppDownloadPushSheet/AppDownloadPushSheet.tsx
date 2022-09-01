@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { TextH6B, TextH4B } from '@components/Shared/Text';
 import { theme, textH5 } from '@styles/theme';
-// import { Button } from '@components/Shared/Button';
 import NextImage from 'next/image';
 import Link from 'next/link';
 

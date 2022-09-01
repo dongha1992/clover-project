@@ -61,6 +61,7 @@ import {
   CartDiscountBox,
   CartDeliveryFeeBox,
   NutritionBox,
+  SpotPickupAvailability,
 } from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ, INITIAL_NUTRITION, INITIAL_DELIVERY_DETAIL } from '@constants/cart';
 import { INIT_ACCESS_METHOD } from '@store/common';
@@ -73,6 +74,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import 'swiper/css';
 import { INIT_COUPON } from '@store/coupon';
+import { getPickupAvailabilityApi } from '@api/spot';
 
 dayjs.locale('ko');
 
@@ -105,6 +107,7 @@ const CartPage = () => {
   });
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [holiday, setHoliday] = useState<string[]>([]);
+  const [isCheckedEventSpot, setIsCheckedEventSpot] = useState<boolean>(false);
 
   const calendarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -118,6 +121,10 @@ const CartPage = () => {
   const { nonMemberCartLists } = useSelector(cartForm);
 
   const queryClient = useQueryClient();
+
+  const { showToast, hideToast } = useToast();
+  const pickupId = userDestination?.spotPickupId;
+  const pickupType = userDestination?.spotPickupType;
 
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async (reqBody: ICreateCartRequest[]) => {
@@ -166,6 +173,7 @@ const CartPage = () => {
           setCheckedMenus(data.cartMenus);
           setCartItemList(data.cartMenus);
           setDisposableList(initMenuOptions(data.cartMenus));
+          setIsCheckedEventSpot(data.discountInfos[0].discountRate > 0);
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
 
@@ -244,7 +252,7 @@ const CartPage = () => {
       enabled: !!me,
     }
   );
-
+ 
   const { data: likeMenusList, isLoading: likeLoading } = useQuery(
     ['getLikeMenus', 'GENERAL'],
     async () => {
@@ -311,6 +319,39 @@ const CartPage = () => {
       refetchOnWindowFocus: false,
       cacheTime: 0,
       enabled: !!me && !!userDestination,
+    }
+  );
+  
+  const {
+    data: pickUpAvailability,
+    error,
+    isLoading: isLoadingPickup,
+  } = useQuery(
+    'getPickupAvailability',
+    async () => {
+      const { data } = await getPickupAvailabilityApi(pickupId!);
+      return data.data.isAvailability;
+    },
+    {
+      onSuccess: async (data) => {
+        if(!data) {
+          dispatch(
+            SET_ALERT({
+              alertMessage: '현재 사용 가능한 보관함이 없어요.\n다른 프코스팟을 이용해 주세요.',
+              submitBtnText: '확인',
+            })
+          );    
+        }
+      },
+      onError: ({ response }: any) => {
+        const { data: error } = response as any;
+
+        dispatch(SET_ALERT({ alertMessage: error?.message }));
+        return;
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      enabled: !!pickupId,
     }
   );
 
@@ -989,6 +1030,7 @@ const CartPage = () => {
   const goToOrder = () => {
     if (!me) return;
     if (!destinationObj.destinationId) return;
+    if (isLoadingPickup || !pickUpAvailability) return;
 
     if (isInvalidDestination) {
       dispatch(
@@ -1085,6 +1127,14 @@ const CartPage = () => {
           로그인을 해주세요
         </Button>
       );
+    }
+
+    if (isLoadingPickup || !pickUpAvailability){
+      return (
+        <Button borderRadius="0" height="100%" disabled={!pickUpAvailability}>
+          배송정보를 설정해 주세요
+        </Button>
+      )
     }
 
     if (destinationObj.delivery && destinationObj.destinationId) {
@@ -1257,7 +1307,7 @@ const CartPage = () => {
   }, [cartItemList]);
 
   useEffect(() => {
-    if (calendarRef && isFromDeliveryPage) {
+    if ((userDeliveryType !== 'spot') && calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
       window.scrollTo({
         behavior: 'smooth',
@@ -1311,12 +1361,30 @@ const CartPage = () => {
 
   return (
     <Container ref={containerRef}>
+      {
+        isCheckedEventSpot && (
+          <TopNoticeWrapper>
+            <TextH5B color={theme.white}>이벤트 프코스팟 주문은 픽업장소 변경이 불가해요.</TextH5B>
+          </TopNoticeWrapper>
+        )
+      }
       {me ? (
-        <DeliveryTypeAndLocation
-          goToDeliveryInfo={goToDeliveryInfo}
-          deliveryType={destinationObj.delivery!}
-          deliveryDestination={destinationObj}
-        />
+        <DeliveryTypeWrapper>
+          <DeliveryTypeAndLocation
+            goToDeliveryInfo={goToDeliveryInfo}
+            deliveryType={destinationObj.delivery!}
+            deliveryDestination={destinationObj}
+          />
+          {
+            userDeliveryType === 'spot' && 
+            (pickupType === 'GS_LOCKER' || pickupType === 'KORAIL_LOCKER') && (
+              <SpotPickupAvailability 
+                pickUpAvailability={pickUpAvailability}
+                isLoadingPickup={isLoadingPickup}
+              />
+            )
+          }
+        </DeliveryTypeWrapper>
       ) : (
         <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
           <Left>
@@ -1565,6 +1633,19 @@ const CartPage = () => {
 const Container = styled.div`
   width: 100%;
   margin-bottom: 50px;
+  position: relative;
+`;
+
+const TopNoticeWrapper = styled.div`
+  width: 100%;
+  height: 45px;
+  position: reletive;
+  top: 0;
+  background: ${theme.brandColor};
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const EmptyContainer = styled.div`
@@ -1574,11 +1655,19 @@ const EmptyContainer = styled.div`
   height: 50vh;
 `;
 
+const DeliveryTypeWrapper = styled.div`
+  width: 100%;
+`;
+
 const DeliveryMethodAndPickupLocation = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 24px 24px 0 24px;
   cursor: pointer;
+`;
+
+const SpotPickupCheckingWrapper = styled.div`
+
 `;
 
 const Left = styled.div`
