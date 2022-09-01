@@ -2604,10 +2604,10 @@ export interface ISpotPickupAvailabilityResponse {
   code: number;
   data: {
     isAvailability: boolean;
-  }
+  };
   message: string;
   metaData: {
     responsedAt: string;
     trackingId: string;
   };
-};
+}
