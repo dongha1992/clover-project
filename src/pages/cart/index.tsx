@@ -173,7 +173,7 @@ const CartPage = () => {
           setCheckedMenus(data.cartMenus);
           setCartItemList(data.cartMenus);
           setDisposableList(initMenuOptions(data.cartMenus));
-          setIsCheckedEventSpot(data.discountInfos[0].discountRate > 0);
+          setIsCheckedEventSpot(data.discountInfos[0]?.discountRate > 0);
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
 
@@ -311,7 +311,6 @@ const CartPage = () => {
       },
       onError: ({ response }: any) => {
         const { data: error } = response as any;
-
         dispatch(SET_ALERT({ alertMessage: error?.message }));
         return;
       },

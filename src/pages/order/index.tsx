@@ -430,6 +430,7 @@ const OrderPage = () => {
     if (tempOrder?.isSubOrderDelivery && name === 'samePerson') {
       return;
     }
+
     if (!checkForm.samePerson.isSelected && name === 'samePerson') {
       setUserInputObj({
         ...userInputObj,
@@ -437,6 +438,9 @@ const OrderPage = () => {
         receiverTel: previewOrder?.order.userTel!,
       });
     }
+
+    console.log('-----');
+
     setCheckForm({ ...checkForm, [name]: { isSelected: !checkForm[name].isSelected } });
   };
 
@@ -881,7 +885,6 @@ const OrderPage = () => {
 
       setCheckForm({
         ...checkForm,
-        accessMethodReuse: { isSelected: previewOrder?.order?.deliveryMessageReused },
         samePerson: { isSelected: isEdited ? false : true },
       });
     }
@@ -926,6 +929,15 @@ const OrderPage = () => {
 
   useEffect(() => {
     if (previewOrder) {
+      setCheckForm({
+        ...checkForm,
+        accessMethodReuse: { isSelected: previewOrder?.order?.deliveryMessageReused },
+      });
+    }
+  }, [previewOrder]);
+
+  useEffect(() => {
+    if (previewOrder) {
       const isMorning = ['MORNING'].includes(previewOrder?.order?.delivery!);
       const { deliveryMessageReused } = previewOrder?.order!;
       const { deliveryMessage, deliveryMessageType } = previewOrder?.destination!;
@@ -958,16 +970,16 @@ const OrderPage = () => {
     }
   }, [previewOrder, userAccessMethod]);
 
-  useEffect(()=> {
-    if (previewOrder?.order?.delivery === 'SPOT' 
-    && previewOrder.destination?.spotPickup.type !=='PICKUP') {
+  useEffect(() => {
+    if (previewOrder?.order?.delivery === 'SPOT' && previewOrder.destination?.spotPickup.type !== 'PICKUP') {
       dispatch(
         SET_ALERT({
-          alertMessage: 'GS BOX25, 코레일 무인보관함 등\n외부 보관함은 주문 예약제로 운영되어\n픽업장소 및 날짜 변경이 불가해요.',
+          alertMessage:
+            'GS BOX25, 코레일 무인보관함 등\n외부 보관함은 주문 예약제로 운영되어\n픽업장소 및 날짜 변경이 불가해요.',
           submitBtnText: '확인',
         })
-      );      
-    };
+      );
+    }
   }, []);
 
   useEffect(() => {
