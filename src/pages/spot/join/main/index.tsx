@@ -18,6 +18,7 @@ import { spotSelector } from '@store/spot';
 import { ISpotsInfo } from '@model/index';
 import { getSpotInfo } from '@api/spot';
 import NextImage from 'next/image';
+import useIsApp from '@hooks/useIsApp';
 
 const SpotReqPage = () => {
   const router = useRouter();
@@ -26,6 +27,8 @@ const SpotReqPage = () => {
   const dispatch = useDispatch();
   const [info, setInfo] = useState<ISpotsInfo>();
   const [spotCount, setSpotCount] = useState<number>(0);
+  const isApp = useIsApp();
+
   const text = {
     privateText: '나의 회사•학교를\n프코스팟으로 만들어 보세요!',
     privateDesc: '나만의 간편건강식을 점심,저녁에\n배송비 무료로 픽업해요!',
@@ -114,6 +117,14 @@ const SpotReqPage = () => {
       }
   };
 
+  const openChat = () => {
+    if (isApp) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ cmd: 'webview-permission-microphone-check' }));
+    };
+    window.ChannelIO('showMessenger');
+  };
+
   return (
     <Container>
       <TopWrapper>
@@ -147,9 +158,8 @@ const SpotReqPage = () => {
       </GuideImgWrapper>
       <ChannelIoBottomWrapper>
         <BtnWrapper>
-          {/* TODO 채널톡 작업 */}
           <TextH3B padding="48px 0 24px 0">{text.askText}</TextH3B>
-          <Button pointer backgroundColor={theme.white} color={theme.black} border borderRadius="8">
+          <Button onClick={openChat} pointer backgroundColor={theme.white} color={theme.black} border borderRadius="8">
             {text.askBtnText}
           </Button>
         </BtnWrapper>

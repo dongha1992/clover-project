@@ -31,7 +31,7 @@ const Footer = () => {
       </TimeInfoWrapper>
       <ButtonWrapper>
         <Button width="148px" onClick={openChat}>
-          채팅문의
+          채팅 문의
         </Button>
       </ButtonWrapper>
       <FlexWrapper onClick={() => setIsShow(!isShow)}>
