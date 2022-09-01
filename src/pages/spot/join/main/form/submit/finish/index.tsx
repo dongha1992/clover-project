@@ -7,11 +7,13 @@ import { Button } from '@components/Shared/Button';
 import { spotSelector } from '@store/spot';
 import { useSelector } from 'react-redux';
 import NextImage from 'next/image';
+import useIsApp from '@hooks/useIsApp';
 
 const FinishPage = () => {
   const router = useRouter();
   const { type } = router.query;
   const { spotRegistrationsPostResult } = useSelector(spotSelector);
+  const isApp = useIsApp();
 
   const goToSpotNotice = ():void => {
     router.push('/spot/notice');
@@ -45,6 +47,14 @@ const FinishPage = () => {
           subTitle: '신청 내용 확인 후 프코매니저가 2~3일 이내 연락드릴거에요!\n조금만 기다려주세요!',    
         }
     }
+  };
+
+  const openChat = () => {
+    if (isApp) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ cmd: 'webview-permission-microphone-check' }));
+    };
+    window.ChannelIO('showMessenger');
   };
 
   return (
@@ -81,7 +91,7 @@ const FinishPage = () => {
         type === 'OWNER' && (
           <ChannelIokWrapper>
             <TextH5B padding="0 0 16px 0">프코스팟 운영 관련 문의해요</TextH5B>
-            <Button pointer backgroundColor={theme.white} color={theme.black} border borderRadius="8">
+            <Button onClick={openChat} pointer backgroundColor={theme.white} color={theme.black} border borderRadius="8">
               채팅 문의
             </Button>
           </ChannelIokWrapper>

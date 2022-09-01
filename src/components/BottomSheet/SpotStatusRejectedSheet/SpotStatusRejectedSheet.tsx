@@ -11,6 +11,7 @@ import { spotSelector } from '@store/spot';
 import { useSelector } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { useRouter } from 'next/router';
+import useIsApp from '@hooks/useIsApp';
 
 type TPrams = {
   onSubmit?: () => void;
@@ -21,6 +22,7 @@ const SpotStatusRejectedSheet = ({ onSubmit, items }: TPrams): JSX.Element => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { spotsRegistrationInfo } = useSelector(spotSelector);
+  const isApp = useIsApp();
 
   const trialRejectedText = '아쉽게도 안내드린 2주 트라이얼 기간 동안 5명 이상 인원모집(배송완료) 조건이 미달되어 오픈 미진행되었음을 안내드립니다.\n\n계속해서 해당 프라이빗 프코스팟의 오픈을 원하신다면 30일 후 재신청이 가능하니 아래 오픈 재신청 버튼을 통해 다시 시도해 주세요. (오픈 재신청은 총 2회 가능하며 단, 이전 트라이얼 모집인원은 리셋돼요!)\n\n자세한 내용은 채팅 문의를 통해 말씀해 주세요.\n감사합니다.';
   const trialRetrialDisabled = '아쉽게도 안내드린 트라이얼 기간동안 5명 이상 인원모집(배송완료) 조건이 미달되어 해당 프코스팟 오픈이 최종 미진행되었음을 안내드립니다.\n\n자세한 내용은 채팅 문의를 통해 말씀해 주세요.\n감사합니다.'
@@ -72,6 +74,14 @@ const SpotStatusRejectedSheet = ({ onSubmit, items }: TPrams): JSX.Element => {
     };  
   };
 
+  const openChat = () => {
+    if (isApp) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ cmd: 'webview-permission-microphone-check' }));
+    };
+    window.ChannelIO('showMessenger');
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -84,7 +94,7 @@ const SpotStatusRejectedSheet = ({ onSubmit, items }: TPrams): JSX.Element => {
             {
                items?.rejected && ((items?.step === 'TRIAL' && items?.rejectionType === 'ETC') || (items?.step !== 'TRIAL') || (items?.trialCount === 3)) &&
               // 트라이얼이 아니고 오픈 미진행인 경우 or 트라이얼 재신청 3회째인 경우
-              <Button color={theme.black} backgroundColor={theme.white} border onClick={()=>{}}>채팅 문의</Button>
+              <Button color={theme.black} backgroundColor={theme.white} border onClick={openChat}>채팅 문의</Button>
             }
             {
               items?.canRetrial && items?.rejectionType === 'INSUFFICIENCY' && items?.trialCount !== 3 &&

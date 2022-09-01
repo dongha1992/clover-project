@@ -18,6 +18,7 @@ import { destinationForm, SET_USER_DELIVERY_TYPE, SET_DESTINATION } from '@store
 import { useToast } from '@hooks/useToast';
 import { SET_SPOT_STATUS_DETAIL_ITEMS } from '@store/spot';
 import { postDestinationApi } from '@api/destination';
+import useIsApp from '@hooks/useIsApp';
 
 const PLAN_GUIDE = [
   {
@@ -58,6 +59,7 @@ const SpotStatusDetailPage = (): ReactElement => {
   const { showToast, hideToast } = useToast();
 
   const loginUserId = me?.id;
+  const isApp = useIsApp();
 
   useEffect(() => {
     if (router.isReady) {
@@ -235,6 +237,14 @@ const SpotStatusDetailPage = (): ReactElement => {
     }
   };
 
+  const openChat = () => {
+    if (isApp) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ cmd: 'webview-permission-microphone-check' }));
+    };
+    window.ChannelIO('showMessenger');
+  };
+
   return (
     <Container order={orderCondition()!}>
       <TopStatusWrapper>
@@ -316,7 +326,7 @@ const SpotStatusDetailPage = (): ReactElement => {
             </PlanGuidContent>
           );
         })}
-        <Button margin="24px 0 0 0" border color={theme.black} backgroundColor={theme.white}>
+        <Button onClick={openChat} margin="24px 0 0 0" border color={theme.black} backgroundColor={theme.white}>
           채팅 문의
         </Button>
       </PlanGuideWrapper>
