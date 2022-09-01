@@ -400,6 +400,7 @@ export interface ISpotInSpotPickUp {
   placeTel: string;
   placeType: string;
   visiblePlaceTel: boolean;
+  placeDetailType: string;
 }
 
 export interface ISpotImageInDestination {
@@ -437,6 +438,7 @@ export interface IDestinationsResponse {
   availableTime?: string;
   closedDate?: string;
   spotId?: number;
+  spotPickupType?: string | null;
 }
 
 export interface IGetDestinationsResponse {
@@ -1606,6 +1608,7 @@ export interface IDestinationInPreview {
   name: string;
   receiverName: string;
   receiverTel: string;
+  spotPickup: ISpotPickupInfoInDestination;
 }
 export interface ICreateOrderPreviewResponse {
   code: number;
@@ -2596,3 +2599,15 @@ export interface IExhibitionListResponse {
     trackingId: string;
   };
 }
+
+export interface ISpotPickupAvailabilityResponse {
+  code: number;
+  data: {
+    isAvailability: boolean;
+  }
+  message: string;
+  metaData: {
+    responsedAt: string;
+    trackingId: string;
+  };
+};

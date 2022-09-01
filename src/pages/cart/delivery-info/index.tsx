@@ -170,7 +170,12 @@ const DeliverInfoPage = () => {
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
 
     if (destinationId || isMainDestination) {
-      dispatch(SET_DESTINATION({ ...tempDestination, spotId: tempDestination.spotId }));
+      dispatch(SET_DESTINATION({ 
+        ...tempDestination, 
+        spotId: tempDestination.spotId,
+        spotPickupType: tempDestination?.spotPickup?.type,
+        spotPickupId: tempDestination?.spotPickup?.id,
+      }));
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(INIT_TEMP_DESTINATION());
@@ -218,8 +223,8 @@ const DeliverInfoPage = () => {
                   id: response.id,
                   availableTime: tempDestination.availableTime,
                   spaceType: tempDestination.spaceType,
-                  spotPickup: response?.spotPickup,
-                  spotPickupId: tempDestination?.spotPickupId,
+                  spotPickupType: response?.spotPickup?.type,
+                  spotPickupId: response?.spotPickup?.id,
                 })
               );
               dispatch(SET_AFTER_SETTING_DELIVERY());
@@ -312,9 +317,10 @@ const DeliverInfoPage = () => {
                 deliveryMessageType: '',
                 delivery: response.delivery,
                 id: response.id,
-                spotPickup: response.spotPickup ? response.spotPickup : null,
                 availableTime: tempDestination.availableTime ? tempDestination.availableTime! : undefined,
                 spaceType: tempDestination.spaceType ? tempDestination.spaceType : undefined,
+                spotPickupType: response.spotPickup?.type,
+                spotPickupId: response.spotPickup?.id,
               })
             );
             dispatch(SET_AFTER_SETTING_DELIVERY());
