@@ -45,7 +45,7 @@ import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { INIT_USER_ORDER_INFO } from '@store/order';
 import { getCustomDate } from '@utils/destination';
-import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus, calculatePoint } from '@utils/menu';
+import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus } from '@utils/menu';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
@@ -78,6 +78,7 @@ dayjs.locale('ko');
 
 const now = dayjs();
 const REST_HEIGHT = 60;
+let i = 0;
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<IGetCart[]>([]);
@@ -215,7 +216,6 @@ const CartPage = () => {
           const params = {
             delivery: response.delivery,
           };
-
           try {
             const { data } = await getMainDestinationsApi(params);
             if (data.code === 200) {
@@ -352,28 +352,6 @@ const CartPage = () => {
 
   const isSpot = destinationObj.delivery === 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj?.delivery!);
-
-  // const changeCartQuantity = (list: IGetCart[], menuDetailId: number, quantity: number) => {
-  //   // 회월일 때
-  //   const changedCartItemList = [];
-  //   let menuId: number;
-  //   cartItemList.forEach((item) => {
-  //     const changed = item.menuDetails.map((detail) => {
-  //       if (detail.id === menuDetailId) {
-  //         menuId = item.id!;
-  //         return { ...detail, quantity };
-  //       } else {
-  //         return detail;
-  //       }
-  //     });
-  //     if (item.menuId === menuId) {
-  //       const found = { ...item, menuDetails: changed };
-  //       changedCartItemList.push(found);
-  //     } else {
-  //       changedCartItemList.push(item);
-  //     }
-  //   });
-  // };
 
   const canCheckFilteredMenus = (list: IGetCart[]) => {
     const canCheckMenus = getCanCheckedMenus(list);
@@ -750,13 +728,6 @@ const CartPage = () => {
   const subDelieryHandler = (deliveryId: number) => {
     setSubDeliveryId(deliveryId);
   };
-
-  // const checkHasMainMenu = (menuDetailId: number, menuId:number) => {
-  //   let foundMenu = cartItemList.find((item) => item.menuId === menuId);
-  //   const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
-  //   const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
-  //   return { foundMenu, isMain, hasOptionalMenu };
-  // };
 
   const checkHasSubOrderDelivery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
@@ -1175,6 +1146,79 @@ const CartPage = () => {
     setDisposableList(editDisposableList);
   };
 
+  const getSubOrderDelivery = async () => {
+    if (me) {
+      const params = {
+        delivery: userDeliveryType.toUpperCase(),
+      };
+      try {
+        const { data } = await getSubOrdersCheckApi(params);
+        if (data.code === 200) {
+          const result = checkHasSubOrderDelivery(data?.data.orderDeliveries);
+
+          setSubOrderDeliery(result);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const checkMenusHandler = (data: IGetCart[]) => {
+    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === data.length) {
+      setIsAllchecked(true);
+      setCheckedMenus(data);
+    } else {
+      setIsAllchecked(false);
+      setCheckedMenus(canCheckFilteredMenus(data));
+    }
+  };
+
+  const checkIsClosedSpot = () => {
+    // 스팟 종료 날짜
+    const { dateFormatter: closedDate } = getCustomDate(destinationObj?.closedDate!);
+    const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
+
+    // 스팟 운영 종료
+    if (dDay || !destinationObj?.closedDate!) {
+      return;
+    }
+
+    const closedSoonOperation = dDay >= -14;
+
+    if (closedSoonOperation && isSpot) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `해당 프코스팟은\n${closedDate}에 운영 종료돼요!`,
+          submitBtnText: '확인',
+        })
+      );
+    }
+  };
+
+  const addToCartItemByNonmember = () => {
+    // 비회원일경우
+    if (!me) {
+      reorderCartList(nonMemberCartLists ?? []);
+    } else {
+      // 로그인 경우 비회원 장바구니 리스트 있는 조회
+      const hasNonMemberCarts = nonMemberCartLists?.length !== 0;
+      if (hasNonMemberCarts) {
+        const reqBody = nonMemberCartLists.flatMap((item) =>
+          item.menuDetails.map((detail) => {
+            return {
+              menuId: item.menuId!,
+              menuDetailId: detail.menuDetailId,
+              quantity: detail.quantity,
+              main: detail.main,
+            };
+          })
+        );
+        mutateAddCartItem(reqBody);
+      }
+    }
+  };
+
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
     if (isSpotOrQuick) {
@@ -1204,34 +1248,6 @@ const CartPage = () => {
       refetch();
     }
   }, [selectedDeliveryDay]);
-
-  const getSubOrderDelivery = async () => {
-    if (me) {
-      const params = {
-        delivery: userDeliveryType.toUpperCase(),
-      };
-      try {
-        const { data } = await getSubOrdersCheckApi(params);
-        if (data.code === 200) {
-          const result = checkHasSubOrderDelivery(data?.data.orderDeliveries);
-
-          setSubOrderDeliery(result);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
-
-  const checkMenusHandler = (data: IGetCart[]) => {
-    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === data.length) {
-      setIsAllchecked(true);
-      setCheckedMenus(data);
-    } else {
-      setIsAllchecked(false);
-      setCheckedMenus(canCheckFilteredMenus(data));
-    }
-  };
 
   useEffect(() => {
     if (isFirstRender) {
@@ -1272,6 +1288,7 @@ const CartPage = () => {
 
   useEffect(() => {
     getSubOrderDelivery();
+    checkIsClosedSpot();
   }, [destinationObj]);
 
   useEffect(() => {
@@ -1280,57 +1297,14 @@ const CartPage = () => {
   }, [checkedMenus, disposableList]);
 
   useEffect(() => {
-    // 스팟 종료 날짜
-    const { dateFormatter: closedDate } = getCustomDate(destinationObj?.closedDate!);
-    const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
-
-    // 스팟 운영 종료
-    if (dDay || !destinationObj?.closedDate!) {
-      return;
-    }
-
-    const closedSoonOperation = dDay >= -14;
-
-    if (closedSoonOperation && isSpot) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: `해당 프코스팟은\n${closedDate}에 운영 종료돼요!`,
-          submitBtnText: '확인',
-        })
-      );
-    }
-  }, [destinationObj]);
-
-  useEffect(() => {
-    // 비회원일경우
-    if (!me) {
-      reorderCartList(nonMemberCartLists ?? []);
-    } else {
-      // 로그인 경우 비회원 장바구니 리스트 있는 조회
-      const hasNonMemberCarts = nonMemberCartLists?.length !== 0;
-      if (hasNonMemberCarts) {
-        const reqBody = nonMemberCartLists.flatMap((item) =>
-          item.menuDetails.map((detail) => {
-            return {
-              menuId: item.menuId!,
-              menuDetailId: detail.menuDetailId,
-              quantity: detail.quantity,
-              main: detail.main,
-            };
-          })
-        );
-        mutateAddCartItem(reqBody);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
+    addToCartItemByNonmember();
     setIsFirstRender(true);
     dispatch(INIT_ACCESS_METHOD());
     dispatch(INIT_USER_ORDER_INFO());
     dispatch(INIT_COUPON());
   }, []);
 
+  console.log(i++);
   if (isLoading) {
     return <div>로딩</div>;
   }
