@@ -127,7 +127,10 @@ const DeliverInfoPage = () => {
           },
         });
       } else {
-        router.push({ pathname: '/destination/search', query: { deliveryType: userSelectDeliveryType.toUpperCase() } });
+        router.replace({
+          pathname: '/destination/search',
+          query: { deliveryType: userSelectDeliveryType.toUpperCase() },
+        });
       }
     }
   };
@@ -170,12 +173,14 @@ const DeliverInfoPage = () => {
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
 
     if (destinationId || isMainDestination) {
-      dispatch(SET_DESTINATION({ 
-        ...tempDestination, 
-        spotId: tempDestination.spotId,
-        spotPickupType: tempDestination?.spotPickup?.type,
-        spotPickupId: tempDestination?.spotPickup?.id,
-      }));
+      dispatch(
+        SET_DESTINATION({
+          ...tempDestination,
+          spotId: tempDestination.spotId,
+          spotPickupType: tempDestination?.spotPickup?.type,
+          spotPickupId: tempDestination?.spotPickup?.id,
+        })
+      );
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(INIT_TEMP_DESTINATION());
@@ -238,7 +243,7 @@ const DeliverInfoPage = () => {
                   query: { subsDeliveryType: subsDeliveryType, menuId },
                 });
               } else {
-                router.push('/cart');
+                router.replace('/cart');
               }
             }
           } catch (error) {
@@ -486,9 +491,9 @@ const DeliverInfoPage = () => {
   const checkTimerShow = () => {
     // 배송 방법 선택과 관련 없이 현재 시간이 배송 마감 30분 전 이면 show
     const timerResult = checkTimerLimitHelper(locationStatus);
-    if(checkIsValidTimer(getCurrentDate(), timerResult)) {
+    if (checkIsValidTimer(getCurrentDate(), timerResult)) {
       dispatch(INIT_TIMER({ isInitDelay: false })); //타이머 시작
-      const timerDeliveryType = getTargetDelivery(timerResult)
+      const timerDeliveryType = getTargetDelivery(timerResult);
       if (['스팟점심', '스팟저녁'].includes(timerDeliveryType)) {
         setTimerDeliveryType('스팟배송');
       } else {

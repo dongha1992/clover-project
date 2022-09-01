@@ -33,6 +33,12 @@ export const deliveryDetailMap: Obj = {
   DINNER: '저녁',
 };
 
+const DAYS_MAP: Obj = {
+  '90': '90일',
+  '180': '180일',
+  '365': '1년',
+};
+
 const DEFAULT_SIZE = 10;
 
 const OrderDeliveryHistoryPage = () => {
@@ -119,12 +125,14 @@ const OrderDeliveryHistoryPage = () => {
 
   return (
     <Container ref={parentRef}>
-      <FlexEnd onClick={clickFilterHandler} padding="16px 0">
-        <SVGIcon name="filter" />
-        <TextH6B pointer padding="0 0 0 4px">
-          {withInDays}일
-        </TextH6B>
-      </FlexEnd>
+      {data?.pages[0]?.result?.length !== 0 && (
+        <FlexEnd onClick={clickFilterHandler} padding="16px 0">
+          <SVGIcon name="filter" />
+          <TextH6B pointer padding="0 0 0 4px">
+            {DAYS_MAP[withInDays]}
+          </TextH6B>
+        </FlexEnd>
+      )}
       {data?.pages[0]?.result?.length !== 0 ? (
         data?.pages.map((page: any, index: number) => {
           return (
@@ -144,7 +152,7 @@ const OrderDeliveryHistoryPage = () => {
         <NoSubsBox>
           <FlexCol width="100%">
             <TextB2R padding="0 0 24px" color={theme.greyScale65} center>
-              주문/배송 내역이 없어요 :울음:
+              주문/배송 내역이 없어요 😭
             </TextB2R>
             <Button backgroundColor="#fff" color="#242424" width="100%" border onClick={goToShop}>
               상품 보러가기
