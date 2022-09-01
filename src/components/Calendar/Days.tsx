@@ -95,7 +95,6 @@ const Wrapper = styled.div<{
   background-color: ${({ selectedDay }) => (selectedDay ? theme.brandColor : '')};
   padding: 4px;
   > div {
-    padding-top: 4px;
   }
 `;
 

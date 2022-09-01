@@ -45,7 +45,7 @@ import { SubDeliverySheet } from '@components/BottomSheet/SubDeliverySheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { INIT_USER_ORDER_INFO } from '@store/order';
 import { getCustomDate } from '@utils/destination';
-import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus, calculatePoint } from '@utils/menu';
+import { checkIsAllSoldout, checkCartMenuStatus, checkPeriodCartMenuStatus } from '@utils/menu';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { getAvailabilityDestinationApi, getMainDestinationsApi } from '@api/destination';
 import { getOrderListsApi, getSubOrdersCheckApi } from '@api/order';
@@ -80,6 +80,7 @@ dayjs.locale('ko');
 
 const now = dayjs();
 const REST_HEIGHT = 60;
+let i = 0;
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<IGetCart[]>([]);
@@ -223,7 +224,6 @@ const CartPage = () => {
           const params = {
             delivery: response.delivery,
           };
-
           try {
             const { data } = await getMainDestinationsApi(params);
             if (data.code === 200) {
@@ -252,7 +252,7 @@ const CartPage = () => {
       enabled: !!me,
     }
   );
- 
+
   const { data: likeMenusList, isLoading: likeLoading } = useQuery(
     ['getLikeMenus', 'GENERAL'],
     async () => {
@@ -321,7 +321,7 @@ const CartPage = () => {
       enabled: !!me && !!userDestination,
     }
   );
-  
+
   const {
     data: pickUpAvailability,
     error,
@@ -334,13 +334,13 @@ const CartPage = () => {
     },
     {
       onSuccess: async (data) => {
-        if(!data) {
+        if (!data) {
           dispatch(
             SET_ALERT({
               alertMessage: '현재 사용 가능한 보관함이 없어요.\n다른 프코스팟을 이용해 주세요.',
               submitBtnText: '확인',
             })
-          );    
+          );
         }
       },
       onError: ({ response }: any) => {
@@ -393,28 +393,6 @@ const CartPage = () => {
 
   const isSpot = destinationObj.delivery === 'spot';
   const isSpotAndQuick = ['spot', 'quick'].includes(destinationObj?.delivery!);
-
-  // const changeCartQuantity = (list: IGetCart[], menuDetailId: number, quantity: number) => {
-  //   // 회월일 때
-  //   const changedCartItemList = [];
-  //   let menuId: number;
-  //   cartItemList.forEach((item) => {
-  //     const changed = item.menuDetails.map((detail) => {
-  //       if (detail.id === menuDetailId) {
-  //         menuId = item.id!;
-  //         return { ...detail, quantity };
-  //       } else {
-  //         return detail;
-  //       }
-  //     });
-  //     if (item.menuId === menuId) {
-  //       const found = { ...item, menuDetails: changed };
-  //       changedCartItemList.push(found);
-  //     } else {
-  //       changedCartItemList.push(item);
-  //     }
-  //   });
-  // };
 
   const canCheckFilteredMenus = (list: IGetCart[]) => {
     const canCheckMenus = getCanCheckedMenus(list);
@@ -757,7 +735,7 @@ const CartPage = () => {
 
   const changeDeliveryDate = ({ value, isChanged }: { value: string; isChanged: boolean }) => {
     const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === value);
-    console.log(value);
+
     if (value.length === 0) {
       dispatch(
         SET_ALERT({
@@ -791,13 +769,6 @@ const CartPage = () => {
   const subDelieryHandler = (deliveryId: number) => {
     setSubDeliveryId(deliveryId);
   };
-
-  // const checkHasMainMenu = (menuDetailId: number, menuId:number) => {
-  //   let foundMenu = cartItemList.find((item) => item.menuId === menuId);
-  //   const isMain = foundMenu?.menuDetails.find((item) => item.menuDetailId === menuDetailId)?.main;
-  //   const hasOptionalMenu = foundMenu?.menuDetails.some((item) => !item.main);
-  //   return { foundMenu, isMain, hasOptionalMenu };
-  // };
 
   const checkHasSubOrderDelivery = (canSubOrderlist: ISubOrderDelivery[]) => {
     const checkAvailableSubDelivery = ({ delivery, location }: ISubOrderDelivery) => {
@@ -1158,12 +1129,12 @@ const CartPage = () => {
       );
     }
 
-    if (isLoadingPickup || !pickUpAvailability){
+    if (isLoadingPickup || !pickUpAvailability) {
       return (
         <Button borderRadius="0" height="100%" disabled={!pickUpAvailability}>
           배송정보를 설정해 주세요
         </Button>
-      )
+      );
     }
 
     if (destinationObj.delivery && destinationObj.destinationId) {
@@ -1225,6 +1196,79 @@ const CartPage = () => {
     setDisposableList(editDisposableList);
   };
 
+  const getSubOrderDelivery = async () => {
+    if (me) {
+      const params = {
+        delivery: userDeliveryType.toUpperCase(),
+      };
+      try {
+        const { data } = await getSubOrdersCheckApi(params);
+        if (data.code === 200) {
+          const result = checkHasSubOrderDelivery(data?.data.orderDeliveries);
+
+          setSubOrderDeliery(result);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const checkMenusHandler = (data: IGetCart[]) => {
+    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === data.length) {
+      setIsAllchecked(true);
+      setCheckedMenus(data);
+    } else {
+      setIsAllchecked(false);
+      setCheckedMenus(canCheckFilteredMenus(data));
+    }
+  };
+
+  const checkIsClosedSpot = () => {
+    // 스팟 종료 날짜
+    const { dateFormatter: closedDate } = getCustomDate(destinationObj?.closedDate!);
+    const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
+
+    // 스팟 운영 종료
+    if (dDay || !destinationObj?.closedDate!) {
+      return;
+    }
+
+    const closedSoonOperation = dDay >= -14;
+
+    if (closedSoonOperation && isSpot) {
+      dispatch(
+        SET_ALERT({
+          alertMessage: `해당 프코스팟은\n${closedDate}에 운영 종료돼요!`,
+          submitBtnText: '확인',
+        })
+      );
+    }
+  };
+
+  const addToCartItemByNonmember = () => {
+    // 비회원일경우
+    if (!me) {
+      reorderCartList(nonMemberCartLists ?? []);
+    } else {
+      // 로그인 경우 비회원 장바구니 리스트 있는 조회
+      const hasNonMemberCarts = nonMemberCartLists?.length !== 0;
+      if (hasNonMemberCarts) {
+        const reqBody = nonMemberCartLists.flatMap((item) =>
+          item.menuDetails.map((detail) => {
+            return {
+              menuId: item.menuId!,
+              menuDetailId: detail.menuDetailId,
+              quantity: detail.quantity,
+              main: detail.main,
+            };
+          })
+        );
+        mutateAddCartItem(reqBody);
+      }
+    }
+  };
+
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
     if (isSpotOrQuick) {
@@ -1255,34 +1299,6 @@ const CartPage = () => {
     }
   }, [selectedDeliveryDay]);
 
-  const getSubOrderDelivery = async () => {
-    if (me) {
-      const params = {
-        delivery: userDeliveryType.toUpperCase(),
-      };
-      try {
-        const { data } = await getSubOrdersCheckApi(params);
-        if (data.code === 200) {
-          const result = checkHasSubOrderDelivery(data?.data.orderDeliveries);
-
-          setSubOrderDeliery(result);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
-
-  const checkMenusHandler = (data: IGetCart[]) => {
-    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === data.length) {
-      setIsAllchecked(true);
-      setCheckedMenus(data);
-    } else {
-      setIsAllchecked(false);
-      setCheckedMenus(canCheckFilteredMenus(data));
-    }
-  };
-
   useEffect(() => {
     if (isFirstRender) {
       checkMenusHandler(cartItemList);
@@ -1291,7 +1307,7 @@ const CartPage = () => {
   }, [cartItemList]);
 
   useEffect(() => {
-    if ((userDeliveryType !== 'spot') && calendarRef && isFromDeliveryPage) {
+    if (userDeliveryType !== 'spot' && calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
       window.scrollTo({
         behavior: 'smooth',
@@ -1322,6 +1338,7 @@ const CartPage = () => {
 
   useEffect(() => {
     getSubOrderDelivery();
+    checkIsClosedSpot();
   }, [destinationObj]);
 
   useEffect(() => {
@@ -1330,51 +1347,7 @@ const CartPage = () => {
   }, [checkedMenus, disposableList]);
 
   useEffect(() => {
-    // 스팟 종료 날짜
-    const { dateFormatter: closedDate } = getCustomDate(destinationObj?.closedDate!);
-    const dDay = now.diff(dayjs(destinationObj?.closedDate!), 'day');
-
-    // 스팟 운영 종료
-    if (dDay || !destinationObj?.closedDate!) {
-      return;
-    }
-
-    const closedSoonOperation = dDay >= -14;
-
-    if (closedSoonOperation && isSpot) {
-      dispatch(
-        SET_ALERT({
-          alertMessage: `해당 프코스팟은\n${closedDate}에 운영 종료돼요!`,
-          submitBtnText: '확인',
-        })
-      );
-    }
-  }, [destinationObj]);
-
-  useEffect(() => {
-    // 비회원일경우
-    if (!me) {
-      reorderCartList(nonMemberCartLists ?? []);
-    } else {
-      // 로그인 경우 비회원 장바구니 리스트 있는 조회
-      const hasNonMemberCarts = nonMemberCartLists?.length !== 0;
-      if (hasNonMemberCarts) {
-        const reqBody = nonMemberCartLists.flatMap((item) =>
-          item.menuDetails.map((detail) => {
-            return {
-              menuId: item.menuId!,
-              menuDetailId: detail.menuDetailId,
-              quantity: detail.quantity,
-              main: detail.main,
-            };
-          })
-        );
-        mutateAddCartItem(reqBody);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
+    addToCartItemByNonmember();
     setIsFirstRender(true);
     dispatch(INIT_ACCESS_METHOD());
     dispatch(INIT_USER_ORDER_INFO());
@@ -1387,13 +1360,11 @@ const CartPage = () => {
 
   return (
     <Container ref={containerRef}>
-      {
-        isCheckedEventSpot && (
-          <TopNoticeWrapper>
-            <TextH5B color={theme.white}>이벤트 프코스팟 주문은 픽업장소 변경이 불가해요.</TextH5B>
-          </TopNoticeWrapper>
-        )
-      }
+      {isCheckedEventSpot && (
+        <TopNoticeWrapper>
+          <TextH5B color={theme.white}>이벤트 프코스팟 주문은 픽업장소 변경이 불가해요.</TextH5B>
+        </TopNoticeWrapper>
+      )}
       {me ? (
         <DeliveryTypeWrapper>
           <DeliveryTypeAndLocation
@@ -1401,15 +1372,9 @@ const CartPage = () => {
             deliveryType={destinationObj.delivery!}
             deliveryDestination={destinationObj}
           />
-          {
-            userDeliveryType === 'spot' && 
-            (pickupType === 'GS_LOCKER' || pickupType === 'KORAIL_LOCKER') && (
-              <SpotPickupAvailability 
-                pickUpAvailability={pickUpAvailability}
-                isLoadingPickup={isLoadingPickup}
-              />
-            )
-          }
+          {userDeliveryType === 'spot' && (pickupType === 'GS_LOCKER' || pickupType === 'KORAIL_LOCKER') && (
+            <SpotPickupAvailability pickUpAvailability={pickUpAvailability} isLoadingPickup={isLoadingPickup} />
+          )}
         </DeliveryTypeWrapper>
       ) : (
         <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
@@ -1692,9 +1657,7 @@ const DeliveryMethodAndPickupLocation = styled.div`
   cursor: pointer;
 `;
 
-const SpotPickupCheckingWrapper = styled.div`
-
-`;
+const SpotPickupCheckingWrapper = styled.div``;
 
 const Left = styled.div`
   display: flex;

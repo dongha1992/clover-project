@@ -1,24 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import { TextB3R, TextH2B, TextH5B } from '@components/Shared/Text';
-import { FlexCol, homePadding, fixedBottom, FlexRow, theme } from '@styles/theme';
+import { TextH2B, TextH5B } from '@components/Shared/Text';
+import { FlexCol, homePadding, fixedBottom } from '@styles/theme';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@components/Shared/Button';
 import { SVGIcon } from '@utils/common';
 import { NAME_REGX } from '@constants/regex';
 import { userForm } from '@store/user';
-import { SET_SIGNUP_USER } from '@store/user';
-import router from 'next/router';
 import { userChangeInfo } from '@api/user';
+import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { WelcomeSheet } from '@components/BottomSheet/WelcomeSheet';
 import Validation from '@components/Pages/User/Validation';
+import { SET_ALERT } from '@store/alert';
 
 const ChangeNamePage = () => {
   const [name, setName] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
   const { me } = useSelector(userForm);
+  const router = useRouter();
+  const { isKakao } = router.query;
+  const isKakaoRegister = isKakao === 'true';
   const recommendCode = sessionStorage.getItem('recommendCode');
 
   const dispatch = useDispatch();
@@ -56,9 +59,15 @@ const ChangeNamePage = () => {
       const { data } = await userChangeInfo(reqBody);
 
       if (data.code === 200) {
-        dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
+        if (isKakaoRegister) {
+          dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
+        } else {
+          router.back();
+        }
       }
-    } catch (error) {}
+    } catch (error) {
+      dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+    }
   };
 
   const handleKeyPress = (e: any) => {

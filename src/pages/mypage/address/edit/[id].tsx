@@ -153,7 +153,6 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
             alertMessage: '내용을 수정했어요!',
             submitBtnText: '확인',
             onSubmit: () => {
-              console.log(selectedSpotPickupId, 'selectedSpotPickupId');
               router.push({
                 pathname: '/mypage/address',
                 query: { isSpot: spotPickupId ? 'true' : 'false' },
