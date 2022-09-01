@@ -83,13 +83,13 @@ const DefaultHeader = ({ title }: TProps) => {
       router.replace({ pathname: '/mypage/review', query: { tab: '/completed' } });
     } else if (cardEdit) {
       isOrder ? router.back() : router.push({ pathname: '/mypage' });
-    } else if (totalReview || totalPhotoReview || reviewPage || reviewDetail) {
-      tab ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } }) : router.back();
     } else if (addressPage) {
       isSpot ? router.replace({ pathname: '/mypage' }) : router.back();
     } else if (cart) {
       sessionStorage.removeItem('selectedDay');
       router.back();
+    } else if (totalReview || totalPhotoReview || reviewPage || reviewDetail) {
+      tab ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } }) : router.back();
     } else {
       router.back();
     }
