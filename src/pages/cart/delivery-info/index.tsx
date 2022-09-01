@@ -202,7 +202,7 @@ const DeliverInfoPage = () => {
               zipCode: tempDestination?.location?.zipCode!,
               dong: tempDestination?.location?.dong!,
             },
-            spotPickupId: tempDestination?.spotPickupId,
+            spotPickupId: userSelectDeliveryType === 'spot' ? tempDestination?.spotPickupId : null,
           };
 
           try {

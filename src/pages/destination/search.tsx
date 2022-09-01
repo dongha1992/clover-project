@@ -94,7 +94,10 @@ const DestinationSearchPage = () => {
   const goToDestinationDetail = (address: any) => {
     if (orderId) {
       dispatch(SET_LOCATION_TEMP(address));
-      router.push({ pathname: '/destination/destination-detail', query: { orderId, destinationId } });
+      router.push({
+        pathname: '/destination/destination-detail',
+        query: { orderId, destinationId, deliveryType: selectDeliveryType },
+      });
     } else {
       dispatch(SET_LOCATION_TEMP(address));
       if (isSubscription) {
