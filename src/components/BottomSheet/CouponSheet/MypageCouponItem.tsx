@@ -48,7 +48,7 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected, isMypage }:
           <FlexBetween padding="0 0 4px 0">
             <TextH4B color={priceColorSet}>{isRateDiscount ? `${coupon.value}%` : `${coupon.value}원`}</TextH4B>
             <Tag backgroundColor={tagColorSet} color={tagNameColorSet}>
-              D-{dDay}
+              D{dDay}
             </Tag>
           </FlexBetween>
           <TextB2R18 color={nameColorSet}>{coupon.name}</TextB2R18>

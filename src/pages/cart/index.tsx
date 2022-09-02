@@ -80,7 +80,6 @@ dayjs.locale('ko');
 
 const now = dayjs();
 const REST_HEIGHT = 60;
-let i = 0;
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<IGetCart[]>([]);
@@ -104,6 +103,8 @@ const CartPage = () => {
     main: false,
     spotId: null,
     name: '',
+    pickupId: null,
+    pickupType: '',
   });
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [holiday, setHoliday] = useState<string[]>([]);
@@ -169,17 +170,10 @@ const CartPage = () => {
       enabled: !!me,
       onSuccess: (data) => {
         try {
-          // checkMenusHandler(data.cartMenus);
-          setCheckedMenus(data.cartMenus);
           setCartItemList(data.cartMenus);
-          setDisposableList(initMenuOptions(data.cartMenus));
-          setIsCheckedEventSpot(data.discountInfos[0].discountRate > 0);
+          setIsCheckedEventSpot(data.discountInfos[0]?.discountRate > 0);
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
-
-          if (isFirstRender) {
-            setHoliday(formatHoliday());
-          }
         } catch (error) {
           console.error(error);
         }
@@ -209,6 +203,7 @@ const CartPage = () => {
 
         if (validDestination && userDeliveryType && userDestination) {
           const destinationId = userDestination?.id!;
+          
           setDestinationObj({
             ...destinationObj,
             delivery: userDeliveryType,
@@ -217,6 +212,8 @@ const CartPage = () => {
             closedDate: userDestination.closedDate && userDestination.closedDate,
             spotId: userDestination.spotId ? userDestination.spotId! : null,
             name: userDestination.name,
+            pickupId: userDestination?.spotPickupId,
+            pickupType: userDestination?.spotPickupType!,
           });
           dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
           dispatch(SET_TEMP_DESTINATION(null));
@@ -228,14 +225,17 @@ const CartPage = () => {
             const { data } = await getMainDestinationsApi(params);
             if (data.code === 200) {
               const destinationId = data.data?.id!;
-
+              
               setDestinationObj({
                 ...destinationObj,
+                name: data.data.name,
                 delivery: response.delivery.toLowerCase(),
                 destinationId,
                 location: data.data?.location ? data.data?.location : null,
                 closedDate: data.data?.spotPickup?.spot?.closedDate ? data.data?.spotPickup?.spot?.closedDate : null,
                 spotId: data.data?.spotPickup?.id && data.data?.spotPickup?.id,
+                pickupId: data.data.spotPickup?.id && data.data.spotPickup?.id,
+                pickupType: data.data?.spotPickup?.spot.placeType && data.data?.spotPickup?.spot.placeType,
               });
 
               dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
@@ -311,7 +311,6 @@ const CartPage = () => {
       },
       onError: ({ response }: any) => {
         const { data: error } = response as any;
-
         dispatch(SET_ALERT({ alertMessage: error?.message }));
         return;
       },
@@ -351,7 +350,7 @@ const CartPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
-      enabled: !!pickupId,
+      enabled: !!me && !!pickupId,
     }
   );
 
@@ -441,6 +440,11 @@ const CartPage = () => {
     setCartItemList(data);
   };
 
+  const storedChckedMenusHanlder = (list: IGetCart[]) => {
+    const checkedMenusIds = list.map((item) => item.menuId);
+    sessionStorage.setItem('checkedMenus', JSON.stringify(checkedMenusIds));
+  };
+
   const selectCartItemHandler = (menu: IGetCart) => {
     const foundItem = checkedMenus.find((item: IGetCart) => item.menuId === menu.menuId);
     let tempCheckedMenus: IGetCart[] = checkedMenus.slice();
@@ -458,7 +462,8 @@ const CartPage = () => {
 
       tempCheckedMenus.push(menu);
     }
-
+    // 선택/해제 할 때마다 저장
+    storedChckedMenusHanlder(tempCheckedMenus);
     setCheckedMenus(tempCheckedMenus);
   };
 
@@ -472,8 +477,10 @@ const CartPage = () => {
     const canNotCheckAllMenus = filtered?.length === 0;
 
     if (!isAllChecked) {
+      storedChckedMenusHanlder(filtered);
       setCheckedMenus(filtered);
     } else {
+      storedChckedMenusHanlder([]);
       setCheckedMenus([]);
     }
     setIsAllchecked((prev) => (canNotCheckAllMenus ? false : !prev));
@@ -935,9 +942,10 @@ const CartPage = () => {
   const getTotalPrice = useCallback((): void => {
     const itemsPrice = getItemsPrice();
 
-    const disposablePrice = getDisposableItem()?.price;
+    const disposablePrice = getDisposableItem()?.price ?? 0;
     const totalDiscountPrice = getTotalDiscountPrice();
     const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
+
     setTotalAmount(tempTotalAmout);
   }, [checkedMenus, disposableList]);
 
@@ -958,7 +966,7 @@ const CartPage = () => {
     const spotDiscount = cartResponse?.discountInfos[0];
     const discoutnedItemsPrice = getItemsPrice() - getItemDiscountPrice();
 
-    return (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice ?? 0;
+    return spotDiscount?.discountRate ? (spotDiscount?.discountRate! / 100) * discoutnedItemsPrice ?? 0 : 0;
   }, [checkedMenus]);
 
   const getDeliveryFee = useCallback(() => {
@@ -1030,7 +1038,7 @@ const CartPage = () => {
   const goToOrder = () => {
     if (!me) return;
     if (!destinationObj.destinationId) return;
-    if (isLoadingPickup || !pickUpAvailability) return;
+    if (isSpot && (isLoadingPickup || !pickUpAvailability)) return;
 
     if (isInvalidDestination) {
       dispatch(
@@ -1128,8 +1136,8 @@ const CartPage = () => {
         </Button>
       );
     }
-
-    if (isLoadingPickup || !pickUpAvailability) {
+    
+    if (isSpot && (isLoadingPickup || !pickUpAvailability)) {
       return (
         <Button borderRadius="0" height="100%" disabled={!pickUpAvailability}>
           배송정보를 설정해 주세요
@@ -1196,6 +1204,11 @@ const CartPage = () => {
     setDisposableList(editDisposableList);
   };
 
+  const getStoredCheckedMenus = () => {
+    const storedCheckedIds = JSON.parse(sessionStorage.getItem('checkedMenus')! ?? null);
+    return cartItemList.filter((items) => storedCheckedIds?.includes(items.menuId));
+  };
+
   const getSubOrderDelivery = async () => {
     if (me) {
       const params = {
@@ -1215,7 +1228,7 @@ const CartPage = () => {
   };
 
   const checkMenusHandler = (data: IGetCart[]) => {
-    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === data.length) {
+    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === cartItemList.length) {
       setIsAllchecked(true);
       setCheckedMenus(data);
     } else {
@@ -1300,13 +1313,6 @@ const CartPage = () => {
   }, [selectedDeliveryDay]);
 
   useEffect(() => {
-    if (isFirstRender) {
-      checkMenusHandler(cartItemList);
-    }
-    setIsFirstRender(false);
-  }, [cartItemList]);
-
-  useEffect(() => {
     if (userDeliveryType !== 'spot' && calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
       window.scrollTo({
@@ -1340,6 +1346,15 @@ const CartPage = () => {
     getSubOrderDelivery();
     checkIsClosedSpot();
   }, [destinationObj]);
+
+  useEffect(() => {
+    const foundChecked = getStoredCheckedMenus();
+    const checked = foundChecked.length !== 0 ? foundChecked : cartItemList;
+
+    setDisposableList(initMenuOptions(checked));
+    setHoliday(formatHoliday());
+    checkMenusHandler(checked);
+  }, [cartItemList]);
 
   useEffect(() => {
     getTotalPrice();
@@ -1656,8 +1671,6 @@ const DeliveryMethodAndPickupLocation = styled.div`
   padding: 24px 24px 0 24px;
   cursor: pointer;
 `;
-
-const SpotPickupCheckingWrapper = styled.div``;
 
 const Left = styled.div`
   display: flex;

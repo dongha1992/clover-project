@@ -30,7 +30,9 @@ import { NextPage } from 'next';
 import DefaultLayout from '@components/Layout/Default';
 import { INIT_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { hideImageViewer } from '@store/imageViewer';
 import * as ga from '../lib/ga';
+import { useToast } from '@hooks/useToast';
 
 declare global {
   interface Window {
@@ -65,6 +67,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
   // const { showToast, hideToast } = useToast();
   const store: any = useStore();
   const isAutoLogin = getCookie({ name: 'autoL' });
+  const { hideToast } = useToast();
   const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
   useWebviewListener();
@@ -88,6 +91,8 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
   const routerEvent = () => {
     if (store.getState().alert) dispatch(INIT_ALERT());
     if (store.getState().bottomSheet.content) dispatch(INIT_BOTTOM_SHEET());
+    if (store.getState().imageViewer.images.length !== 0) dispatch(hideImageViewer());
+    if (store.getState().toast) hideToast();
   };
 
   const authCheck = async () => {
@@ -184,7 +189,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
           strategy="beforeInteractive"
         ></Script>
         <Script src="https://web.nicepay.co.kr/v3/webstd/js/nicepay-2.0.js" type="text/javascript"></Script>
-        <Script id="test">
+        <Script id="nicePay">
           {`  // 결제 최종 요청시 실행됩니다. <<'nicepaySubmit()' 이름 수정 불가능>>
             const nicepaySubmit = () => {
                 document.payForm.submit()

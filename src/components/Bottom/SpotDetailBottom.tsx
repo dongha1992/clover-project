@@ -97,7 +97,7 @@ const SpotDetailBottom = () => {
                 location: response.location,
               })
             );
-            router.push({
+            router.replace({
               pathname: '/mypage/order-detail/edit/[orderId]',
               query: { orderId, destinationId },
             });
@@ -125,7 +125,7 @@ const SpotDetailBottom = () => {
               })
             );
             dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            router.push({ pathname: '/cart', query: { isClosed: !!spotDetail?.closedDate } });
+            router.replace({ pathname: '/cart', query: { isClosed: !!spotDetail?.closedDate } });
           }
         }
       } catch (e) {
@@ -150,7 +150,7 @@ const SpotDetailBottom = () => {
       };
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      router.push({
+      router.replace({
         pathname: '/cart/delivery-info',
         query: { isClosed: !!spotDetail?.closedDate },
       });
@@ -161,7 +161,7 @@ const SpotDetailBottom = () => {
       destinationInfo.spotPickupId = store.getState().spot.spotPickupId;
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
-      router.push({
+      router.replace({
         pathname: '/cart/delivery-info',
         query: { destinationId: spotDetail?.id, isSubscription: isSubs, subsDeliveryType, menuId },
       });
@@ -171,7 +171,7 @@ const SpotDetailBottom = () => {
       destinationInfo.spotPickupId = store.getState().spot.spotPickupId;
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
       dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
-      router.push({
+      router.replace({
         pathname: '/cart/delivery-info',
         query: { destinationId: spotDetail?.id, isSubscription: isSubs, subsDeliveryType, menuId },
       });
