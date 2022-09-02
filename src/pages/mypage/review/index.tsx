@@ -214,7 +214,6 @@ const ReviewInfoWrapper = styled.div`
   padding: 24px;
   color: ${theme.greyScale65};
   ${textBody3};
-  text-align: center;
 `;
 
 const WillReviewItmesWrapper = styled.div``;
