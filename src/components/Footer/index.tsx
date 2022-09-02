@@ -3,15 +3,18 @@ import styled from 'styled-components';
 import { TextH5B, TextB2R, TextB3R, TextH6B } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import { SVGIcon } from '@utils/common';
-import { SITE_INFO_TITLE } from '@constants/footer';
+import { SNS_ITEMS } from '@constants/footer';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { theme } from '@styles/theme';
 import SlideToggle from '@components/Shared/SlideToggle';
 import useIsApp from '@hooks/useIsApp';
+import { goExternalLink } from '@utils/common';
+import { useRouter } from 'next/router';
 
 const Footer = () => {
   const [isShow, setIsShow] = useState(false);
   const isApp = useIsApp();
+  const router = useRouter();
 
   const openChat = () => {
     if (isApp) {
@@ -19,6 +22,10 @@ const Footer = () => {
         JSON.stringify({ cmd: 'webview-permission-microphone-check' }));
     };
     window.ChannelIO('showMessenger');
+  };
+
+  const goToLink = (url: string) => {
+    router.push(url);
   };
 
   return (
@@ -52,30 +59,36 @@ const Footer = () => {
           <TextB3R>단체주문문의 : order@freshcode.me</TextB3R>
         </BossInfo>
       </SlideToggle>
-      <SiteInfo>
-        {SITE_INFO_TITLE.map((item, index) => {
-          return <TextH6B key={index}>{item.title}</TextH6B>;
-        })}
-      </SiteInfo>
+      <SiteInfoWrapper>
+        <SiteInfo onClick={()=> goToLink('/mypage/term/privacy')}>
+            <TextH6B color={theme.greyScale65}>개인정보처리방침</TextH6B>
+          </SiteInfo>
+          <SiteInfo onClick={()=> goToLink('/mypage/term/use')}>
+            <TextH6B color={theme.greyScale65}>이용약관</TextH6B>
+          </SiteInfo>
+          <SiteInfo onClick={()=> goExternalLink('https://fco-supply.oopy.io/6520993b-4424-4c45-867f-5a72061f42ea')}>
+            <TextH6B color={theme.greyScale65}>제휴 문의</TextH6B>
+          </SiteInfo>
+          <SiteInfo onClick={()=> goToLink('/')}>
+            <TextH6B color={theme.greyScale65}>대량 문의</TextH6B>
+          </SiteInfo>
+          <SiteInfo onClick={()=> goExternalLink('https://fco-supply.oopy.io/6520993b-4424-4c45-867f-5a72061f42ea')}>
+            <TextH6B color={theme.greyScale65}>B2B 신청</TextH6B>
+          </SiteInfo>
+          <SiteInfo onClick={()=> goExternalLink('https://freshcode.notion.site/freshcode/bf6cd5195f1f4d649063829766d640f4')}>
+            <TextH6B color={theme.greyScale65}>채용문의</TextH6B>
+          </SiteInfo>
+      </SiteInfoWrapper>
       <LinkIconWrapper>
-        <SVGWrapper className="link">
-          <SVGIcon name="instaLink" />
-        </SVGWrapper>
-        <SVGWrapper className="link">
-          <SVGIcon name="facebookLink" />
-        </SVGWrapper>
-        <SVGWrapper className="link">
-          <SVGIcon name="youtubeLink" />
-        </SVGWrapper>
-        <SVGWrapper className="link">
-          <SVGIcon name="naverBlogLink" />
-        </SVGWrapper>
-        <SVGWrapper className="link">
-          <SVGIcon name="naverPostLink" />
-        </SVGWrapper>
-        <SVGWrapper className="link">
-          <SVGIcon name="channelTalkLink" />
-        </SVGWrapper>
+      {
+        SNS_ITEMS.map((item, index) => {
+          return (
+            <SVGWrapper className="link" onClick={()=> goExternalLink(item.href)}  key={index}>
+              <SVGIcon name={item.src} />
+            </SVGWrapper>
+          )
+        })
+      }
       </LinkIconWrapper>
     </Container>
   );
@@ -122,15 +135,16 @@ const BossInfo = styled.div`
   }
 `;
 
-const SiteInfo = styled.div`
+const SiteInfoWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
-  padding-top: 25px;
-  > div {
-    color: ${({ theme }) => theme.greyScale65};
-    cursor: pointer;
-    padding-right: 16px;
-  }
+  padding-top: 12px;
+`;
+
+const SiteInfo = styled.div`
+  cursor: pointer;
+  padding-right: 16px;
+  padding-top: 12px;
 `;
 
 const LinkIconWrapper = styled.div`
