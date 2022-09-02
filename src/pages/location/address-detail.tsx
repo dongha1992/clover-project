@@ -10,14 +10,12 @@ import router from 'next/router';
 import { getLonLatFromAddress } from '@api/location';
 import { SET_LOCATION, INIT_LOCATION_TEMP } from '@store/destination';
 import { checkDestinationHelper } from '@utils/destination';
-import { SET_SPOT_POSITIONS, spotSelector } from '@store/spot';
+import { SET_SPOT_POSITIONS } from '@store/spot';
 
 const AddressDetailPage = () => {
   const { tempLocation, availableDestination, isCanNotDelivery } = useSelector(destinationForm);
-  const { spotsPosition } = useSelector(spotSelector);
   const dispatch = useDispatch();
-
-  const { isSpot, position } = router.query;
+  const { isSpot, isSub } = router.query;
 
   const [latitudeLongitude, setLatitudeLongitude] = useState({
     latitude: null,
@@ -25,14 +23,7 @@ const AddressDetailPage = () => {
   });
 
   useEffect(() => {
-    if (!position) {
-      getLonLanForMap();
-    } else {
-      setLatitudeLongitude({
-        latitude: spotsPosition.latitude,
-        longitude: spotsPosition.longitude
-      });
-    }
+    getLonLanForMap();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -73,6 +64,8 @@ const AddressDetailPage = () => {
     );
     if (isSpot) {
       router.push('/spot');
+    } else if (isSub) {
+      router.push('/subscription');
     } else {
       router.push('/');
     }
@@ -112,6 +105,8 @@ const AddressDetailPage = () => {
 
 const Container = styled.div`
   position: relative;
+  height: calc(100vh - 112px);
+  overflow: hidden;
 `;
 
 const ButtonWrapper = styled.div`
@@ -119,7 +114,7 @@ const ButtonWrapper = styled.div`
 `;
 
 const MapWrapper = styled.div`
-  height: 75.5vh;
+  height: 100%;
 `;
 
 export default AddressDetailPage;

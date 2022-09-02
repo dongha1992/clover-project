@@ -29,7 +29,10 @@ const SubscriptionHeader = () => {
   };
 
   const goToLocation = () => {
-    router.push('/location');
+    router.push({
+      pathname: '/location',
+      query: { isSub: true },
+    });
   };
 
   return (
