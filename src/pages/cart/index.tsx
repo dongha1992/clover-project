@@ -169,17 +169,10 @@ const CartPage = () => {
       enabled: !!me,
       onSuccess: (data) => {
         try {
-          // checkMenusHandler(data.cartMenus);
-          setCheckedMenus(data.cartMenus);
           setCartItemList(data.cartMenus);
-          setDisposableList(initMenuOptions(data.cartMenus));
           setIsCheckedEventSpot(data.discountInfos[0]?.discountRate > 0);
           dispatch(INIT_CART_LISTS());
           dispatch(SET_CART_LISTS(data));
-
-          if (isFirstRender) {
-            setHoliday(formatHoliday());
-          }
         } catch (error) {
           console.error(error);
         }
@@ -441,6 +434,11 @@ const CartPage = () => {
     setCartItemList(data);
   };
 
+  const storedChckedMenusHanlder = (list: IGetCart[]) => {
+    const checkedMenusIds = list.map((item) => item.menuId);
+    sessionStorage.setItem('checkedMenus', JSON.stringify(checkedMenusIds));
+  };
+
   const selectCartItemHandler = (menu: IGetCart) => {
     const foundItem = checkedMenus.find((item: IGetCart) => item.menuId === menu.menuId);
     let tempCheckedMenus: IGetCart[] = checkedMenus.slice();
@@ -458,7 +456,8 @@ const CartPage = () => {
 
       tempCheckedMenus.push(menu);
     }
-
+    // 선택/해제 할 때마다 저장
+    storedChckedMenusHanlder(tempCheckedMenus);
     setCheckedMenus(tempCheckedMenus);
   };
 
@@ -472,8 +471,10 @@ const CartPage = () => {
     const canNotCheckAllMenus = filtered?.length === 0;
 
     if (!isAllChecked) {
+      storedChckedMenusHanlder(filtered);
       setCheckedMenus(filtered);
     } else {
+      storedChckedMenusHanlder([]);
       setCheckedMenus([]);
     }
     setIsAllchecked((prev) => (canNotCheckAllMenus ? false : !prev));
@@ -1031,7 +1032,7 @@ const CartPage = () => {
   const goToOrder = () => {
     if (!me) return;
     if (!destinationObj.destinationId) return;
-    if (isLoadingPickup || !pickUpAvailability) return;
+    if (isSpot && (isLoadingPickup || !pickUpAvailability)) return;
 
     if (isInvalidDestination) {
       dispatch(
@@ -1130,7 +1131,7 @@ const CartPage = () => {
       );
     }
 
-    if (isLoadingPickup || !pickUpAvailability) {
+    if (isSpot && (isLoadingPickup || !pickUpAvailability)) {
       return (
         <Button borderRadius="0" height="100%" disabled={!pickUpAvailability}>
           배송정보를 설정해 주세요
@@ -1197,6 +1198,11 @@ const CartPage = () => {
     setDisposableList(editDisposableList);
   };
 
+  const getStoredCheckedMenus = () => {
+    const storedCheckedIds = JSON.parse(sessionStorage.getItem('checkedMenus')! ?? null);
+    return cartItemList.filter((items) => storedCheckedIds?.includes(items.menuId));
+  };
+
   const getSubOrderDelivery = async () => {
     if (me) {
       const params = {
@@ -1216,7 +1222,7 @@ const CartPage = () => {
   };
 
   const checkMenusHandler = (data: IGetCart[]) => {
-    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === data.length) {
+    if (data.length! > 0 && canCheckFilteredMenus(data)?.length === cartItemList.length) {
       setIsAllchecked(true);
       setCheckedMenus(data);
     } else {
@@ -1301,13 +1307,6 @@ const CartPage = () => {
   }, [selectedDeliveryDay]);
 
   useEffect(() => {
-    if (isFirstRender) {
-      checkMenusHandler(cartItemList);
-    }
-    setIsFirstRender(false);
-  }, [cartItemList]);
-
-  useEffect(() => {
     if (userDeliveryType !== 'spot' && calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
       window.scrollTo({
@@ -1341,6 +1340,15 @@ const CartPage = () => {
     getSubOrderDelivery();
     checkIsClosedSpot();
   }, [destinationObj]);
+
+  useEffect(() => {
+    const foundChecked = getStoredCheckedMenus();
+    const checked = foundChecked.length !== 0 ? foundChecked : cartItemList;
+
+    setDisposableList(initMenuOptions(checked));
+    setHoliday(formatHoliday());
+    checkMenusHandler(checked);
+  }, [cartItemList]);
 
   useEffect(() => {
     getTotalPrice();
@@ -1657,8 +1665,6 @@ const DeliveryMethodAndPickupLocation = styled.div`
   padding: 24px 24px 0 24px;
   cursor: pointer;
 `;
-
-const SpotPickupCheckingWrapper = styled.div``;
 
 const Left = styled.div`
   display: flex;

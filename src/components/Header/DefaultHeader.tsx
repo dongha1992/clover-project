@@ -86,6 +86,7 @@ const DefaultHeader = ({ title }: TProps) => {
     } else if (addressPage) {
       isSpot ? router.replace({ pathname: '/mypage' }) : router.back();
     } else if (cart) {
+      sessionStorage.removeItem('checkedMenus');
       sessionStorage.removeItem('selectedDay');
       router.back();
     } else if (totalReview || totalPhotoReview || reviewPage || reviewDetail) {
