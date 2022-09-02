@@ -90,10 +90,7 @@ const DefaultHeader = ({ title }: TProps) => {
       sessionStorage.removeItem('selectedDay');
       router.back();
     } else if (totalReview || totalPhotoReview || reviewPage || reviewDetail) {
-      console.log(tab, '--');
-      tab !== '/completed'
-        ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } })
-        : router.back();
+      tab === 'review' ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } }) : router.back();
     } else {
       router.back();
     }
