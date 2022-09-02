@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { OrderFilter } from '@components/Filter/components';
 import { TextB3R, TextH5B } from '@components/Shared/Text';
 import styled from 'styled-components';
@@ -10,9 +10,10 @@ import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 
 interface IProps {
   handler: React.Dispatch<React.SetStateAction<string>>;
+  selectedDay: string;
 }
 
-const OrderDateFilter = ({ handler }: IProps) => {
+const OrderDateFilter = ({ handler, selectedDay }: IProps) => {
   const [selectedRadioValue, setSelectedRadioValue] = useState<string>('90');
   const dispatch = useDispatch();
 
@@ -24,6 +25,10 @@ const OrderDateFilter = ({ handler }: IProps) => {
     handler(selectedRadioValue);
     dispatch(INIT_BOTTOM_SHEET());
   };
+
+  useEffect(() => {
+    setSelectedRadioValue(selectedDay);
+  }, []);
 
   return (
     <Container>
