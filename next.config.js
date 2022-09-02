@@ -9,6 +9,7 @@ module.exports = () => {
       API_URL: process.env.API_URL,
       IMAGE_SERVER_URL: process.env.IMAGE_SERVER_URL,
       NEXT_PUBLIC_GOOGLE_ANALYTICS: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS,
+      NEXT_PUBLIC_CHANNEL_IO_KEY: process.env.NEXT_PUBLIC_CHANNEL_IO_KEY,
     },
   };
 };
