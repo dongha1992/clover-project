@@ -372,7 +372,7 @@ const DeliverInfoPage = () => {
         return <Tooltip message="택배배송만 가능해요!" top="25px" width="150px" />;
       }
       case 'spot': {
-        return <Tooltip message="무료 스팟배송이 가능해요!" top="25px" width="170px" />;
+        return <Tooltip message="무료 스팟배송이 가능해요!" top="25px" width="180px" />;
       }
     }
   };
