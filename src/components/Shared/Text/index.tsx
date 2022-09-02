@@ -31,6 +31,7 @@ export interface IProps {
   wordWrap?: string;
   textHide?: boolean;
   textHideMultiline?: boolean;
+  textHidelineNum?: number;
 }
 
 /* 사용법 
@@ -80,13 +81,13 @@ const Container = styled.div<IProps>`
     }
   }}
 
-  ${({ textHideMultiline }) => {
+  ${({ textHideMultiline, textHidelineNum }) => {
     if (textHideMultiline) {
       return css`
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: ${textHidelineNum ? textHidelineNum : 2};
         -webkit-box-orient: vertical;
       `;
     }
