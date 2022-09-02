@@ -54,7 +54,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
         })
       );
     }
-    router.push(`/mypage/review`);
+    router.push({ pathname: `/mypage/review`, query: { tab: 'review', menuId } });
   };
 
   return (
