@@ -6,6 +6,8 @@ import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
 import { theme } from '@styles/theme';
 import { useGetNotiInfo } from '@queries/notification';
+import { userForm } from '@store/user';
+import { useSelector } from 'react-redux';
 
 const textStyle = {
   padding: '4px 0 0 0',
@@ -40,11 +42,14 @@ const BOTTOM_MENU = [
 
 const Bottom = (): ReactElement => {
   const router = useRouter();
+  const { me } = useSelector(userForm);
   const [selectedTab, setSelectedTab] = useState<string>('/category');
+
   const { data } = useGetNotiInfo('notiInfo', {
     refetchOnMount: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
+    enabled: !!me,
   });
 
   useEffect(() => {

@@ -2314,6 +2314,8 @@ export interface IDeliveryObj {
   name?: string;
   main: boolean;
   spotId?: number | null;
+  pickupId?: number | null;
+  pickupType?: string | null;
 }
 
 /* COUPON */

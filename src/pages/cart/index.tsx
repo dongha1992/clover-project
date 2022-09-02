@@ -80,7 +80,6 @@ dayjs.locale('ko');
 
 const now = dayjs();
 const REST_HEIGHT = 60;
-let i = 0;
 
 const CartPage = () => {
   const [cartItemList, setCartItemList] = useState<IGetCart[]>([]);
@@ -104,6 +103,8 @@ const CartPage = () => {
     main: false,
     spotId: null,
     name: '',
+    pickupId: null,
+    pickupType: '',
   });
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [holiday, setHoliday] = useState<string[]>([]);
@@ -202,6 +203,7 @@ const CartPage = () => {
 
         if (validDestination && userDeliveryType && userDestination) {
           const destinationId = userDestination?.id!;
+          
           setDestinationObj({
             ...destinationObj,
             delivery: userDeliveryType,
@@ -210,6 +212,8 @@ const CartPage = () => {
             closedDate: userDestination.closedDate && userDestination.closedDate,
             spotId: userDestination.spotId ? userDestination.spotId! : null,
             name: userDestination.name,
+            pickupId: userDestination?.spotPickupId,
+            pickupType: userDestination?.spotPickupType!,
           });
           dispatch(SET_USER_DELIVERY_TYPE(userDeliveryType));
           dispatch(SET_TEMP_DESTINATION(null));
@@ -221,7 +225,7 @@ const CartPage = () => {
             const { data } = await getMainDestinationsApi(params);
             if (data.code === 200) {
               const destinationId = data.data?.id!;
-
+              
               setDestinationObj({
                 ...destinationObj,
                 name: data.data.name,
@@ -230,6 +234,8 @@ const CartPage = () => {
                 location: data.data?.location ? data.data?.location : null,
                 closedDate: data.data?.spotPickup?.spot?.closedDate ? data.data?.spotPickup?.spot?.closedDate : null,
                 spotId: data.data?.spotPickup?.id && data.data?.spotPickup?.id,
+                pickupId: data.data.spotPickup?.id && data.data.spotPickup?.id,
+                pickupType: data.data?.spotPickup?.spot.placeType && data.data?.spotPickup?.spot.placeType,
               });
 
               dispatch(SET_USER_DELIVERY_TYPE(response.delivery.toLowerCase()));
@@ -344,7 +350,7 @@ const CartPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
-      enabled: !!pickupId,
+      enabled: !!me && !!pickupId,
     }
   );
 
@@ -936,7 +942,7 @@ const CartPage = () => {
   const getTotalPrice = useCallback((): void => {
     const itemsPrice = getItemsPrice();
 
-    const disposablePrice = getDisposableItem()?.price;
+    const disposablePrice = getDisposableItem()?.price ?? 0;
     const totalDiscountPrice = getTotalDiscountPrice();
     const tempTotalAmout = itemsPrice + disposablePrice - totalDiscountPrice;
 
@@ -1130,7 +1136,7 @@ const CartPage = () => {
         </Button>
       );
     }
-
+    
     if (isSpot && (isLoadingPickup || !pickUpAvailability)) {
       return (
         <Button borderRadius="0" height="100%" disabled={!pickUpAvailability}>
