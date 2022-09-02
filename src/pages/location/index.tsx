@@ -161,10 +161,13 @@ const LocationPage = () => {
     } else if (isSub) {
       router.push({
         pathname: '/location/address-detail',
-        query: { isSub: true },
+        query: { isSub: true, isLocation: true, },
       });
     } else {
-      router.push('/location/address-detail');
+      router.push({
+        pathname: '/location/address-detail',
+        query: { isLocation: true },
+      });
     };
   };
 
@@ -257,10 +260,13 @@ const LocationPage = () => {
     } else if (isSub) {
       router.push({
         pathname: '/location/address-detail',
-        query: { isSub: true },
+        query: { isSub: true, isLocation: true, },
       });
     } else {
-      router.push('/location/address-detail');
+      router.push({
+        pathname: '/location/address-detail',
+        query: { isLocation: true, },
+      });
     };
   };
 
