@@ -62,7 +62,7 @@ const OrderDeliveryHistoryPage = () => {
   const clickFilterHandler = () => {
     dispatch(
       SET_BOTTOM_SHEET({
-        content: <OrderDateFilter handler={setWithInDays} />,
+        content: <OrderDateFilter handler={setWithInDays} selectedDay={withInDays} />,
       })
     );
   };

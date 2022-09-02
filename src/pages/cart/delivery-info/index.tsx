@@ -101,7 +101,7 @@ const DeliverInfoPage = () => {
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
       if (isSubscription) {
-        router.push({
+        router.replace({
           pathname: '/spot/search/result',
           query: {
             subsDeliveryType: userSelectDeliveryType.toUpperCase(),
@@ -111,14 +111,14 @@ const DeliverInfoPage = () => {
           },
         });
       } else {
-        router.push({
+        router.replace({
           pathname: '/spot/search/result',
           query: { isDelivery: true },
         });
       }
     } else {
       if (isSubscription) {
-        router.push({
+        router.replace({
           pathname: '/destination/search',
           query: {
             subsDeliveryType: userSelectDeliveryType.toUpperCase(),
@@ -202,7 +202,7 @@ const DeliverInfoPage = () => {
               zipCode: tempDestination?.location?.zipCode!,
               dong: tempDestination?.location?.dong!,
             },
-            spotPickupId: tempDestination?.spotPickupId,
+            spotPickupId: userSelectDeliveryType === 'spot' ? tempDestination?.spotPickupId : null,
           };
 
           try {

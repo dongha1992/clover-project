@@ -39,7 +39,7 @@ const CouponSheet = ({ coupons }: IProps) => {
     },
     {
       onSuccess: async (data) => {
-        const updated = updateCouponHandler(data?.id!);
+        const updated = updateCouponHandler([data?.id!]);
         setCouponList(updated);
         dispatch(
           SET_ALERT({
@@ -68,9 +68,9 @@ const CouponSheet = ({ coupons }: IProps) => {
     }
   );
 
-  const updateCouponHandler = (id: number) => {
+  const updateCouponHandler = (ids: number[]) => {
     return couponList.map((item) => {
-      if (item.id === id) {
+      if (ids.includes(item.id)) {
         return { ...item, participationStatus: 'COMPLETED' };
       } else {
         return item;
@@ -110,12 +110,12 @@ const CouponSheet = ({ coupons }: IProps) => {
           const { data } = await postPromotionCodeApi(params);
           if (data.code === 200) {
             aleadyDownloadedCount++;
-            const updated = updateCouponHandler(couponItem?.id!);
-            setCouponList(updated);
           }
 
           if (i + 1 === available?.length!) {
             if (aleadyDownloadedCount > 0) {
+              const updated = updateCouponHandler(available.map((item) => item.id));
+              setCouponList(updated);
               dispatch(SET_ALERT({ alertMessage: '모든 쿠폰을 다운받았습니다.' }));
             } else {
               dispatch(SET_ALERT({ alertMessage: '다운 가능한 쿠폰이 없습니다.' }));
