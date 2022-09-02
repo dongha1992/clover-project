@@ -108,11 +108,11 @@ describe('SubsDateMngCalendar', () => {
       expect(tileDisabled({ date, deliveryType, firstDeliveryDate, lastDeliveryDate })).toBeFalsy();
     });
 
-    it('return false when 구독스팟 일때 검사 날짜 하루전이 오늘 07:00 이후 일때', () => {
-      const date = new Date(afterDate(today, 1));
-      const deliveryType = 'SPOT';
-      expect(tileDisabled({ date, deliveryType, firstDeliveryDate, lastDeliveryDate })).toBeFalsy();
-    });
+    // it('return false when 구독스팟 일때 검사 날짜 하루전이 오늘 07:00 이후 일때', () => {
+    //   const date = new Date(afterDate(today, 1));
+    //   const deliveryType = 'SPOT';
+    //   expect(tileDisabled({ date, deliveryType, firstDeliveryDate, lastDeliveryDate })).toBeFalsy();
+    // });
 
     it('return true when 첫번째 배송일보다 작을때', () => {
       const date = new Date('2022-08-28');
