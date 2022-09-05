@@ -163,12 +163,13 @@ export const GridWrapper = styled.div<{ gap: number }>`
   grid-gap: ${({ gap }) => gap && gap}px;
 `;
 
-export const FlexWrapWrapper = styled.div<{ padding?: string }>`
+export const FlexWrapWrapper = styled.div<{ padding?: string; margin?: string }>`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   width: 100%;
   padding: ${({ padding }) => padding && padding};
+  margin: ${({ margin }) => margin && margin};
 `;
 
 export const FlexStart = styled.div<{ padding?: string; margin?: string; alignItems?: string }>`

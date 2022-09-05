@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { IAllMenus } from '@components/Pages/Category/SingleMenu';
 import { getFilteredMenus, reorderedMenusBySoldout } from '@utils/menu';
 import { CategoryFilter } from '@components/Pages/Category';
+import CategorySkeleton from '@components/Skeleton/CategorySkeleton';
 
 /* TODO: 메뉴 디테일 메뉴 이미지 삭제 */
 const categoryTypeMap: Obj = {
@@ -56,7 +57,7 @@ const CategoryPage = () => {
   const formatType = categoryTypeMap[type] ? categoryTypeMap[type] : '';
   const types = typeof formatType === 'string' ? formatType : formatType.join(',');
 
-  const { error: menuError, isLoading } = useQuery(
+  const { error: menuError, isFetching } = useQuery(
     ['getMenus', type],
     async ({ queryKey }) => {
       const params = {
@@ -121,8 +122,8 @@ const CategoryPage = () => {
     }
   }, [categoryFilters]);
 
-  if (isLoading) {
-    return <div>로딩 중</div>;
+  if (isFetching) {
+    return <CategorySkeleton />;
   }
 
   return (
