@@ -109,7 +109,7 @@ const SettingPage = () => {
           )}
           <ListItem>
             <FlexBetween>
-              <TextH4B>마케팅/이벤트 알림</TextH4B>
+              <TextH4B>마케팅 정보 수신 동의</TextH4B>
               <ToggleButton
                 onChange={() => checkHandler('marketingEmailReceived', 'marketingSmsReceived')}
                 status={me?.marketingEmailReceived}

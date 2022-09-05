@@ -83,9 +83,6 @@ const MypageItem = styled.a`
   cursor: pointer;
   padding: 0 24px;
   list-style: none;
-  &:first-of-type > div {
-    border-top: 1px solid ${theme.greyScale3};
-  }
   > div {
     border-bottom: 1px solid ${theme.greyScale3};
   }
