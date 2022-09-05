@@ -70,6 +70,7 @@ const GlobalStyle = createGlobalStyle`
     select:focus,
     textarea {
         font-size: 16px;
+        font-family: 'Noto Sans KR', sans-serif;
     }
     ol, ul {
         list-style: none;

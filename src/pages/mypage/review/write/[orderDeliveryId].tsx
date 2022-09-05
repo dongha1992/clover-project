@@ -215,10 +215,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
         </RateWrapper>
         <TextArea
           name="reviewArea"
-          placeholder=" - 맛과 양, 신선도, 패키지, 조리법 등 상품 대해 만족한 점, 아쉬운 점 모두 솔직하게 남겨주세요. &#13;&#10;
-          - 띄어쓰기 포함한 최소 30자 이상 작성해 주세요.&#13;&#10;
-          - 비방성, 광고글, 문의사항 관련 내용이 포함된 후기는 관리자에 의해 삭제될 수 있어요.&#13;&#10;
-          "
+          placeholder=" - 맛과 양, 신선도, 패키지, 조리법 등 상품 대해 만족한 점, 아쉬운 점 모두 솔직하게 남겨주세요.                                                                                                - 띄어쓰기 포함한 최소 30자 이상 작성해 주세요.                                            - 비방성, 광고글, 문의사항 관련 내용이 포함된 후기는 관리자에 의해 삭제될 수 있어요."
           minLength={0}
           maxLength={1000}
           rows={20}

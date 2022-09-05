@@ -53,7 +53,7 @@ const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: I
                     className="rounded"
                   />
                 </MenuImgWrapper>
-                <TextH5B margin="0 0 0 8px" pointer>
+                <TextH5B margin="0 24px 0 16px" pointer>
                   {review.displayMenuName}
                 </TextH5B>
               </FlexRowStart>
@@ -62,7 +62,7 @@ const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: I
                 color={theme.greyScale65}
                 textDecoration="underline"
                 onClick={() => {
-                  if (review.editable) {
+                  if (!review.editable) {
                     goToReviewDetail({
                       url: review.menuImage.url,
                       menuId: review.menuId,
