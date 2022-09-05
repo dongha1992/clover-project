@@ -23,6 +23,7 @@ class MyDocument extends Document<IProps> {
             href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
             rel="stylesheet"
           />
+          <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png" />
         </Head>
         <body>
           <Main />
