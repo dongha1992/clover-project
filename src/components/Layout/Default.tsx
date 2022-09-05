@@ -13,6 +13,7 @@ import Toast from '@components/Shared/Toast';
 import BottomSheet from '@components/BottomSheet';
 import ImageViewer from '@components/ImageViewer';
 import { bottomSheetForm } from '@store/bottomSheet';
+import Image from 'next/image';
 
 interface IDefaultLayoutProps {
   children: ReactElement,
@@ -64,12 +65,13 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
           />
           <Left>
             <div className="left-contents">
-              {/* <Image
-                src="https://s3.ap-northeast-2.amazonaws.com/freshcode/img/seo/main.png"
+              <Image
+                src="/images/img_brandstory_desktop.png"
+                width='512px'
+                height='688px'
+                alt="프코스팟 매장이미지"
                 layout="responsive"
-                objectFit="cover"
-                width={512}
-              /> */}
+              />
             </div>
           </Left>
           <Right>
@@ -92,6 +94,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
+  max-height: 100vh;
   box-sizing: border-box;
   background-color: #f4f4f4;
 `;
@@ -116,9 +119,11 @@ const Center = styled.div`
 
 const Right = styled.div`
   position: relative;
+  overflow-y: scroll;
   width: 50%;
   max-width: ${breakpoints.mobile}px;
   background-color: white;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.2);
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
@@ -129,13 +134,19 @@ const Right = styled.div`
 `;
 
 const Left = styled.div`
-  position: relative;
+  position: sticky;
+  bottom: 0;
   background-color: white;
-  width: 50%;
+  width: 50%;  
+  .left-contents {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+  }
   ${({ theme }) => theme.desktop`  
   display: none;
   `}
-`;
+  `;
 
 const Main = styled.main`
   margin: 56px 0 0 0;
