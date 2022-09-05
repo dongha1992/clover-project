@@ -7,13 +7,7 @@ import { SVGIcon } from '@utils/common';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { SpotList } from '@components/Pages/Spot';
-import {
-  getNewSpots,
-  getSpotEvent,
-  getSpotPopular,
-  getSpotInfo,
-  getSpotRegistrationsRecruiting,
-} from '@api/spot';
+import { getNewSpots, getSpotEvent, getSpotPopular, getSpotInfo, getSpotRegistrationsRecruiting } from '@api/spot';
 import { IParamsSpots, ISpotsInfo } from '@model/index';
 import { useQuery } from 'react-query';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -29,6 +23,7 @@ import ShareUrl from '@components/ShareUrl';
 import DefaultLayout from '@components/Layout/Default';
 import HomeBottom from '@components/Bottom/HomeBottom';
 import HomePage from '@pages/index';
+import SpotSkeleton from '@components/Skeleton/SpotSkeleton';
 
 const FCO_SPOT_BANNER = [
   {
@@ -93,7 +88,7 @@ const SpotPage = () => {
   // react-query
 
   // 신규 프코스팟
-  const { data: newSpotList, isLoading: isLoadingNew } = useQuery(
+  const { data: newSpotList, isFetching: isFetchingNew } = useQuery(
     ['spotList', 'NEW'],
     async () => {
       const response = await getNewSpots(params);
@@ -103,7 +98,7 @@ const SpotPage = () => {
   );
 
   // 이벤트 진행 중인 프코스팟
-  const { data: eventSpotList, isLoading: isLoadingEvent } = useQuery(
+  const { data: eventSpotList, isFetching: isFetchingEvent } = useQuery(
     ['spotList', 'EVENT'],
     async () => {
       const response = await getSpotEvent(params);
@@ -113,7 +108,7 @@ const SpotPage = () => {
   );
 
   // 오늘 점심 함계 주문해요 (근처 인기있는 프코스팟)
-  const { data: popularSpotList, isLoading: isLoadingPopular } = useQuery(
+  const { data: popularSpotList, isFetching: isFetchingPopular } = useQuery(
     ['spotList', 'POPULAR'],
     async () => {
       const response = await getSpotPopular(params);
@@ -123,7 +118,7 @@ const SpotPage = () => {
   );
 
   // 단골가게 프코스팟 (퍼블릭)
-  const { data: trialSpotList, isLoading: isLoadingTrial } = useQuery(
+  const { data: trialSpotList, isFetching: isFetchingTrial } = useQuery(
     ['trialSpot'],
     async () => {
       const response = await getSpotRegistrationsRecruiting(params);
@@ -218,10 +213,10 @@ const SpotPage = () => {
     });
   };
 
-  const isLoading = isLoadingNew && isLoadingEvent && isLoadingPopular && isLoadingTrial;
+  const isFetching = isFetchingNew || isFetchingEvent || isFetchingPopular || isFetchingTrial;
 
-  if (isLoading) {
-    return <div>loading...</div>;
+  if (isFetching) {
+    return <SpotSkeleton />;
   }
 
   return (
@@ -370,12 +365,12 @@ const SpotPage = () => {
           <>
             <TextH2B padding="10px 24px 0 24px">오픈 진행 중인 프코스팟</TextH2B>
             <SpotOpenBannerWrapper>
-              <NextImage 
-                src='/images/fcospot/img_fcospot_banner_open.png'
+              <NextImage
+                src="/images/fcospot/img_fcospot_banner_open.png"
                 width={'512px'}
                 height={'287px'}
                 alt="프코스팟 신청 완료 페이지 이미지"
-                className='banner-open-img'
+                className="banner-open-img"
                 layout="responsive"
               />
             </SpotOpenBannerWrapper>
@@ -406,12 +401,12 @@ const SpotPage = () => {
               </SpotRegistration>
             </Wrapper>
             <StoryContentsWrapper onClick={goToSpotNotice}>
-              <NextImage 
-                src='/images/fcospot/img_fcospot_banner_info.jpg'
+              <NextImage
+                src="/images/fcospot/img_fcospot_banner_info.jpg"
                 width={'512px'}
                 height={'444px'}
                 alt="프코스팟 신청 완료 페이지 이미지"
-                className='benner-info-img'
+                className="benner-info-img"
                 layout="responsive"
               />
             </StoryContentsWrapper>
@@ -429,12 +424,12 @@ const SpotPage = () => {
           </>
         ) : (
           <StoryContentsWrapper>
-            <NextImage 
-              src='/images/fcospot/img_fcospot_banner_info.jpg'
+            <NextImage
+              src="/images/fcospot/img_fcospot_banner_info.jpg"
               width={'512px'}
               height={'444px'}
               alt="프코스팟 신청 완료 페이지 이미지"
-              className='benner-info-img'
+              className="benner-info-img"
               layout="responsive"
             />
           </StoryContentsWrapper>
@@ -557,7 +552,7 @@ const StoryContentsWrapper = styled.div`
 `;
 
 SpotPage.getLayout = (page: ReactElement) => {
-  return (<DefaultLayout bottom={<HomeBottom/>}>{page}</DefaultLayout>)
-}
+  return <DefaultLayout bottom={<HomeBottom />}>{page}</DefaultLayout>;
+};
 
 export default SpotPage;

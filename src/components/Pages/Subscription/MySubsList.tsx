@@ -37,7 +37,7 @@ const MySubsList = ({ subsList }: IProps) => {
   );
 };
 const MySubsBox = styled.div`
-  padding-bottom: 56px;
+  padding-bottom: 48px;
 `;
 
 const Head = styled.div`
