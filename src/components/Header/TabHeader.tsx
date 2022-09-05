@@ -38,8 +38,6 @@ const TabHeader = ({ title }: TProps) => {
     }
   };
 
-  console.log(title, 'title');
-
   const clickTabHandler = useCallback(
     (tabItem: any) => {
       setSelectedTab(tabItem.link);

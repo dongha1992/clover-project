@@ -10,7 +10,7 @@ export type TImageViewer = {
 const initialState: TImageViewer = {
   images: [],
   startIndex: 0,
-  isShow: false
+  isShow: false,
 };
 
 export const imageViewerSlice = createSlice({

@@ -339,7 +339,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   // TODO : lastdeliverydate 추가 전체 회차 변경하는부분 체크
   const goToDeliverySearch = () => {
     if (isSpot) {
-      router.push({
+      router.replace({
         pathname: '/spot/search/result',
         query: {
           orderId,
@@ -351,7 +351,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
         },
       });
     } else {
-      router.push({
+      router.replace({
         pathname: '/destination/search',
         query: { orderId, destinationId, deliveryType: orderDetail?.delivery },
       });

@@ -24,7 +24,7 @@ const LocationPage = () => {
   const addressRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const dispatch = useDispatch();
-  const { isSpot, keyword }: any = router.query;
+  const { isSpot, keyword, isSub }: any = router.query;
   const { location: currentLocation, error: currentError, currentArrowed, handlerCurrentPosition } = useCurrentLocation();
 
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
@@ -156,12 +156,17 @@ const LocationPage = () => {
     if (isSpot) {
       router.push({
         pathname: '/location/address-detail',
-        query: { isSpot: true, position: true },
+        query: { isSpot: true },
+      });
+    } else if (isSub) {
+      router.push({
+        pathname: '/location/address-detail',
+        query: { isSub: true, isLocation: true, },
       });
     } else {
       router.push({
         pathname: '/location/address-detail',
-        query: { isLocation: true, position: true },
+        query: { isLocation: true },
       });
     };
   };
@@ -252,12 +257,17 @@ const LocationPage = () => {
         pathname: '/location/address-detail',
         query: { isSpot: true },
       });
+    } else if (isSub) {
+      router.push({
+        pathname: '/location/address-detail',
+        query: { isSub: true, isLocation: true, },
+      });
     } else {
       router.push({
         pathname: '/location/address-detail',
-        query: { isLocation: true },
+        query: { isLocation: true, },
       });
-    }
+    };
   };
 
   if(currentArrowed){

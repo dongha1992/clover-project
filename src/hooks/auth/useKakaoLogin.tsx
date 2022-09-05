@@ -35,7 +35,6 @@ const useKakaoLogin = () => {
         const { data } = await userProfile().then((res) => {
           return res?.data;
         });
-        console.log('userProfile', data);
 
         dispatch(SET_USER(data));
 

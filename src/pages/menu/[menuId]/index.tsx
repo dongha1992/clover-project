@@ -237,7 +237,7 @@ const MenuDetailPage: NextPageWithLayout = () => {
         window.scrollTo({
           behavior: 'smooth',
           left: 0,
-          top: offsetTop,
+          top: offsetTop - 70,
         });
       }
     }, 100);
@@ -387,7 +387,7 @@ const MenuDetailPage: NextPageWithLayout = () => {
               <>
                 {coupons?.some((coupon) => coupon.participationStatus === 'POSSIBLE') ? (
                   <CouponWrapper onClick={couponDownloadHandler}>
-                    <TextH6B padding="4px 4px 0 0" pointer>
+                    <TextH6B padding="0px 4px 0 0" pointer>
                       쿠폰 받기
                     </TextH6B>
                     <SVGIcon name="download" />

@@ -31,7 +31,6 @@ const DestinationSearchPage = () => {
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     ['getDestinationList', selectDeliveryType],
     async () => {
-      console.log(selectDeliveryType, 'selectDeliveryType');
       const params = {
         page: 1,
         size: 10,
@@ -84,7 +83,7 @@ const DestinationSearchPage = () => {
           query: { subsDeliveryType, isSubscription: true, destinationId: destination.id, menuId },
         });
       } else {
-        router.push({
+        router.replace({
           pathname: '/cart/delivery-info',
           query: { destinationId: destination.id, deliveryType: selectDeliveryType },
         });
@@ -95,7 +94,10 @@ const DestinationSearchPage = () => {
   const goToDestinationDetail = (address: any) => {
     if (orderId) {
       dispatch(SET_LOCATION_TEMP(address));
-      router.push({ pathname: '/destination/destination-detail', query: { orderId, destinationId } });
+      router.push({
+        pathname: '/destination/destination-detail',
+        query: { orderId, destinationId, deliveryType: selectDeliveryType },
+      });
     } else {
       dispatch(SET_LOCATION_TEMP(address));
       if (isSubscription) {
@@ -104,7 +106,7 @@ const DestinationSearchPage = () => {
           query: { subsDeliveryType, isSubscription: true, menuId },
         });
       } else {
-        router.push({
+        router.replace({
           pathname: '/destination/destination-detail',
           query: {
             deliveryType: selectDeliveryType,

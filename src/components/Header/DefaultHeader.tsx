@@ -25,6 +25,7 @@ const DefaultHeader = ({ title }: TProps) => {
   const oauth = router.pathname === '/oauth';
   const totalReview = router.pathname === '/menu/[menuId]/review/total';
   const totalPhotoReview = router.pathname === '/menu/[menuId]/review/photo';
+  const reviewDetail = '/menu/[menuId]/review/[contentId]';
   const finishOrder = router.pathname === '/order/finish';
   const orderDetail = router.pathname === '/mypage/order-detail/[id]';
   const subsCancel = router.pathname === '/subscription/[detailId]/cancel/complete';
@@ -37,6 +38,7 @@ const DefaultHeader = ({ title }: TProps) => {
   const reviewPage = router.pathname === '/mypage/review';
   const addressPage = router.pathname === '/mypage/address';
   const cartDelivery = router.pathname === '/cart/delivery-info';
+  const destinationSearch = router.pathname === '/destination/search';
   const cart = router.pathname === '/cart';
 
   const countMap: Obj = {
@@ -61,6 +63,7 @@ const DefaultHeader = ({ title }: TProps) => {
     } else if (cartDelivery) {
       if (!isSubscription) {
         router.replace('/cart');
+        // router.back();
       } else {
         router.replace({ pathname: '/subscription/set-info', query: router.query });
       }
@@ -80,13 +83,14 @@ const DefaultHeader = ({ title }: TProps) => {
       router.replace({ pathname: '/mypage/review', query: { tab: '/completed' } });
     } else if (cardEdit) {
       isOrder ? router.back() : router.push({ pathname: '/mypage' });
-    } else if (totalReview || totalPhotoReview || reviewPage) {
-      tab ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } }) : router.back();
     } else if (addressPage) {
       isSpot ? router.replace({ pathname: '/mypage' }) : router.back();
     } else if (cart) {
+      sessionStorage.removeItem('checkedMenus');
       sessionStorage.removeItem('selectedDay');
       router.back();
+    } else if (totalReview || totalPhotoReview || reviewPage || reviewDetail) {
+      tab === 'review' ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } }) : router.back();
     } else {
       router.back();
     }

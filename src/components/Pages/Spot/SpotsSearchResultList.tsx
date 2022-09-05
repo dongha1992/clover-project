@@ -175,7 +175,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
                 location: response.location,
               })
             );
-            router.push({
+            router.replace({
               pathname: '/mypage/order-detail/edit/[orderId]',
               query: { orderId, destinationId },
             });
@@ -203,7 +203,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
               })
             );
             dispatch(SET_USER_DELIVERY_TYPE('spot'));
-            router.push({
+            router.replace({
               pathname: '/cart',
               query: { isClosed: !!closedDate },
             });
@@ -236,7 +236,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
       // dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_TEMP_DESTINATION(deliveryInfoDestinationInfo));
       // CHECK_LIST : destinationId 쿼리 지워야 하는지 체크
-      router.push({ pathname: '/cart/delivery-info', query: { isClosed: !!closedDate, deliveryType: 'SPOT' } });
+      router.replace({ pathname: '/cart/delivery-info', query: { isClosed: !!closedDate, deliveryType: 'SPOT' } });
     };
 
     const handleSubsDeliveryType = (pickupInfo: ISpotPickupInfoInDestination) => {
@@ -259,7 +259,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
       dispatch(SET_TEMP_DESTINATION(subsDestinationInfo));
       // dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
 
-      router.push({
+      router.replace({
         pathname: '/cart/delivery-info',
         query: { isSubscription, subsDeliveryType, menuId, deliveryType: 'SPOT' },
       });
@@ -631,7 +631,6 @@ const Col = styled.div`
 `;
 
 const TextPickup = styled.div`
-  width: 26px;
   ${textH6};
   padding: 0 4px 0 0;
   color: ${theme.greyScale65};

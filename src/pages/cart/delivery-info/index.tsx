@@ -101,7 +101,7 @@ const DeliverInfoPage = () => {
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
       if (isSubscription) {
-        router.push({
+        router.replace({
           pathname: '/spot/search/result',
           query: {
             subsDeliveryType: userSelectDeliveryType.toUpperCase(),
@@ -111,14 +111,14 @@ const DeliverInfoPage = () => {
           },
         });
       } else {
-        router.push({
+        router.replace({
           pathname: '/spot/search/result',
           query: { isDelivery: true },
         });
       }
     } else {
       if (isSubscription) {
-        router.push({
+        router.replace({
           pathname: '/destination/search',
           query: {
             subsDeliveryType: userSelectDeliveryType.toUpperCase(),
@@ -127,7 +127,10 @@ const DeliverInfoPage = () => {
           },
         });
       } else {
-        router.push({ pathname: '/destination/search', query: { deliveryType: userSelectDeliveryType.toUpperCase() } });
+        router.replace({
+          pathname: '/destination/search',
+          query: { deliveryType: userSelectDeliveryType.toUpperCase() },
+        });
       }
     }
   };
@@ -170,12 +173,14 @@ const DeliverInfoPage = () => {
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
 
     if (destinationId || isMainDestination) {
-      dispatch(SET_DESTINATION({ 
-        ...tempDestination, 
-        spotId: tempDestination.spotId,
-        spotPickupType: tempDestination?.spotPickup?.type,
-        spotPickupId: tempDestination?.spotPickup?.id,
-      }));
+      dispatch(
+        SET_DESTINATION({
+          ...tempDestination,
+          spotId: tempDestination.spotId,
+          spotPickupType: tempDestination?.spotPickup?.type,
+          spotPickupId: tempDestination?.spotPickup?.id,
+        })
+      );
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
       dispatch(SET_AFTER_SETTING_DELIVERY());
       dispatch(INIT_TEMP_DESTINATION());
@@ -197,7 +202,7 @@ const DeliverInfoPage = () => {
               zipCode: tempDestination?.location?.zipCode!,
               dong: tempDestination?.location?.dong!,
             },
-            spotPickupId: tempDestination?.spotPickupId,
+            spotPickupId: userSelectDeliveryType === 'spot' ? tempDestination?.spotPickupId : null,
           };
 
           try {
@@ -238,7 +243,7 @@ const DeliverInfoPage = () => {
                   query: { subsDeliveryType: subsDeliveryType, menuId },
                 });
               } else {
-                router.push('/cart');
+                router.replace('/cart');
               }
             }
           } catch (error) {
@@ -367,7 +372,7 @@ const DeliverInfoPage = () => {
         return <Tooltip message="택배배송만 가능해요!" top="25px" width="150px" />;
       }
       case 'spot': {
-        return <Tooltip message="무료 스팟배송이 가능해요!" top="25px" width="170px" />;
+        return <Tooltip message="무료 스팟배송이 가능해요!" top="25px" width="180px" />;
       }
     }
   };
@@ -486,9 +491,9 @@ const DeliverInfoPage = () => {
   const checkTimerShow = () => {
     // 배송 방법 선택과 관련 없이 현재 시간이 배송 마감 30분 전 이면 show
     const timerResult = checkTimerLimitHelper(locationStatus);
-    if(checkIsValidTimer(getCurrentDate(), timerResult)) {
+    if (checkIsValidTimer(getCurrentDate(), timerResult)) {
       dispatch(INIT_TIMER({ isInitDelay: false })); //타이머 시작
-      const timerDeliveryType = getTargetDelivery(timerResult)
+      const timerDeliveryType = getTargetDelivery(timerResult);
       if (['스팟점심', '스팟저녁'].includes(timerDeliveryType)) {
         setTimerDeliveryType('스팟배송');
       } else {

@@ -124,7 +124,6 @@ const SubsItem = ({ item, height, width }: IProps) => {
     if (item.liked) {
       mutateDeleteMenuLike();
     } else {
-      console.log('post');
       mutatePostMenuLike();
     }
   };

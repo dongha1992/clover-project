@@ -17,7 +17,7 @@ const BottomSheet = () => {
   useEffect(() => {
     // sheetRef.current => sheetRef.current?.offsetHeight 수정
     if (size.maxY && sheetRef.current?.offsetHeight) {
-      sheetRef.current.style.setProperty('transform', `translateY(${-100}px)`);
+      sheetRef.current.style.setProperty('transform', `translateY(${-1}px)`);
     }
     document!.querySelector('html')!.style!.overflow! = 'hidden';
     document.body.style.overflow = 'hidden';
@@ -86,7 +86,7 @@ const Container = styled.div<{ height: number | null }>`
 
   left: calc(50%);
   right: 0;
-  bottom: -100px;
+  bottom: -1px;
   background-color: #fff;
   /* top: ${({ height }) => height}px; */
   /* height: ${({ height }) => (height ? height : null)}; */
