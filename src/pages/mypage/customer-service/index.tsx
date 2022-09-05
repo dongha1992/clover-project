@@ -5,15 +5,11 @@ import { TextH5B, TextB2R, TextH4B } from '@components/Shared/Text';
 import { FlexCol, theme, FlexBetween, FlexRow } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import useIsApp from '@hooks/useIsApp';
+import { goExternalLink } from '@utils/common';
 
 const customServicePage = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const isApp = useIsApp();
-
-  const goToLink = (link: string) => {
-    // TODO: ios, 안드로이드, window 나눠야함
-    window.open(link, '_blank');
-  };
 
   const openChat = () => {
     if (isApp) {
@@ -25,7 +21,7 @@ const customServicePage = () => {
   return (
     <Container>
       <PaddingWrapper>
-        <MypageItem onClick={() => goToLink('https://freshcode.notion.site/FAQ-ca6ff2c62f1141be9c1e60f95ac3424d')}>
+        <MypageItem onClick={() => goExternalLink('https://freshcode.notion.site/FAQ-ca6ff2c62f1141be9c1e60f95ac3424d')}>
           <FlexBetween padding="24px 0">
             <TextH4B>FAQ</TextH4B>
             <FlexRow>
@@ -35,7 +31,7 @@ const customServicePage = () => {
             </FlexRow>
           </FlexBetween>
         </MypageItem>
-        <MypageItem onClick={() => goToLink('https://bit.ly/fco_partnership')}>
+        <MypageItem onClick={() => goExternalLink('https://bit.ly/fco_partnership')}>
           <FlexBetween padding="24px 0">
             <TextH4B>기업제휴</TextH4B>
             <FlexRow>
@@ -87,9 +83,6 @@ const MypageItem = styled.a`
   cursor: pointer;
   padding: 0 24px;
   list-style: none;
-  &:first-of-type > div {
-    border-top: 1px solid ${theme.greyScale3};
-  }
   > div {
     border-bottom: 1px solid ${theme.greyScale3};
   }
