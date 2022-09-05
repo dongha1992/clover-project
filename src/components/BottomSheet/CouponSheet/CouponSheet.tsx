@@ -17,13 +17,14 @@ import { userForm } from '@store/user';
 interface IProps {
   coupons?: IPromotion[];
 }
+
+let aleadyDownloadedCount = 0;
+
 const CouponSheet = ({ coupons }: IProps) => {
   const [couponList, setCouponList] = useState<IPromotion[]>(coupons!);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { me } = useSelector(userForm);
-
-  let aleadyDownloadedCount = 0;
 
   const { mutateAsync: mutatePostPromotionCode } = useMutation(
     async (couponItem: IPromotion) => {
@@ -97,7 +98,8 @@ const CouponSheet = ({ coupons }: IProps) => {
 
     dispatch(SET_IS_LOADING(true));
     const available = couponList.filter((item) => item.participationStatus === 'POSSIBLE');
-    if (available?.length! > 0) {
+
+    if (available?.length! !== 0) {
       for (let i = 0; i < available?.length!; i++) {
         const couponItem = coupons && available[i]!;
 
