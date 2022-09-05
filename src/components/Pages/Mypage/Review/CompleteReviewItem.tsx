@@ -62,7 +62,7 @@ const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: I
                 color={theme.greyScale65}
                 textDecoration="underline"
                 onClick={() => {
-                  if (!review.editable) {
+                  if (review.editable) {
                     goToReviewDetail({
                       url: review.menuImage.url,
                       menuId: review.menuId,

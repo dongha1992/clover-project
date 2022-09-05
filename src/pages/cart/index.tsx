@@ -123,10 +123,6 @@ const CartPage = () => {
 
   const queryClient = useQueryClient();
 
-  const { showToast, hideToast } = useToast();
-  const pickupId = userDestination?.spotPickupId;
-  const pickupType = userDestination?.spotPickupType;
-
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async (reqBody: ICreateCartRequest[]) => {
       const { data } = await postCartsApi(reqBody);
@@ -203,7 +199,7 @@ const CartPage = () => {
 
         if (validDestination && userDeliveryType && userDestination) {
           const destinationId = userDestination?.id!;
-          
+
           setDestinationObj({
             ...destinationObj,
             delivery: userDeliveryType,
@@ -225,7 +221,7 @@ const CartPage = () => {
             const { data } = await getMainDestinationsApi(params);
             if (data.code === 200) {
               const destinationId = data.data?.id!;
-              
+
               setDestinationObj({
                 ...destinationObj,
                 name: data.data.name,
@@ -328,7 +324,7 @@ const CartPage = () => {
   } = useQuery(
     'getPickupAvailability',
     async () => {
-      const { data } = await getPickupAvailabilityApi(pickupId!);
+      const { data } = await getPickupAvailabilityApi(destinationObj?.pickupId!);
       return data.data.isAvailability;
     },
     {
@@ -350,7 +346,7 @@ const CartPage = () => {
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
-      enabled: !!me && !!pickupId,
+      enabled: !!me && !!destinationObj?.pickupId!,
     }
   );
 
@@ -1136,7 +1132,7 @@ const CartPage = () => {
         </Button>
       );
     }
-    
+
     if (isSpot && (isLoadingPickup || !pickUpAvailability)) {
       return (
         <Button borderRadius="0" height="100%" disabled={!pickUpAvailability}>
@@ -1387,9 +1383,10 @@ const CartPage = () => {
             deliveryType={destinationObj.delivery!}
             deliveryDestination={destinationObj}
           />
-          {userDeliveryType === 'spot' && (pickupType === 'GS_LOCKER' || pickupType === 'KORAIL_LOCKER') && (
-            <SpotPickupAvailability pickUpAvailability={pickUpAvailability} isLoadingPickup={isLoadingPickup} />
-          )}
+          {userDeliveryType === 'spot' &&
+            (destinationObj?.pickupType === 'GS_LOCKER' || destinationObj?.pickupType === 'KORAIL_LOCKER') && (
+              <SpotPickupAvailability pickUpAvailability={pickUpAvailability} isLoadingPickup={isLoadingPickup} />
+            )}
         </DeliveryTypeWrapper>
       ) : (
         <DeliveryMethodAndPickupLocation onClick={onUnauthorized}>
