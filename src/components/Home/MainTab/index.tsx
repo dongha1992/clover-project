@@ -4,7 +4,7 @@ import { TextB2R } from '@components/Shared/Text';
 import Image from '@components/Shared/Image';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { SET_EVENT_TITLE, INIT_EVENT_TITLE } from '@store/event';
+import { SET_EVENT_TITLE } from '@store/event';
 
 const TABS = [
   { title: '카테고리', link: '/category/all' },
@@ -18,13 +18,12 @@ const MainTab = () => {
   const dispatch = useDispatch();
 
   const goToPromotion = (path: string, id?: number) => {
-    
-    if(path === '/promotion/detail') {
+    if (path === '/promotion/detail') {
       dispatch(SET_EVENT_TITLE('HOT썸머 할인!')); // 고정 기획전 타이틀
       router.push(`/promotion/detail/${id}`);
     } else {
       router.push(path);
-    };
+    }
   };
 
   return (
@@ -32,13 +31,7 @@ const MainTab = () => {
       {TABS.map((item, index) => {
         return (
           <TabWrapper key={index} onClick={() => goToPromotion(item.link, item.id)}>
-            <Image
-              src="/menu/img_thumbnail_empty.jpg"
-              height="80px"
-              width="80px"
-              className="rounded"
-              alt='홈탭'
-            />
+            <Image src="/menu/img_thumbnail_empty.jpg" height="80px" width="80px" className="rounded" alt="홈탭" />
             <TextB2R padding="12px 0" pointer>
               {item.title}
             </TextB2R>

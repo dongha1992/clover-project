@@ -25,14 +25,11 @@ const SubsSpotList = ({ menus, moreClickHandler }: IProps) => {
       <ListBox>
         <ScrollHorizonList>
           <SubsList slidesPerView={'auto'} spaceBetween={16}>
-            {menus?.map(
-              (item, index) =>
-                item.subscriptionDeliveries?.includes('SPOT') && (
-                  <SwiperSlide key={index}>
-                    <SubsItem item={item} height="168px" width="298px" />
-                  </SwiperSlide>
-                )
-            )}
+            {menus?.map((item, index) => (
+              <SwiperSlide key={index}>
+                <SubsItem item={item} height="168px" width="298px" />
+              </SwiperSlide>
+            ))}
           </SubsList>
         </ScrollHorizonList>
       </ListBox>

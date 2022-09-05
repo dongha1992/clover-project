@@ -17,6 +17,7 @@ import Carousel from '@components/Shared/Carousel';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { IMenus } from '@model/index';
+import HomeSkeleton from '@components/Skeleton/HomeSkeleton';
 
 const Home = () => {
   const [bannerList, setBannerList] = useState<IBanners[]>([]);
@@ -28,11 +29,12 @@ const Home = () => {
     dispatch(INIT_EVENT_TITLE());
   });
 
-  const { error: carouselError } = useQuery(
+  const { isFetching: isLoadingBanners } = useQuery(
     'carouselBanners',
     async () => {
       const params = { type: 'CAROUSEL', size: 100 };
       const { data } = await getBannersApi(params);
+
       setBannerList(data.data);
     },
     { refetchOnMount: true, refetchOnWindowFocus: false }
@@ -41,7 +43,7 @@ const Home = () => {
   const {
     data: contents,
     error: exhiError,
-    isLoading: isLoadingExhibition,
+    isFetching: isLoadingExhibition,
   } = useQuery(
     ['getExhibitionMenus'],
     async () => {
@@ -57,8 +59,8 @@ const Home = () => {
     router.push(`/promotion/detail/${id}`);
   };
 
-  if (isLoadingExhibition) {
-    return <div>로딩</div>;
+  if (isLoadingExhibition || isLoadingBanners) {
+    return <HomeSkeleton />;
   }
 
   return (
@@ -68,7 +70,7 @@ const Home = () => {
       </Container>
       <SectionWrapper>
         <MainTab />
-        <BorderLine height={1} margin="24px 0 24px 0" />
+        <BorderLine height={1} margin="24px 0 0 0" />
       </SectionWrapper>
       {mainContents?.length! > 0
         ? mainContents?.map((item: any, idx: number) => {

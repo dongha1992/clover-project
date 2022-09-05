@@ -24,19 +24,12 @@ const SubsParcelList = ({ menus, moreClickHandler }: IProps) => {
       <ListBox>
         <ScrollHorizonList>
           <SubsList slidesPerView={'auto'} spaceBetween={16}>
-            {menus?.map(
-              (item, index) =>
-                (item.subscriptionDeliveries?.includes('PARCEL') ||
-                  item.subscriptionDeliveries?.includes('MORNING')) && (
-                  <SwiperSlide key={index}>
-                    <SubsItem item={item} key={index} height="168px" width="298px" />
-                  </SwiperSlide>
-                )
-            )}
-            {menus?.filter(
-              (item) =>
-                item.subscriptionDeliveries?.includes('PARCEL') || item.subscriptionDeliveries?.includes('MORNING')
-            ).length === 0 && <div>새벽/택배 구독 상품이 없습니다.</div>}
+            {menus?.map((item, index) => (
+              <SwiperSlide key={index}>
+                <SubsItem item={item} key={index} height="168px" width="298px" />
+              </SwiperSlide>
+            ))}
+            {menus?.length === 0 && <div>새벽/택배 구독 상품이 없습니다.</div>}
           </SubsList>
         </ScrollHorizonList>
       </ListBox>
