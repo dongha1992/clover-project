@@ -229,7 +229,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               </ImageWrapper>
             </StorImgWrapper>
             <LocationInfoWrapper type="normal">
-              <TextB2R margin="8px 0 0 0" color={theme.black}>
+              <TextB2R margin="8px 0 0 0" color={theme.black} textHideMultiline textHidelineNum={1}>
                 {list?.name}
               </TextB2R>
               {
@@ -312,8 +312,8 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
           <Container type="trial">
             <LocationInfoWrapper type="trial">
               <FlexCol>
-                <TextH5B margin="0 0 4px 0">{list.placeName}</TextH5B>
-                <TextB3R margin="0 0 4px 0">{`${list.location?.address} ${list.location?.addressDetail}`}</TextB3R>
+                <TextH5B margin="0 0 4px 0" textHideMultiline textHidelineNum={1}>{list.placeName}</TextH5B>
+                <TextB3R margin="0 0 4px 0" textHideMultiline textHidelineNum={1}>{`${list.location?.address} ${list.location?.addressDetail}`}</TextB3R>
                 {
                   // 유저 위치정보 있을때 노출
                   userLocationLen && (

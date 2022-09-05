@@ -2314,6 +2314,8 @@ export interface IDeliveryObj {
   name?: string;
   main: boolean;
   spotId?: number | null;
+  pickupId?: number | null;
+  pickupType?: string | null;
 }
 
 /* COUPON */
@@ -2604,10 +2606,10 @@ export interface ISpotPickupAvailabilityResponse {
   code: number;
   data: {
     isAvailability: boolean;
-  }
+  };
   message: string;
   metaData: {
     responsedAt: string;
     trackingId: string;
   };
-};
+}

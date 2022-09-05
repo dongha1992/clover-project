@@ -29,14 +29,13 @@ const CheckTimerByDelivery = ({ isTooltip, isCartSheet }: IProps) => {
   const { timer } = useTimer();
   const { locationStatus } = useSelector(destinationForm);
   const timerResult = checkTimerLimitHelper(locationStatus);
-  if(checkIsValidTimer(getCurrentDate(), timerResult)) {
+  if (checkIsValidTimer(getCurrentDate(), timerResult)) {
     dispatch(INIT_TIMER({ isInitDelay: false })); //타이머 시작
-  }else {
+  } else {
     dispatch(INIT_TIMER({ isInitDelay: true })); //타이머 정지
   }
 
-  const deliveryType = getTargetDelivery(timerResult)
-  console.log(deliveryType, 'deliveryType');
+  const deliveryType = getTargetDelivery(timerResult);
 
   const msgHandler = () => {
     /* TODO: state 관리 필요? */

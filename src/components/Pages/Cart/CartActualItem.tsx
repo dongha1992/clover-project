@@ -71,7 +71,7 @@ const CartActualItem = ({
   const periodLimit = menuDetailAvailabilityMessage === 'EVENT';
   const dateLimit = ['DAILY', 'WEEKLY'].includes(menuDetailAvailabilityMessage);
 
-  const isPersonLimit = personLimit && (!remainingQuantity || !availability);
+  const isPersonLimit = personLimit && !availability;
   const soldCases = isSold || (periodLimit && !availability);
 
   const defaultStatus = (availability && remainingQuantity === 0) || holidayLimit || noLimit;

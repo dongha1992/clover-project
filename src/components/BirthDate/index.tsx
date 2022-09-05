@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { customSelect, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
-import { getCustomDate, getFormatTime } from '@utils/destination';
+import { getCustomDate } from '@utils/destination';
 
 interface IProps {
   selected: { year: number; month: number; day: number };
   onChange: any;
 }
-
-/* TODO: 렌더  */
 
 const BirthDate = ({ selected, onChange }: IProps) => {
   const [days, setDays] = useState<number[]>([]);
@@ -32,49 +30,49 @@ const BirthDate = ({ selected, onChange }: IProps) => {
 
   return (
     <Container>
-      <YearWrapper>
+      <YearWrapper isSelected={selected.year === 0}>
         <select name="year" value={selected.year} key={selected.year} onChange={onChange}>
-          <option className="placeholder" value={selected.year === 0 ? selected.year : 'YYYY'} disabled>
+          <Option className="placeholder" value={selected.year === 0 ? selected.year : 'YYYY'} disabled selected>
             YYYY
-          </option>
+          </Option>
           {years().map((y, index) => (
-            <option value={y} key={index}>
+            <Option value={y} key={index}>
               {y}
-            </option>
+            </Option>
           ))}
-          <option value={0}>선택 안 함</option>
+          {/* <Option value={0}>선택 안 함</Option> */}
         </select>
         <SvgWrapper>
           <SVGIcon name="triangleDown" />
         </SvgWrapper>
       </YearWrapper>
-      <MonthWrapper>
+      <MonthWrapper isSelected={selected.month === 0}>
         <select name="month" placeholder="MM" value={selected.month} key={selected.month} onChange={onChange}>
-          <option className="placeholder" value={selected.month === 0 ? selected.month : 'MM'} disabled>
+          <Option className="placeholder" value={selected.month === 0 ? selected.month : 'MM'} disabled selected>
             MM
-          </option>
+          </Option>
           {months().map((m, index) => (
-            <option value={m} key={index}>
+            <Option value={m} key={index}>
               {m}
-            </option>
+            </Option>
           ))}
-          <option value={0}>선택 안 함</option>
+          {/* <Option value={0}>선택 안 함</Option> */}
         </select>
         <SvgWrapper>
           <SVGIcon name="triangleDown" />
         </SvgWrapper>
       </MonthWrapper>
-      <DayWrapper>
+      <DayWrapper isSelected={selected.day === 0}>
         <select name="day" placeholder="DD" value={selected.day} key={selected.day} onChange={onChange}>
-          <option className="placeholder" value={selected.day === 0 ? selected.month : 'DD'} disabled>
+          <Option className="placeholder" value={selected.day === 0 ? selected.day : 'DD'} disabled selected>
             DD
-          </option>
+          </Option>
           {days?.map((d, index) => (
-            <option value={d} key={index}>
+            <Option value={d} key={index}>
               {d}
-            </option>
+            </Option>
           ))}
-          <option value={0}>선택 안 함</option>
+          {/* <Option value={0}>선택 안 함</Option> */}
         </select>
         <SvgWrapper>
           <SVGIcon name="triangleDown" />
@@ -88,24 +86,34 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  color: black;
 `;
 
-const YearWrapper = styled.div`
+const Option = styled.option``;
+
+const YearWrapper = styled.div<{ isSelected: boolean }>`
   position: relative;
   ${customSelect}
   margin-right: 10px;
+  select {
+    color: ${({ isSelected }) => (isSelected ? theme.greyScale45 : theme.black)};
+  }
 `;
 
-const MonthWrapper = styled.div`
+const MonthWrapper = styled.div<{ isSelected: boolean }>`
   position: relative;
   ${customSelect}
   margin-right: 10px;
+  select {
+    color: ${({ isSelected }) => (isSelected ? theme.greyScale45 : theme.black)};
+  }
 `;
 
-const DayWrapper = styled.div`
+const DayWrapper = styled.div<{ isSelected: boolean }>`
   position: relative;
   ${customSelect};
+  select {
+    color: ${({ isSelected }) => (isSelected ? theme.greyScale45 : theme.black)};
+  }
 `;
 
 const SvgWrapper = styled.div`

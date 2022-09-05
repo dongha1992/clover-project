@@ -58,7 +58,8 @@ const Header = () => {
   //   }
   // };
 
-  const { category } = router.query;
+  const { category, isKakao } = router.query;
+  const isKakaoRegister = isKakao === 'true';
 
   const renderComponent = (currentPath: string) => {
     const headerTitleMap: Obj = {
@@ -107,7 +108,7 @@ const Header = () => {
       '/signup/auth': '회원가입',
       '/signup/email-password': '회원가입',
       '/signup/optional': '회원가입',
-      '/signup/change-name': '회원가입',
+      '/signup/change-name': `${isKakaoRegister ? '회원가입' : '이름 변경'}`,
       '/login': '로그인',
       '/login/find-account/email': '이메일/비밀번호 찾기',
       '/login/find-account/password': '이메일/비밀번호 찾기',

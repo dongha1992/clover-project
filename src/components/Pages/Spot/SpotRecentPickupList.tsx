@@ -182,14 +182,14 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
       // 로그인 o, 장바구니 o, 스팟 검색 내에서 cart로 넘어간 경우
       dispatch(SET_USER_DELIVERY_TYPE('spot'));
       dispatch(SET_DESTINATION(destinationInfo));
-      router.push({ pathname: '/cart', query: { isClosed: !!closedDate } });
+      router.replace({ pathname: '/cart', query: { isClosed: !!closedDate } });
     };
 
     const goToDeliveryInfo = () => {
       // 장바구니 o, 배송 정보에서 픽업장소 변경하기 위헤 넘어온 경우
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
 
-      router.push({
+      router.replace({
         pathname: '/cart/delivery-info',
         query: { destinationId: item?.id, isClosed: !!closedDate, deliveryType: 'SPOT' },
       });
@@ -197,8 +197,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
 
     const handleSubsDeliveryType = () => {
       dispatch(SET_TEMP_DESTINATION(destinationInfo));
-      // dispatch(SET_USER_DELIVERY_TYPE(subsDeliveryType));
-      router.push({
+      router.replace({
         pathname: '/cart/delivery-info',
         query: { destinationId: item?.id, isSubscription, subsDeliveryType, menuId, deliveryType: 'SPOT' },
       });

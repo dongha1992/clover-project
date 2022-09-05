@@ -20,12 +20,16 @@ const GlobalStyle = createGlobalStyle`
         /* font-size: 100%;  */
         /* font: inherit; */
         vertical-align: baseline;
+        font-family: 'Noto Sans KR', sans-serif;
+        /* transform: rotate(-0.001deg) */
     }
     /* HTML5 display-role reset for older browsers */
     article, aside, details, figcaption, figure, 
     footer, header, hgroup, menu, nav, section {
         display: block;
     }
+
+
 
     @media(max-width:512px){
         body{
@@ -102,7 +106,6 @@ const GlobalStyle = createGlobalStyle`
 
     * {
         box-sizing: border-box;
-        font-family: 'NotoSansKR', sans-serif !important;
         ::-webkit-scrollbar { display: none; }
     }
 

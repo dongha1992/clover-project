@@ -57,7 +57,7 @@ const Oauth = () => {
 
         if (isRegister) {
           if (needToChangeName) {
-            router.push('/signup/change-name');
+            router.push({ pathname: '/signup/change-name', query: { isKakao: true } });
           } else {
             dispatch(SET_BOTTOM_SHEET({ content: <WelcomeSheet recommendCode={recommendCode as string} /> }));
           }

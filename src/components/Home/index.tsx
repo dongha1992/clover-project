@@ -163,11 +163,6 @@ const SectionWrapper = styled.section`
   width: 100%;
 `;
 
-const SectionTitle = styled.div`
-  ${textH3};
-  padding: 0 0 24px 0;
-`;
-
 const PromotionBanner = styled.section`
   max-width: 512px;
   width: 100%;

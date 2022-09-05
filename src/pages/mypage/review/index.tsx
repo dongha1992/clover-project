@@ -12,6 +12,7 @@ import useScrollCheck from '@hooks/useScrollCheck';
 import { SET_MENU_IMAGE } from '@store/review';
 import { useRouter } from 'next/router';
 import { SET_ALERT } from '@store/alert';
+import { Obj } from '@model/index';
 
 const TAB_LIST = [
   { id: 1, text: '작성 예정', value: 'willWrite', link: '/willWrite' },
@@ -90,7 +91,13 @@ const ReviewPage = () => {
 
   useEffect(() => {
     if (router.isReady) {
-      setSelectedTab((router.query.tab as string) ? (router.query.tab as string) : '/willWrite');
+      const TAP_MAP: Obj = {
+        review: '/willWrite',
+        '/willWrite': '/willWrite',
+        '/completed': '/completed',
+      };
+
+      setSelectedTab(TAP_MAP[router.query.tab as string] ?? '/willWrite');
     }
   }, [router.isReady]);
 
@@ -214,7 +221,6 @@ const ReviewInfoWrapper = styled.div`
   padding: 24px;
   color: ${theme.greyScale65};
   ${textBody3};
-  text-align: center;
 `;
 
 const WillReviewItmesWrapper = styled.div``;
