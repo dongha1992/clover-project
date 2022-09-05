@@ -12,6 +12,7 @@ import getFormatPrice from './getFormatPrice';
 import { setCookie, getCookie, removeCookie } from './cookie';
 import getValidBirthday from './getValidBirthday';
 import getUnCommaPrice from './getUnCommaPrice';
+import goExternalLink from './goExternalLink';
 
 export {
   SVGIcon,
@@ -28,4 +29,5 @@ export {
   getValidBirthday,
   getUnCommaPrice,
   dateN,
+  goExternalLink,
 };
