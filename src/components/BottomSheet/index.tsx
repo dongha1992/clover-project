@@ -16,7 +16,7 @@ const BottomSheet = () => {
 
   useEffect(() => {
     // sheetRef.current => sheetRef.current?.offsetHeight 수정
-    console.log(size.maxY, sheetRef.current?.offsetHeight);
+
     if (size.maxY && sheetRef.current?.offsetHeight) {
       sheetRef.current.style.setProperty('transform', `translateY(${-100}px)`);
     }
