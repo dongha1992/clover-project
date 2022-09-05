@@ -1,26 +1,32 @@
-export const SITE_INFO_TITLE = [
+export const SNS_ITEMS = [
   {
-    title: '개인정보처리방침',
-    link: '/',
+    src: 'instaLink',
+    title: 'instagram',
+    href: 'https://www.instagram.com/freshcode_salad',
   },
   {
-    title: '이용약관',
-    link: '/',
+    src: 'facebookLink',
+    title: 'facebook',
+    href: 'https://www.facebook.com/freshcode.me',
   },
   {
-    title: '제휴문의',
-    link: '/',
+    src: 'youtubeLink',
+    title: 'youtube',
+    href: 'https://www.youtube.com/channel/UCfjb5Z1nJDi831vNepTtH2A',
   },
   {
-    title: '대량문의',
-    link: '/',
+    src: 'naverBlogLink',
+    title: 'blog',
+    href: 'https://blog.naver.com/freshcode',
   },
   {
-    title: 'B2B 신청',
-    link: '/',
+    src: 'naverPostLink',
+    title: 'Naver post',
+    href: 'https://post.naver.com/my.nhn?memberNo=35667196',
   },
   {
-    title: '채용문의',
-    link: '/',
+    src: 'channelTalkLink',
+    title: 'kakao channel',
+    href: 'https://pf.kakao.com/_hvpzu',
   },
 ];
