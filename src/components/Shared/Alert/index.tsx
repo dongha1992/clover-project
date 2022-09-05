@@ -119,10 +119,11 @@ const AlertBtnBox = styled.div`
     outline: none;
     cursor: pointer;
     background-color: white;
-    font-size: 16px;
+    font-size: 14px;
     letter-spacing: -0.4px;
     font-weight: bold;
     line-height: 24px;
+    color: ${theme.black};
   }
 
   button:hover {
