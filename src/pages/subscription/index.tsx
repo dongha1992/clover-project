@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { useQuery } from 'react-query';
 import { getMenusApi } from '@api/menu';
 import { getOrdersApi } from '@api/order';
-import { IGetOrders, IOrderDeliverie } from '@model/index';
+import { IGetOrders, IMenus, IOrderDeliverie } from '@model/index';
 import Image from 'next/image';
 import subsMainBanner from '@public/images/subsMainBanner.svg';
 import dayjs from 'dayjs';
@@ -15,11 +15,14 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import DefaultLayout from '@components/Layout/Default';
 import HomeBottom from '@components/Bottom/HomeBottom';
 import { NextPageWithLayout } from '@pages/_app';
+import SubsMainSkeleton from '@components/Skeleton/SubsMainSkeleton';
 
 const SubscriptiopPage: NextPageWithLayout = () => {
   const { me } = useSelector(userForm);
+  const [spotList, setSpotList] = useState<IMenus[]>();
+  const [parcelList, setParcelList] = useState<IMenus[]>();
 
-  const { data: menus } = useQuery(
+  const { isLoading: isMenusLoading } = useQuery(
     'getExhibitionMenus',
     async () => {
       const params = { categories: '', keyword: '', type: 'SUBSCRIPTION' };
@@ -27,10 +30,17 @@ const SubscriptiopPage: NextPageWithLayout = () => {
       const { data } = await getMenusApi(params);
       return data.data;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      onSuccess: (menus) => {
+        setSpotList(menus?.filter((menu) => menu.subscriptionDeliveries?.includes('SPOT')));
+        setParcelList(menus?.filter((menu) => !menu.subscriptionDeliveries?.includes('SPOT')));
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
-  const { data: subsList } = useQuery(
+  const { data: subsList, isLoading: isOrdersLoading } = useQuery(
     ['getSubscriptionOrders', 'progress'],
     async () => {
       const params = { days: 365, page: 1, size: 100, type: 'SUBSCRIPTION' };
@@ -96,49 +106,31 @@ const SubscriptiopPage: NextPageWithLayout = () => {
   const goToSubsInformation = () => {
     router.push('/subscription/information');
   };
-  const [loading, setLoading] = useState<boolean>(true);
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
-  }, []);
-  // isMenusLoading && isOrdersLoading && 수정
-  if (loading) {
-    return (
-      <div>...로딩중</div>
-      // <Loading>
-      //   <Lottie options={defaultOptions} height={500} width={500} />
-      // </Loading>
-    );
-  }
 
+  if (isMenusLoading || isOrdersLoading || !spotList || !parcelList) {
+    return <SubsMainSkeleton me={me} />;
+  }
   return (
     <Container>
       <InfoCard subsCount={subsList?.length!} />
       {subsList?.length! > 0 && <MySubsList subsList={subsList!} />}
 
-      <SubsSpotList menus={menus!} moreClickHandler={goToSpot} />
-      <SubsParcelList menus={menus!} moreClickHandler={goToDawn} />
+      <SubsSpotList menus={spotList!} moreClickHandler={goToSpot} />
+      <SubsParcelList menus={parcelList!} moreClickHandler={goToDawn} />
 
       <Banner onClick={goToSubsInformation}>
-        <Image 
-          src='/images/subsMainBanner.svg'
-          alt="웰컴이미지" 
-          width={512} 
-          height={131} 
-          layout="responsive" 
-        />
+        <Image src="/images/subsMainBanner.svg" alt="웰컴이미지" width={512} height={131} layout="responsive" />
       </Banner>
     </Container>
   );
 };
 
 SubscriptiopPage.getLayout = (page: ReactElement) => {
-  return (<DefaultLayout bottom={<HomeBottom/>}>{page}</DefaultLayout>)
-}
+  return <DefaultLayout bottom={<HomeBottom />}>{page}</DefaultLayout>;
+};
 
 const Container = styled.div`
-  padding: 0 0 68px;
+  padding: 0 0 48px;
 `;
 const Banner = styled.div`
   background-color: #f2f2f2;
