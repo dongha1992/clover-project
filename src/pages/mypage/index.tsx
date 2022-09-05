@@ -7,6 +7,7 @@ import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
 import router from 'next/router';
 import Image from '@components/Shared/Image';
+import NextImage from 'next/image';
 import newUserImg from '@public/images/newUserImg.svg';
 import friendPushEventImg from '@public/images/friendPushEventImg.svg';
 import { IGetOrders } from '@model/index';
@@ -261,11 +262,11 @@ const MypagePage: NextPageWithLayout = () => {
               <ImageWrapper>
                 <Link href="/mypage/friend">
                   <a>
-                    <Image
+                    <NextImage
                       height="131px"
                       width="512px"
                       layout="responsive"
-                      src="/banner/mypage_banner.jpg"
+                      src={friendPushEventImg}
                       alt="Friend invitation banner"
                     />
                   </a>
@@ -315,14 +316,20 @@ const MypagePage: NextPageWithLayout = () => {
               <ImageWrapper>
                 <Link href="/mypage/friend">
                   <a>
-                    <Image height="131px" width="512px" layout="responsive" src={newUserImg} alt="new member event" />
+                    <NextImage
+                      height="131px"
+                      width="512px"
+                      layout="responsive"
+                      src={newUserImg}
+                      alt="new member event"
+                    />
                   </a>
                 </Link>
               </ImageWrapper>
               <ImageWrapper className="last">
                 <Link href="/mypage/friend">
                   <a>
-                    <Image
+                    <NextImage
                       height="131px"
                       width="512px"
                       layout="responsive"
