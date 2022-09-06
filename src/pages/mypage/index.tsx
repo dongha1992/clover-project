@@ -192,16 +192,6 @@ const MypagePage: NextPageWithLayout = () => {
     );
   };
 
-  // useEffect(() => {
-  //   const offsetTop = ref?.current?.offsetTop!;
-  //   console.log(offsetTop);
-  //   window.scrollTo({
-  //     behavior: 'smooth',
-  //     left: 0,
-  //     top: offsetTop,
-  //   });
-  // }, []);
-
   if (isNil(orderList) && infoLoading && subsOrdersLoading) {
     return <div>로딩</div>;
   }

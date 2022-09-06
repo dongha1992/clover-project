@@ -16,8 +16,8 @@ import { bottomSheetForm } from '@store/bottomSheet';
 import Image from 'next/image';
 
 interface IDefaultLayoutProps {
-  children: ReactElement,
-  bottom?: ReactElement
+  children: ReactElement;
+  bottom?: ReactElement;
 }
 const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
   const alert = useSelector(alertForm);
@@ -67,20 +67,18 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
             <div className="left-contents">
               <Image
                 src="/images/img_brandstory_desktop.png"
-                width='512px'
-                height='688px'
+                width="512px"
+                height="688px"
                 alt="프코스팟 매장이미지"
                 layout="responsive"
               />
             </div>
           </Left>
-          <Right>
-            <Header/>
-            {toast.message && <Toast/>}
+          <Right id="right">
+            <Header />
+            {toast.message && <Toast />}
             <Main>{children}</Main>
-            <BottomWrapper isShow={!!bottom}>
-              {bottom}
-            </BottomWrapper>
+            <BottomWrapper isShow={!!bottom}>{bottom}</BottomWrapper>
           </Right>
         </Center>
       </Container>
@@ -108,9 +106,6 @@ const Center = styled.div`
   height: 100%;
   min-height: calc(var(--vh, 1vh) * 100);
   --ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center;
@@ -137,16 +132,16 @@ const Left = styled.div`
   position: sticky;
   bottom: 0;
   background-color: white;
-  width: 50%;  
+  width: 50%;
   .left-contents {
     width: 100%;
     position: absolute;
     bottom: 0;
   }
   ${({ theme }) => theme.desktop`  
-  display: none;
+    display: none;
   `}
-  `;
+`;
 
 const Main = styled.main`
   margin: 56px 0 0 0;
