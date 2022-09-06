@@ -19,6 +19,7 @@ const PopupWrapper = ({ children }: IProps): JSX.Element => {
   const { isMobile } = useSelector(commonSelector);
   const pathnameHome = window.location.pathname.indexOf('/') !== -1;
   const dynamicLink = 'https://freshcodeclover.page.link/DtUc';
+  
   const { data: fetchBanner, error: popupBannerError } = useQuery(
     'getPopupBannerList',
     async () => {
@@ -54,8 +55,9 @@ const PopupWrapper = ({ children }: IProps): JSX.Element => {
             })
           );
         } else if (
-          (isApp !== null && fetchBanner?.length! > 0 && JSON.parse(getHomePopupKey!) === null) ||
-          JSON.parse(getHomePopupKey!) < currentData
+          isApp !== null && 
+          fetchBanner?.length! > 0 &&
+          (JSON.parse(getHomePopupKey!) === null || JSON.parse(getHomePopupKey!) < currentData)
         ) {
           dispatch(
             SET_BOTTOM_SHEET({
