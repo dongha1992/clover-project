@@ -1309,7 +1309,7 @@ const CartPage = () => {
   }, [selectedDeliveryDay]);
 
   useEffect(() => {
-    if (userDeliveryType !== 'spot' && calendarRef && isFromDeliveryPage) {
+    if (calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
       window.scrollTo({
         behavior: 'smooth',
