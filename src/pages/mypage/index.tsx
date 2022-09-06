@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useEffect, useRef } from 'react';
 import { TextB3R, TextH2B, TextH6B, TextH3B, TextH4B } from '@components/Shared/Text';
 import { FlexCol, homePadding, FlexRow, theme, FlexBetweenStart, FlexBetween } from '@styles/theme';
 import { getFormatPrice, SVGIcon } from '@utils/common';
@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { Tag } from '@components/Shared/Tag';
 import BorderLine from '@components/Shared/BorderLine';
 import router from 'next/router';
-import Image from '@components/Shared/Image';
 import NextImage from 'next/image';
 import newUserImg from '@public/images/newUserImg.svg';
 import friendPushEventImg from '@public/images/friendPushEventImg.svg';
@@ -39,6 +38,7 @@ interface IMypageMenu {
   link: string;
   hideBorder?: boolean;
 }
+
 const MypagePage: NextPageWithLayout = () => {
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);
@@ -47,6 +47,8 @@ const MypagePage: NextPageWithLayout = () => {
   const [subsUnpaidOrders, setSubsUnpaidOrders] = useState([]);
   const [subsCloseOrders, setSubsCloseOrders] = useState([]);
   const [showBoard, setShowBoard] = useState<string>('');
+
+  const ref = useRef<HTMLDivElement>(null);
 
   const isApp = useIsApp();
   const { data: orderList } = useQuery(
@@ -189,12 +191,23 @@ const MypagePage: NextPageWithLayout = () => {
       })
     );
   };
+
+  // useEffect(() => {
+  //   const offsetTop = ref?.current?.offsetTop!;
+  //   console.log(offsetTop);
+  //   window.scrollTo({
+  //     behavior: 'smooth',
+  //     left: 0,
+  //     top: offsetTop,
+  //   });
+  // }, []);
+
   if (isNil(orderList) && infoLoading && subsOrdersLoading) {
     return <div>로딩</div>;
   }
 
   return (
-    <Container>
+    <Container ref={ref}>
       <Wrapper>
         {me ? (
           // 회원
