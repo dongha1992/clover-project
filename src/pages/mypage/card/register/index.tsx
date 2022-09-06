@@ -491,6 +491,7 @@ const CardInputWrapper = styled.div`
 `;
 
 const CardInputGroup = styled.div`
+  position: relative;
   display: flex;
   align-self: center;
   height: 100%;
@@ -499,9 +500,7 @@ const CardInputGroup = styled.div`
     width: calc(100% / 4);
     ${customInput}
     ::placeholder {
-      padding-top: 3px;
       ${textBody2}
-      position: absolute;
       color: ${({ theme }) => theme.greyScale45};
     }
   }
@@ -526,15 +525,13 @@ const CardInputGroup = styled.div`
 const CustomInputWrapper = styled.div`
   border: 1px solid ${theme.greyScale15};
   width: 100%;
-  height: 48px;
+  /* height: 48px; */
   border-radius: 8px;
 
   > input {
     ${customInput}
     ::placeholder {
-      padding-top: 3px;
       ${textBody2}
-      position: absolute;
       color: ${({ theme }) => theme.greyScale45};
     }
   }

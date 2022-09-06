@@ -1,7 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { Obj } from '@model/index';
-import debounce from 'lodash-es/debounce';
 import { SVGIcon } from '@utils/common';
 import { textBody2, theme } from '@styles/theme';
 
@@ -226,9 +225,7 @@ const Container = styled.div<{
 
     input::placeholder {
       ${textBody2}
-      position: absolute;
       color: ${({ theme }) => theme.greyScale45};
-      padding-top: 3px;
     }
 
     input:disabled {

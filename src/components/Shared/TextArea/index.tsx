@@ -103,7 +103,6 @@ const Container = styled.div<{
 
   textarea::placeholder {
     ${textBody2}
-    position: absolute;
     color: ${({ theme }) => theme.greyScale45};
     padding: 4px 16px 4px 4px;
   }
