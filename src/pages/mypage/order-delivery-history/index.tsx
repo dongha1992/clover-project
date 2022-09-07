@@ -114,13 +114,8 @@ const OrderDeliveryHistoryPage = () => {
     router.push('/');
   };
 
-  const initQueries = async () => {
-    await queryClient.resetQueries('infiniteOrderList', { exact: true });
-  };
-
   useEffect(() => {
-    // TODO: 의존성 때문에 처음에 두번 호출
-    initQueries();
+    refetch();
   }, [withInDays]);
 
   return (
