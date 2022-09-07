@@ -32,7 +32,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
     <Container>
       <YearWrapper isSelected={selected.year === 0}>
         <select name="year" value={selected.year} key={selected.year} onChange={onChange}>
-          <Option className="placeholder" value={selected.year === 0 ? selected.year : 'YYYY'} disabled selected>
+          <Option className="placeholder" value={selected.year === 0 ? selected.year : 'YYYY'} disabled>
             YYYY
           </Option>
           {years().map((y, index) => (
@@ -48,7 +48,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
       </YearWrapper>
       <MonthWrapper isSelected={selected.month === 0}>
         <select name="month" placeholder="MM" value={selected.month} key={selected.month} onChange={onChange}>
-          <Option className="placeholder" value={selected.month === 0 ? selected.month : 'MM'} disabled selected>
+          <Option className="placeholder" value={selected.month === 0 ? selected.month : 'MM'} disabled>
             MM
           </Option>
           {months().map((m, index) => (
@@ -64,7 +64,7 @@ const BirthDate = ({ selected, onChange }: IProps) => {
       </MonthWrapper>
       <DayWrapper isSelected={selected.day === 0}>
         <select name="day" placeholder="DD" value={selected.day} key={selected.day} onChange={onChange}>
-          <Option className="placeholder" value={selected.day === 0 ? selected.day : 'DD'} disabled selected>
+          <Option className="placeholder" value={selected.day === 0 ? selected.day : 'DD'} disabled>
             DD
           </Option>
           {days?.map((d, index) => (

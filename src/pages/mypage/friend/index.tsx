@@ -28,10 +28,7 @@ const InviteFriendPaage = () => {
   const url = location.origin;
   const recommendCodeUrl = `${url}/onboarding?recommendCode=${me?.promotionCode}`;
 
-  const {
-    data,
-    isLoading,
-  } = useQuery(
+  const { data, isLoading } = useQuery(
     'getInvitationInfo',
     async () => {
       const { data } = await userInvitationApi();
