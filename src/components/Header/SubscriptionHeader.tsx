@@ -4,25 +4,11 @@ import { theme } from '@styles/theme';
 import router from 'next/router';
 import { SVGIcon } from '@utils/common';
 import { TextH5B } from '@components/Shared/Text';
-import { Tooltip } from '@components/Shared/Tooltip';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
-import { useEffect, useState } from 'react';
-import { Obj } from '@model/index';
-
-const mapper: Obj = {
-  morning: { text: '새벽배송이 가능해요!', width: '150px' },
-  parcel: { text: '택배배송만 가능해요!', width: '150px' },
-  spot: { text: '무료 스팟배송이 가능해요!', width: '170px' },
-};
 
 const SubscriptionHeader = () => {
-  const [formatAvailableDestination, setFormatAvailableDestination] = useState('');
-  const { userLocation, locationStatus } = useSelector(destinationForm);
-
-  useEffect(() => {
-    setFormatAvailableDestination(locationStatus);
-  }, []);
+  const { userLocation } = useSelector(destinationForm);
 
   const goToSubsInformation = () => {
     router.push('/subscription/information');
@@ -42,14 +28,6 @@ const SubscriptionHeader = () => {
           <SVGIcon name="location" />
           <AddressWrapper>
             <TextH5B>{userLocation?.emdNm ? <a>{userLocation?.emdNm}</a> : <a>내 위치 설정하기</a>}</TextH5B>
-            {userLocation?.emdNm && formatAvailableDestination && (
-              <Tooltip
-                message={mapper[formatAvailableDestination]?.text}
-                width={mapper[formatAvailableDestination]?.width}
-                left="-8px"
-                top="30px"
-              />
-            )}
           </AddressWrapper>
         </Left>
         <Button onClick={goToSubsInformation}>구독안내</Button>
@@ -57,6 +35,7 @@ const SubscriptionHeader = () => {
     </Container>
   );
 };
+
 const Container = styled.div`
   width: 100%;
   height: 100%;
