@@ -194,6 +194,9 @@ const Container = styled.div`
 const InfoWrapper = styled.div`
   ${homePadding}
   padding-top:74px;
+  margin: 0 24px;
+  position: relative;
+  width: 90%;
 `;
 
 const FixedTab = styled.div<{ scroll: boolean }>`
