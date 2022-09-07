@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TextH5B } from '@components/Shared/Text';
+import { TextH4B } from '@components/Shared/Text';
 import { homePadding } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
@@ -28,7 +28,7 @@ const TermInfoSheet = ({ children, type }: IProps) => {
     <Container>
       <Header>
         <div />
-        <TextH5B padding="">{TITLE_MAP[type]}</TextH5B>
+        <TextH4B padding="">{TITLE_MAP[type]}</TextH4B>
         <SVGWrapper onClick={initSheetHandler}>
           <SVGIcon name="crossCloseBlack" />
         </SVGWrapper>
@@ -43,7 +43,6 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  ${homePadding}
 `;
 
 const Header = styled.div`
