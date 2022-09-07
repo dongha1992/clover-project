@@ -1,11 +1,12 @@
 import styled from 'styled-components';
-import Lottie from "lottie-react";
+import Lottie from 'lottie-react';
 import loadingAnimation from '@public/images/loading.json';
+import { theme } from '@styles/theme';
 
-export const Loading = ({isShow=false}) => {
+export const Loading = ({ isShow = false }) => {
   return (
-    <Overlay style={{display: isShow ? 'flex' : 'none'}}>
-      <Lottie animationData={loadingAnimation} style={{ width: 100, height: 100 }} />
+    <Overlay style={{ display: isShow ? 'flex' : 'none' }}>
+      <Lottie animationData={loadingAnimation} style={{ width: 60, height: 60 }} />
     </Overlay>
   );
 };
@@ -23,6 +24,7 @@ const Overlay = styled.div`
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.5);
 `;
 
 export default Loading;

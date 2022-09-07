@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FlexBetween, homePadding, theme } from '@styles/theme';
 import styled from 'styled-components';
 import { TextH4B, TextB2R, TextB3R } from '@components/Shared/Text';
@@ -10,6 +10,7 @@ import 'dayjs/locale/ko';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import useIsApp from '@hooks/useIsApp';
+import { show, hide } from '@store/loading';
 
 dayjs.locale('ko');
 
@@ -27,6 +28,9 @@ const SettingPage = () => {
         notiPushReceived: data.notiPushReceived!,
         primePushReceived: data.primePushReceived!,
       });
+    },
+    onSettled: () => {
+      dispatch(hide());
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
@@ -70,7 +74,9 @@ const SettingPage = () => {
     );
   };
 
-  if (isLoading) return <div>...로딩중</div>;
+  if (isLoading) {
+    dispatch(show());
+  }
 
   return (
     <Container>

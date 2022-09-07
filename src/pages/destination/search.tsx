@@ -1,21 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import { TextH6B } from '@components/Shared/Text';
-import { useDispatch, useSelector } from 'react-redux';
-import { SVGIcon } from '@utils/common/';
+import { useDispatch } from 'react-redux';
 import { RecentDelivery } from '@components/Pages/Destination';
 import { ADDRESS_KEYWORD_REGX, SPECIAL_REGX } from '@constants/regex';
 import { searchAddressJuso } from '@api/search';
 import { IJuso } from '@model/index';
 import { DestinationSearchResult } from '@components/Pages/Destination';
 import router from 'next/router';
-import { destinationForm, SET_LOCATION_TEMP, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
+import { SET_LOCATION_TEMP, SET_TEMP_DESTINATION, SET_DESTINATION } from '@store/destination';
 import { SET_TEMP_EDIT_DESTINATION } from '@store/mypage';
 import { getDestinationsApi } from '@api/destination';
 import { useQuery } from 'react-query';
 import { IDestinationsResponse } from '@model/index';
 import { DELIVERY_TYPE_MAP } from '@constants/order';
+import { show, hide } from '@store/loading';
 
 const DestinationSearchPage = () => {
   const [resultAddress, setResultAddress] = useState<IJuso[]>([]);
@@ -31,6 +30,7 @@ const DestinationSearchPage = () => {
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     ['getDestinationList', selectDeliveryType],
     async () => {
+      dispatch(show());
       const params = {
         page: 1,
         size: 10,
@@ -40,7 +40,13 @@ const DestinationSearchPage = () => {
 
       return data.data.destinations;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const getSearchAddressResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -136,7 +142,7 @@ const DestinationSearchPage = () => {
   }, []);
 
   if (beforeSearch && isLoading) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   return (

@@ -4,16 +4,15 @@ import { ReviewDetailItem } from '@components/Pages/Review';
 import { useDispatch } from 'react-redux';
 import { useQuery } from 'react-query';
 import { getReviewDetailApi } from '@api/menu';
+import { show, hide } from '@store/loading';
 
 const ReviewDetailPage = ({ contentId, menuId }: { contentId: string; menuId: string }) => {
   const dispatch = useDispatch();
 
-  const {
-    data: menuReview,
-    isLoading,
-  } = useQuery(
+  const { data: menuReview, isLoading } = useQuery(
     'getReviewDetail',
     async () => {
+      dispatch(show());
       const params = {
         id: Number(menuId),
         menuReviewId: Number(contentId),
@@ -21,16 +20,18 @@ const ReviewDetailPage = ({ contentId, menuId }: { contentId: string; menuId: st
       const { data } = await getReviewDetailApi(params);
       return data.data.menuReview;
     },
-
     {
       onSuccess: (data) => {},
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
 
   if (isLoading) {
-    return <div>로딩중</div>;
+    return <div></div>;
   }
 
   return (

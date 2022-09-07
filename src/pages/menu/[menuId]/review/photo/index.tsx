@@ -6,7 +6,8 @@ import { getMenuDetailReviewImageApi } from '@api/menu';
 import { useQuery } from 'react-query';
 import { IDetailImage } from '@model/index';
 import NextImage from '@components/Shared/Image';
-/* 사진 전체 후기 */
+import { show, hide } from '@store/loading';
+import { useDispatch } from 'react-redux';
 
 const DEFAULT_SIZE = 30;
 
@@ -15,6 +16,7 @@ const ReviewPage = ({ menuId }: any) => {
   let [list, setList] = useState<IDetailImage[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
 
   let {
     data,
@@ -25,7 +27,8 @@ const ReviewPage = ({ menuId }: any) => {
   } = useQuery(
     'getMenuDetailReviewImages',
     async () => {
-      const params = { id: Number(menuId)!, page, size: 10 };
+      dispatch(show());
+      const params = { id: Number(menuId)!, page, size: DEFAULT_SIZE };
       const { data } = await getMenuDetailReviewImageApi(params);
       return data.data;
     },
@@ -33,6 +36,9 @@ const ReviewPage = ({ menuId }: any) => {
     {
       onSuccess: (data) => {
         setList((prev: IDetailImage[]) => [...prev, ...data.images]);
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
 
       refetchOnMount: true,
@@ -78,7 +84,7 @@ const ReviewPage = ({ menuId }: any) => {
   }, []);
 
   if (isLoading || isFetching) {
-    <div>로딩중</div>;
+    <div></div>;
   }
 
   return (

@@ -12,6 +12,7 @@ interface IProps {
   goToReviewDetail: (id: number) => void;
   averageRating: number;
   totalReviews: number;
+  totalImgs: number;
 }
 
 const ReviewOnlyImage = ({
@@ -20,6 +21,7 @@ const ReviewOnlyImage = ({
   goToReviewDetail,
   averageRating,
   totalReviews,
+  totalImgs,
 }: IProps) => {
   return (
     <Container>
@@ -36,20 +38,20 @@ const ReviewOnlyImage = ({
         <ReviewSwipe>
           {reviewsImages?.map((review: any, index: number) => {
             if (index > 3) return;
-            if (reviewsImages?.length > 4 && index === 3) {
-              const numOfImages = reviewsImages.length - 4;
+            if (totalImgs > 4 && index === 3) {
+              const numOfImages = totalImgs - 4;
               return (
                 <LastImgWrapper key={index} onClick={goToReviewImages}>
                   <LastImg>
                     <TextH4B color={theme.white}>+ {numOfImages.toLocaleString()}</TextH4B>
                   </LastImg>
-                  <Image src={review.url} alt="리뷰이미지" layout={"fill"}></Image>
+                  <Image src={review.url} alt="리뷰이미지" layout={'fill'}></Image>
                 </LastImgWrapper>
               );
             }
             return (
               <ReviewImgWrapper key={index} onClick={() => goToReviewDetail(review.contentId)}>
-                <Image src={review.url} alt="리뷰이미지" key={index} layout={"fill"}/>
+                <Image src={review.url} alt="리뷰이미지" key={index} layout={'fill'} />
               </ReviewImgWrapper>
             );
           })}
