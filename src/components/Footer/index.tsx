@@ -50,10 +50,11 @@ const Footer = () => {
       <SlideToggle state={isShow} duration={0.5}>
         <BossInfo>
           <TextB3R>대표 : 정유석</TextB3R>
-          <TextB3R>주소 : 서울특별시 성동구 왕십리로 115, </TextB3R>
+          <TextB3R>주소 : 서울특별시 성동구 왕십리로 115,</TextB3R>
           <TextB3R>헤이그라운드 서울숲점 7층</TextB3R>
           <TextB3R>사업자등록번호 : 883-81-00307</TextB3R>
           <TextB3R padding="0 0 8px 0">통신판매업신고 : 제 2016-서울용산-00657</TextB3R>
+          <TextB3R>전화문의 : 1644-4559</TextB3R>
           <TextB3R>제휴문의 : biz@freshcode.me</TextB3R>
           <TextB3R>카카오ID : @프레시코드-freshcode</TextB3R>
           <TextB3R>단체주문문의 : order@freshcode.me</TextB3R>
@@ -66,14 +67,11 @@ const Footer = () => {
           <SiteInfo onClick={()=> goToLink('/mypage/term/use')}>
             <TextH6B color={theme.greyScale65}>이용약관</TextH6B>
           </SiteInfo>
-          <SiteInfo onClick={()=> goExternalLink('https://fco-supply.oopy.io/6520993b-4424-4c45-867f-5a72061f42ea')}>
-            <TextH6B color={theme.greyScale65}>제휴 문의</TextH6B>
-          </SiteInfo>
-          <SiteInfo onClick={()=> goToLink('/')}>
-            <TextH6B color={theme.greyScale65}>대량 문의</TextH6B>
+          <SiteInfo onClick={()=> goExternalLink('https://freshcode.notion.site/FAQ-ca6ff2c62f1141be9c1e60f95ac3424d')}>
+            <TextH6B color={theme.greyScale65}>FAQ</TextH6B>
           </SiteInfo>
           <SiteInfo onClick={()=> goExternalLink('https://fco-supply.oopy.io/6520993b-4424-4c45-867f-5a72061f42ea')}>
-            <TextH6B color={theme.greyScale65}>B2B 신청</TextH6B>
+            <TextH6B color={theme.greyScale65}>기업제휴</TextH6B>
           </SiteInfo>
           <SiteInfo onClick={()=> goExternalLink('https://freshcode.notion.site/freshcode/bf6cd5195f1f4d649063829766d640f4')}>
             <TextH6B color={theme.greyScale65}>채용문의</TextH6B>
