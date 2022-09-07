@@ -306,7 +306,7 @@ const SpotSearchPage = (): ReactElement => {
     }
   };
 
-  if (isLoadingRecomand && isLoadingEventSpot && isLoadingPickup) {
+  if (isLoadingRecomand || isLoadingEventSpot || isLoadingPickup) {
     return <div>로딩</div>;
   }
 
@@ -384,35 +384,43 @@ const SpotSearchPage = (): ReactElement => {
               {
                 // 위지 정보가 있는 상태
                 userLocationLen &&
-                  (spotRecommendList?.spotList.length! > 0 ? ( // 추천, 이벤트 스팟이 있는 경우
+                  ((spotRecommendList?.spotList.length! > 0 || eventSpotList?.spots.length! > 0) ? ( // 추천, 이벤트 스팟이 있는 경우
                     <>
-                      {/* 추천스팟 */}
-                      <SpotRecommendWrapper>
-                        <FlexBetween margin="0 0 12px 0">
-                          <TextH2B>{spotRecommendList?.data.title}</TextH2B>
-                          {
-                            // 사용자 위치 설정 했을 경우 노출
-                            userLocationLen && <TextB3R color={theme.greyScale65}>3km이내 프코스팟</TextB3R>
-                          }
-                        </FlexBetween>
-                        {spotRecommendList?.spotList.map((item: any, index: number) => {
-                          return <SpotsSearchResultList item={item} key={index} recommand={true} />;
-                        })}
-                      </SpotRecommendWrapper>
-                      {/* 이벤트 중인 스팟 */}
-                      <BottomContentWrapper>
-                        <Row />
-                        <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.title}</TextH2B>
-                        <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
-                          {eventSpotList?.spots.map((list, idx) => {
-                            return (
-                              <SwiperSlide className="swiper-slide" key={idx}>
-                                <SpotList list={list} type="event" />
-                              </SwiperSlide>
-                            );
-                          })}
-                        </EventSlider>
-                      </BottomContentWrapper>
+                      {
+                        // 추천스팟
+                        spotRecommendList?.spotList.length! > 0 && (
+                          <SpotRecommendWrapper>
+                            <FlexBetween margin="0 0 12px 0">
+                              <TextH2B>{spotRecommendList?.data.title}</TextH2B>
+                              {
+                                // 사용자 위치 설정 했을 경우 노출
+                                userLocationLen && <TextB3R color={theme.greyScale65}>3km이내 프코스팟</TextB3R>
+                              }
+                            </FlexBetween>
+                            {spotRecommendList?.spotList.map((item: any, index: number) => {
+                              return <SpotsSearchResultList item={item} key={index} recommand={true} />;
+                            })}
+                          </SpotRecommendWrapper>
+                        )
+                      }
+                      {
+                        // 이벤트 중인 스팟
+                        eventSpotList?.spots.length! > 0 && (
+                          <BottomContentWrapper>
+                            <Row />
+                            <TextH2B padding="24px 24px 24px 24px">{eventSpotList?.title}</TextH2B>
+                            <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={20} speed={500}>
+                              {eventSpotList?.spots.map((list, idx) => {
+                                return (
+                                  <SwiperSlide className="swiper-slide" key={idx}>
+                                    <SpotList list={list} type="event" />
+                                  </SwiperSlide>
+                                );
+                              })}
+                            </EventSlider>
+                          </BottomContentWrapper>
+                        )
+                      }
                     </>
                   ) : (
                     <>
