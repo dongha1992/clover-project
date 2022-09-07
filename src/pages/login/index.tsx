@@ -80,6 +80,9 @@ const LoginPage = () => {
         });
 
         if (data.code === 200) {
+          // 로그인 성공 GA이벤트
+          gtag.setEvent({action: 'login'});
+
           const userTokenObj = data.data;
           if (userTokenObj?.tmpPasswordUsed) {
             dispatch(SET_USER_AUTH(userTokenObj));
@@ -117,15 +120,13 @@ const LoginPage = () => {
               router.push(`${returnPath}`);
               return;
             }
-          }
+          };
         }
       } catch (error) {
         console.error(error);
         setErrorMessage('이메일 혹은 비밀번호를 다시 입력해 주세요.');
       }
     }
-
-    gtag.setEvent({action: 'login'});
   };
 
   const handleKeyPress = (e: any) => {
