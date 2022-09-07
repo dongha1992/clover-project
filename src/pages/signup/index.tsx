@@ -9,6 +9,8 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_SIGNUP_USER } from '@store/user';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
+import { termsApi } from '@api/term';
+import { TermInfoSheet } from '@components/BottomSheet/TermInfoSheet';
 
 const textPaddingStyle = {
   padding: '0 0 0 8px',
@@ -68,7 +70,18 @@ const SignupPage = () => {
     setCheckTermList(copied);
   };
 
-  const goToTerm = () => {};
+  const goToTerm = async (type: string) => {
+    const params = {
+      type,
+      version: null,
+    };
+    try {
+      const { data } = await termsApi(params);
+      dispatch(SET_BOTTOM_SHEET({ content: <TermInfoSheet children={data.data.terms.content} type={type} /> }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const goToAuthTel = () => {
     if (!isAllAgreed) {
@@ -104,14 +117,14 @@ const SignupPage = () => {
         <FlexRow padding="16px 0 0 0">
           <Checkbox onChange={() => checkTermHandler(1)} isSelected={checkTermList.includes(1)} />
           <TextB2R {...textPaddingStyle}>[필수] 이용약관에 동의합니다.</TextB2R>
-          <TextH6B {...moreTextStyle} onClick={goToTerm}>
+          <TextH6B pointer {...moreTextStyle} onClick={() => goToTerm('USE')}>
             자세히
           </TextH6B>
         </FlexRow>
         <FlexRow padding="16px 0">
           <Checkbox onChange={() => checkTermHandler(2)} isSelected={checkTermList.includes(2)} />
           <TextB2R {...textPaddingStyle}>[필수] 개인정보처리방침에 동의합니다.</TextB2R>
-          <TextH6B {...moreTextStyle} onClick={goToTerm}>
+          <TextH6B pointer {...moreTextStyle} onClick={() => goToTerm('PRIVACY')}>
             자세히
           </TextH6B>
         </FlexRow>
