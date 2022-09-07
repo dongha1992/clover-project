@@ -140,7 +140,7 @@ const PointPage = () => {
             <TextH3B padding="6px 0 0 0"> {getFormatPrice(String(points?.expirePoint))} P</TextH3B>
           </FlexCol>
         </FlexBetweenStart>
-        <PaddingWrapper onClick={() => setIsShow(!isShow)}>
+        <InfoWrapper onClick={() => setIsShow(!isShow)}>
           <FlexBetween>
             <TextH6B color={theme.greyScale65}>포인트 이용 안내</TextH6B>
             <div>
@@ -148,8 +148,8 @@ const PointPage = () => {
             </div>
           </FlexBetween>
           {isShow && (
-            <>
-              <BorderLine height={1} margin="16px 0" />
+            <Content>
+              <BorderLine height={1} margin="8px 0" />
               <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
                 적립 포인트 유효기간
               </TextB3R>
@@ -159,9 +159,9 @@ const PointPage = () => {
               <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
                 포인트는 보유한 계정에서만 사용하며 양도, 선물은 불가합니다.
               </TextB3R>
-            </>
+            </Content>
           )}
-        </PaddingWrapper>
+        </InfoWrapper>
         <BorderLine height={8} margin="24px 0 0 0 " />
         <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
       </Wrapper>
@@ -263,15 +263,34 @@ const PaddingWrapper = styled.div`
   cursor: pointer;
 `;
 
+const InfoWrapper = styled.div`
+  position: relative;
+  margin-top: 24px;
+  margin: 24px 24px 0 24px;
+  padding: 16px;
+  background-color: ${theme.greyScale3};
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+`;
+
 const ScrollView = styled.div`
   padding: 24px 25px;
   overflow-y: scroll;
   height: calc(100vh - 379px);
 `;
 
-// const Info = styled.div`
-//   padding: 0 24px;
-// `;
+const Content = styled.div`
+  cursor: pointer;
+  background-color: ${theme.greyScale3};
+  padding: 16px;
+  border-radius: 8px;
+  position: absolute;
+  left: 0;
+  top: 35px;
+  width: 100%;
+`;
 
 const EmptyContainer = styled.div`
   height: 30vh;

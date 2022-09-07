@@ -6,7 +6,7 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { TermSheet } from '@components/BottomSheet/TermSheet';
 import { theme } from '@styles/theme';
-import { terms } from '@api/term';
+import { termsApi } from '@api/term';
 import { ITerm } from '@model/index';
 import MarkdownRenderer from '@components/Shared/Markdown';
 import { commonSelector, SET_VERSION_OF_TERM } from '@store/common';
@@ -32,7 +32,7 @@ const LocationTermPage = () => {
       version: versionOfTerm ?? null,
     };
     try {
-      const { data } = await terms(params);
+      const { data } = await termsApi(params);
       setTermOfUse(data.data);
     } catch (error) {
       console.error(error);
