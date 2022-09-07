@@ -4,7 +4,7 @@ import { theme, FlexRow, homePadding, FlexBetweenStart, FlexCol, FlexBetween, fl
 import TextInput from '@components/Shared/TextInput';
 import { Button } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
-import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
+import { TextH6B, TextH5B, TextB3R, TextB2R, TextH3B } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/common/getMediaQuery';
@@ -121,7 +121,7 @@ const PointPage = () => {
   return (
     <Container>
       <Wrapper>
-        <FlexRow padding="24px 0 0 0">
+        <FlexRow padding="24px">
           <TextInput placeholder="프로모션 코드를 입력해주세요." ref={codeRef} />
           <Button width="30%" margin="0 0 0 8px" onClick={() => mutatePostPromotionCode()}>
             등록하기
@@ -131,13 +131,13 @@ const PointPage = () => {
         <FlexBetweenStart padding="0 24px">
           <FlexCol width="50%">
             <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
-            <TextH5B color={theme.brandColor} padding="6px 0 0 0">
+            <TextH3B color={theme.brandColor} padding="6px 0 0 0">
               {getFormatPrice(String(points?.availablePoint))} P
-            </TextH5B>
+            </TextH3B>
           </FlexCol>
           <FlexCol width="50%">
             <TextH6B color={theme.greyScale65}>7일 이내 소멸 예정 포인트</TextH6B>
-            <TextH5B padding="6px 0 0 0"> {getFormatPrice(String(points?.expirePoint))} P</TextH5B>
+            <TextH3B padding="6px 0 0 0"> {getFormatPrice(String(points?.expirePoint))} P</TextH3B>
           </FlexCol>
         </FlexBetweenStart>
         <PaddingWrapper onClick={() => setIsShow(!isShow)}>
@@ -235,11 +235,8 @@ const Container = styled.div`
   height: calc(100vh - 114px);
 `;
 const Wrapper = styled.div`
-  ${homePadding}
   position: relative;
   width: 100%;
-  /* left: calc(50%);
-  right: 0; */
   background-color: white;
   max-width: ${breakpoints.mobile}px;
 
@@ -257,6 +254,7 @@ const Wrapper = styled.div`
 
 const PaddingWrapper = styled.div`
   margin-top: 24px;
+  margin: 24px 24px 0 24px;
   padding: 16px;
   background-color: ${theme.greyScale3};
   border-radius: 8px;
@@ -271,11 +269,8 @@ const ScrollView = styled.div`
   height: calc(100vh - 379px);
 `;
 
-// const ScrollView = styled.div<{ customMargin?: number }>`
-//   padding: 24px 25px;
-//   overflow-y: scroll;
-//   height: 100%;
-//   padding-top: ${({ customMargin }) => customMargin && customMargin}px;
+// const Info = styled.div`
+//   padding: 0 24px;
 // `;
 
 const EmptyContainer = styled.div`

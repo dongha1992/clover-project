@@ -176,14 +176,14 @@ const MenusPriceBox = ({
             {getFormatPrice(
               String(
                 calculatePoint({
-                  rate: grade.benefit.accumulationRate!,
+                  rate: grade.benefit.accumulationRate! * 100,
                   total: disposable
                     ? menuPrice + menuOption1?.price + menuOption2?.price + deliveryPrice - menuDiscount
                     : menuPrice + deliveryPrice - menuDiscount,
                 })
               )
             )}
-            P ({grade.benefit.accumulationRate}%) 적립 예정
+            P ({grade.benefit.accumulationRate! * 100}%) 적립 예정
           </b>
         </TextB3R>
       </FlexEnd>

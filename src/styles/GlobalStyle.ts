@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import { textBody2, theme } from '@styles/theme';
 
 const GlobalStyle = createGlobalStyle`
     html, body, div, span, applet, object, iframe,
@@ -17,11 +18,9 @@ const GlobalStyle = createGlobalStyle`
         margin: 0;
         padding: 0;
         border: 0;
-        /* font-size: 100%;  */
-        /* font: inherit; */
         vertical-align: baseline;
         font-family: 'Noto Sans KR', sans-serif;
-        /* transform: rotate(-0.001deg) */
+        
     }
     /* HTML5 display-role reset for older browsers */
     article, aside, details, figcaption, figure, 
@@ -41,18 +40,21 @@ const GlobalStyle = createGlobalStyle`
 
     html{
         overscroll-behavior-y: none;
+        
     }
     
     body {
         line-height: 1;
         margin: 0 auto;
-        /* background-color: #232323; */
         width: 100%;
         overscroll-behavior-y: none;
-        
-        
-
     }
+
+    body, button, input, textarea, select {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: none;
+    }
+
     input[type="color"],
     input[type="date"],
     input[type="datetime"],
@@ -72,6 +74,11 @@ const GlobalStyle = createGlobalStyle`
         font-size: 16px;
         font-family: 'Noto Sans KR', sans-serif;
     }
+    input:focus::-webkit-input-placeholder { color:transparent; }
+    input:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
+    input:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
+    input:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
+
     ol, ul {
         list-style: none;
     }
@@ -108,6 +115,7 @@ const GlobalStyle = createGlobalStyle`
     * {
         box-sizing: border-box;
         ::-webkit-scrollbar { display: none; }
+        -webkit-touch-callout: none;
     }
 
     a {
@@ -115,23 +123,6 @@ const GlobalStyle = createGlobalStyle`
         color: inherit;
     }
 
-/* @font-face {
-    font-family: 'Noto Sans CJK KR';
-    font-style: normal;
-    font-weight: normal;
-    src: url("./fonts/NotoSansKR-Regular.woff2") format('woff2'),
-    url("./fonts/NotoSansKR-Regular.woff") format('woff'),
-    url("./fonts/NotoSansKR-Regular.otf") format('truetype')
-}
-
-@font-face {
-    font-family: 'Noto Sans CJK KR';
-    font-style: normal;
-    font-weight: bold;
-    src: url("./fonts/NotoSansKR-Bold.woff2") format('woff2'),
-    url("./fonts/NotoSansKR-Bold.woff") format('woff'),
-    url("./fonts/NotoSansKR-Bold.otf") format('truetype')
-} */
 `;
 
 export default GlobalStyle;

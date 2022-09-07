@@ -16,6 +16,8 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import BirthDate from '@components/BirthDate';
 import { IBirthdayObj } from '@pages/signup/optional';
 import { getFormatTime } from '@utils/destination';
+import { CardTermSheet } from '@components/BottomSheet/CardTermSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
@@ -202,7 +204,7 @@ const CardRegisterPage = () => {
   };
 
   const goToCardRegisterTerm = () => {
-    router.push('/mypage/card/register/term');
+    dispatch(SET_BOTTOM_SHEET({ content: <CardTermSheet /> }));
   };
 
   const registerCardHandler = async () => {
@@ -491,6 +493,7 @@ const CardInputWrapper = styled.div`
 `;
 
 const CardInputGroup = styled.div`
+  position: relative;
   display: flex;
   align-self: center;
   height: 100%;
@@ -499,9 +502,7 @@ const CardInputGroup = styled.div`
     width: calc(100% / 4);
     ${customInput}
     ::placeholder {
-      padding-top: 3px;
       ${textBody2}
-      position: absolute;
       color: ${({ theme }) => theme.greyScale45};
     }
   }
@@ -526,15 +527,13 @@ const CardInputGroup = styled.div`
 const CustomInputWrapper = styled.div`
   border: 1px solid ${theme.greyScale15};
   width: 100%;
-  height: 48px;
+  /* height: 48px; */
   border-radius: 8px;
 
   > input {
     ${customInput}
     ::placeholder {
-      padding-top: 3px;
       ${textBody2}
-      position: absolute;
       color: ${({ theme }) => theme.greyScale45};
     }
   }
