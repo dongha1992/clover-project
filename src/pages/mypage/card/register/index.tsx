@@ -16,6 +16,8 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import BirthDate from '@components/BirthDate';
 import { IBirthdayObj } from '@pages/signup/optional';
 import { getFormatTime } from '@utils/destination';
+import { CardTermSheet } from '@components/BottomSheet/CardTermSheet';
+import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
   ssr: false,
@@ -202,7 +204,7 @@ const CardRegisterPage = () => {
   };
 
   const goToCardRegisterTerm = () => {
-    router.push('/mypage/card/register/term');
+    dispatch(SET_BOTTOM_SHEET({ content: <CardTermSheet /> }));
   };
 
   const registerCardHandler = async () => {
