@@ -17,7 +17,7 @@ const PopupWrapper = ({ children }: IProps): JSX.Element => {
   const dispatch = useDispatch();
   const isApp = useIsApp();
   const { isMobile } = useSelector(commonSelector);
-  const pathnameHome = window.location.pathname.indexOf('/') !== -1;
+  const pathnameHome = window.location.pathname === '/';
   const dynamicLink = 'https://freshcodeclover.page.link/DtUc';
   
   const { data: fetchBanner, error: popupBannerError } = useQuery(
@@ -38,7 +38,6 @@ const PopupWrapper = ({ children }: IProps): JSX.Element => {
     const getLookAroundKey = localStorage.getItem('LOOKAROUND_POPUP_CLOSE');
     const currentData = new Date().getTime();
 
-    setTimeout(() => {
       if (pathnameHome) {
         if (
           isMobile &&
@@ -72,7 +71,6 @@ const PopupWrapper = ({ children }: IProps): JSX.Element => {
           );
         }
       }
-    }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchBanner, isApp]);
 
@@ -86,8 +84,6 @@ const PopupWrapper = ({ children }: IProps): JSX.Element => {
     localStorage.setItem('HOMEMAIN_POPUP_CLOSE', midnight.getTime()?.toString());
     dispatch(INIT_BOTTOM_SHEET());
   };
-
-  const goToAppLink = () => {};
 
   const lookAroundHandler = () => {
     let midnight = new Date();
