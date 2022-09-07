@@ -13,33 +13,35 @@ interface IProps {
   isShow?: boolean;
 }
 
-const ImageViewer = ({ images=[], startIndex=0, isShow=false }: IProps) => {
+const ImageViewer = ({ images = [], startIndex = 0, isShow = false }: IProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(startIndex);
   const dispatch = useDispatch();
 
   const onChange = (changedIndex: number) => {
     setCurrentImageIndex(changedIndex);
-  }
+  };
 
   const closeModal = () => {
     dispatch(hideImageViewer());
-  }
+  };
 
   return (
-    isShow && (
-    <ModalFullScreen height="300px" padding="10px" style={{ borderRadius: '8px'}}>
-      <Container>
-        <Header>
-          <TextH5B color={theme.white}>
-            {currentImageIndex + 1} / {images.length}
-          </TextH5B>
-          <div className="close" onClick={closeModal}>
-            <SVGIcon name="defaultCancel24White" />
-          </div>
-        </Header>
-        <ViewerCarousel images={images} initialSlide={startIndex} onChange={onChange}/>
-      </Container>
-    </ModalFullScreen>) || null
+    (isShow && (
+      <ModalFullScreen height="300px" padding="10px" style={{ borderRadius: '8px' }}>
+        <Container>
+          <Header>
+            <TextH5B color={theme.white}>
+              {currentImageIndex + 1} / {images.length}
+            </TextH5B>
+            <div className="close" onClick={closeModal}>
+              <SVGIcon name="defaultCancel24White" />
+            </div>
+          </Header>
+          <ViewerCarousel images={images} initialSlide={startIndex} onChange={onChange} />
+        </Container>
+      </ModalFullScreen>
+    )) ||
+    null
   );
 };
 
@@ -65,7 +67,7 @@ const Header = styled.div`
     position: absolute;
     right: 24px;
     ${({ theme }) => theme.mobile`
-      right:20%
+      right:10%
   `};
   }
 `;

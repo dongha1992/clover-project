@@ -338,7 +338,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
           <FlexBetween padding="0 0 24px 0">
             <TextH4B>배송정보</TextH4B>
             {isSpot && (
-              <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={changePickUpPlace}>
+              <TextH6B pointer color={theme.greyScale65} textDecoration="underline" onClick={changePickUpPlace}>
                 픽업 장소 변경
               </TextH6B>
             )}

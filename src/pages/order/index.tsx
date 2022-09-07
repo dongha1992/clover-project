@@ -544,7 +544,7 @@ const OrderPage = () => {
       type: 'PRIVACY',
       version: null,
     };
-    
+
     try {
       const { data } = await termsApi(params);
       dispatch(SET_BOTTOM_SHEET({ content: <TermInfoSheet children={data.data.terms.content} type="ORDER" /> }));
@@ -1497,7 +1497,7 @@ const OrderPage = () => {
               checkOrderTermHandler('privacy');
             }}
           >
-            개인정보 수집·이용 동의 (필수)
+            [필수] 개인정보 수집·이용 동의
           </TextB2R>
           <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo} pointer>
             자세히
@@ -1518,7 +1518,7 @@ const OrderPage = () => {
                 checkOrderTermHandler('subscription');
               }}
             >
-              정기구독 이용약관・주의사항 동의 (필수)
+              [필수] 정기구독 이용약관・주의사항 동의
             </TextB2R>
             <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
               자세히
