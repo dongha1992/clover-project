@@ -40,9 +40,9 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
 
   return (
     <>
+      <Loading isShow={loadingState?.isShown}></Loading>
       <Container>
         <Center>
-          <Loading isShow={loadingState?.isShown}></Loading>
           {alert && (
             <Alert
               alertMessage={alert.alertMessage}

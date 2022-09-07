@@ -45,15 +45,7 @@ import {
   postNicePaymnetApi,
 } from '@api/order';
 import { useQuery } from 'react-query';
-import {
-  Obj,
-  IGetCard,
-  ICoupon,
-  ICreateOrder,
-  IGetNicePaymentResponse,
-  IUserInputObj,
-  IAccessMethod,
-} from '@model/index';
+import { Obj, IGetCard, ICoupon, ICreateOrder, IGetNicePaymentResponse, IUserInputObj } from '@model/index';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
@@ -66,6 +58,7 @@ import useIsApp from '@hooks/useIsApp';
 import { ACCESS_METHOD } from '@constants/order';
 import { termsApi } from '@api/term';
 import { TermInfoSheet } from '@components/BottomSheet/TermInfoSheet';
+import { show, hide } from '@store/loading';
 
 declare global {
   interface Window {
@@ -74,8 +67,6 @@ declare global {
 }
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
-/* TODO: 배송 출입 부분 함수로 */
-/* TODO: 배송예정 어떻게? */
 
 const successOrderPath: string = 'order/finish';
 
@@ -132,6 +123,9 @@ const OrderPage = () => {
       if (!tempOrder) {
         router.push('/cart');
       }
+
+      dispatch(show());
+
       const {
         delivery,
         deliveryDetail,
@@ -204,6 +198,9 @@ const OrderPage = () => {
         } else {
           isSubscription ? router.replace('/subscription') : router.replace('/cart');
         }
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -1028,10 +1025,6 @@ const OrderPage = () => {
       setCheckForm({ ...checkForm, alwaysPointAll: { isSelected: alwaysPointAll } });
     }
   }, []);
-
-  if (preveiwOrderLoading) {
-    return <div>로딩</div>;
-  }
 
   const {
     userEmail,

@@ -17,7 +17,7 @@ import { useDispatch } from 'react-redux';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 import { getFormatPrice } from '@utils/common';
-
+import { show, hide } from '@store/loading';
 interface IProps {
   orderId: number;
 }
@@ -35,6 +35,7 @@ const OrderCancelPage = ({ orderId }: IProps) => {
   const { data: orderDetail, isLoading } = useQuery(
     'getOrderDetail',
     async () => {
+      dispatch(show());
       const { data } = await getOrderDetailApi(orderId);
       return data.data;
     },
@@ -44,6 +45,9 @@ const OrderCancelPage = ({ orderId }: IProps) => {
         if (isSubOrderCanceled) {
           router.replace('/mypage/order-delivery-history');
         }
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -97,7 +101,7 @@ const OrderCancelPage = ({ orderId }: IProps) => {
   };
 
   if (isLoading) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   const {

@@ -18,6 +18,7 @@ import { userForm } from '@store/user';
 import { ICreateReivewRequest } from '@model/index';
 import router from 'next/router';
 import { ReviewImagePreview, ReviewImageUpload } from '@components/Pages/Review';
+import { show, hide } from '@store/loading';
 
 const LIMIT = 30;
 
@@ -60,6 +61,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
   const { data, isLoading } = useQuery(
     'getMenuDetail',
     async () => {
+      dispatch(show());
       const { data } = await getMenuDetailApi(menuId);
       return data.data;
     },
@@ -74,6 +76,9 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
             },
           })
         );
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -168,10 +173,6 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
   };
 
   const over30Letter = LIMIT - numberOfReivewContent > 0;
-
-  if (isLoading) {
-    return <div>로딩</div>;
-  }
 
   return (
     <Container>

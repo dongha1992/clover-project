@@ -67,6 +67,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
             goToReviewDetail={goToReviewDetail}
             averageRating={menuItem?.rating}
             totalReviews={menuItem?.reviewCount}
+            totalImgs={reviewsImages?.pagination.total!}
           />
         </Wrapper>
       )}

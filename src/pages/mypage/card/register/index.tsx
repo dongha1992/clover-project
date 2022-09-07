@@ -360,6 +360,8 @@ const CardRegisterPage = () => {
           <CardInputGroup>
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="0000"
               id="number1"
               name="number1"
@@ -371,6 +373,8 @@ const CardRegisterPage = () => {
             <div className="firstDash" />
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="0000"
               id="number2"
               name="number2"
@@ -383,6 +387,8 @@ const CardRegisterPage = () => {
             <input
               type="password"
               placeholder="0000"
+              inputMode="numeric"
+              pattern="[0-9]*"
               id="number3"
               name="number3"
               onChange={cardNumberHandler}
@@ -393,6 +399,8 @@ const CardRegisterPage = () => {
             <div className="thirdDash" />
             <input
               type="password"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="0000"
               id="number4"
               name="number4"
@@ -410,6 +418,8 @@ const CardRegisterPage = () => {
           <CustomInputWrapper>
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               name="expireDateInput"
               placeholder="MMYY"
               onChange={changeExpireDateHandler}
@@ -430,6 +440,8 @@ const CardRegisterPage = () => {
             <input
               type="password"
               name="passwordInput"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="비밀번호 앞 두 자리"
               onChange={changePasswordHandler}
               value={password}

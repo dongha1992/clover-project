@@ -16,6 +16,7 @@ import { getCustomDate } from '@utils/destination';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { getFormatPrice } from '@utils/common';
+import { show, hide } from '@store/loading';
 
 const TAB_LIST = [
   { id: 1, text: '적립', value: 'save', link: '/save' },
@@ -33,6 +34,7 @@ const PointPage = () => {
   const { data: pointHistory, isLoading } = useQuery(
     ['getPointHistoryList', selectedTab],
     async () => {
+      dispatch(show());
       const types = formatTanNameHandler(selectedTab);
       const params = {
         page: 1,
@@ -44,18 +46,31 @@ const PointPage = () => {
         return data.data.pointHistories;
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const { data: points, isLoading: pointLoading } = useQuery(
     'getPoint',
     async () => {
+      dispatch(show());
       const { data } = await getPointApi();
       if (data.code === 200) {
         return data.data;
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const { mutate: mutatePostPromotionCode } = useMutation(
@@ -107,7 +122,7 @@ const PointPage = () => {
   };
 
   if (isLoading || pointLoading) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   const targetIndex = pointHistory?.find((item) => {
