@@ -57,25 +57,27 @@ const CompleteReviewItem = ({ review, goToReviewDetail, deleteReviewHandler }: I
                   {review.displayMenuName}
                 </TextH5B>
               </FlexRowStart>
-              <TextH6B
-                pointer
-                color={theme.greyScale65}
-                textDecoration="underline"
-                onClick={() => {
-                  if (review.editable) {
-                    goToReviewDetail({
-                      url: review.menuImage.url,
-                      menuId: review.menuId,
-                      id: review.id,
-                      name: review.displayMenuName!,
-                    });
-                  } else {
-                    deleteReviewHandler(review.id);
-                  }
-                }}
-              >
-                {review.editable ? '수정' : '삭제'}
-              </TextH6B>
+              <ButtonContainer>
+                <TextH6B
+                  pointer
+                  color={theme.greyScale65}
+                  textDecoration="underline"
+                  onClick={() => {
+                    if (review.editable) {
+                      goToReviewDetail({
+                        url: review.menuImage.url,
+                        menuId: review.menuId,
+                        id: review.id,
+                        name: review.displayMenuName!,
+                      });
+                    } else {
+                      deleteReviewHandler(review.id);
+                    }
+                  }}
+                >
+                  {review.editable ? '수정' : '삭제'}
+                </TextH6B>
+              </ButtonContainer>
             </FlexBetweenStart>
             <ReviewHeader>
               <RatingAndUser>
@@ -174,6 +176,9 @@ const ReviewContent = styled.div`
   width: 100%;
 `;
 
+const ButtonContainer = styled.div`
+  width: 35px;
+`;
 const ReviewHeader = styled.div`
   display: flex;
   justify-content: space-between;

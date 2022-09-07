@@ -1,11 +1,25 @@
-import { TextB3R } from '@components/Shared/Text';
-import { theme } from '@styles/theme';
-import React from 'react';
-import styled from 'styled-components';
+import React, { useRef } from 'react';
+import styled, { css } from 'styled-components';
+import { TextB3R, TextH5B } from '@components/Shared/Text';
+import { homePadding, theme } from '@styles/theme';
+import { SVGIcon } from '@utils/common';
+import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { useDispatch } from 'react-redux';
 
-const CardTermPage = () => {
+const CardTermSheet = () => {
+  const dispatch = useDispatch();
+  const initSheetHandler = () => {
+    dispatch(INIT_BOTTOM_SHEET());
+  };
   return (
     <Container>
+      <Header>
+        <div />
+        <TextH5B padding="">이용약관</TextH5B>
+        <SVGWrapper onClick={initSheetHandler}>
+          <SVGIcon name="crossCloseBlack" />
+        </SVGWrapper>
+      </Header>
       <TextB3R color={theme.greyScale65}>
         카드번호, 비밀번호 등 민감한 정보는 이용가맹점에서 절대로 보관하지 않습니다.
         <br />
@@ -28,10 +42,24 @@ const CardTermPage = () => {
     </Container>
   );
 };
+
 const Container = styled.div`
-  padding: 24px;
-  min-height: calc(100vh - 56px);
-  background-color: ${theme.greyScale3};
+  height: calc(100vh - 56px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  ${homePadding}
 `;
 
-export default CardTermPage;
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 56px;
+`;
+const SVGWrapper = styled.div`
+  padding-right: 16px;
+  cursor: pointer;
+`;
+
+export default CardTermSheet;

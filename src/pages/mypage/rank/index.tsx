@@ -47,7 +47,7 @@ const RankPage = () => {
             </FlexRow>
           </FlexCol>
           <FlexCol>
-            <UserRankInfo title="적립금" count={userGrade?.userGrade.benefit.accumulationRate} id={1} />
+            <UserRankInfo title="적립금" count={userGrade?.userGrade?.benefit.accumulationRate! * 100} id={1} />
           </FlexCol>
           <BorderLine height={1} margin="24px 0" />
           <FlexCol padding="0 0 48px 0">

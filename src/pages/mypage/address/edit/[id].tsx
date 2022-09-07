@@ -92,7 +92,9 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
 
         me?.name !== data?.receiverName && !!data?.receiverName ? setIsSamePerson(false) : setIsSamePerson(true);
       },
-      onSettled: async () => {},
+      onError: async () => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+      },
 
       refetchOnMount: true,
       refetchOnWindowFocus: false,
