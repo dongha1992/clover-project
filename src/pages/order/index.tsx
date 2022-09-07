@@ -22,8 +22,8 @@ import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-import { commonSelector, INIT_ACCESS_METHOD, SET_ACCESS_METHOD, SET_IS_LOADING } from '@store/common';
-import { couponForm, INIT_COUPON } from '@store/coupon';
+import { commonSelector, SET_IS_LOADING } from '@store/common';
+import { couponForm } from '@store/coupon';
 import { userForm } from '@store/user';
 import { subscriptionForm } from '@store/subscription';
 import { SET_ALERT } from '@store/alert';
@@ -48,7 +48,6 @@ import { useQuery } from 'react-query';
 import {
   Obj,
   IGetCard,
-  ILocation,
   ICoupon,
   ICreateOrder,
   IGetNicePaymentResponse,
@@ -65,6 +64,8 @@ import { periodMapper } from '@constants/subscription';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
 import useIsApp from '@hooks/useIsApp';
 import { ACCESS_METHOD } from '@constants/order';
+import { termsApi } from '@api/term';
+import { TermInfoSheet } from '@components/BottomSheet/TermInfoSheet';
 
 declare global {
   interface Window {
@@ -538,7 +539,19 @@ const OrderPage = () => {
     );
   };
 
-  const goToTermInfo = () => {};
+  const goToTermInfo = async () => {
+    const params = {
+      type: 'PRIVACY',
+      version: null,
+    };
+    
+    try {
+      const { data } = await termsApi(params);
+      dispatch(SET_BOTTOM_SHEET({ content: <TermInfoSheet children={data.data.terms.content} type="ORDER" /> }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const nicepayStart = () => {
     window.goPay(document.getElementById('payForm'));
