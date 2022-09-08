@@ -41,6 +41,7 @@ import { NextPageWithLayout } from '@pages/_app';
 import DefaultLayout from '@components/Layout/Default';
 import DetailBottom from '@components/Bottom/DetailBottom';
 import { show, hide } from '@store/loading';
+import { Loading } from '@components/Shared/Loading';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -332,8 +333,8 @@ const MenuDetailPage: NextPageWithLayout = () => {
     };
   }, []);
 
-  if (isLoading && bannerLoading) {
-    <div></div>;
+  if (isLoading || bannerLoading) {
+    <Loading />
   }
 
   return (

@@ -242,7 +242,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               }
               <LikeWrapper type="normal" onClick={(e) => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
-                <TextB3R padding="2px 0 0 0">{list?.likeCount}</TextB3R>
+                <TextB3R>{list?.likeCount}</TextB3R>
               </LikeWrapper>
             </LocationInfoWrapper>
           </Container>

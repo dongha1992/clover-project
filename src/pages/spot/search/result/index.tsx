@@ -28,6 +28,8 @@ import { SpotSearchKeywordSlider, SpotRecentPickupList } from '@components/Pages
 import { getFilteredSpotList } from '@utils/spot';
 import { SET_ALERT } from '@store/alert';
 import useCurrentLocation from '@hooks/useCurrentLocation';
+import { Loading } from '@components/Shared/Loading';
+import { show, hide } from '@store/loading';
 
 const SpotSearchResultPage = (): ReactElement => {
   const dispatch = useDispatch();
@@ -251,10 +253,17 @@ const SpotSearchResultPage = (): ReactElement => {
         latitude: latitude,
         longitude: longitude,
       };
+      dispatch(show());
       const { data } = await getDestinationsApi(params);
       return data.data.destinations;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    { 
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true, 
+      refetchOnWindowFocus: false 
+    }
   );
 
   // 스팟 검색 결과 호출
@@ -292,6 +301,7 @@ const SpotSearchResultPage = (): ReactElement => {
         latitude: latitude,
         longitude: longitude,
       };
+      dispatch(show());
       const { data } = await getSpotSearch(params);
       return data.data;
     },
@@ -308,6 +318,9 @@ const SpotSearchResultPage = (): ReactElement => {
           // 스팟 결과없는 경우 전체 스팟 리스트 호출
           getSpotsAllList();
         }
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
     }
   );
@@ -405,8 +418,8 @@ const SpotSearchResultPage = (): ReactElement => {
     router.push('/spot/join');
   };
 
-  if (isFetching) {
-    return <div>로딩</div>;
+  if (isFetching || isLoadingPickup) {
+    return <Loading />
   }
 
   // 검색바 활성화 된 상테
