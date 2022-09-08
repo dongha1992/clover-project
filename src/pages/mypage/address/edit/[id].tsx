@@ -22,6 +22,7 @@ import { userForm } from '@store/user';
 import { getSpotPickups } from '@api/spot';
 import { spotSelector } from '@store/spot';
 import { pipe, indexBy } from '@fxts/core';
+import { show, hide } from '@store/loading';
 
 interface IProps {
   id: number;
@@ -67,6 +68,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
   const { data, isLoading } = useQuery(
     ['getAddressDetail'],
     async () => {
+      dispatch(show());
       const { data } = await getDestinationApi(id);
       return data.data;
     },
@@ -94,6 +96,10 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
       },
       onError: async () => {
         dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+      },
+
+      onSettled: () => {
+        dispatch(hide());
       },
 
       refetchOnMount: true,
@@ -301,8 +307,9 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
   }, [data]);
 
   if (isLoading) {
-    return <div>로딩중</div>;
+    return <div></div>;
   }
+
   return (
     <Container>
       <Wrapper>
@@ -338,7 +345,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
           <FlexBetween padding="0 0 24px 0">
             <TextH4B>배송정보</TextH4B>
             {isSpot && (
-              <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={changePickUpPlace}>
+              <TextH6B pointer color={theme.greyScale65} textDecoration="underline" onClick={changePickUpPlace}>
                 픽업 장소 변경
               </TextH6B>
             )}

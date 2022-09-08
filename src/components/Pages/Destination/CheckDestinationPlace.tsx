@@ -23,7 +23,8 @@ import {
   MorningAndPacelInfo,
 } from '@components/Pages/Destination';
 import isNil from 'lodash-es/isNil';
-import { Obj } from '@model/index';
+import { show, hide } from '@store/loading';
+import { SET_ALERT } from '@store/alert';
 
 interface IObj {
   morning?: boolean;
@@ -50,6 +51,7 @@ const CheckDestinationPlace = () => {
   } = useQuery(
     'getAvailabilityDestination',
     async () => {
+      dispatch(show());
       const params = {
         jibunAddress: tempLocation.jibunAddr,
         roadAddress: tempLocation.roadAddr,
@@ -93,7 +95,10 @@ const CheckDestinationPlace = () => {
         dispatch(SET_CAN_NOT_DELIVERY(false));
       },
       onError: (error: AxiosError) => {
-        return error.message;
+        dispatch(SET_ALERT({ alertMessage: error.message }));
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -179,11 +184,11 @@ const CheckDestinationPlace = () => {
   };
 
   if (isLoading) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   if (isNil(result)) {
-    return <div>에러 발생</div>;
+    dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다' }));
   }
 
   return (

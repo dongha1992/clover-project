@@ -25,15 +25,12 @@ import { DELIVERY_STATUS_MAP } from '@constants/mypage';
 import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import dayjs from 'dayjs';
 import { getFormatPrice } from '@utils/common';
-import { calculatePoint } from '@utils/menu';
 import { userForm } from '@store/user';
 import { INIT_TEMP_ORDER_INFO, INIT_TEMP_EDIT_DESTINATION, INIT_TEMP_EDIT_SPOT } from '@store/mypage';
-
+import { show, hide } from '@store/loading';
 import { OrderCancelSheet } from '@components/BottomSheet/OrderCancelSheet';
 import { AxiosError } from 'axios';
 import { INIT_ACCESS_METHOD } from '@store/common';
-
-// temp
 
 const disabledDates: any = [];
 
@@ -55,11 +52,15 @@ const OrderDetailPage = () => {
   const { data: orderDetail, isLoading } = useQuery(
     ['getOrderDetail'],
     async () => {
+      dispatch(show());
       const { data } = await getOrderDetailApi(orderId!);
       return data?.data;
     },
     {
       onSuccess: (data) => {},
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!orderId,
@@ -337,7 +338,7 @@ const OrderDetailPage = () => {
   }, []);
 
   if (!orderDetail) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   const {

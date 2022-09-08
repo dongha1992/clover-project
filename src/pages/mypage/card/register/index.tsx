@@ -4,7 +4,7 @@ import { SVGIcon } from '@utils/common';
 import { textBody2, theme, homePadding, FlexCenter, FlexStart, FlexRow, fixedBottom, customInput } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { Button, RadioButton } from '@components/Shared/Button';
-import { TextB2R, TextH5B, TextH6B } from '@components/Shared/Text';
+import { TextB2R, TextH5B, TextH6B, TextB3R } from '@components/Shared/Text';
 import TextInput from '@components/Shared/TextInput';
 import { IRegisterCard } from '@model/index';
 import router from 'next/router';
@@ -16,7 +16,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import BirthDate from '@components/BirthDate';
 import { IBirthdayObj } from '@pages/signup/optional';
 import { getFormatTime } from '@utils/destination';
-import { CardTermSheet } from '@components/BottomSheet/CardTermSheet';
+import { TermInfoSheet } from '@components/BottomSheet/TermInfoSheet';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 
 const Checkbox = dynamic(() => import('@components/Shared/Checkbox'), {
@@ -204,7 +204,24 @@ const CardRegisterPage = () => {
   };
 
   const goToCardRegisterTerm = () => {
-    dispatch(SET_BOTTOM_SHEET({ content: <CardTermSheet /> }));
+    dispatch(
+      SET_BOTTOM_SHEET({
+        content: (
+          <TermInfoSheet
+            children={`카드번호, 비밀번호 등 민감한 정보는 이용가맹점에서 절대로 보관하지 않습니다.
+                귀하가 신청하신 신용카드 정기출금 결제는 결제대행사 나이스정보통신(주)에서 대행합니다.
+                따라서, 귀하의 신용카드 결제내역에는 정기출금과 관련한 이용가맹점이 결제대행사로 표기되오니 이점 착오
+                없으시기 발바니다.
+                또한 결제대행사는 정기출금 결제대행만을 수행하므로, 정기출금 결제신청 해지 등과 관련한 모든 업무는 해당
+                인터넷 상점을 통해 직접 요청하셔야 합니다.
+                결제대행사는 귀하의 본 신청과 관련된 거래내역을 e-mail로 통보 드리며, 별도 조회를 각 결제대행사
+                사이트에서 이용하실 수 있도록 하고 있습니다. 결제대행사는 이러한 별도 서비스 제공을 위해 필요한
+                최소정보만(성명, e-mail)을 해당 인터넷 상점으로부터 수령하여 보관하게 됩니다.`}
+            type="USE"
+          />
+        ),
+      })
+    );
   };
 
   const registerCardHandler = async () => {
@@ -343,6 +360,8 @@ const CardRegisterPage = () => {
           <CardInputGroup>
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="0000"
               id="number1"
               name="number1"
@@ -354,6 +373,8 @@ const CardRegisterPage = () => {
             <div className="firstDash" />
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="0000"
               id="number2"
               name="number2"
@@ -366,6 +387,8 @@ const CardRegisterPage = () => {
             <input
               type="password"
               placeholder="0000"
+              inputMode="numeric"
+              pattern="[0-9]*"
               id="number3"
               name="number3"
               onChange={cardNumberHandler}
@@ -376,6 +399,8 @@ const CardRegisterPage = () => {
             <div className="thirdDash" />
             <input
               type="password"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="0000"
               id="number4"
               name="number4"
@@ -393,6 +418,8 @@ const CardRegisterPage = () => {
           <CustomInputWrapper>
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               name="expireDateInput"
               placeholder="MMYY"
               onChange={changeExpireDateHandler}
@@ -413,6 +440,8 @@ const CardRegisterPage = () => {
             <input
               type="password"
               name="passwordInput"
+              inputMode="numeric"
+              pattern="[0-9]*"
               placeholder="비밀번호 앞 두 자리"
               onChange={changePasswordHandler}
               value={password}

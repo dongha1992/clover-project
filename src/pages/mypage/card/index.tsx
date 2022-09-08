@@ -9,8 +9,8 @@ import { Button } from '@components/Shared/Button';
 import router from 'next/router';
 import { getCardLists } from '@api/card';
 import { IGetCard } from '@model/index';
-
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { show, hide } from '@store/loading';
+import { useQuery } from 'react-query';
 import isNil from 'lodash-es/isNil';
 import { SET_CARD } from '@store/order';
 import { useDispatch } from 'react-redux';
@@ -24,12 +24,19 @@ const CardManagementPage = () => {
   } = useQuery(
     'getCardList',
     async () => {
+      dispatch(show());
       const { data } = await getCardLists();
       if (data.code === 200) {
         return data.data;
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const dispatch = useDispatch();
@@ -70,7 +77,7 @@ const CardManagementPage = () => {
   };
 
   if (isLoading || isNil(cards)) {
-    return <div>로딩중</div>;
+    return <div></div>;
   }
 
   return (

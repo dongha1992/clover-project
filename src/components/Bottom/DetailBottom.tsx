@@ -26,11 +26,6 @@ import { deleteNotificationApi, postLikeMenus, deleteLikeMenus } from '@api/menu
 import { IMenuDetail } from '@model/index';
 import { last } from 'lodash-es';
 
-interface IMenuStatus {
-  isItemSold: boolean | undefined;
-  checkIsBeforeThanLaunchAt: string | boolean;
-}
-
 const DetailBottom = () => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -233,7 +228,7 @@ const DetailBottom = () => {
   };
 
   if (!menuDetail) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   return (
