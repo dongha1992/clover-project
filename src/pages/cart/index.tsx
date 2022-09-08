@@ -65,10 +65,9 @@ import {
 } from '@components/Pages/Cart';
 import { DELIVERY_FEE_OBJ, INITIAL_NUTRITION, INITIAL_DELIVERY_DETAIL } from '@constants/cart';
 import { INIT_ACCESS_METHOD } from '@store/common';
-import { useToast } from '@hooks/useToast';
 import { setCookie } from '@utils/common';
 import { DeliveryTypeInfoSheet } from '@components/BottomSheet/DeliveryTypeInfoSheet';
-
+import { show, hide } from '@store/loading';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
@@ -86,7 +85,6 @@ const CartPage = () => {
   const [checkedMenus, setCheckedMenus] = useState<IGetCart[]>([]);
   const [isAllChecked, setIsAllchecked] = useState<boolean>(true);
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>(INITIAL_DELIVERY_DETAIL);
-  const [isFirstRender, setIsFirstRender] = useState<boolean>(false);
   const [isShow, setIsShow] = useState(false);
   const [isInvalidDestination, setIsInvalidDestination] = useState<boolean>(false);
   const [disposableList, setDisposableList] = useState<IDisposable[]>([]);
@@ -173,6 +171,9 @@ const CartPage = () => {
         } catch (error) {
           console.error(error);
         }
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
       onError: (error: any) => {
         alert(error);
@@ -1309,7 +1310,7 @@ const CartPage = () => {
   }, [selectedDeliveryDay]);
 
   useEffect(() => {
-    if (userDeliveryType !== 'spot' && calendarRef && isFromDeliveryPage) {
+    if (calendarRef && isFromDeliveryPage) {
       const offsetTop = calendarRef.current?.offsetTop;
       window.scrollTo({
         behavior: 'smooth',
@@ -1359,14 +1360,13 @@ const CartPage = () => {
 
   useEffect(() => {
     addToCartItemByNonmember();
-    setIsFirstRender(true);
     dispatch(INIT_ACCESS_METHOD());
     dispatch(INIT_USER_ORDER_INFO());
     dispatch(INIT_COUPON());
   }, []);
 
   if (isLoading) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   return (
@@ -1553,7 +1553,7 @@ const CartPage = () => {
           </FlexCol>
         </>
       )}
-      {me && cartItemList?.length !== 0 && <BorderLine height={8} margin="32px 0" />}
+      {me && <BorderLine height={8} margin="32px 0" />}
       <MenuListContainer>
         {me && likeMenusList?.length !== 0 && (
           <MenuListWarpper>
@@ -1575,7 +1575,7 @@ const CartPage = () => {
         {me && orderedMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
-              <TextH3B padding="12px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
+              <TextH3B padding="36px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
               <ScrollHorizonListGroup className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
                 {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
                   if (index > 9) return;

@@ -11,6 +11,7 @@ import { Obj } from '@model/index';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 import { bottomSheetForm } from '@store/bottomSheet';
+import * as gtag from 'src/lib/gtag';
 
 const mapper: Obj = {
   morning: { text: '새벽배송이 가능해요!', width: '150px' },
@@ -37,6 +38,11 @@ const HomeHeader = () => {
     router.push('/location');
   };
 
+  const goToSearch = () => {
+    router.push('/search');
+    gtag.setEvent({action: 'search'});
+  };
+
   useEffect(() => {
     setIsBottomSheet(content ? true : false);
   }, [content]);
@@ -59,12 +65,8 @@ const HomeHeader = () => {
           </AddressWrapper>
         </Left>
         <Right>
-          <div className="search">
-            <Link href="/search" passHref>
-              <a>
-                <SVGIcon name="searchIcon" />
-              </a>
-            </Link>
+          <div className="search" onClick={goToSearch}>
+            <SVGIcon name="searchIcon" />
           </div>
           <CartIcon onClick={goToCart} />
         </Right>
@@ -131,6 +133,7 @@ const Right = styled.div`
 
   .search {
     padding-right: 27px;
+    cursor: pointer;
   }
 `;
 

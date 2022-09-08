@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TextB3R, TextH2B, TextH4B, TextB2R, TextH5B } from '@components/Shared/Text';
-import {
-  theme,
-  FlexBetween,
-  FlexRow,
-  homePadding,
-  FlexBetweenStart,
-  FlexCol,
-  FlexColEnd,
-  fixedBottom,
-} from '@styles/theme';
+import { theme, FlexBetween, FlexRow, FlexBetweenStart, FlexCol, FlexColEnd, fixedBottom } from '@styles/theme';
 import BorderLine from '@components/Shared/BorderLine';
 import { CancelOrderInfoBox, FinishOrderItem } from '@components/Pages/Order';
 import { ButtonGroup } from '@components/Shared/Button';
-import { getOrderDetailApi } from '@api/order';
 import { useRouter } from 'next/router';
 import { DELIVERY_TYPE_MAP, DELIVERY_TIME_MAP } from '@constants/order';
 import { getCustomDate } from '@utils/destination';
@@ -27,6 +17,7 @@ import { SubsOrderItem } from '@components/Pages/Subscription/payment';
 import { subscriptionForm } from '@store/subscription';
 import { INIT_ORDER, INIT_CARD, INIT_USER_ORDER_INFO } from '@store/order';
 import { INIT_COUPON } from '@store/coupon';
+import { show, hide } from '@store/loading';
 
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
@@ -36,13 +27,6 @@ import { SET_ALERT } from '@store/alert';
 import { useGetOrderDetail } from 'src/queries/order';
 import { cartForm } from '@store/cart';
 import { periodMapper } from '@constants/subscription';
-
-interface IProps {
-  orderId: number;
-  pgToken?: string;
-  payToken?: number;
-  pg: string;
-}
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
@@ -65,6 +49,9 @@ const OrderFinishPage = () => {
         pickupDayObj.add(dayjs(item.deliveryDate).format('dd'));
       });
       setPickupDay(Array.from(pickupDayObj));
+    },
+    onSettled: () => {
+      dispatch(hide());
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
@@ -275,7 +262,7 @@ const OrderFinishPage = () => {
   }, [router.isReady]);
 
   if (!orderDetail) {
-    return <div>로딩중</div>;
+    dispatch(show());
   }
 
   const {

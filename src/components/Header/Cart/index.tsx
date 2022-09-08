@@ -41,9 +41,11 @@ const CartIcon = ({ onClick }: any) => {
       <div className="cart">
         <SVGIcon name="cart" />
       </div>
-      <CountWrapper>
-        <Count> {displayCount}</Count>
-      </CountWrapper>
+      {displayCount > 0 && (
+        <CountWrapper>
+          <Count>{displayCount}</Count>
+        </CountWrapper>
+      )}
     </Container>
   );
 };

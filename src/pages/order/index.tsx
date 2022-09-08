@@ -22,8 +22,8 @@ import { useRouter } from 'next/router';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccessMethodSheet } from '@components/BottomSheet/AccessMethodSheet';
-import { commonSelector, INIT_ACCESS_METHOD, SET_ACCESS_METHOD, SET_IS_LOADING } from '@store/common';
-import { couponForm, INIT_COUPON } from '@store/coupon';
+import { commonSelector, SET_IS_LOADING } from '@store/common';
+import { couponForm } from '@store/coupon';
 import { userForm } from '@store/user';
 import { subscriptionForm } from '@store/subscription';
 import { SET_ALERT } from '@store/alert';
@@ -45,16 +45,7 @@ import {
   postNicePaymnetApi,
 } from '@api/order';
 import { useQuery } from 'react-query';
-import {
-  Obj,
-  IGetCard,
-  ILocation,
-  ICoupon,
-  ICreateOrder,
-  IGetNicePaymentResponse,
-  IUserInputObj,
-  IAccessMethod,
-} from '@model/index';
+import { Obj, IGetCard, ICoupon, ICreateOrder, IGetNicePaymentResponse, IUserInputObj } from '@model/index';
 import { getCustomDate } from '@utils/destination';
 import { OrderCouponSheet } from '@components/BottomSheet/OrderCouponSheet';
 import { useMutation, useQueryClient } from 'react-query';
@@ -65,6 +56,9 @@ import { periodMapper } from '@constants/subscription';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
 import useIsApp from '@hooks/useIsApp';
 import { ACCESS_METHOD } from '@constants/order';
+import { termsApi } from '@api/term';
+import { TermInfoSheet } from '@components/BottomSheet/TermInfoSheet';
+import { show, hide } from '@store/loading';
 
 declare global {
   interface Window {
@@ -73,8 +67,6 @@ declare global {
 }
 
 /* TODO: access method 컴포넌트 분리 가능 나중에 리팩토링 */
-/* TODO: 배송 출입 부분 함수로 */
-/* TODO: 배송예정 어떻게? */
 
 const successOrderPath: string = 'order/finish';
 
@@ -131,6 +123,9 @@ const OrderPage = () => {
       if (!tempOrder) {
         router.push('/cart');
       }
+
+      dispatch(show());
+
       const {
         delivery,
         deliveryDetail,
@@ -203,6 +198,9 @@ const OrderPage = () => {
         } else {
           isSubscription ? router.replace('/subscription') : router.replace('/cart');
         }
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -538,7 +536,19 @@ const OrderPage = () => {
     );
   };
 
-  const goToTermInfo = () => {};
+  const goToTermInfo = async () => {
+    const params = {
+      type: 'PRIVACY',
+      version: null,
+    };
+
+    try {
+      const { data } = await termsApi(params);
+      dispatch(SET_BOTTOM_SHEET({ content: <TermInfoSheet type="ORDER">{data.data.terms.content}</TermInfoSheet> }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const nicepayStart = () => {
     window.goPay(document.getElementById('payForm'));
@@ -1016,10 +1026,6 @@ const OrderPage = () => {
     }
   }, []);
 
-  if (preveiwOrderLoading) {
-    return <div>로딩</div>;
-  }
-
   const {
     userEmail,
     delivery,
@@ -1484,7 +1490,7 @@ const OrderPage = () => {
               checkOrderTermHandler('privacy');
             }}
           >
-            개인정보 수집·이용 동의 (필수)
+            [필수] 개인정보 수집·이용 동의
           </TextB2R>
           <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo} pointer>
             자세히
@@ -1505,7 +1511,7 @@ const OrderPage = () => {
                 checkOrderTermHandler('subscription');
               }}
             >
-              정기구독 이용약관・주의사항 동의 (필수)
+              [필수] 정기구독 이용약관・주의사항 동의
             </TextB2R>
             <TextH6B color={theme.greyScale65} textDecoration="underline" onClick={goToTermInfo}>
               자세히

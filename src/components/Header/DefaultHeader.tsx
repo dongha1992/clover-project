@@ -96,9 +96,9 @@ const DefaultHeader = ({ title }: TProps) => {
     }
   };
 
-  if (totalReview && !menuItem?.reviewCount) {
-    return <div>로딩</div>;
-  }
+  // if (totalReview && !menuItem?.reviewCount) {
+  //   return <div>로딩</div>;
+  // }
 
   return (
     <Container>

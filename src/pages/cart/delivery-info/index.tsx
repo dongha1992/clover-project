@@ -31,6 +31,7 @@ import { useQuery } from 'react-query';
 import { SET_SUBS_DELIVERY_EXPECTED_DATE, SET_SUBS_INFO_STATE, SET_SUBS_START_DATE } from '@store/subscription';
 import { useMenuDetail } from '@queries/menu';
 import { getCurrentDate } from '@utils/common/dateHelper';
+import { show, hide } from '@store/loading';
 
 const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
@@ -71,6 +72,7 @@ const DeliverInfoPage = () => {
   const { data: recentOrderDelivery } = useQuery(
     'getOrderLists',
     async () => {
+      dispatch(show());
       const params = {
         days: 90,
         page: 1,
@@ -85,7 +87,9 @@ const DeliverInfoPage = () => {
       onSuccess: (data) => {
         setHasRecentOrder(true);
       },
-
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -564,7 +568,7 @@ const DeliverInfoPage = () => {
   const isSpotPickupPlace = userSelectDeliveryType === 'spot';
   const subsParcelAndMorning = ['PARCEL', 'MORNING'].includes(subsDeliveryType as string);
 
-  if (isFetching) return <div>...로딩중</div>;
+  if (isFetching) return <div></div>;
 
   return (
     <Container>

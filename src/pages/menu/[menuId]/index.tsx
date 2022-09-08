@@ -40,6 +40,7 @@ import 'swiper/css';
 import { NextPageWithLayout } from '@pages/_app';
 import DefaultLayout from '@components/Layout/Default';
 import DetailBottom from '@components/Bottom/DetailBottom';
+import { show, hide } from '@store/loading';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -71,6 +72,7 @@ const MenuDetailPage: NextPageWithLayout = () => {
   } = useQuery(
     'getMenuDetail',
     async () => {
+      dispatch(show());
       const { data } = await getMenuDetailApi(Number(menuId)!);
       setThumbnailList(data.data.thumbnail.map((image) => ({ src: image.url })));
       return data?.data;
@@ -79,6 +81,9 @@ const MenuDetailPage: NextPageWithLayout = () => {
     {
       onSuccess: (data) => {
         dispatch(SET_MENU_ITEM(data));
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
 
       refetchOnMount: true,
@@ -328,7 +333,7 @@ const MenuDetailPage: NextPageWithLayout = () => {
   }, []);
 
   if (isLoading && bannerLoading) {
-    <div>로딩</div>;
+    <div></div>;
   }
 
   return (

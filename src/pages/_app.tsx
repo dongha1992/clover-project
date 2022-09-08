@@ -31,7 +31,7 @@ import DefaultLayout from '@components/Layout/Default';
 import { INIT_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { hideImageViewer } from '@store/imageViewer';
-import * as ga from '../lib/ga';
+import * as gtag from 'src/lib/gtag';
 import { useToast } from '@hooks/useToast';
 
 declare global {
@@ -157,10 +157,12 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
 
   useEffect(() => {
     const handleRouteChange = (url: string) => {
-      ga.pageview(url);
+      gtag.pageview(url);
+      document?.getElementById('right')?.scrollTo(0, 0);
     };
     router.events.on('routeChangeComplete', handleRouteChange);
     router.events.on('hashChangeComplete', handleRouteChange);
+
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
       router.events.off('hashChangeComplete', handleRouteChange);
@@ -274,7 +276,8 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
             'hideChannelButtonOnBoot': ${true},
             'mobileMessengerMode': 'newTab',
           });
-          `}} 
+          `,
+          }}
         />
       </>
 
@@ -286,9 +289,9 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
             {getLayout(<Component {...pageProps} />)}
           </PersistGate>
         </ThemeProvider>
-        <button 
-          id="custom-ch-btn" 
-          style={{ display: 'none' }}>문의하기</button>
+        <button id="custom-ch-btn" style={{ display: 'none' }}>
+          문의하기
+        </button>
         <form
           name="payForm"
           id="payForm"

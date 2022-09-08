@@ -14,6 +14,7 @@ import { SET_ALERT } from '@store/alert';
 import { userForm } from '@store/user';
 import { copyToClipboard } from '@utils/common/clipboard';
 import ShareUrl from '@components/ShareUrl';
+import { show, hide } from '@store/loading';
 
 const textStyle = {
   color: theme.greyScale65,
@@ -28,18 +29,19 @@ const InviteFriendPaage = () => {
   const url = location.origin;
   const recommendCodeUrl = `${url}/onboarding?recommendCode=${me?.promotionCode}`;
 
-  const {
-    data,
-    isLoading,
-  } = useQuery(
+  const { data, isLoading } = useQuery(
     'getInvitationInfo',
     async () => {
+      dispatch(show());
       const { data } = await userInvitationApi();
       return data.data;
     },
 
     {
       onSuccess: () => {},
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!me,
@@ -105,7 +107,7 @@ const InviteFriendPaage = () => {
   };
 
   if (isLoading) {
-    <div>로딩</div>;
+    <div></div>;
   }
 
   return (
