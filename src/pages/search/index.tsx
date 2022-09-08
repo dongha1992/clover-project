@@ -18,6 +18,7 @@ import { show, hide } from '@store/loading';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { SET_ALERT } from '@store/alert';
+import * as ga from 'src/lib/ga';
 
 const SearchPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,6 +63,13 @@ const SearchPage = () => {
   const getSearchResult = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { value } = e.target as HTMLInputElement;
     if (e.key === 'Enter') {
+      ga.setEvent({
+        action: 'search', 
+        params : {
+          search_term: keyword,
+        }
+      });
+
       router.push({
         pathname: '/search/result',
         query: { keyword: keyword },

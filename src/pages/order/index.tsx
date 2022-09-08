@@ -59,6 +59,7 @@ import { ACCESS_METHOD } from '@constants/order';
 import { termsApi } from '@api/term';
 import { TermInfoSheet } from '@components/BottomSheet/TermInfoSheet';
 import { show, hide } from '@store/loading';
+import * as ga from 'src/lib/ga';
 
 declare global {
   interface Window {
@@ -873,7 +874,7 @@ const OrderPage = () => {
         }
       }
     }
-
+    ga.setEvent({action: 'purchase'});
     dispatch(SET_USER_ORDER_INFO({ ...userInputObj, selectedOrderMethod }));
   };
 
