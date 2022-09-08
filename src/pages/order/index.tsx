@@ -544,7 +544,7 @@ const OrderPage = () => {
 
     try {
       const { data } = await termsApi(params);
-      dispatch(SET_BOTTOM_SHEET({ content: <TermInfoSheet children={data.data.terms.content} type="ORDER" /> }));
+      dispatch(SET_BOTTOM_SHEET({ content: <TermInfoSheet type="ORDER">{data.data.terms.content}</TermInfoSheet> }));
     } catch (error) {
       console.error(error);
     }

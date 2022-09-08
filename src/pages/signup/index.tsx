@@ -77,7 +77,7 @@ const SignupPage = () => {
     };
     try {
       const { data } = await termsApi(params);
-      dispatch(SET_BOTTOM_SHEET({ content: <TermInfoSheet children={data.data.terms.content} type={type} /> }));
+      dispatch(SET_BOTTOM_SHEET({ content: <TermInfoSheet type={type}>{data.data.terms.content}</TermInfoSheet> }));
     } catch (error) {
       console.error(error);
     }
