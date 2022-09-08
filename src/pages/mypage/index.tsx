@@ -26,13 +26,13 @@ import { INIT_CART_LISTS } from '@store/cart';
 import { INIT_MENU_ITEM } from '@store/menu';
 import { INIT_DESTINATION, INIT_USER_DELIVERY_TYPE } from '@store/destination';
 import { commonSelector } from '@store/common';
-
+import { show, hide } from '@store/loading';
 import { SET_ALERT } from '@store/alert';
 import useIsApp from '@hooks/useIsApp';
 import DefaultLayout from '@components/Layout/Default';
 import HomeBottom from '@components/Bottom/HomeBottom';
 import { NextPageWithLayout } from '@pages/_app';
-import { Loading } from '@components/Shared/Loading';
+
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -55,6 +55,7 @@ const MypagePage: NextPageWithLayout = () => {
   const { data: orderList } = useQuery(
     'getOrderLists',
     async () => {
+      dispatch(show());
       const params = {
         orderType: 'GENERAL',
       };
@@ -64,6 +65,9 @@ const MypagePage: NextPageWithLayout = () => {
     },
     {
       onSuccess: () => {},
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!me,
@@ -194,7 +198,7 @@ const MypagePage: NextPageWithLayout = () => {
   };
 
   if (isNil(orderList) && infoLoading && subsOrdersLoading) {
-    return <Loading />;
+    return <div></div>;
   }
 
   return (
