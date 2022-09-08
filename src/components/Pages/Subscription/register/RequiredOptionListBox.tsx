@@ -10,11 +10,12 @@ import styled from 'styled-components';
 
 interface IProps {
   list: any;
+  canSubscriptionCustom: boolean;
 }
 
 // TODO : 수량은 한개일수밖에 없는지 물어보기
 
-const RequiredOptionListBox = ({ list }: IProps) => {
+const RequiredOptionListBox = ({ list, canSubscriptionCustom }: IProps) => {
   const dispatch = useDispatch();
   const mainMenuChangeHandler = (id: number) => {
     dispatch(
@@ -50,14 +51,17 @@ const RequiredOptionListBox = ({ list }: IProps) => {
                     <TextH5B>{getFormatPrice(String(item.menuPrice))}원</TextH5B>
                     <div className="line"></div>
                     <TextB2R>1개</TextB2R>
-                    <button
-                      className="changeBtn"
-                      onClick={() => {
-                        mainMenuChangeHandler(item.id);
-                      }}
-                    >
-                      변경
-                    </button>
+                    {canSubscriptionCustom && (
+                      <button
+                        className="changeBtn"
+                        onClick={() => {
+                          mainMenuChangeHandler(item.id);
+                        }}
+                        disabled={!list.filter((item: any) => item.main && !item.selected).length}
+                      >
+                        변경
+                      </button>
+                    )}
                   </div>
                 </MenuTextBox>
               </OptionLi>

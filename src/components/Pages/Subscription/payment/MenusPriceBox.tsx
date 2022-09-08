@@ -218,9 +218,6 @@ export const MenuPriceLi = styled.li<{ padding?: string }>`
   &:last-of-type {
     padding-bottom: 0;
   }
-  svg {
-    margin-bottom: 3px;
-  }
 `;
 const Badge = styled.div`
   padding: 4px 8px;

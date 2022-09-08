@@ -1,7 +1,7 @@
 import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
 import useIntersectionObserver from '@hooks/useIntersectionObserver';
 import { IGetNoti } from '@model/index';
-import { NotiItem, NotiList, NOTI_MAP, TextBox } from '@pages/mypage/noti';
+import { NoNotiBox, NotiItem, NotiList, NOTI_MAP, TextBox } from '@pages/mypage/noti';
 import { useInfiniteNotis } from '@queries/notification';
 import { SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
@@ -32,7 +32,7 @@ const NotiCoupon = ({ parentRef, postNotiChek }: IProps) => {
 
   return (
     <>
-      {data?.pages[0]?.result.length !== 0 &&
+      {data?.pages[0]?.result.length !== 0 ? (
         data?.pages?.map((page: any, index) => (
           <NotiList key={index}>
             {page.result?.map((item: IGetNoti, index: number) => (
@@ -56,7 +56,12 @@ const NotiCoupon = ({ parentRef, postNotiChek }: IProps) => {
               </NotiItem>
             ))}
           </NotiList>
-        ))}
+        ))
+      ) : (
+        <NoNotiBox>
+          <TextB2R>아직 도착한 알림이 없어요. 😭</TextB2R>
+        </NoNotiBox>
+      )}
       <div ref={childRef}></div>
     </>
   );
