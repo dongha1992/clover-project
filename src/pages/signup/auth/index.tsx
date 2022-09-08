@@ -132,7 +132,7 @@ const SignupAuthPage = () => {
     if (!phoneValidation) {
       dispatch(
         SET_ALERT({
-          alertMessage: `잘못된 휴대폰 번호 입니다.\n\확인 후 다시 시도 해 주세요.`,
+          alertMessage: `잘못된 휴대폰 번호 입니다.\n 확인 후 다시 시도 해 주세요.`,
           submitBtnText: '확인',
         })
       );
@@ -168,19 +168,19 @@ const SignupAuthPage = () => {
       if (error.code === 2000) {
         dispatch(
           SET_ALERT({
-            alertMessage: `이미 사용 중인 휴대폰 번호예요. 입력한 번호를 확인해 주세요.`,
+            alertMessage: `이미 사용 중인 휴대폰 번호예요. \n입력한 번호를 확인해 주세요.`,
           })
         );
       } else if (error.code === 2007) {
         dispatch(
           SET_ALERT({
-            alertMessage: '이미 사용 중인 휴대폰 번호예요. 입력한 번호를 확인해 주세요.',
+            alertMessage: '이미 사용 중인 휴대폰 번호예요. \n입력한 번호를 확인해 주세요.',
           })
         );
       } else if (error.code === 2010) {
         dispatch(
           SET_ALERT({
-            alertMessage: '탈퇴한 번호입니다. 탈퇴한 날부터 30일 이후 재가입 가능해요.',
+            alertMessage: '탈퇴한 번호입니다. \n탈퇴한 날부터 30일 이후 재가입 가능해요.',
           })
         );
       } else if (error.code === 2001) {
