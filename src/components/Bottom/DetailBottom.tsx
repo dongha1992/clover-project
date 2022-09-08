@@ -228,7 +228,7 @@ const DetailBottom = () => {
   };
 
   if (!menuDetail) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   return (

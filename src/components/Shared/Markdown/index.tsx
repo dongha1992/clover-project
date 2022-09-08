@@ -12,7 +12,7 @@ interface IProps {
 
 const MarkdownRender = ({ content }: IProps) => {
   if (!content) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   return (
