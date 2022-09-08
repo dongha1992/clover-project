@@ -27,7 +27,7 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(INIT_EVENT_TITLE());
-  });
+  }, []);
 
   const { isFetching: isLoadingBanners } = useQuery(
     'carouselBanners',

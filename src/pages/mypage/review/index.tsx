@@ -13,6 +13,7 @@ import { SET_MENU_IMAGE } from '@store/review';
 import { useRouter } from 'next/router';
 import { SET_ALERT } from '@store/alert';
 import { Obj } from '@model/index';
+import { hide, show } from '@store/loading';
 
 const TAB_LIST = [
   { id: 1, text: '작성 예정', value: 'willWrite', link: '/willWrite' },
@@ -37,12 +38,15 @@ const ReviewPage = () => {
   } = useQuery<IWillWriteReview[]>(
     'getWillWriteReview',
     async () => {
+      dispatch(show());
       const { data } = await getWillWriteReviews();
       return data.data;
     },
-
     {
       onSuccess: (data) => {},
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -55,12 +59,15 @@ const ReviewPage = () => {
   } = useQuery<ICompletionReviews[]>(
     'getCompleteWriteReview',
     async () => {
+      dispatch(show());
       const { data } = await getCompleteReviews();
       return data.data;
     },
-
     {
       onSuccess: (data) => {},
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
@@ -132,10 +139,6 @@ const ReviewPage = () => {
   const isWillWrite = selectedTab === '/willWrite';
   const isComplete = selectedTab === '/completed';
 
-  if (completeIsLoading || willWriteIsLoading) {
-    return <div>로딩</div>;
-  }
-
   return (
     <Container ref={ref}>
       <FixedTab scroll={isScroll}>
@@ -194,6 +197,9 @@ const Container = styled.div`
 const InfoWrapper = styled.div`
   ${homePadding}
   padding-top:74px;
+  margin: 0 24px;
+  position: relative;
+  width: 90%;
 `;
 
 const FixedTab = styled.div<{ scroll: boolean }>`

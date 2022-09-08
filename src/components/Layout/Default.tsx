@@ -40,9 +40,9 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
 
   return (
     <>
+      <Loading isShow={loadingState?.isShown}></Loading>
       <Container>
         <Center>
-          <Loading isShow={loadingState?.isShown}></Loading>
           {alert && (
             <Alert
               alertMessage={alert.alertMessage}
@@ -74,7 +74,7 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
               />
             </div>
           </Left>
-          <Right>
+          <Right id="right">
             <Header />
             {toast.message && <Toast />}
             <Main>{children}</Main>
@@ -106,9 +106,6 @@ const Center = styled.div`
   height: 100%;
   min-height: calc(var(--vh, 1vh) * 100);
   --ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center;
@@ -144,7 +141,7 @@ const Left = styled.div`
     align-items: end;
   }
   ${({ theme }) => theme.desktop`  
-  display: none;
+    display: none;
   `}
 `;
 

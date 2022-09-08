@@ -6,11 +6,12 @@ import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { TermSheet } from '@components/BottomSheet/TermSheet';
 import { theme } from '@styles/theme';
-import { terms } from '@api/term';
+import { termsApi } from '@api/term';
 import { ITerm } from '@model/index';
 import MarkdownRenderer from '@components/Shared/Markdown';
 import { commonSelector, SET_VERSION_OF_TERM } from '@store/common';
 import { getTermDate } from '@utils/getTermDate';
+import { show, hide } from '@store/loading';
 export interface IFormatVersion {
   [key: string]: {
     endedAt: string;
@@ -27,16 +28,18 @@ const PrivacyPage = () => {
   const dispatch = useDispatch();
 
   const getTerms = async () => {
+    dispatch(show());
     const params = {
       type: 'PRIVACY',
       version: versionOfTerm ?? null,
     };
     try {
-      const { data } = await terms(params);
+      const { data } = await termsApi(params);
       setTermOfUse(data.data);
     } catch (error) {
       console.error(error);
     }
+    dispatch(hide());
   };
 
   const changeVersionHandler = () => {
@@ -59,10 +62,6 @@ const PrivacyPage = () => {
       dispatch(SET_VERSION_OF_TERM(2));
     };
   }, []);
-
-  if (!termOfUser) {
-    return <div>로딩중</div>;
-  }
 
   return (
     <Container>

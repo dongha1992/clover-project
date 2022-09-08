@@ -12,7 +12,7 @@ interface IProps {
 
 const MarkdownRender = ({ content }: IProps) => {
   if (!content) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   return (
@@ -37,6 +37,9 @@ const LinkRenderer = (props: any) => {
 };
 
 const Container = styled.div`
+  width: 100%;
+  padding: 24px;
+  background-color: ${theme.greyScale3};
   color: ${theme.greyScale65};
   white-space: pre-wrap;
   > h2 {

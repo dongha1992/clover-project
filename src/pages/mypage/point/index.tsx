@@ -4,7 +4,7 @@ import { theme, FlexRow, homePadding, FlexBetweenStart, FlexCol, FlexBetween, fl
 import TextInput from '@components/Shared/TextInput';
 import { Button } from '@components/Shared/Button';
 import BorderLine from '@components/Shared/BorderLine';
-import { TextH6B, TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
+import { TextH6B, TextH5B, TextB3R, TextB2R, TextH3B } from '@components/Shared/Text';
 import { SVGIcon } from '@utils/common';
 import { TabList } from '@components/Shared/TabList';
 import { breakpoints } from '@utils/common/getMediaQuery';
@@ -16,6 +16,7 @@ import { getCustomDate } from '@utils/destination';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { getFormatPrice } from '@utils/common';
+import { show, hide } from '@store/loading';
 
 const TAB_LIST = [
   { id: 1, text: '적립', value: 'save', link: '/save' },
@@ -33,6 +34,7 @@ const PointPage = () => {
   const { data: pointHistory, isLoading } = useQuery(
     ['getPointHistoryList', selectedTab],
     async () => {
+      dispatch(show());
       const types = formatTanNameHandler(selectedTab);
       const params = {
         page: 1,
@@ -44,18 +46,31 @@ const PointPage = () => {
         return data.data.pointHistories;
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const { data: points, isLoading: pointLoading } = useQuery(
     'getPoint',
     async () => {
+      dispatch(show());
       const { data } = await getPointApi();
       if (data.code === 200) {
         return data.data;
       }
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const { mutate: mutatePostPromotionCode } = useMutation(
@@ -107,7 +122,7 @@ const PointPage = () => {
   };
 
   if (isLoading || pointLoading) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   const targetIndex = pointHistory?.find((item) => {
@@ -121,7 +136,7 @@ const PointPage = () => {
   return (
     <Container>
       <Wrapper>
-        <FlexRow padding="24px 0 0 0">
+        <FlexRow padding="24px">
           <TextInput placeholder="프로모션 코드를 입력해주세요." ref={codeRef} />
           <Button width="30%" margin="0 0 0 8px" onClick={() => mutatePostPromotionCode()}>
             등록하기
@@ -131,16 +146,16 @@ const PointPage = () => {
         <FlexBetweenStart padding="0 24px">
           <FlexCol width="50%">
             <TextH6B color={theme.greyScale65}>사용 가능한 포인트</TextH6B>
-            <TextH5B color={theme.brandColor} padding="6px 0 0 0">
+            <TextH3B color={theme.brandColor} padding="6px 0 0 0">
               {getFormatPrice(String(points?.availablePoint))} P
-            </TextH5B>
+            </TextH3B>
           </FlexCol>
           <FlexCol width="50%">
             <TextH6B color={theme.greyScale65}>7일 이내 소멸 예정 포인트</TextH6B>
-            <TextH5B padding="6px 0 0 0"> {getFormatPrice(String(points?.expirePoint))} P</TextH5B>
+            <TextH3B padding="6px 0 0 0"> {getFormatPrice(String(points?.expirePoint))} P</TextH3B>
           </FlexCol>
         </FlexBetweenStart>
-        <PaddingWrapper onClick={() => setIsShow(!isShow)}>
+        <InfoWrapper onClick={() => setIsShow(!isShow)}>
           <FlexBetween>
             <TextH6B color={theme.greyScale65}>포인트 이용 안내</TextH6B>
             <div>
@@ -148,8 +163,8 @@ const PointPage = () => {
             </div>
           </FlexBetween>
           {isShow && (
-            <>
-              <BorderLine height={1} margin="16px 0" />
+            <Content>
+              <BorderLine height={1} margin="8px 0" />
               <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
                 적립 포인트 유효기간
               </TextB3R>
@@ -159,9 +174,9 @@ const PointPage = () => {
               <TextB3R color={theme.greyScale65} padding="2px 0 0 0">
                 포인트는 보유한 계정에서만 사용하며 양도, 선물은 불가합니다.
               </TextB3R>
-            </>
+            </Content>
           )}
-        </PaddingWrapper>
+        </InfoWrapper>
         <BorderLine height={8} margin="24px 0 0 0 " />
         <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
       </Wrapper>
@@ -235,11 +250,8 @@ const Container = styled.div`
   height: calc(100vh - 114px);
 `;
 const Wrapper = styled.div`
-  ${homePadding}
   position: relative;
   width: 100%;
-  /* left: calc(50%);
-  right: 0; */
   background-color: white;
   max-width: ${breakpoints.mobile}px;
 
@@ -257,6 +269,19 @@ const Wrapper = styled.div`
 
 const PaddingWrapper = styled.div`
   margin-top: 24px;
+  margin: 24px 24px 0 24px;
+  padding: 16px;
+  background-color: ${theme.greyScale3};
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+`;
+
+const InfoWrapper = styled.div`
+  position: relative;
+  margin-top: 24px;
+  margin: 24px 24px 0 24px;
   padding: 16px;
   background-color: ${theme.greyScale3};
   border-radius: 8px;
@@ -271,12 +296,16 @@ const ScrollView = styled.div`
   height: calc(100vh - 379px);
 `;
 
-// const ScrollView = styled.div<{ customMargin?: number }>`
-//   padding: 24px 25px;
-//   overflow-y: scroll;
-//   height: 100%;
-//   padding-top: ${({ customMargin }) => customMargin && customMargin}px;
-// `;
+const Content = styled.div`
+  cursor: pointer;
+  background-color: ${theme.greyScale3};
+  padding: 16px;
+  border-radius: 8px;
+  position: absolute;
+  left: 0;
+  top: 35px;
+  width: 100%;
+`;
 
 const EmptyContainer = styled.div`
   height: 30vh;
