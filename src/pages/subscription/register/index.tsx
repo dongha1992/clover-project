@@ -19,6 +19,7 @@ import { periodMapper } from '@constants/subscription';
 import { DELIVERY_TIME_MAP2, DELIVERY_TYPE_MAP } from '@constants/order';
 import MenusPriceBox from '@components/Pages/Subscription/payment/MenusPriceBox';
 import { userForm } from '@store/user';
+import { useMenuDetail } from '@queries/menu';
 
 interface IReceipt {
   menuPrice: number;
@@ -59,6 +60,13 @@ const SubsRegisterPage = () => {
       router.push('/subscription');
     }
   }, []);
+
+  const { data: menuDetail } = useMenuDetail('getMenuDetail', Number(subsInfo?.menuId), {
+    onSuccess: () => {},
+    enabled: !!subsInfo?.menuId,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     let monthObj = new Set();
@@ -276,7 +284,12 @@ const SubsRegisterPage = () => {
             />
           </CalendarBox>
 
-          <SelectDateInfoBox selectCount={selectCount} selectDate={selectDate} disposable={disposable} />
+          <SelectDateInfoBox
+            selectCount={selectCount}
+            selectDate={selectDate}
+            disposable={disposable}
+            canSubscriptionCustom={menuDetail?.canSubscriptionCustom}
+          />
 
           <DisposableAddBox>
             <TextH4B className="title">일회용품 추가</TextH4B>

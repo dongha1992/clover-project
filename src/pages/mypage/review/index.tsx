@@ -199,7 +199,6 @@ const InfoWrapper = styled.div`
   padding-top:74px;
   margin: 0 24px;
   position: relative;
-  width: 90%;
 `;
 
 const FixedTab = styled.div<{ scroll: boolean }>`
@@ -229,7 +228,9 @@ const ReviewInfoWrapper = styled.div`
   ${textBody3};
 `;
 
-const WillReviewItmesWrapper = styled.div``;
+const WillReviewItmesWrapper = styled.div`
+  margin-top: 50px;
+`;
 const Center = styled.div`
   display: flex;
   justify-content: center;

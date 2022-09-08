@@ -20,8 +20,6 @@ interface IProps {
   clickRestockNoti?: () => void;
 }
 
-/* TODO: 아 props로 패딩 주고 싶지 않아... 이거 컴포넌트 나누기 */
-
 const CartSheetItem = ({
   menu,
   isSoldout,
@@ -51,12 +49,11 @@ const CartSheetItem = ({
           <TextB3R>{menu.name}</TextB3R>
           <FlexBetween>
             <PriceWrapper>
-              {
-                discount > 0 &&
+              {discount > 0 && (
                 <TextH5B color={isSoldout ? theme.greyScale25 : theme.brandColor} padding={'0 4px 0 0'}>
                   {discount}%
                 </TextH5B>
-              }
+              )}
               <TextH5B>{discountedPrice.toLocaleString()}원</TextH5B>
             </PriceWrapper>
             {!isCart && (

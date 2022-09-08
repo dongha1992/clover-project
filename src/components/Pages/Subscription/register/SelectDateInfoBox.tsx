@@ -3,8 +3,8 @@ import { Button } from '@components/Shared/Button';
 import { TextB1R, TextB2R, TextH5B } from '@components/Shared/Text';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { subscriptionForm } from '@store/subscription';
-import { theme } from '@styles/theme';
-import { getFormatDate } from '@utils/common';
+import { FlexRow, theme } from '@styles/theme';
+import { getFormatDate, SVGIcon } from '@utils/common';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -16,6 +16,7 @@ interface IProps {
   selectCount: number | undefined;
   selectDate: Date | undefined;
   disposable: boolean;
+  canSubscriptionCustom: boolean;
 }
 
 interface IReceipt {
@@ -37,7 +38,7 @@ interface IReceipt {
   deliveryPrice: number;
 }
 
-const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
+const SelectDateInfoBox = ({ selectCount, selectDate, disposable, canSubscriptionCustom }: IProps) => {
   const dispatch = useDispatch();
   const { subsCalendarSelectMenu, subsOrderMenus, subsInfo } = useSelector(subscriptionForm);
   const [receiptInfo, setReceiptInfo] = useState<IReceipt | null>();
@@ -115,7 +116,21 @@ const SelectDateInfoBox = ({ selectCount, selectDate, disposable }: IProps) => {
           <TextB2R color={theme.greyScale65}>상품이 품절되면 대체상품이 발송됩니다.</TextB2R>
         </DeliveryInfoBox>
         <TextH5B>필수옵션</TextH5B>
-        {subsCalendarSelectMenu && <RequiredOptionListBox list={subsCalendarSelectMenu?.menuTableItems} />}
+        {!canSubscriptionCustom && (
+          <FlexRow padding="8px 0 0">
+            <SVGIcon name="exclamationMark" />
+            <TextB2R margin="0 0 0 4px" color={theme.brandColor}>
+              메뉴를 변경할 수 없는 식단이에요.
+            </TextB2R>
+          </FlexRow>
+        )}
+
+        {subsCalendarSelectMenu && (
+          <RequiredOptionListBox
+            list={subsCalendarSelectMenu?.menuTableItems}
+            canSubscriptionCustom={canSubscriptionCustom}
+          />
+        )}
         <TextH5B>선택옵션</TextH5B>
         {subsCalendarSelectMenu && <SelectOptionListBox list={subsCalendarSelectMenu?.menuTableItems} />}
         <Button
