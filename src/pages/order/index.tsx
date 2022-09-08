@@ -522,7 +522,7 @@ const OrderPage = () => {
 
   const goToRegisteredCard = () => {
     dispatch(SET_USER_ORDER_INFO({ ...userInputObj, ...deliveryInfoObj, selectedOrderMethod }));
-    router.push('/mypage/card/register');
+    router.push({ pathname: '/mypage/card/register', query: { isOrder: true } });
   };
 
   const webviewPayment = () => {

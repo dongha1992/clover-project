@@ -5,7 +5,7 @@ import router from 'next/router';
 import { getMenuDetailReviewImageApi } from '@api/menu';
 import { useQuery } from 'react-query';
 import { IDetailImage } from '@model/index';
-import NextImage from '@components/Shared/Image';
+import Image from '@components/Shared/Image';
 import { show, hide } from '@store/loading';
 import { useDispatch } from 'react-redux';
 
@@ -93,7 +93,7 @@ const ReviewPage = ({ menuId }: any) => {
         {list?.map((image: any, index: number) => {
           return (
             <ImageWrapper key={index}>
-              <NextImage
+              <Image
                 src={image?.url}
                 alt="리뷰이미지"
                 onClick={() => goToReviewDetail(image)}
