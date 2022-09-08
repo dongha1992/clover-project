@@ -34,14 +34,14 @@ const MenuOption = ({ option, selectMenuHandler, menuId }: TProps) => {
       <FlexBetween>
         <TextB3R color={isCheckedFontColor() ? theme.greyScale25 : theme.black}>{option.name}</TextB3R>
         <FlexRow>
-          {!option.isSold && option.availability?.availability && option.personalMaximum && (
+          {!option.isSold && option.availability?.availability && option.personalMaximum ? (
             <TextH7B color={theme.black}>{`구매 수량 제한 :${option.personalMaximum}개`}</TextH7B>
-          )}
-          {(option.isSold || !option.availability?.availability) && (
+          ) : null}
+          {option.isSold || !option.availability?.availability ? (
             <TextH7B padding="0 0 0 4px" color={theme.greyScale25}>
               품절
             </TextH7B>
-          )}
+          ) : null}
         </FlexRow>
       </FlexBetween>
       <FlexRowStart padding="0 0 4px 0"></FlexRowStart>
