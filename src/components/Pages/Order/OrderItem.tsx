@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import { TextH5B, TextB3R, TextB2R } from '@components/Shared/Text';
 import { FlexBetween, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { getDiscountPrice } from '@utils/menu/getMenuDisplayPrice';
 import { getFormatPrice } from '@utils/common';
+import Image from '@components/Shared/Image';
 interface IProps {
   menu: any;
   isDeliveryComplete?: boolean;
@@ -24,7 +24,14 @@ const OrderItem = ({ menu, isDeliveryComplete, isCanceled, goToReivew, hasReview
     <Container isCanceled={isCanceled}>
       <Wrapper>
         <ImageWrapper>
-          <ItemImage src={IMAGE_S3_URL + menu.image.url} alt="상품이미지" />
+          <Image
+            src={menu.image.url}
+            alt="상품이미지"
+            width={'100%'}
+            height={'100%'}
+            layout="responsive"
+            className="rounded"
+          />
         </ImageWrapper>
         <ContentWrapper>
           <TextB3R>
