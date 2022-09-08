@@ -1,6 +1,7 @@
 import { TextB2R } from '@components/Shared/Text';
 import { Obj } from '@model/index';
 import { usePostNotiCheck } from '@queries/notification';
+import { theme } from '@styles/theme';
 import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -173,6 +174,15 @@ export const NotiItem = styled.li`
     left: calc(50%);
     bottom: -1px;
     transform: translateX(-50%);
+  }
+`;
+export const NoNotiBox = styled.div`
+  display: flex;
+  height: calc(100vh - 130px);
+  justify-content: center;
+  align-items: center;
+  div {
+    color: ${theme.greyScale65};
   }
 `;
 export const TextBox = styled.div`
