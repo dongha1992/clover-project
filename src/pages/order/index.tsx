@@ -522,7 +522,7 @@ const OrderPage = () => {
 
   const goToRegisteredCard = () => {
     dispatch(SET_USER_ORDER_INFO({ ...userInputObj, ...deliveryInfoObj, selectedOrderMethod }));
-    router.push('/mypage/card/register');
+    router.push({ pathname: '/mypage/card/register', query: { isOrder: true } });
   };
 
   const webviewPayment = () => {
@@ -544,7 +544,7 @@ const OrderPage = () => {
 
     try {
       const { data } = await termsApi(params);
-      dispatch(SET_BOTTOM_SHEET({ content: <TermInfoSheet children={data.data.terms.content} type="ORDER" /> }));
+      dispatch(SET_BOTTOM_SHEET({ content: <TermInfoSheet type="ORDER">{data.data.terms.content}</TermInfoSheet> }));
     } catch (error) {
       console.error(error);
     }
@@ -1025,6 +1025,10 @@ const OrderPage = () => {
       setCheckForm({ ...checkForm, alwaysPointAll: { isSelected: alwaysPointAll } });
     }
   }, []);
+
+  if (preveiwOrderLoading) {
+    return <div></div>;
+  }
 
   const {
     userEmail,

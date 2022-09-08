@@ -53,13 +53,15 @@ const ReviewInfo = ({ isShow, setIsShow }: any) => {
 };
 
 const ReviewInfoWrapper = styled.div`
+  z-index: 10;
   cursor: pointer;
   background-color: ${theme.greyScale3};
   padding: 16px;
   border-radius: 8px;
-  position: absolute;
-  left: 0;
   width: 100%;
+  position: absolute;
+  top: 60px;
+  left: 0px;
   .svg {
     display: flex;
   }

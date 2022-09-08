@@ -2,8 +2,8 @@ import { FlexBetween, FlexCol, FlexRow, theme } from '@styles/theme';
 import React from 'react';
 import styled from 'styled-components';
 import { TextB2R, TextH5B, TextB3R } from '@components/Shared/Text';
-import { IMAGE_S3_URL } from '@constants/mock';
 import { getFormatPrice } from '@utils/common';
+import Image from '@components/Shared/Image';
 interface IProps {
   url: string;
   name: string;
@@ -12,10 +12,11 @@ interface IProps {
 }
 
 const ItemInfo = ({ url, name, amount, paidAt }: IProps) => {
+  console.log(url);
   return (
     <Container>
       <ImageWrapper>
-        <ItemImage src={IMAGE_S3_URL + url} alt="상품이미지" />
+        <Image src={url} alt="상품이미지" width={'100%'} height={'100%'} layout="responsive" className="rounded" />
       </ImageWrapper>
       <FlexCol width="80%" margin="0 0 0 16px">
         <TextB2R padding="0 0 4px 0">{name}</TextB2R>
