@@ -41,6 +41,7 @@ import { NextPageWithLayout } from '@pages/_app';
 import DefaultLayout from '@components/Layout/Default';
 import DetailBottom from '@components/Bottom/DetailBottom';
 import { show, hide } from '@store/loading';
+import { Loading } from '@components/Shared/Loading';
 
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
@@ -68,7 +69,7 @@ const MenuDetailPage: NextPageWithLayout = () => {
   const {
     data: menuDetail,
     error: menuError,
-    isLoading: menuDetailLoading,
+    isLoading: isLoading,
   } = useQuery(
     'getMenuDetail',
     async () => {
@@ -342,7 +343,7 @@ const MenuDetailPage: NextPageWithLayout = () => {
     };
   }, []);
 
-  if (!menuDetailLoading && !bannerLoading && !bestReviewLoading && !reviewImagesLoading) {
+  if (!isLoading && !bannerLoading && !bestReviewLoading && !reviewImagesLoading) {
     dispatch(hide());
   }
 

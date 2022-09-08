@@ -11,9 +11,10 @@ import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { SET_ALERT } from '@store/alert';
-import { SET_SPOT_POSITIONS } from '@store/spot';
 import { useQuery } from 'react-query';
 import useCurrentLocation from '@hooks/useCurrentLocation';
+import { Loading } from '@components/Shared/Loading';
+import { show, hide } from '@store/loading';
 
 interface IPosition {
   latitude: number | null;
@@ -85,6 +86,7 @@ const LocationPage = () => {
   useEffect(()=> {
     if(currentArrowed){
       setIsSearchingPosition(false);
+      dispatch(hide());
     };
   }, [currentArrowed]);
 
@@ -99,6 +101,7 @@ const LocationPage = () => {
               const address = result[0];
                 setIsSearchingPosition(false);
                 setCurrentPositionAddress(address);
+                dispatch(hide());
             };
         };
         geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
@@ -175,6 +178,7 @@ const LocationPage = () => {
   const getGeoLocation = () => { 
     setIsSearchingPosition(true);
     handlerCurrentPosition();
+    dispatch(show());
   };
 
   const getSearchAddress = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -270,10 +274,8 @@ const LocationPage = () => {
     };
   };
 
-  if(currentArrowed){
-    if(isSeachingPosition){
-      return <div>현재 위치 찾는 중..😊</div>
-    };  
+  if(isSeachingPosition){
+    return <Loading />
   };
 
   return (
