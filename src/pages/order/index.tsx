@@ -1026,6 +1026,10 @@ const OrderPage = () => {
     }
   }, []);
 
+  if (preveiwOrderLoading) {
+    return <div></div>;
+  }
+
   const {
     userEmail,
     delivery,
