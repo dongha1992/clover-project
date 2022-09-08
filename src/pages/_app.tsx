@@ -31,7 +31,7 @@ import DefaultLayout from '@components/Layout/Default';
 import { INIT_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { hideImageViewer } from '@store/imageViewer';
-import * as gtag from 'src/lib/gtag';
+import * as ga from 'src/lib/ga';
 import { useToast } from '@hooks/useToast';
 
 declare global {
@@ -157,7 +157,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
 
   useEffect(() => {
     const handleRouteChange = (url: string) => {
-      gtag.pageview(url);
+      ga.pageview(url);
       document?.getElementById('right')?.scrollTo(0, 0);
     };
     router.events.on('routeChangeComplete', handleRouteChange);

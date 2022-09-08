@@ -14,7 +14,7 @@ import { userLoginApi } from '@api/authentication';
 import { EMAIL_REGX } from '@pages/signup/email-password';
 import { SET_LOGIN_TYPE } from '@store/common';
 import { setCookie } from '@utils/common';
-import * as gtag from 'src/lib/gtag';
+import * as ga from 'src/lib/ga';
 
 const LoginPage = () => {
   const [checkAutoLogin, setCheckAutoLogin] = useState(true);
@@ -81,7 +81,7 @@ const LoginPage = () => {
 
         if (data.code === 200) {
           // 로그인 성공 GA이벤트
-          gtag.setEvent({action: 'login'});
+          ga.setEvent({action: 'login'});
 
           const userTokenObj = data.data;
           if (userTokenObj?.tmpPasswordUsed) {

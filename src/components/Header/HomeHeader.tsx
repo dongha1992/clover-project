@@ -11,7 +11,6 @@ import { Obj } from '@model/index';
 import { useSelector } from 'react-redux';
 import { destinationForm } from '@store/destination';
 import { bottomSheetForm } from '@store/bottomSheet';
-import * as gtag from 'src/lib/gtag';
 
 const mapper: Obj = {
   morning: { text: '새벽배송이 가능해요!', width: '150px' },
@@ -40,7 +39,6 @@ const HomeHeader = () => {
 
   const goToSearch = () => {
     router.push('/search');
-    gtag.setEvent({action: 'search'});
   };
 
   useEffect(() => {
