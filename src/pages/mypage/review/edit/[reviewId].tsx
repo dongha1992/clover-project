@@ -48,6 +48,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   const { data: selectedReviewDetail, isLoading } = useQuery(
     'getReviewDetail',
     async () => {
+      dispatch(show());
       const params = {
         id: Number(menuId),
         menuReviewId: Number(reviewId),
@@ -56,10 +57,12 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
       const { data } = await getReviewDetailApi(params);
       return data.data;
     },
-
     {
       onError: () => {
         router.back();
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
 
       refetchOnMount: true,
@@ -202,10 +205,6 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   }, [selectedReviewDetail]);
 
   const over30Letter = LIMIT - numberOfReviewContent > 0;
-
-  if (isLoading) {
-    return <div>로딩</div>;
-  }
 
   return (
     <Container>

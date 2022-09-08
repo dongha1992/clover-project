@@ -32,6 +32,7 @@ import useIsApp from '@hooks/useIsApp';
 import DefaultLayout from '@components/Layout/Default';
 import HomeBottom from '@components/Bottom/HomeBottom';
 import { NextPageWithLayout } from '@pages/_app';
+import { Loading } from '@components/Shared/Loading';
 interface IMypageMenu {
   title: string;
   count?: number;
@@ -193,7 +194,7 @@ const MypagePage: NextPageWithLayout = () => {
   };
 
   if (isNil(orderList) && infoLoading && subsOrdersLoading) {
-    return <div>로딩</div>;
+    return <Loading />;
   }
 
   return (

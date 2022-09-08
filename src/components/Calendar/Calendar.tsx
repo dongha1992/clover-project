@@ -294,7 +294,7 @@ const Calendar = ({
   }, [subOrderDelivery]);
 
   if (dateList.length === 0) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   return (

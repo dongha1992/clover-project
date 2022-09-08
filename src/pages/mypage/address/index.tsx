@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SET_DESTINATION, SET_USER_DELIVERY_TYPE } from '@store/destination';
 import useScrollCheck from '@hooks/useScrollCheck';
 import { userForm } from '@store/user';
+import { show, hide } from '@store/loading';
 
 const TAB_LIST = [
   { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
@@ -29,6 +30,7 @@ const AddressManagementPage = () => {
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     ['getDestinationList', selectedTab],
     async () => {
+      dispatch(show());
       const isSpot = selectedTab === '/pickup';
 
       const params = {
@@ -40,7 +42,13 @@ const AddressManagementPage = () => {
       const { data } = await getDestinationsApi(params);
       return data.data.destinations;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const selectTabHandler = (tabItem: any) => {
@@ -67,7 +75,7 @@ const AddressManagementPage = () => {
   }, [router.isReady]);
 
   if (isLoading) {
-    return <div>로딩</div>;
+    return <div></div>;
   }
 
   return (

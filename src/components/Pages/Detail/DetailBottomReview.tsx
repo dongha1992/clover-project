@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { TextB2R } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
@@ -14,6 +14,7 @@ import { SET_ALERT } from '@store/alert';
 import { useSelector } from 'react-redux';
 import { userForm } from '@store/user';
 import { menuSelector } from '@store/menu';
+import { show, hide } from '@store/loading';
 
 interface IProps {
   reviews: { menuReviews: ISearchReviews[]; pagination: IPagination };
@@ -67,6 +68,7 @@ const DetailBottomReview = ({ reviews, isSticky, menuId, reviewsImages, isSub }:
             goToReviewDetail={goToReviewDetail}
             averageRating={menuItem?.rating}
             totalReviews={menuItem?.reviewCount}
+            totalImgs={reviewsImages?.pagination.total!}
           />
         </Wrapper>
       )}

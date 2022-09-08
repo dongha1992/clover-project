@@ -1,19 +1,18 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
-import { fixedBottom, FlexCol, FlexRow, homePadding, flexCenter, theme } from '@styles/theme';
+import { FlexCol, FlexRow, homePadding, flexCenter, theme } from '@styles/theme';
 import TextInput from '@components/Shared/TextInput';
 import { Button } from '@components/Shared/Button';
 import { TextB2R, TextH5B } from '@components/Shared/Text';
 import { MypageCouponItem } from '@components/BottomSheet/CouponSheet';
 import { useRouter } from 'next/router';
-import { SET_USER_SELECT_COUPON } from '@store/coupon';
 import { useDispatch } from 'react-redux';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { postPromotionCodeApi } from '@api/promotion';
 import { getCouponApi } from '@api/coupon';
 import { ICoupon } from '@model/index';
 import { SET_ALERT } from '@store/alert';
-import { AxiosError } from 'axios';
+import { show, hide } from '@store/loading';
 
 const CouponManagementPage = () => {
   const [selectedCoupon, setSelectedCoupon] = useState<ICoupon>();
@@ -73,10 +72,17 @@ const CouponManagementPage = () => {
   } = useQuery(
     'getCouponList',
     async () => {
+      dispatch(show());
       const { data } = await getCouponApi();
       return data.data;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const selectCouponHandler = (coupon: ICoupon): void => {
@@ -84,7 +90,7 @@ const CouponManagementPage = () => {
   };
 
   if (isLoading) {
-    return <div>로딩중</div>;
+    return <div></div>;
   }
 
   if (coupons?.length === 0) {

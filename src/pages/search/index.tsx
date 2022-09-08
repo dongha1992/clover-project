@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { CATEGORY } from '@constants/search';
-import { TextB1R, TextH3B, TextB2R, TextH6B } from '@components/Shared/Text';
+import { TextB1R, TextH3B, TextH6B } from '@components/Shared/Text';
 import BorderLine from '@components/Shared/BorderLine';
 import { Item } from '@components/Item';
 import { homePadding, textBody2, theme, FlexBetween } from '@styles/theme';
@@ -9,14 +9,15 @@ import Link from 'next/link';
 import { SVGIcon } from '@utils/common';
 import { useQuery } from 'react-query';
 import { getExhibitionMdRecommendApi } from '@api/promotion';
-import { useDispatch, useSelector } from 'react-redux';
-import { filterSelector, INIT_CATEGORY_FILTER } from '@store/filter';
+import { useDispatch } from 'react-redux';
 import { INIT_MENU_KEYWORD } from '@store/menu';
-import { IMenus, Obj } from '@model/index';
+import { IMenus } from '@model/index';
 import router from 'next/router';
 import TextInput from '@components/Shared/TextInput';
+import { show, hide } from '@store/loading';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
+import { SET_ALERT } from '@store/alert';
 
 const SearchPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,10 +31,21 @@ const SearchPage = () => {
   } = useQuery(
     'getExhibitionMenus',
     async () => {
+      dispatch(show());
       const { data } = await getExhibitionMdRecommendApi();
       return checkIsSold(data.data.menus);
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      onSuccess: () => {},
+      onSettled: () => {
+        dispatch(hide());
+      },
+      onError: () => {
+        dispatch(SET_ALERT({ alertMessage: '알 수 없는 에러가 발생했습니다.' }));
+      },
+    }
   );
 
   useEffect(() => {
@@ -81,10 +93,6 @@ const SearchPage = () => {
   };
 
   const goToMore = () => {};
-
-  if (mdIsLoading) {
-    return <div>로딩중</div>;
-  }
 
   return (
     <Container>
@@ -137,16 +145,14 @@ const SearchPage = () => {
             </TextH6B>
           </FlexBetween>
           <SliderWrapper className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
-            {
-              mdMenus?.map((item, index) => {
-                if (index > 9) return;
-                return(
-                  <SwiperSlide className="swiper-slide" key={index}>
-                    <Item item={item} isHorizontal />
-                  </SwiperSlide>
-                ) 
-              })
-            }
+            {mdMenus?.map((item, index) => {
+              if (index > 9) return;
+              return (
+                <SwiperSlide className="swiper-slide" key={index}>
+                  <Item item={item} isHorizontal />
+                </SwiperSlide>
+              );
+            })}
           </SliderWrapper>
         </MdRecommendationWrapper>
       </DefaultSearchContainer>

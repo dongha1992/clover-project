@@ -16,7 +16,7 @@ const ReviewInfo = ({ isShow, setIsShow }: any) => {
           </TextH6B>
           <TextH6B color={theme.greyScale65}>혜택받으세요!</TextH6B>
         </FlexRow>
-        <div>
+        <div className="svg">
           <SVGIcon name={isShow ? 'triangleUp' : 'triangleDown'} />
         </div>
       </FlexBetween>
@@ -57,6 +57,12 @@ const ReviewInfoWrapper = styled.div`
   background-color: ${theme.greyScale3};
   padding: 16px;
   border-radius: 8px;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  .svg {
+    display: flex;
+  }
 `;
 
 export default ReviewInfo;

@@ -110,6 +110,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
               goToReviewDetail={goToReviewDetail}
               averageRating={menuDetail?.rating!}
               totalReviews={menuDetail?.reviewCount!}
+              totalImgs={reviewsImages?.pagination.total!}
             />
           )}
           <Button
