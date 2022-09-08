@@ -9,6 +9,7 @@ import { SET_EVENT_TITLE, INIT_EVENT_TITLE } from '@store/event';
 import { getExhibitionApi } from '@api/promotion';
 import { useQuery } from 'react-query';
 import { useInfiniteExhibitionList } from '@queries/promotion';
+import { Loading } from '@components/Shared/Loading';
 
 const DEFAULT_SIZE = 10;
 
@@ -63,6 +64,10 @@ const PromotionPage = () => {
   const goToDetail = (title: string, type: string, id: number) => {
     dispatch(SET_EVENT_TITLE(title ? title : '기획전'));
     router.push(`/promotion/detail/${id}`);
+  };
+
+  if (isFetching || isLoading) {
+    return <Loading />
   };
   
   return (

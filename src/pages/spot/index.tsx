@@ -22,7 +22,6 @@ import NextImage from 'next/image';
 import ShareUrl from '@components/ShareUrl';
 import DefaultLayout from '@components/Layout/Default';
 import HomeBottom from '@components/Bottom/HomeBottom';
-import HomePage from '@pages/index';
 import SpotSkeleton from '@components/Skeleton/SpotSkeleton';
 
 const FCO_SPOT_BANNER = [
@@ -231,7 +230,7 @@ const SpotPage = () => {
         <RegistrationCTA onClick={goToRegiList}>
           <FlexCenter>
             <SVGIcon name="plusWhite" />
-            <TextH5B padding="3px 0 0 0" color={theme.white}>
+            <TextH5B color={theme.white}>
               프코스팟 신청할래요
             </TextH5B>
           </FlexCenter>
