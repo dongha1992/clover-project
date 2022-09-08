@@ -8,18 +8,18 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_ALERT } from '@store/alert';
 import { searchAddressJuso } from '@api/search';
-import { getAddressFromLonLat } from '@api/location';
 import { IJuso } from '@model/index';
 import AddressItem from '@components/Pages/Location/AddressItem';
 import { SET_LOCATION_TEMP } from '@store/destination';
 import { getAvailabilityDestinationApi } from '@api/destination';
 import { useSelector } from 'react-redux';
 import { getRegistrationSearch } from '@api/spot';
-import { ISpotsDetail } from '@model/index';
 import { SET_BOTTOM_SHEET } from '@store/bottomSheet';
 import { SpotRegisterSheet } from '@components/BottomSheet/SpotRegisterSheet';
 import { userForm } from '@store/user';
 import { useQuery } from 'react-query';
+import { Loading } from '@components/Shared/Loading';
+import { show, hide } from '@store/loading';
 
 const LocationPage = () => {
   const router = useRouter();
@@ -84,6 +84,7 @@ const LocationPage = () => {
         query: inputKeyword,
         page: page,
       };
+        dispatch(show());
         const { data } = await searchAddressJuso(params);
       return data
     },
@@ -96,6 +97,9 @@ const LocationPage = () => {
         const list = data.results.juso ?? [];
         setResultAddress((prevList) => [...prevList, ...list]);
         setTotalCount(data.results.common.totalCount);
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
     }
   );
@@ -287,6 +291,10 @@ const LocationPage = () => {
   const goToSpotRegisterationDetailInfo = (i: IJuso): void => {
     dispatch(SET_LOCATION_TEMP(i));
     getSpotRegistrationSearch(i);
+  };
+
+  if (isLoading) {
+    return <Loading />;
   };
 
   return (

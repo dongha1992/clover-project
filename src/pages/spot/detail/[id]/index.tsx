@@ -18,6 +18,8 @@ import NextImage from 'next/image';
 import DefaultLayout from '@components/Layout/Default';
 import SpotDetailBottom from '@components/Bottom/SpotDetailBottom';
 import { showImageViewer } from '@store/imageViewer';
+import { Loading } from '@components/Shared/Loading';
+import { show, hide } from '@store/loading';
 
 const SpotDetailPage = () => {
   const dispatch = useDispatch();
@@ -69,6 +71,7 @@ const SpotDetailPage = () => {
   } = useQuery(
     'getSpotDetail',
     async () => {
+      dispatch(show());
       const { data } = await getSpotDetail(id!);
       return data?.data;
     },
@@ -76,6 +79,9 @@ const SpotDetailPage = () => {
     {
       onSuccess: (data) => {
         dispatch(SPOT_ITEM(data));
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -170,6 +176,10 @@ const SpotDetailPage = () => {
 
   const goToSpotNotice = (): void => {
     router.push('/spot/notice');
+  };
+
+  if (isSpotLoading || isSpotStoryLoading) {
+    return <Loading />
   };
 
   return (
