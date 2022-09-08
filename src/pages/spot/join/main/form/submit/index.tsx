@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { TextH2B, TextB1B, TextH5B, TextB2R } from '@components/Shared/Text';
 import { theme, homePadding, fixedBottom, FlexBetween } from '@styles/theme';
@@ -10,14 +10,19 @@ import { postSpotsRegistrationsInfoSubmit } from '@api/spot';
 import { IGetRegistrationStatus } from '@model/index';
 import { useDispatch } from 'react-redux';
 import { SET_SPOT_REGISTRATIONS_POST_RESULT } from '@store/spot';
+import { Loading } from '@components/Shared/Loading';
+import { show, hide } from '@store/loading';
 
 const SubmitPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState<boolean>(false);
   const { spotLocation, spotsRegistrationOptions, spotsRegistrationInfo } = useSelector(spotSelector);
   const { type } = router.query;
 
   const registrationsSubmitHandeler = async () => {
+    dispatch(show());
+    setIsLoadingSubmit(true);
     const params: IGetRegistrationStatus = {
       coordinate: {
         lat: Number(spotLocation.lat),
@@ -44,6 +49,8 @@ const SubmitPage = () => {
     try {
       const { data } = await postSpotsRegistrationsInfoSubmit(params);
       if (data.code === 200) {
+        setIsLoadingSubmit(false);
+        dispatch(hide());
         dispatch(SET_SPOT_REGISTRATIONS_POST_RESULT(data?.data));
         router.push({
           pathname: '/spot/join/main/form/submit/finish',
@@ -53,6 +60,10 @@ const SubmitPage = () => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  if (isLoadingSubmit) {
+    return <Loading />
   };
 
   return (
