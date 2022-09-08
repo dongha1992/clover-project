@@ -248,7 +248,9 @@ PointItem.displayName = 'PointItem';
 
 const Container = styled.div`
   height: calc(100vh - 114px);
+  overflow: scroll;
 `;
+
 const Wrapper = styled.div`
   position: relative;
   width: 100%;
