@@ -13,7 +13,7 @@ import Toast from '@components/Shared/Toast';
 import BottomSheet from '@components/BottomSheet';
 import ImageViewer from '@components/ImageViewer';
 import { bottomSheetForm } from '@store/bottomSheet';
-import Image from 'next/image';
+import NextImage from 'next/image';
 
 interface IDefaultLayoutProps {
   children: ReactElement;
@@ -65,7 +65,7 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
           />
           <Left>
             <div className="left-contents">
-              <Image
+              <NextImage
                 src="/images/img_brandstory_desktop.png"
                 width="512px"
                 height="688px"
@@ -92,9 +92,9 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-height: 100vh;
+  /* max-height: 100vh; */
   box-sizing: border-box;
-  background-color: #f4f4f4;
+  background-color: #fff;
 `;
 
 const Center = styled.div`
@@ -114,7 +114,7 @@ const Center = styled.div`
 
 const Right = styled.div`
   position: relative;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   width: 50%;
   max-width: ${breakpoints.mobile}px;
   background-color: white;
@@ -129,14 +129,16 @@ const Right = styled.div`
 `;
 
 const Left = styled.div`
-  position: sticky;
-  bottom: 0;
-  background-color: white;
-  width: 50%;
+  position: relative;
+  width: 512px;
   .left-contents {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
+    position: fixed;
+    width: 512px;
+    height: 100vh;
+    top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    align-items: end;
   }
   ${({ theme }) => theme.desktop`  
     display: none;
