@@ -9,6 +9,8 @@ import { theme } from '@styles/theme';
 import { useQuery } from 'react-query';
 import { getBannersApi } from '@api/banner';
 import { IBanners } from '@model/index';
+import { Loading } from '@components/Shared/Loading';
+import { show, hide } from '@store/loading';
 
 const EventPage = () => {
   const router = useRouter();
@@ -16,14 +18,21 @@ const EventPage = () => {
   const [page, setPage] = useState<number>(1);
   const [eventbannerList, setEventBannerList] = useState<IBanners[]>([]);
 
-  const { error: eventsError } = useQuery(
+  const { error: eventsError, isLoading } = useQuery(
     'eventsBanners',
     async () => {
       const params = { type: 'EVENT', size: 100 };
+      dispatch(show());
       const { data } = await getBannersApi(params);
       setEventBannerList(data.data);
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    { 
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false 
+    }
   );
 
   const goToEvent = (id: number, title: string) => {
@@ -40,6 +49,11 @@ const EventPage = () => {
       router.push('/event');
     // };
   };
+
+  if (isLoading) {
+    return <Loading />
+  };
+  
   return (
     <Container>
       {

@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { homePadding, theme, FlexWrapWrapper } from '@styles/theme';
 import { useRouter } from 'next/router';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useQuery } from 'react-query';
 import { Item } from '@components/Item';
 import { SubsItem } from '@components/Pages/Subscription';
 import { getExhibitionInquireApi } from '@api/promotion';
 import MarkdownRenderer from '@components/Shared/Markdown';
+import { Loading } from '@components/Shared/Loading';
+import { show, hide } from '@store/loading';
 
 // 기획전 상세 페이지
 const PromotionDetailPage = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [id, setId] = useState<number>();
   const [items, setItems] = useState<any>([]);
 
@@ -29,19 +32,23 @@ const PromotionDetailPage = () => {
   } = useQuery(
     'getExhibitionMenus',
     async () => {
+      dispatch(show());
       const { data } = await getExhibitionInquireApi(id!);
       setItems(data.data);
       return data.data.menus;
     },
     { 
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true, 
       refetchOnWindowFocus: false, 
       enabled: !!id, 
     }
   );
 
-  if(isLoading){
-    return <div>로딩..</div>;
+  if (isLoading) {
+    return <Loading />
   };
 
   return (

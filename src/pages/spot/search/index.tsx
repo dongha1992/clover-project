@@ -19,9 +19,10 @@ import { IDestinationsResponse, IGetDestinationsResponse } from '@model/index';
 import { SpotSearchKeywordSlider } from '@components/Pages/Spot';
 import { ISpotsDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
-import { truncate } from 'lodash-es';
 import TextInput from '@components/Shared/TextInput';
 import useCurrentLocation from '@hooks/useCurrentLocation';
+import { Loading } from '@components/Shared/Loading';
+import { show, hide } from '@store/loading';
 // import { getCartsApi } from '@api/cart';
 // import { INIT_CART_LISTS, SET_CART_LISTS } from '@store/cart';
 
@@ -188,6 +189,7 @@ const SpotSearchPage = (): ReactElement => {
         longitude: longitude,
         size: 3,
       };
+      dispatch(show());
       const response = await getSpotSearchRecommend(params);
       const listSort = response.data.data.spots.sort((a, b) => a.distance - b.distance);
       return {
@@ -195,7 +197,13 @@ const SpotSearchPage = (): ReactElement => {
         spotList: listSort,
       };
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    { 
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true, 
+      refetchOnWindowFocus: false 
+    }
   );
 
   // 스팟 검색 - 이벤트 스팟 api
@@ -207,10 +215,17 @@ const SpotSearchPage = (): ReactElement => {
         longitude: longitude,
         size: 6,
       };
+      dispatch(show());
       const response = await getSpotEvent(params);
       return response.data.data;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    { 
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true, 
+      refetchOnWindowFocus: false 
+    }
   );
 
   // 최근 픽업 이력 조회 api
@@ -224,6 +239,7 @@ const SpotSearchPage = (): ReactElement => {
         latitude: latitude,
         longitude: longitude,
       };
+      dispatch(show());
       const response = await getDestinationsApi(params);
       return response.data;
     },
@@ -234,6 +250,9 @@ const SpotSearchPage = (): ReactElement => {
         setPickUpList((prevList: any) => [...prevList, ...list]);
         setIsLastPage(page === lastPage);
       },
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
@@ -241,7 +260,7 @@ const SpotSearchPage = (): ReactElement => {
     }
   );
 
-  const { data: spotAllList, isLoading: isLoadingSpotAllList } = useQuery<ISpotsDetail[]>(
+  const { data: spotAllList } = useQuery<ISpotsDetail[]>(
     ['allList'],
     async () => {
       const params = {
@@ -307,12 +326,12 @@ const SpotSearchPage = (): ReactElement => {
   };
 
   if (isLoadingRecomand || isLoadingEventSpot || isLoadingPickup) {
-    return <div>로딩</div>;
+    return <Loading />;
   }
 
   if (currentArrowed) {
     if (isSeachingPosition) {
-      return <div>현재 위치 찾는중...😊</div>;
+      return <Loading />;
     }
   }
 
