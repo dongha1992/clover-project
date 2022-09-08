@@ -197,7 +197,7 @@ const MypagePage: NextPageWithLayout = () => {
     );
   };
 
-  if (isNil(orderList) || infoLoading || subsOrdersLoading) {
+  if (isNil(orderList) && infoLoading && subsOrdersLoading) {
     return <div></div>;
   }
 
