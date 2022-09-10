@@ -22,7 +22,7 @@ const useKakaoLogin = () => {
         accessToken: `bearer ${authObj.access_token}`,
       });
 
-      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-msg', data: result }));
+      await window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-msg', data: result }));
 
       if (result.data.code === 200) {
         const userTokenObj = result.data.data;
