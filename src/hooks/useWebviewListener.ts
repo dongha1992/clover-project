@@ -1,17 +1,27 @@
 import { putDeviceApi } from '@api/device';
 import { useEffect } from 'react';
+import { useStore } from 'react-redux';
 import { useAppleLogin, useKakaoLogin } from './auth';
 
 const useWebviewListener = () => {
+  const store: any = useStore();
   const onKaKao = useKakaoLogin();
   const onApple = useAppleLogin();
 
   useEffect(() => {
     if (window.ReactNativeWebView) {
-      window.addEventListener('message', webviewListener);
+      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-message-eventListener-on', data: true }));
+      if (window.navigator.userAgent.match('ios')) {
+        window.addEventListener('message', webviewListener);
+      } else {
+        document.addEventListener('message', webviewListener);
+      }
     }
     return () => {
-      window.removeEventListener('message', webviewListener);
+      if (window.ReactNativeWebView) {
+        window.removeEventListener('message', webviewListener);
+        document.removeEventListener('message', webviewListener);
+      }
     };
   }, []);
 
@@ -33,6 +43,11 @@ const useWebviewListener = () => {
         break;
       case 'rn-device-register':
         putDeviceApi(data);
+        break;
+      case 'rn-login-check':
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({ cmd: 'webview-login-check', data: !!store.getState().user.me })
+        );
         break;
 
       default:
