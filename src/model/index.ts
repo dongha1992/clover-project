@@ -1290,7 +1290,7 @@ export interface IOrderDetailInOrderDeliveries {
   spotPickupId: number;
   spotPickupName: string;
   spotPickupType: string;
-  hasReview: boolean;
+  canReview: boolean;
   status: string;
   orderMenus: IOrderMenus[];
   type: string;

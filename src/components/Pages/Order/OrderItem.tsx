@@ -10,11 +10,11 @@ interface IProps {
   menu: any;
   isDeliveryComplete?: boolean;
   isCanceled?: boolean;
-  hasReview?: boolean;
+  canReview?: boolean;
   goToReivew?: () => void;
 }
 
-const OrderItem = ({ menu, isDeliveryComplete, isCanceled, goToReivew, hasReview }: IProps) => {
+const OrderItem = ({ menu, isDeliveryComplete, isCanceled, goToReivew, canReview }: IProps) => {
   const { discountedPrice, discount } = getDiscountPrice({
     discountPrice: menu.menuDiscount,
     price: menu.menuPrice,
@@ -52,7 +52,7 @@ const OrderItem = ({ menu, isDeliveryComplete, isCanceled, goToReivew, hasReview
               <Col />
               <TextB2R>{menu.menuQuantity}개</TextB2R>
             </PriceWrapper>
-            {isDeliveryComplete && !hasReview ? (
+            {isDeliveryComplete && canReview ? (
               <div>
                 <Button
                   backgroundColor={theme.white}
