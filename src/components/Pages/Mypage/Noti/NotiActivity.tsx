@@ -37,7 +37,7 @@ const NotiActivity = ({ parentRef, postNotiChek, setIsData }: IProps) => {
 
   return (
     <>
-      {data?.pages[0]?.result.length !== 0 ? (
+      {data?.pages[0]?.result.length !== 0 &&
         data?.pages?.map((page: any, index) => (
           <NotiList key={index}>
             {page.result?.map((item: IGetNoti, index: number) => (
@@ -61,12 +61,7 @@ const NotiActivity = ({ parentRef, postNotiChek, setIsData }: IProps) => {
               </NotiItem>
             ))}
           </NotiList>
-        ))
-      ) : (
-        <NoNotiBox>
-          <TextB2R>아직 도착한 알림이 없어요. 😭</TextB2R>
-        </NoNotiBox>
-      )}
+        ))}
       <div ref={childRef}></div>
     </>
   );

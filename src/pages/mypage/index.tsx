@@ -55,7 +55,6 @@ const MypagePage: NextPageWithLayout = () => {
   const { data: orderList } = useQuery(
     'getOrderLists',
     async () => {
-      dispatch(show());
       const params = {
         orderType: 'GENERAL',
       };
@@ -196,10 +195,6 @@ const MypagePage: NextPageWithLayout = () => {
       })
     );
   };
-
-  if (isNil(orderList) && infoLoading && subsOrdersLoading) {
-    return <div></div>;
-  }
 
   return (
     <Container ref={ref}>
