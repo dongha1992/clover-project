@@ -69,7 +69,7 @@ const MenuDetailPage: NextPageWithLayout = () => {
   const {
     data: menuDetail,
     error: menuError,
-    isLoading,
+    isLoading: isLoading,
   } = useQuery(
     'getMenuDetail',
     async () => {
@@ -84,7 +84,7 @@ const MenuDetailPage: NextPageWithLayout = () => {
         dispatch(SET_MENU_ITEM(data));
       },
       onSettled: () => {
-        dispatch(hide());
+        // dispatch(hide());
       },
 
       refetchOnMount: true,
@@ -102,24 +102,28 @@ const MenuDetailPage: NextPageWithLayout = () => {
   const { data: reviews, error } = useQuery(
     'getMenuDetailReview',
     async () => {
+      dispatch(show());
       const params = { id: Number(menuId)!, page: 1, size: 10 };
-
       const { data } = await getMenuDetailReviewApi(params);
       return data.data;
     },
 
     {
       onSuccess: (data) => {},
+      onSettled: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
-      // cacheTime: 0,
-      // staleTime: 0,
     }
   );
 
-  const { data: bestReviews, error: bestReviewsError } = useQuery(
+  const {
+    data: bestReviews,
+    error: bestReviewsError,
+    isLoading: bestReviewLoading,
+  } = useQuery(
     'getBestReviewApi',
     async () => {
+      dispatch(show());
       const params = { id: Number(menuId)!, page: 1, size: 10 };
 
       const { data } = await getBestReviewApi(params);
@@ -128,14 +132,20 @@ const MenuDetailPage: NextPageWithLayout = () => {
 
     {
       onSuccess: (data) => {},
+      onSettled: () => {},
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
   );
 
-  const { data: reviewsImages, error: reviewsImagesError } = useQuery(
+  const {
+    data: reviewsImages,
+    error: reviewsImagesError,
+    isLoading: reviewImagesLoading,
+  } = useQuery(
     'getMenuDetailReviewImages',
     async () => {
+      dispatch(show());
       const params = { id: Number(menuId)!, page: 1, size: 10 };
       const { data } = await getMenuDetailReviewImageApi(params);
       return data.data;
@@ -333,8 +343,8 @@ const MenuDetailPage: NextPageWithLayout = () => {
     };
   }, []);
 
-  if (isLoading || bannerLoading) {
-    <Loading />
+  if (!isLoading && !bannerLoading && !bestReviewLoading && !reviewImagesLoading) {
+    dispatch(hide());
   }
 
   return (
