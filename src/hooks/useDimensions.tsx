@@ -5,7 +5,6 @@ interface IDimension {
   height: number;
 }
 
-/* TODO : 쓰로트링 필요 */
 /* TODO : innerHeight 값 다름 */
 
 const useDiemension = (): IDimension => {

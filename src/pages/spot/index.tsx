@@ -45,8 +45,6 @@ const FCO_SPOT_BANNER = [
   },
 ];
 
-// TODO : 로그인 유저별 분기처리, 단골 api , 타입에러
-
 const SpotPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -228,9 +226,7 @@ const SpotPage = () => {
       </HeaderTitle>
       <RegistrationsCTAWrapper onClick={goToRegiList}>
         <SVGIcon name="plusWhite" />
-        <TextH5B color={theme.white}>
-          프코스팟 신청할래요
-        </TextH5B>
+        <TextH5B color={theme.white}>프코스팟 신청할래요</TextH5B>
       </RegistrationsCTAWrapper>
       {isLoginSuccess && (
         <TopCTASlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>

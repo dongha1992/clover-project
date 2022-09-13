@@ -17,8 +17,6 @@ type TProps = {
   title?: string;
 };
 
-/* TODO: 뒤로가기 시 replace로 교체 */
-
 const TabHeader = ({ title }: TProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
