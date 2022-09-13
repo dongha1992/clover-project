@@ -172,7 +172,6 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
     },
     {
       onSuccess: async () => {
-        // TODO : 일반 주문도 배송지 변경후 이동 action이 있어야 할듯
         if (data.type === 'SUBSCRIPTION' && destinationId) {
           router.push({ pathname: `/subscription/${orderId}` });
           return;

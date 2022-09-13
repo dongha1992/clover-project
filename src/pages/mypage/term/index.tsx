@@ -18,7 +18,6 @@ const TermPage = () => {
 
 const Container = styled.div``;
 const Wrapper = styled.div`
-  /* padding-top: 24px; */
   li {
     &:first-of-type > div {
       border-top: none;

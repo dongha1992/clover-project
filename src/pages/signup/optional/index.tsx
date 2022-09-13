@@ -22,8 +22,6 @@ import { NAME_REGX } from '@constants/regex';
 import { getValidBirthday } from '@utils/common';
 import { SET_ALERT } from '@store/alert';
 
-// TODO: 로그인 핸들러 모듈
-// TODO: 애플 회원가입/로그인 분리 제발...
 export const GENDER = [
   {
     id: 1,
@@ -146,7 +144,6 @@ const SignupOptionalPage = () => {
     if (!isValidBirthDay) return;
 
     const gender = GENDER.find((item) => item.value === checkGender)?.value;
-    /* TODO: 회원가입 후 데이터 처리 래퍼 만들어야 함*/
     const hasBirthDate = birthDayObj.year > 0 && birthDayObj.month > 0 && birthDayObj.day > 0;
     const birthDate = `${birthDayObj.year}-${getFormatTime(birthDayObj.month)}-${getFormatTime(birthDayObj.day)}`;
 
