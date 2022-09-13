@@ -51,11 +51,14 @@ const ReviewDetailItem = ({ review, isDetailPage }: IProps) => {
                   <TextB3R color={theme.greyScale65}>{review?.createdAt}</TextB3R>
                 </UserInfo>
               </RatingAndUser>
-              <TagWrapper>
-                <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
-                  {review?.orderType === 'SUBSCRIPTION' ? review?.tag : `${review?.tag}번째 구매`}
-                </Tag>
-              </TagWrapper>
+              {review?.tag.length > 0 && (
+                <TagWrapper>
+                  <Tag backgroundColor={theme.brandColor5} color={theme.brandColor}>
+                    {/* {review?.orderType === 'SUBSCRIPTION' ? review?.tag : `${review?.tag}번째 구매`} */}
+                    {review?.tag}
+                  </Tag>
+                </TagWrapper>
+              )}
             </ReviewHeader>
             <ReviewBody>
               <TextBody isShow={isShow}>

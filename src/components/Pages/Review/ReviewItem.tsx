@@ -31,9 +31,12 @@ const ReviewItem = ({ review, onClick }: IProps) => {
               <SVGIcon name="singleStar" />
               <TextH5B padding="0 0 0 4px">{review.rating}</TextH5B>
             </Rating>
-            <Tag backgroundColor={theme.brandColor5} color={theme.brandColor} margin="0 16px 0 0">
-              {review?.orderType === 'SUBSCRIPTION' ? review?.tag : `${review?.tag}번째 구매`}
-            </Tag>
+            {review?.tag?.length! > 0 && (
+              <Tag backgroundColor={theme.brandColor5} color={theme.brandColor} margin="0 16px 0 0">
+                {/* {review?.orderType === 'SUBSCRIPTION' ? review?.tag : `${review?.tag}번째 구매`} */}
+                {review?.tag}
+              </Tag>
+            )}
           </ReviewHeader>
           <ReviewBody>
             <TextB3R>{review.content}</TextB3R>
