@@ -172,6 +172,8 @@ const MypagePage: NextPageWithLayout = () => {
     dispatch(
       SET_ALERT({
         alertMessage: '로그아웃 하시겠어요?',
+        submitBtnText: '확인',
+        closeBtnText: '취소',
         onSubmit: () => {
           dispatch(INIT_USER());
           dispatch(INIT_CART_LISTS());
