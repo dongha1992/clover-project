@@ -107,9 +107,9 @@ const OptionsSheet = ({ tab }: IProps): ReactElement => {
                 />
                 {
                   items.value === selectTab()?.value ? (
-                    <TextH5B padding="0 0 0 8px" onClick={() => registrationsOptionsHandler(items.value)}>{items.name}</TextH5B>
+                    <TextH5B padding="0 0 0 8px" onClick={() => registrationsOptionsHandler(items.value)} pointer>{items.name}</TextH5B>
                   ) : (
-                    <TextB2R padding="0 0 0 8px" onClick={() => registrationsOptionsHandler(items.value)}>{items.name}</TextB2R>
+                    <TextB2R padding="0 0 0 8px" onClick={() => registrationsOptionsHandler(items.value)} pointer>{items.name}</TextB2R>
                   )
                 }
               </Selected>
