@@ -6,13 +6,13 @@ import { theme } from '@styles/theme';
 export const Loading = ({ isShow = false }) => {
   return (
     <Overlay style={{ display: isShow ? 'flex' : 'none' }}>
-      <Lottie animationData={loadingAnimation} style={{ width: 60, height: 60 }} />
+      <Lottie animationData={loadingAnimation} style={{ width: 150, height: 150 }} />
     </Overlay>
   );
 };
 
 const Overlay = styled.div`
-  position: fixed;
+  position: absolute;
   height: 100%;
   width: 100%;
   top: 0;
