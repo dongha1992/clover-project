@@ -6,6 +6,7 @@ import { SUBSCRIBE_TIME_SELECT } from '@constants/subscription';
 import { ISubsActiveDate, Obj } from '@model/index';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
 import { destinationForm } from '@store/destination';
+import { hide, show } from '@store/loading';
 import {
   SET_SUBS_DELIVERY_EXPECTED_DATE,
   SET_SUBS_START_DATE,
@@ -55,12 +56,13 @@ const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType, menuId }: IProp
         destinationId: userDestination?.id!,
         subscriptionPeriod: userSelectPeriod,
       };
+      dispatch(show());
       const { data } = await getSubscriptionApi(params);
       return data.data.menuTables as ISubsActiveDate[];
     },
     {
-      onSuccess: (data) => {
-        console.log('subsActiveDates', data);
+      onSettled: () => {
+        dispatch(hide());
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -132,8 +134,6 @@ const SubsCalendarSheet = ({ userSelectPeriod, subsDeliveryType, menuId }: IProp
     dispatch(SET_SUBS_DELIVERY_EXPECTED_DATE({ subsDeliveryExpectedDate: deliveryExpectedDate }));
     dispatch(INIT_BOTTOM_SHEET());
   };
-
-  if (isLoading) return <div>...로딩중</div>;
 
   return (
     <Container>
