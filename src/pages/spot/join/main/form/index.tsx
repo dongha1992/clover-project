@@ -340,7 +340,7 @@ const RegisterPage = () => {
         <BottomWrapper>
           <FlexRow>
             <Checkbox onChange={noticeHandler} isSelected={noticeChecked} />
-            <TextH5B margin="0 0 0 8px" padding="3px 0 0 0" onClick={noticeHandler}>
+            <TextH5B margin="0 0 0 8px" padding="3px 0 0 0" onClick={noticeHandler} pointer>
               픽업 장소 선정 유의사항을 확인했습니다.
             </TextH5B>
           </FlexRow>
