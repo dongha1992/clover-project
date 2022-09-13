@@ -192,7 +192,7 @@ const LocationPage = () => {
   };
 
   const goToAddressDetailPage = () => {
-    router.push({
+    router.replace({
       pathname: '/spot/location/address',
       query: {
         type: type,

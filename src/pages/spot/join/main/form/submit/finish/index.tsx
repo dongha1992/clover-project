@@ -106,7 +106,9 @@ const FinishPage = () => {
   );
 };
 
-const Container = styled.main``;
+const Container = styled.main`
+  padding-bottom: 56px;
+`;
 
 const FixedButton = styled.section`
   ${fixedBottom}

@@ -7,7 +7,8 @@ import { useRouter } from 'next/router';
 import { theme } from '@styles/theme';
 import { useGetNotiInfo } from '@queries/notification';
 import { userForm } from '@store/user';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { hide } from '@store/loading';
 
 const textStyle = {
   padding: '4px 0 0 0',
@@ -41,11 +42,15 @@ const BOTTOM_MENU = [
 /* TODO: selected tab hook으로 빼고 싶다.. */
 
 const Bottom = (): ReactElement => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const { me } = useSelector(userForm);
   const [selectedTab, setSelectedTab] = useState<string>('/category');
 
   const { data } = useGetNotiInfo('notiInfo', {
+    onSettled: () => {
+      dispatch(hide());
+    },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,

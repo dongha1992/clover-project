@@ -226,15 +226,11 @@ const SpotPage = () => {
           {isLoginSuccess ? <span>{me?.nickname.length! > 0 ? me?.nickname : me?.name}</span> : '회원'}님을 기다려요!
         </TextH2B>
       </HeaderTitle>
-      <RegistrationsCTAWrapper>
-        <RegistrationCTA onClick={goToRegiList}>
-          <FlexCenter>
-            <SVGIcon name="plusWhite" />
-            <TextH5B color={theme.white}>
-              프코스팟 신청할래요
-            </TextH5B>
-          </FlexCenter>
-        </RegistrationCTA>
+      <RegistrationsCTAWrapper onClick={goToRegiList}>
+        <SVGIcon name="plusWhite" />
+        <TextH5B color={theme.white}>
+          프코스팟 신청할래요
+        </TextH5B>
       </RegistrationsCTAWrapper>
       {isLoginSuccess && (
         <TopCTASlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
@@ -481,16 +477,17 @@ const HeaderTitle = styled.div`
   }
 `;
 
-const RegistrationsCTAWrapper = styled.article`
-  padding: 18px 24px 24px 24px;
-`;
-
-const RegistrationCTA = styled.div`
+const RegistrationsCTAWrapper = styled.div`
+  width: 165px;
   display: inline-block;
   background: ${theme.brandColor};
-  padding: 4px 13px 4px 8px;
+  padding: 6px 15px 6px 10px;
+  margin: 18px 24px 24px 24px;
   border-radius: 24px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const IconWrapper = styled.div`
