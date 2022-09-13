@@ -151,7 +151,9 @@ const SubmitPage = () => {
   );
 };
 
-const Container = styled.main``;
+const Container = styled.main`
+  padding-bottom: 56px;
+`;
 
 const Wrapper = styled.div`
   ${homePadding}

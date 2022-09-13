@@ -104,7 +104,7 @@ const RegisterPage = () => {
   };
 
   const goToLocation = () => {
-    router.push({
+    router.replace({
       pathname: '/spot/location',
       query: { type },
     });
@@ -365,7 +365,9 @@ const RegisterPage = () => {
   );
 };
 
-const Container = styled.main``;
+const Container = styled.main`
+  padding-bottom: 56px;
+`;
 
 const FormWrapper = styled.section`
   margin-bottom: 32px;
