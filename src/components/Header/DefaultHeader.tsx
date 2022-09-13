@@ -8,6 +8,7 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
 import { Obj } from '@model/index';
+import { useHistory } from '@context/History';
 
 type TProps = {
   title?: string;
@@ -16,6 +17,7 @@ type TProps = {
 const DefaultHeader = ({ title }: TProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { history } = useHistory();
 
   const { isSubscription, menuId, returnPath, isOrder, tab, isSpot } = router.query;
   const { menuItem, reviewImagesCount } = useSelector(menuSelector);
@@ -62,8 +64,8 @@ const DefaultHeader = ({ title }: TProps) => {
       router.replace('/onboarding');
     } else if (cartDelivery) {
       if (!isSubscription) {
-        router.replace('/cart');
-        // router.back();
+        // router.replace('/cart');
+        router.back();
       } else {
         router.replace({ pathname: '/subscription/set-info', query: router.query });
       }
@@ -95,10 +97,6 @@ const DefaultHeader = ({ title }: TProps) => {
       router.back();
     }
   };
-
-  // if (totalReview && !menuItem?.reviewCount) {
-  //   return <div>로딩</div>;
-  // }
 
   return (
     <Container>

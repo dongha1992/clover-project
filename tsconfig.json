@@ -15,7 +15,8 @@
       "@styles/*": ["./src/styles/*"],
       "@utils/*": ["./src/utils/*"],
       "@enum/*": ["./src/enum/*"],
-      "@queries/*": ["./src/queries/*"]
+      "@queries/*": ["./src/queries/*"],
+      "@context/*": ["./src/context/*"]
     },
     "allowJs": true,
     "skipLibCheck": true,

@@ -46,7 +46,6 @@ const SpotSearchPage = (): ReactElement => {
   const [pickUpList, setPickUpList] = useState<any>([]);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const [currentPosition, setCurrentPosition] = useState<any>();
 
   const userLocationLen = userLocation.emdNm?.length! > 0;
 
@@ -68,7 +67,7 @@ const SpotSearchPage = (): ReactElement => {
       const scrollTop = document.documentElement.scrollTop;
       const clientHeight = document.documentElement.clientHeight;
 
-      if (Math.round(scrollTop + clientHeight) >= scrollHeight) {
+      if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
         // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
         setPage((prev) => prev + 1);
       }
@@ -325,7 +324,7 @@ const SpotSearchPage = (): ReactElement => {
     }
   };
 
-  if (isLoadingRecomand || isLoadingEventSpot || isLoadingPickup) {
+  if (isLoadingRecomand || isLoadingEventSpot) {
     return <Loading />;
   }
 
@@ -556,12 +555,6 @@ const DefaultSearchContainer = styled.section<{ empty?: boolean }>`
       `;
     }
   }}
-`;
-
-const SearchResultContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  ${homePadding}
 `;
 
 const EventSlider = styled(Swiper)`
