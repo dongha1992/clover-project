@@ -6,7 +6,7 @@ import { theme } from '@styles/theme';
 export const Loading = ({ isShow = false }) => {
   return (
     <Overlay style={{ display: isShow ? 'flex' : 'none' }}>
-      <Lottie animationData={loadingAnimation} style={{ width: 150, height: 150 }} />
+      <Lottie animationData={loadingAnimation} style={{ width: 60, height: 60 }} />
     </Overlay>
   );
 };
