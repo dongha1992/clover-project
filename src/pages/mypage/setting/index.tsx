@@ -39,10 +39,7 @@ const SettingPage = () => {
 
   const checkHandler = async (value: any, value2?: any) => {
     let marketingValue = await (me[value] || me[value2]);
-    if (
-      (value === 'marketingEmailReceived' && value2 === 'marketingSmsReceived' && me?.marketingEmailReceived) ||
-      me?.marketingSmsReceived
-    ) {
+    if (value === 'marketingEmailReceived' && value2 === 'marketingSmsReceived') {
       dispatch(
         SET_ALERT({
           alertMessage:
@@ -64,7 +61,7 @@ const SettingPage = () => {
     }
 
     fatchUserProfile(
-      { ...appSettings, [value]: !me[value], [value2]: !marketingValue },
+      { ...appSettings, [value]: !me[value], [value2]: !me[value2] },
       {
         onSettled: () => {
           queryClient.refetchQueries('userProfile');
