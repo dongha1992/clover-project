@@ -5,20 +5,24 @@ import { NoNotiBox, NotiItem, NotiList, NOTI_MAP, TextBox } from '@pages/mypage/
 import { useInfiniteNotis } from '@queries/notification';
 import { SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
-import { useRef } from 'react';
+import { Dispatch, SetStateAction, useRef } from 'react';
 
 interface IProps {
   parentRef: any;
   postNotiChek: any;
+  setIsData: Dispatch<SetStateAction<boolean | undefined>>;
 }
 
-const NotiOrder = ({ parentRef, postNotiChek }: IProps) => {
+const NotiOrder = ({ parentRef, postNotiChek, setIsData }: IProps) => {
   const childRef = useRef<any>();
 
   const { data, fetchNextPage, isFetching } = useInfiniteNotis({
     key: ['notis', 'order'],
     size: 10,
     type: 'ORDER',
+    onSuccess: (data: any) => {
+      data?.pages[0]?.result.length !== 0 ? setIsData(true) : setIsData(false);
+    },
   });
 
   useIntersectionObserver({

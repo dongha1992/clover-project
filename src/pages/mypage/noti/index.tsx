@@ -28,6 +28,7 @@ const NotiPage = () => {
   const queryClient = useQueryClient();
   const parentRef = useRef<any>();
   const [selected, setSelected] = useState('ALL');
+  const [isData, setIsData] = useState<boolean>();
   const [filterList, setFilterList] = useState([
     {
       id: 1,
@@ -111,13 +112,22 @@ const NotiPage = () => {
           ))}
         </FilterList>
       </FilterWrapper>
-      {selected === 'ALL' && <NotiAll parentRef={parentRef} postNotiChek={postNotiChek} />}
-      {selected === 'ORDER' && <NotiOrder parentRef={parentRef} postNotiChek={postNotiChek} />}
-      {selected === 'SPOT' && <NotiSpot parentRef={parentRef} postNotiChek={postNotiChek} />}
-      {selected === 'ACTIVITY' && <NotiActivity parentRef={parentRef} postNotiChek={postNotiChek} />}
-      {selected === 'POINT' && <NotiPoint parentRef={parentRef} postNotiChek={postNotiChek} />}
-      {selected === 'COUPON' && <NotiCoupon parentRef={parentRef} postNotiChek={postNotiChek} />}
-      {selected === 'BENEFIT' && <NotiBenefit parentRef={parentRef} postNotiChek={postNotiChek} />}
+      {selected === 'ALL' && <NotiAll parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />}
+      {selected === 'ORDER' && <NotiOrder parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />}
+      {selected === 'SPOT' && <NotiSpot parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />}
+      {selected === 'ACTIVITY' && (
+        <NotiActivity parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />
+      )}
+      {selected === 'POINT' && <NotiPoint parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />}
+      {selected === 'COUPON' && <NotiCoupon parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />}
+      {selected === 'BENEFIT' && (
+        <NotiBenefit parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />
+      )}
+      {!isData && (
+        <NoNotiBox>
+          <TextB2R>아직 도착한 알림이 없어요. 😭</TextB2R>
+        </NoNotiBox>
+      )}
     </Container>
   );
 };
