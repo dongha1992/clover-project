@@ -1857,7 +1857,7 @@ export interface IBestReviews {
   userNickname: string;
   menuName?: string;
   menuDetailName?: string;
-  tag?: number;
+  tag?: string;
   rating: number;
   content: string;
   createdAt: string;
