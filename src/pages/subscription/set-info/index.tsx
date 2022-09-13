@@ -15,7 +15,6 @@ import {
   SET_SUBS_START_DATE,
   subscriptionForm,
 } from '@store/subscription';
-import { userForm } from '@store/user';
 import { fixedBottom, theme } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import { useRouter } from 'next/router';
@@ -27,6 +26,7 @@ import { SubsDeliveryTypeAndLocation } from '@components/Pages/Subscription';
 import { getOrderDetailApi, getOrdersApi } from '@api/order';
 import { getMenuDetailApi } from '@api/menu';
 import { last } from 'lodash-es';
+import { hide, show } from '@store/loading';
 
 // TODO(young) : 구독하기 메뉴 상세에서 들어온 구독 타입에 따라 설정해줘야함
 
@@ -39,8 +39,7 @@ const SubsSetInfoPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { subsStartDate, subsInfo, subsDeliveryExpectedDate } = useSelector(subscriptionForm);
-  const { isLoginSuccess } = useSelector(userForm);
-  const { userDestination, userTempDestination } = useSelector(destinationForm);
+  const { userDestination } = useSelector(destinationForm);
   const [subsDeliveryType, setSubsDeliveryType] = useState<string | string[]>();
   const [menuId, setMenuId] = useState<number>();
   const [userSelectPeriod, setUserSelectPeriod] = useState(subsInfo?.period && subsInfo.period);
@@ -77,11 +76,15 @@ const SubsSetInfoPage = () => {
   } = useQuery(
     'getMenuDetail',
     async () => {
+      dispatch(show());
       const { data } = await getMenuDetailApi(menuId!);
 
       return data?.data;
     },
     {
+      onSettled: () => {
+        dispatch(hide());
+      },
       onSuccess: (data) => {
         !subsInfo?.period &&
           setUserSelectPeriod(
