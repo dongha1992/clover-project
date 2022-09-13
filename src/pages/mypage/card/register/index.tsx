@@ -231,7 +231,6 @@ const CardRegisterPage = () => {
       // 필수조건 작성하기 전까지 버튼 비활성화
       if (!isDisabled) return;
 
-      /* TODO: 에러 내용 추가 / 벨리데이트 다시  */
       if (isCorporationCard) {
         if (expireDate.length < 4) {
           return alert('유효기간을 입력해주세요.');

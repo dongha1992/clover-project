@@ -37,8 +37,6 @@ const Tooltip = dynamic(() => import('@components/Shared/Tooltip/Tooltip'), {
   ssr: false,
 });
 
-/* TODO: map 리팩토링 */
-
 const DeliverInfoPage = () => {
   const [deliveryTypeWithTooltip, setDeliveryTypeWithTooltip] = useState<string>('');
   const [hasRecentOrder, setHasRecentOrder] = useState<boolean>(false);
