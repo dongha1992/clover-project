@@ -16,6 +16,7 @@ import { userForm } from '@store/user';
 import { useInfiniteMenuReviews } from '@queries/menu';
 import { SET_ALERT } from '@store/alert';
 import useIntersectionObserver from '@hooks/useIntersectionObserver';
+import { show, hide } from '@store/loading';
 /* TODO: 중복 코드 많음 , 리팩토링 */
 
 const DEFAULT_SIZE = 10;
@@ -38,12 +39,16 @@ const TotalReviewPage = ({ menuId }: IProps) => {
   } = useQuery(
     'getMenuDetail',
     async () => {
+      dispatch(show());
       const { data } = await getMenuDetailApi(Number(menuId)!);
       return data?.data;
     },
     {
       onSuccess: (data) => {
         dispatch(SET_MENU_ITEM(data));
+      },
+      onSettled: () => {
+        dispatch(hide());
       },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
@@ -61,6 +66,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
   const { data: reviewsImages, error: reviewsImagesError } = useQuery(
     'getMenuDetailReviewImages',
     async () => {
+      dispatch(show());
       const params = { id: Number(menuId)!, page: 1, size: 10 };
       const { data } = await getMenuDetailReviewImageApi(params);
       return data.data;
@@ -68,6 +74,9 @@ const TotalReviewPage = ({ menuId }: IProps) => {
 
     {
       onSuccess: (data) => {},
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       enabled: !!menuId,
@@ -98,6 +107,12 @@ const TotalReviewPage = ({ menuId }: IProps) => {
   };
 
   const hasImageReview = reviewsImages?.images?.length! !== 0;
+
+  if (isFetching) {
+    dispatch(show());
+  } else {
+    dispatch(hide());
+  }
 
   return (
     <Container ref={parentRef}>
