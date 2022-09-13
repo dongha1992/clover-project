@@ -298,7 +298,7 @@ const MypagePage: NextPageWithLayout = () => {
           // 비회원
           <>
             <UserInfoWrapper className="hideBorder">
-              <FlexRow onClick={() => onUnauthorized()}>
+              <FlexRow onClick={() => onUnauthorized()} pointer>
                 <TextH2B padding="0 6px 0 0">로그인을 해주세요</TextH2B>
                 <IconBox>
                   <SVGIcon name="arrowRight" />
@@ -441,6 +441,7 @@ const ImageWrapper = styled.li`
 const IconBox = styled.div`
   display: flex;
   cursor: pointer;
+  padding-top: 3px;
 `;
 
 export default MypagePage;

@@ -1,5 +1,6 @@
 import { getNotiInfoApi, getNotisApi, postNotiCheckApi } from '@api/notification';
 import { TNotiType } from '@model/index';
+import { hide, show } from '@store/loading';
 import {
   MutationKey,
   QueryKey,
@@ -9,16 +10,21 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query';
+import { useDispatch } from 'react-redux';
 
-export const useGetNotiInfo = (key: QueryKey, options?: UseQueryOptions<any>) =>
-  useQuery(
+export const useGetNotiInfo = (key: QueryKey, options?: UseQueryOptions<any>) => {
+  const dispatch = useDispatch();
+
+  return useQuery(
     key,
     async () => {
+      dispatch(show());
       const { data } = await getNotiInfoApi();
       return data.data.uncheckedCount;
     },
     options
   );
+};
 
 export const usePostNotiCheck = (key: MutationKey, options?: UseMutationOptions<any>) =>
   useMutation(
@@ -30,8 +36,20 @@ export const usePostNotiCheck = (key: MutationKey, options?: UseMutationOptions<
     options
   );
 
-export const useInfiniteNotis = ({ key, size, type }: { key: QueryKey; size: number; type?: TNotiType }) => {
+export const useInfiniteNotis = ({
+  key,
+  size,
+  type,
+  onSuccess,
+}: {
+  key: QueryKey;
+  size: number;
+  type?: TNotiType;
+  onSuccess?: any;
+}) => {
+  const dispatch = useDispatch();
   const fetchDatas = async ({ pageParam = 1 }) => {
+    dispatch(show());
     const { data } = await getNotisApi({ page: pageParam, size, type });
     return {
       result: data.data.notifications,
@@ -47,6 +65,10 @@ export const useInfiniteNotis = ({ key, size, type }: { key: QueryKey; size: num
         return null;
       }
     },
+    onSettled: () => {
+      dispatch(hide());
+    },
+    onSuccess,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
