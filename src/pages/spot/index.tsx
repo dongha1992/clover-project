@@ -364,7 +364,7 @@ const SpotPage = () => {
                 src="/images/fcospot/img_fcospot_banner_open.png"
                 width={'512px'}
                 height={'287px'}
-                alt="프코스팟 신청 완료 페이지 이미지"
+                alt="오픈 진행중인 프코스팟"
                 className="banner-open-img"
                 layout="responsive"
               />
@@ -400,7 +400,7 @@ const SpotPage = () => {
                 src="/images/fcospot/img_fcospot_banner_info.jpg"
                 width={'512px'}
                 height={'444px'}
-                alt="프코스팟 신청 완료 페이지 이미지"
+                alt="프코스팟 더 알아보기"
                 className="benner-info-img"
                 layout="responsive"
               />
@@ -418,12 +418,12 @@ const SpotPage = () => {
             </Wrapper>
           </>
         ) : (
-          <StoryContentsWrapper>
+          <StoryContentsWrapper onClick={goToSpotNotice}>
             <NextImage
               src="/images/fcospot/img_fcospot_banner_info.jpg"
               width={'512px'}
               height={'444px'}
-              alt="프코스팟 신청 완료 페이지 이미지"
+              alt="프코스팟 더 알아보기"
               className="benner-info-img"
               layout="responsive"
             />
