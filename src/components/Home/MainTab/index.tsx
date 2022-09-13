@@ -32,7 +32,7 @@ const MainTab = () => {
         return (
           <TabWrapper key={index} onClick={() => goToPromotion(item.link, item.id)}>
             <Image src="/menu/img_thumbnail_empty.jpg" height="80px" width="80px" className="rounded" alt="홈탭" />
-            <TextB2R padding="12px 0" pointer>
+            <TextB2R padding='12px 0 0 0' pointer textHideMultiline textHidelineNum={1}>
               {item.title}
             </TextB2R>
           </TabWrapper>
@@ -50,6 +50,7 @@ const Container = styled.div`
 `;
 
 const TabWrapper = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
