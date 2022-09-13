@@ -42,7 +42,7 @@ const CouponManagementPage = () => {
             submitBtnText: '확인',
           })
         );
-        /* TODO: 성공 혹 실패시 작업 */
+
         await queryClient.refetchQueries('getCouponList');
       },
       onError: async (error: any) => {

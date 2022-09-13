@@ -27,8 +27,6 @@ import { checkDestinationHelper } from '@utils/destination';
 import { Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 
-/* TODO: receiverName, receiverTel  */
-
 const deliveryMap: Obj = {
   parcel: '택배배송',
   morning: '새벽배송',

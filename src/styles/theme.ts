@@ -3,8 +3,6 @@ import { breakpoints } from '@utils/common/getMediaQuery';
 import { Obj } from '@model/index';
 import { createGlobalStyle } from 'styled-components';
 
-/* TODO: 주석 */
-
 export const theme: Obj = {
   brandColor: '#35AD73',
   brandColor3p: '#F5FBF8',
