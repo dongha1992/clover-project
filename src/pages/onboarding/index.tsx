@@ -337,7 +337,7 @@ const KakaoBtn = styled.div`
     bottom: 36%;
 
     ${({ theme }) => theme.mobile`
-    left: 20%;
+    left: 18%;
   `};
 
     ${({ theme }) => theme.sm`
@@ -356,7 +356,7 @@ const AppleBtn = styled.div`
     bottom: 36%;
 
     ${({ theme }) => theme.mobile`
-      left: 28%;
+      left: 25%;
   `};
 
     ${({ theme }) => theme.sm`

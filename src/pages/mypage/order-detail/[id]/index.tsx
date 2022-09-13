@@ -138,7 +138,7 @@ const OrderDetailPage = () => {
   const deliveryId = orderDeliveries?.id!;
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
-  const hasReview = orderDeliveries?.hasReview;
+  const canReview = orderDeliveries?.canReview;
 
   const isBeforeCompleted = isDelivering || canChangeDelivery;
 
@@ -428,7 +428,7 @@ const OrderDetailPage = () => {
                 isDeliveryComplete={isCompleted}
                 isCanceled={isCanceled}
                 goToReivew={goToReivew}
-                hasReview={hasReview}
+                canReview={canReview}
               />
             );
           })}
