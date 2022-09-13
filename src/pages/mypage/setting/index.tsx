@@ -40,23 +40,34 @@ const SettingPage = () => {
   const checkHandler = async (value: any, value2?: any) => {
     let marketingValue = await (me[value] || me[value2]);
     if (value === 'marketingEmailReceived' && value2 === 'marketingSmsReceived') {
-      dispatch(
-        SET_ALERT({
-          alertMessage:
-            '프레시코드의 인기 상품이나 프로모션, 신규 서비스 출시 정보를 받지 못할 수 있어요. 그래도 알림을 해제하시겠어요?',
-          closeBtnText: '취소',
-          onSubmit: () => {
-            fatchUserProfile(
-              { ...appSettings, [value]: !marketingValue, [value2]: !marketingValue },
-              {
-                onSettled: () => {
-                  queryClient.refetchQueries('userProfile');
-                },
-              }
-            );
-          },
-        })
-      );
+      if (marketingValue) {
+        dispatch(
+          SET_ALERT({
+            alertMessage:
+              '프레시코드의 인기 상품이나 프로모션, 신규 서비스 출시 정보를 받지 못할 수 있어요. 그래도 알림을 해제하시겠어요?',
+            closeBtnText: '취소',
+            onSubmit: () => {
+              fatchUserProfile(
+                { ...appSettings, [value]: !marketingValue, [value2]: !marketingValue },
+                {
+                  onSettled: () => {
+                    queryClient.refetchQueries('userProfile');
+                  },
+                }
+              );
+            },
+          })
+        );
+      } else {
+        fatchUserProfile(
+          { ...appSettings, [value]: !marketingValue, [value2]: !marketingValue },
+          {
+            onSettled: () => {
+              queryClient.refetchQueries('userProfile');
+            },
+          }
+        );
+      }
       return;
     }
 
