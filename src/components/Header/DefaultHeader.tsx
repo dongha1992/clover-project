@@ -64,8 +64,8 @@ const DefaultHeader = ({ title }: TProps) => {
       router.replace('/onboarding');
     } else if (cartDelivery) {
       if (!isSubscription) {
-        router.replace('/cart');
-        // router.back();
+        // router.replace('/cart');
+        router.back();
       } else {
         router.replace({ pathname: '/subscription/set-info', query: router.query });
       }
@@ -88,10 +88,9 @@ const DefaultHeader = ({ title }: TProps) => {
     } else if (addressPage) {
       isSpot ? router.replace({ pathname: '/mypage' }) : router.back();
     } else if (cart) {
-      const firstPath = history[0];
       sessionStorage.removeItem('checkedMenus');
       sessionStorage.removeItem('selectedDay');
-      router.push(firstPath);
+      router.back();
     } else if (totalReview || totalPhotoReview || reviewPage || reviewDetail) {
       tab === 'review' ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } }) : router.back();
     } else {
