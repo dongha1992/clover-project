@@ -24,7 +24,6 @@ interface IProps {
   deliveryId: number;
   delieryTime: string;
 }
-/* TODO: 배송일 변경용 캘린더 컴포넌트 따로? */
 
 const CalendarSheet = ({
   title,

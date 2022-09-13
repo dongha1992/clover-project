@@ -23,8 +23,6 @@ import { useToast } from '@hooks/useToast';
 dayjs.extend(isSameOrBefore);
 dayjs.locale('ko');
 
-/* TODO ITEM과 싱크 */
-
 type TProps = {
   item: IOrderedMenuDetails;
   isHorizontal?: boolean;
@@ -34,9 +32,6 @@ const DetailItem = ({ item, isHorizontal }: TProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { categoryMenus } = useSelector(menuSelector);
-
-  const { type } = useSelector(filterSelector);
 
   const { showToast } = useToast();
 
@@ -120,16 +115,6 @@ const DetailItem = ({ item, isHorizontal }: TProps) => {
   const goToDetail = (item: IOrderedMenuDetails) => {
     dispatch(SET_MENU_ITEM(item));
     router.push(`/menu/${item.menu.id}`);
-  };
-
-  const goToLogin = () => {
-    return dispatch(
-      SET_ALERT({
-        alertMessage: '로그인이 필요한 기능이에요.\n로그인 하시겠어요?',
-        onSubmit: () => router.push(`/onboarding?returnPath=${encodeURIComponent(String(router.asPath))}`),
-        closeBtnText: '취소',
-      })
-    );
   };
 
   return (

@@ -19,8 +19,6 @@ OrderFilter: 단일 선택 필터
 
 */
 
-/* TODO : 전체선택 시  */
-
 const MenuFilter = () => {
   const [selectedCheckboxIds, setSelectedCheckboxIds] = useState<string[]>([]);
   const [selectedRadioId, setSelectedRadioId] = useState<string>('');
