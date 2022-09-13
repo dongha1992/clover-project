@@ -8,6 +8,7 @@ import { SET_ALERT } from '@store/alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { menuSelector } from '@store/menu';
 import { Obj } from '@model/index';
+import { useHistory } from '@context/History';
 
 type TProps = {
   title?: string;
@@ -16,6 +17,7 @@ type TProps = {
 const DefaultHeader = ({ title }: TProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { history } = useHistory();
 
   const { isSubscription, menuId, returnPath, isOrder, tab, isSpot } = router.query;
   const { menuItem, reviewImagesCount } = useSelector(menuSelector);
@@ -86,19 +88,16 @@ const DefaultHeader = ({ title }: TProps) => {
     } else if (addressPage) {
       isSpot ? router.replace({ pathname: '/mypage' }) : router.back();
     } else if (cart) {
+      const firstPath = history[0];
       sessionStorage.removeItem('checkedMenus');
       sessionStorage.removeItem('selectedDay');
-      router.back();
+      router.push(firstPath);
     } else if (totalReview || totalPhotoReview || reviewPage || reviewDetail) {
       tab === 'review' ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } }) : router.back();
     } else {
       router.back();
     }
   };
-
-  // if (totalReview && !menuItem?.reviewCount) {
-  //   return <div>로딩</div>;
-  // }
 
   return (
     <Container>
