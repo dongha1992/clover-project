@@ -38,7 +38,6 @@ const CheckTimerByDelivery = ({ isTooltip, isCartSheet }: IProps) => {
   const deliveryType = getTargetDelivery(timerResult);
 
   const msgHandler = () => {
-    /* TODO: state 관리 필요? */
     setTimerMsg(`${targetDelivery} 마감 ${timer} 전 ${isTooltip ? `(${msgMapper[targetDelivery]})` : ''}`);
   };
 

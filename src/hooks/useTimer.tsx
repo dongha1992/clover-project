@@ -43,7 +43,6 @@ const useTimer = () => {
   );
 
   useEffect(() => {
-    /* TODO: 타이머 끝내는 기준 */
     if (timer === '00:00') {
       dispatch(SET_TIMER_STATUS({ isTimerTooltip: false }));
       setDelay(null);
@@ -57,7 +56,6 @@ const useTimer = () => {
     }
   }, [isInitDelay]);
 
-  /*TODO: 불필요? */
   useEffect(() => {
     timerRef.current = getRestTimeTilLimit();
   }, [timer]);

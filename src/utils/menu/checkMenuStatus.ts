@@ -37,10 +37,7 @@ export const checkMenuStatus = (menu: IMenus | IMenuDetail) => {
     const today = dayjs();
     const diff = dayjs(openedAt).diff(today, 'day', true);
 
-    // const isDisplayBadge = diff > 0 && diff <= ONE_WEEK;
-    /* TODO: 임시 */
-    // const customOpenedAt = openedAt?.replace(/-/g, '/');
-    const isDisplayBadge = diff > 0;
+    const isDisplayBadge = diff > 0 && diff <= ONE_WEEK;
     const isBeforeThanLaunchedAt = today.isSameOrBefore(openedAt, 'day');
 
     try {

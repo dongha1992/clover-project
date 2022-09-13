@@ -83,8 +83,6 @@ const CartSheet = ({ menuItem }: any) => {
 
   const queryClient = useQueryClient();
 
-  /* TODO: axios 여러번 */
-
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
       const reqBody = selectedMenus.map((item) => {
