@@ -123,7 +123,7 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
               </MenuTextBox>
             </MenuLi>
           ))}
-          {item?.status === 'COMPLETED' && !item.orderMenus[0].hasReview && (
+          {item?.status === 'COMPLETED' && item.orderMenus[0].canReview && (
             <MenuLi className="menuLi">
               <Button backgroundColor="#fff" color="#242424" border onClick={goToReview}>
                 후기 작성하기
