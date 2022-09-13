@@ -5,19 +5,23 @@ import { NoNotiBox, NotiItem, NotiList, NOTI_MAP, TextBox } from '@pages/mypage/
 import { useInfiniteNotis } from '@queries/notification';
 import { SVGIcon } from '@utils/common';
 import dayjs from 'dayjs';
-import { useRef } from 'react';
+import { Dispatch, SetStateAction, useRef } from 'react';
 
 interface IProps {
   parentRef: any;
   postNotiChek: any;
+  setIsData: Dispatch<SetStateAction<boolean | undefined>>;
 }
 
-const NotiAll = ({ parentRef, postNotiChek }: IProps) => {
+const NotiAll = ({ parentRef, postNotiChek, setIsData }: IProps) => {
   const childRef = useRef<any>();
 
   const { data, fetchNextPage, isFetching } = useInfiniteNotis({
     key: ['notis', 'all'],
     size: 10,
+    onSuccess: (data: any) => {
+      data?.pages[0]?.result.length !== 0 ? setIsData(true) : setIsData(false);
+    },
   });
 
   useIntersectionObserver({
@@ -31,7 +35,7 @@ const NotiAll = ({ parentRef, postNotiChek }: IProps) => {
 
   return (
     <>
-      {data?.pages[0]?.result.length !== 0 ? (
+      {data?.pages[0]?.result.length !== 0 &&
         data?.pages?.map((page: any, index) => (
           <NotiList key={index}>
             {page.result?.map((item: IGetNoti, index: number) => (
@@ -55,12 +59,7 @@ const NotiAll = ({ parentRef, postNotiChek }: IProps) => {
               </NotiItem>
             ))}
           </NotiList>
-        ))
-      ) : (
-        <NoNotiBox>
-          <TextB2R>아직 도착한 알림이 없어요. 😭</TextB2R>
-        </NoNotiBox>
-      )}
+        ))}
       <div ref={childRef}></div>
     </>
   );

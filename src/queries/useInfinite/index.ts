@@ -1,6 +1,9 @@
+import { hide } from '@store/loading';
 import { useInfiniteQuery, QueryFunction, QueryKey } from 'react-query';
+import { useDispatch } from 'react-redux';
 
 export const useInfinite = (key: QueryKey, fetchDatas: QueryFunction, enabled?: string) => {
+  const dispatch = useDispatch();
   return useInfiniteQuery(key, fetchDatas, {
     getNextPageParam: (lastPage: any, pages) => {
       if (lastPage.totalPage >= lastPage.nextPage) {
@@ -8,6 +11,9 @@ export const useInfinite = (key: QueryKey, fetchDatas: QueryFunction, enabled?: 
       } else {
         return null;
       }
+    },
+    onSettled: () => {
+      dispatch(hide());
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,

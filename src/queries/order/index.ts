@@ -10,6 +10,8 @@ import {
   UseQueryOptions,
 } from 'react-query';
 import { useInfinite } from '@queries/useInfinite';
+import { useDispatch } from 'react-redux';
+import { show } from '@store/loading';
 
 export const useGetOrders = (key: QueryKey, params: IGetOrderRequest, options?: UseQueryOptions<any>) =>
   useQuery(
@@ -55,7 +57,9 @@ export const useDeleteOrderCancel = (key: MutationKey, options?: UseMutationOpti
   );
 
 export const useInfiniteOrders = ({ days, size, type }: { days: number; size: number; type: string }) => {
+  const dispatch = useDispatch();
   const fetchDatas = async ({ pageParam = 1 }) => {
+    dispatch(show());
     const { data } = await getOrdersApi({ days: days, page: pageParam, size: size, type: type });
     data.data.orders.map((item: IGetOrders) => {
       item.orderDeliveries.sort(
