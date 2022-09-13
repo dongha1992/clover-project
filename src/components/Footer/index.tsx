@@ -53,7 +53,7 @@ const Footer = () => {
           <TextB3R>주소 : 서울특별시 성동구 왕십리로 115,</TextB3R>
           <TextB3R>헤이그라운드 서울숲점 7층</TextB3R>
           <TextB3R>사업자등록번호 : 883-81-00307</TextB3R>
-          <TextB3R padding="0 0 8px 0">통신판매업신고 : 제 2016-서울용산-00657</TextB3R>
+          <TextB3R>통신판매업신고 : 제 2016-서울용산-00657</TextB3R>
           <TextB3R>전화문의 : 1644-4559</TextB3R>
           <TextB3R>제휴문의 : biz@freshcode.me</TextB3R>
           <TextB3R>카카오ID : @프레시코드-freshcode</TextB3R>

@@ -103,7 +103,7 @@ const GeneralMenusPriceBox = ({
       {deliveryFeeDiscount > 0 && (
         <FlexBetween padding="8px 0 0 0">
           <TextB2R>배송비 할인</TextB2R>
-          <TextB2R>{getFormatPrice(String(deliveryFeeDiscount))}원</TextB2R>
+          <TextB2R>-{getFormatPrice(String(deliveryFeeDiscount))}원</TextB2R>
         </FlexBetween>
       )}
       <BorderLine height={1} margin="16px 0" />

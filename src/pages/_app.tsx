@@ -15,6 +15,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import Script from 'next/script';
 import { NAME_REGX } from '@constants/regex';
 import { useRouter } from 'next/router';
+import { HistoryProvider } from '@context/History';
 
 // persist
 import { persistStore } from 'redux-persist';
@@ -282,13 +283,15 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
       </>
 
       <QueryClientProvider client={queryClient.current}>
-        <ThemeProvider theme={{ ...theme, ...getMediaQuery, isWithContentsSection, isMobile }}>
-          <GlobalStyle />
-          <PersistGate persistor={store.__persistor}>
-            <ReactQueryDevtools initialIsOpen={false} />
-            {getLayout(<Component {...pageProps} />)}
-          </PersistGate>
-        </ThemeProvider>
+        <HistoryProvider>
+          <ThemeProvider theme={{ ...theme, ...getMediaQuery, isWithContentsSection, isMobile }}>
+            <GlobalStyle />
+            <PersistGate persistor={store.__persistor}>
+              <ReactQueryDevtools initialIsOpen={false} />
+              {getLayout(<Component {...pageProps} />)}
+            </PersistGate>
+          </ThemeProvider>
+        </HistoryProvider>
         <button id="custom-ch-btn" style={{ display: 'none' }}>
           문의하기
         </button>

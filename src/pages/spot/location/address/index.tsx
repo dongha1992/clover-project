@@ -122,6 +122,7 @@ const AddressDetailPage = () => {
 
 const Container = styled.div`
   position: relative;
+  padding-bottom: 56px;
 `;
 
 const Wrapper = styled.section`

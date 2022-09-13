@@ -138,7 +138,7 @@ const OrderDetailPage = () => {
   const deliveryId = orderDeliveries?.id!;
   const isSpot = orderDetail?.delivery === 'SPOT';
   const isParcel = orderDetail?.delivery === 'PARCEL';
-  const hasReview = orderDeliveries?.hasReview;
+  const canReview = orderDeliveries?.canReview;
 
   const isBeforeCompleted = isDelivering || canChangeDelivery;
 
@@ -428,7 +428,7 @@ const OrderDetailPage = () => {
                 isDeliveryComplete={isCompleted}
                 isCanceled={isCanceled}
                 goToReivew={goToReivew}
-                hasReview={hasReview}
+                canReview={canReview}
               />
             );
           })}
@@ -536,7 +536,7 @@ const OrderDetailPage = () => {
         {deliveryFeeDiscount > 0 && (
           <FlexBetween padding="8px 0 0 0">
             <TextB2R>배송비 할인</TextB2R>
-            <TextB2R>{getFormatPrice(String(deliveryFeeDiscount))}원</TextB2R>
+            <TextB2R>-{getFormatPrice(String(deliveryFeeDiscount))}원</TextB2R>
           </FlexBetween>
         )}
         <BorderLine height={1} margin="16px 0" />
