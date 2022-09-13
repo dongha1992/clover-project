@@ -2,21 +2,29 @@ import { getLikeMenus } from '@api/menu';
 import { SubsItem } from '@components/Pages/Subscription';
 import { Button } from '@components/Shared/Button';
 import { TextB2R } from '@components/Shared/Text';
+import { hide, show } from '@store/loading';
 import router from 'next/router';
 import React from 'react';
 import { useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { MypageLikeMenusContainer } from '../general';
 
 const SubscriptionDibPage = () => {
+  const dispatch = useDispatch();
+
   const { data: likeMenus, isLoading } = useQuery(
     ['getLikeMenus', 'SUBSCRIPTION'],
     async () => {
+      dispatch(show());
       const { data } = await getLikeMenus('SUBSCRIPTION');
 
       return data.data;
     },
     {
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }

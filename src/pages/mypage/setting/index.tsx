@@ -37,12 +37,11 @@ const SettingPage = () => {
   });
   const isApp = useIsApp();
 
-  const checkHandler = (value: any, value2?: any) => {
+  const checkHandler = async (value: any, value2?: any) => {
+    let marketingValue = await (me[value] || me[value2]);
     if (
-      value === 'marketingEmailReceived' &&
-      value2 === 'marketingSmsReceived' &&
-      me.marketingEmailReceived &&
-      me.marketingSmsReceived
+      (value === 'marketingEmailReceived' && value2 === 'marketingSmsReceived' && me?.marketingEmailReceived) ||
+      me?.marketingSmsReceived
     ) {
       dispatch(
         SET_ALERT({
@@ -51,7 +50,7 @@ const SettingPage = () => {
           closeBtnText: '취소',
           onSubmit: () => {
             fatchUserProfile(
-              { ...appSettings, [value]: !me[value], [value2]: !me[value2] },
+              { ...appSettings, [value]: !marketingValue, [value2]: !marketingValue },
               {
                 onSettled: () => {
                   queryClient.refetchQueries('userProfile');
@@ -65,7 +64,7 @@ const SettingPage = () => {
     }
 
     fatchUserProfile(
-      { ...appSettings, [value]: !me[value], [value2]: !me[value2] },
+      { ...appSettings, [value]: !me[value], [value2]: !marketingValue },
       {
         onSettled: () => {
           queryClient.refetchQueries('userProfile');
@@ -118,11 +117,11 @@ const SettingPage = () => {
               <TextH4B>마케팅 정보 수신 동의</TextH4B>
               <ToggleButton
                 onChange={() => checkHandler('marketingEmailReceived', 'marketingSmsReceived')}
-                status={me?.marketingEmailReceived}
+                status={me?.marketingEmailReceived && me?.marketingSmsReceived}
               />
             </FlexBetween>
             <TextB2R color={theme.greyScale65} padding="2px 0 0 0">
-              마케팅 정보 수신 {me?.marketingEmailReceived ? '동의' : '해제'}{' '}
+              마케팅 정보 수신 {me?.marketingEmailReceived && me?.marketingSmsReceived ? '동의' : '해제'}{' '}
               {dayjs(me?.metaData?.responsedAt).format('YYYY-MM-DD')}
             </TextB2R>
             <TextB3R color={theme.brandColor} padding="8px 0 0 0">
