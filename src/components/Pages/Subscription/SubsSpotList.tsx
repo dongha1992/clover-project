@@ -54,6 +54,7 @@ export const ListBox = styled.div`
 
 export const SubsList = styled(Swiper)`
   width: 100%;
+  padding-right: 24px;
   > div {
     margin-right: 16px;
     margin-bottom: 0;

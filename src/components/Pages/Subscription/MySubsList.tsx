@@ -48,7 +48,7 @@ const Head = styled.div`
 `;
 
 const ListContainer = styled(Swiper)`
-  width: auto;
+  width: 100%;
   padding: 24px;
   background-color: ${theme.greyScale3};
   .swiper-slide {

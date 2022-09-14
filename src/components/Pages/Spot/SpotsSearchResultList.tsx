@@ -423,7 +423,7 @@ const SpotsSearchResultList = ({ item, hasCart, map, recommand, dragging }: IPro
             },
           });
         } else if (isDelivery && isSubs) {
-          router.push({
+          router.replace({
             pathname: `/spot/detail/${id}`,
             query: {
               isSpot: true,

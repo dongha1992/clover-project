@@ -80,7 +80,7 @@ const SubsDeliveryChangeSheet = ({ goToDeliverySearch, isCancel }: IProps) => {
         })}
       </RadioWrapper>
       <BottomButton onClick={destinationChangeHandler}>
-        <TextH5B>확인</TextH5B>
+        <TextH5B color="#fff">확인</TextH5B>
       </BottomButton>
     </Container>
   );

@@ -17,6 +17,7 @@ import useUnSubsStatus from '@hooks/subscription/useUnSubsStatus';
 import { IOrderDetail, IResponse } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { hide } from '@store/loading';
 import { subscriptionForm } from '@store/subscription';
 import { userForm } from '@store/user';
 import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexEnd, FlexRow, theme } from '@styles/theme';
@@ -74,6 +75,9 @@ const SubsDetailPage = () => {
       setSubDeliveries(subArr);
       setCompletedDeliveryCount(deliveryCount);
       setDeliveryDay(Array.from(pickupDayObj));
+    },
+    onSettled: () => {
+      dispatch(hide());
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
