@@ -9,8 +9,8 @@ import { getCustomDate } from '@utils/destination/';
 import dayjs from 'dayjs';
 interface IProps {
   coupon: ICoupon;
-  selectCouponHandler: (coupon: ICoupon) => void;
-  isSelected: boolean;
+  selectCouponHandler?: (coupon: ICoupon) => void;
+  isSelected?: boolean;
   isMypage?: boolean;
 }
 
@@ -40,7 +40,7 @@ const MypageCouponItem = ({ coupon, selectCouponHandler, isSelected, isMypage }:
         if (canNotUse) {
           return;
         }
-        selectCouponHandler(coupon);
+        selectCouponHandler && selectCouponHandler(coupon);
       }}
     >
       <Wrapper>
