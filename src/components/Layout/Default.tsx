@@ -14,6 +14,7 @@ import BottomSheet from '@components/BottomSheet';
 import ImageViewer from '@components/ImageViewer';
 import { bottomSheetForm } from '@store/bottomSheet';
 import NextImage from 'next/image';
+import { commonSelector } from '@store/common';
 
 interface IDefaultLayoutProps {
   children: ReactElement;
@@ -25,6 +26,7 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
   const toast = useSelector(toastSelector);
   const imageViewerState = useSelector(imageViewerSelector);
   const loadingState = useSelector((state: AppState) => state.loading);
+  const { isMobile } = useSelector(commonSelector);
 
   // set 1vh for all devices
   useEffect(() => {
@@ -40,7 +42,7 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
 
   return (
     <>
-      <Loading isShow={loadingState?.isShown}></Loading>
+      {!isMobile && <BackgroundImg />}
       <Container>
         <Center>
           {alert && (
@@ -67,14 +69,14 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
             <div className="left-contents">
               <NextImage
                 src="/images/img_brandstory_desktop.png"
-                width="512px"
-                height="688px"
+                width="401px"
+                height="381px"
                 alt="프코스팟 매장이미지"
-                layout="responsive"
               />
             </div>
           </Left>
           <Right id="right">
+            <Loading isShow={loadingState?.isShown}></Loading>
             <Header />
             {toast.message && <Toast />}
             <Main>{children}</Main>
@@ -86,6 +88,13 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
     </>
   );
 };
+const BackgroundImg = styled.div`
+  background: url('/images/backgroundImg.png') no-repeat bottom;
+  background-size: cover;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -94,12 +103,12 @@ const Container = styled.div`
   width: 100%;
   /* max-height: 100vh; */
   box-sizing: border-box;
-  background-color: #fff;
+  background-color: tff;
 `;
 
 const Center = styled.div`
   position: relative;
-  background-color: white;
+  background-color: transparent;
   display: flex;
   width: 100%;
   max-width: ${breakpoints.desktop}px;
@@ -118,8 +127,9 @@ const Right = styled.div`
   width: 50%;
   max-width: ${breakpoints.mobile}px;
   background-color: white;
-  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.2);
-
+  @media (min-width: 512px) {
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.2);
+  }
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
     left: 0px;
@@ -131,14 +141,19 @@ const Right = styled.div`
 const Left = styled.div`
   position: relative;
   width: 512px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   .left-contents {
     position: fixed;
     width: 512px;
     height: 100vh;
     top: 50%;
     transform: translateY(-50%);
-    display: grid;
-    align-items: end;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* object-fit: contain; */
   }
   ${({ theme }) => theme.desktop`  
     display: none;

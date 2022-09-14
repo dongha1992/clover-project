@@ -3,21 +3,29 @@ import { Item } from '@components/Item';
 import { SubsItem } from '@components/Pages/Subscription';
 import { Button } from '@components/Shared/Button';
 import { TextB2R } from '@components/Shared/Text';
+import { hide, show } from '@store/loading';
 import { FlexWrapWrapper } from '@styles/theme';
 import router from 'next/router';
 import React from 'react';
 import { useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 const GeneralDibPage = () => {
+  const dispatch = useDispatch();
+
   const { data: likeMenus, isLoading } = useQuery(
     ['getLikeMenus', 'GENERAL'],
     async () => {
+      dispatch(show());
       const { data } = await getLikeMenus('GENERAL');
 
       return data.data;
     },
     {
+      onSettled: () => {
+        dispatch(hide());
+      },
       refetchOnMount: true,
       refetchOnWindowFocus: false,
     }
