@@ -25,7 +25,7 @@ export const useGetOrders = (key: QueryKey, params: IGetOrderRequest, options?: 
 
 export const useGetOrderDetail = (key: QueryKey, id: number, options?: UseQueryOptions<any>) => {
   const dispatch = useDispatch();
-  useQuery(
+  return useQuery(
     key,
     async () => {
       dispatch(show());
