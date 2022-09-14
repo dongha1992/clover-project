@@ -37,30 +37,37 @@ const SettingPage = () => {
   });
   const isApp = useIsApp();
 
-  const checkHandler = (value: any, value2?: any) => {
-    if (
-      value === 'marketingEmailReceived' &&
-      value2 === 'marketingSmsReceived' &&
-      me.marketingEmailReceived &&
-      me.marketingSmsReceived
-    ) {
-      dispatch(
-        SET_ALERT({
-          alertMessage:
-            '프레시코드의 인기 상품이나 프로모션, 신규 서비스 출시 정보를 받지 못할 수 있어요. 그래도 알림을 해제하시겠어요?',
-          closeBtnText: '취소',
-          onSubmit: () => {
-            fatchUserProfile(
-              { ...appSettings, [value]: !me[value], [value2]: !me[value2] },
-              {
-                onSettled: () => {
-                  queryClient.refetchQueries('userProfile');
-                },
-              }
-            );
-          },
-        })
-      );
+  const checkHandler = async (value: any, value2?: any) => {
+    let marketingValue = await (me[value] || me[value2]);
+    if (value === 'marketingEmailReceived' && value2 === 'marketingSmsReceived') {
+      if (marketingValue) {
+        dispatch(
+          SET_ALERT({
+            alertMessage:
+              '프레시코드의 인기 상품이나 프로모션, 신규 서비스 출시 정보를 받지 못할 수 있어요. 그래도 알림을 해제하시겠어요?',
+            closeBtnText: '취소',
+            onSubmit: () => {
+              fatchUserProfile(
+                { ...appSettings, [value]: !marketingValue, [value2]: !marketingValue },
+                {
+                  onSettled: () => {
+                    queryClient.refetchQueries('userProfile');
+                  },
+                }
+              );
+            },
+          })
+        );
+      } else {
+        fatchUserProfile(
+          { ...appSettings, [value]: !marketingValue, [value2]: !marketingValue },
+          {
+            onSettled: () => {
+              queryClient.refetchQueries('userProfile');
+            },
+          }
+        );
+      }
       return;
     }
 
@@ -118,11 +125,11 @@ const SettingPage = () => {
               <TextH4B>마케팅 정보 수신 동의</TextH4B>
               <ToggleButton
                 onChange={() => checkHandler('marketingEmailReceived', 'marketingSmsReceived')}
-                status={me?.marketingEmailReceived}
+                status={me?.marketingEmailReceived && me?.marketingSmsReceived}
               />
             </FlexBetween>
             <TextB2R color={theme.greyScale65} padding="2px 0 0 0">
-              마케팅 정보 수신 {me?.marketingEmailReceived ? '동의' : '해제'}{' '}
+              마케팅 정보 수신 {me?.marketingEmailReceived && me?.marketingSmsReceived ? '동의' : '해제'}{' '}
               {dayjs(me?.metaData?.responsedAt).format('YYYY-MM-DD')}
             </TextB2R>
             <TextB3R color={theme.brandColor} padding="8px 0 0 0">

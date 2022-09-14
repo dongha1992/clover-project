@@ -12,8 +12,8 @@ export const Loading = ({ isShow = false }) => {
 };
 
 const Overlay = styled.div`
-  position: fixed;
-  height: 100%;
+  position: absolute;
+  height: 100vh;
   width: 100%;
   top: 0;
   left: 0;
