@@ -48,6 +48,7 @@ const DestinationDetailPage = () => {
   const dispatch = useDispatch();
 
   let { orderId, isSubscription, subsDeliveryType, destinationId, menuId, deliveryType } = router.query;
+  const isSubs = isSubscription === 'true';
 
   // 배송 가능 여부
   const { tempLocation, availableDestination, isCanNotDelivery } = useSelector(destinationForm);
@@ -150,7 +151,7 @@ const DestinationDetailPage = () => {
               query: { orderId, destinationId },
             });
 
-            if (isSubscription) {
+            if (isSubs) {
               router.replace({
                 pathname: '/subscription/set-info',
                 query: { subsDeliveryType: subsDeliveryType, menuId },
@@ -160,7 +161,7 @@ const DestinationDetailPage = () => {
             router.replace('/cart');
           }
         } catch (error) {
-          if (isSubscription) {
+          if (isSubs) {
             router.replace({
               pathname: '/subscription/set-info',
               query: { subsDeliveryType: subsDeliveryType, menuId },
@@ -172,10 +173,10 @@ const DestinationDetailPage = () => {
         dispatch(SET_TEMP_DESTINATION(userDestinationInfo));
         dispatch(SET_DESTINATION_TYPE(destinationDeliveryType));
         dispatch(INIT_LOCATION_TEMP());
-        if (isSubscription) {
+        if (isSubs) {
           router.replace({
             pathname: '/cart/delivery-info',
-            query: { subsDeliveryType, isSubscription: true, menuId },
+            query: { subsDeliveryType, isSubscription: isSubs, menuId },
           });
         } else {
           router.replace({ pathname: '/cart/delivery-info', query: { deliveryType: destinationStatusByRule } });

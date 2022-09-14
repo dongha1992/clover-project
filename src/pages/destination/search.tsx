@@ -26,6 +26,7 @@ const DestinationSearchPage = () => {
   const dispatch = useDispatch();
 
   const { orderId, isSubscription, destinationId, subsDeliveryType, menuId, deliveryType } = router.query;
+  const isSubs = isSubscription === 'true';
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
     ['getDestinationList', selectDeliveryType],
@@ -78,15 +79,15 @@ const DestinationSearchPage = () => {
     if (orderId) {
       router.push({
         pathname: '/mypage/order-detail/edit/[orderId]',
-        query: { orderId, destinationId: destination.id },
+        query: { orderId, destinationId: isSubs ? destinationId : destination.id, isSubscription: isSubs },
       });
       dispatch(SET_TEMP_EDIT_DESTINATION(destination));
     } else {
       dispatch(SET_TEMP_DESTINATION(destination));
-      if (isSubscription) {
+      if (isSubs) {
         router.replace({
           pathname: '/cart/delivery-info',
-          query: { subsDeliveryType, isSubscription: true, destinationId: destination.id, menuId },
+          query: { subsDeliveryType, isSubscription: isSubs, destinationId: destination.id, menuId },
         });
       } else {
         router.replace({
@@ -109,7 +110,7 @@ const DestinationSearchPage = () => {
       if (isSubscription) {
         router.replace({
           pathname: '/destination/destination-detail',
-          query: { subsDeliveryType, isSubscription: true, menuId },
+          query: { subsDeliveryType, isSubscription: isSubs, menuId },
         });
       } else {
         router.replace({
@@ -131,10 +132,11 @@ const DestinationSearchPage = () => {
   }, [router.isReady]);
 
   useEffect(() => {
-    if (isSubscription) {
-      if (!subsDeliveryType) {
-        router.replace('subscription');
-      }
+    if (isSubs) {
+      // if (!subsDeliveryType) {
+
+      //   router.replace('/subscription');
+      // }
       return;
     } else {
       if (!deliveryType) router.replace('/cart');
