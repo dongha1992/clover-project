@@ -620,7 +620,7 @@ const ProfilePage = () => {
         </UserInfoWrapper>
         <BorderLine height={8} margin="32px 0" />
         <DeleteUser onClick={getDeleteUser}>
-          <TextH5B color={theme.greyScale65} textDecoration="underline">
+          <TextH5B color={theme.greyScale65} textDecoration="underline" pointer>
             탈퇴하기
           </TextH5B>
         </DeleteUser>

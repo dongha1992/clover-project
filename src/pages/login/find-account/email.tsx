@@ -60,6 +60,7 @@ const FindEmailPage = () => {
   };
 
   const getHelpEmail = async () => {
+    if (!isAllValid) return;
     setErrorMessage('');
     if (phoneRef.current && nameRef.current) {
       const name = nameRef.current?.value;
@@ -112,7 +113,7 @@ const FindEmailPage = () => {
         {errorMessage && <Validation>{errorMessage}</Validation>}
       </InputWrapper>
       <BtnWrapper onClick={getHelpEmail}>
-        <Button disabled={!isAllValid} height="100%" borderRadius="0">
+        <Button disabled2={!isAllValid} height="100%" borderRadius="0">
           요청하기
         </Button>
       </BtnWrapper>
