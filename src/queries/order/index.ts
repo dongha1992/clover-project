@@ -27,6 +27,8 @@ export const useGetOrderDetail = (key: QueryKey, id: number, options?: UseQueryO
   useQuery(
     key,
     async () => {
+      const dispatch = useDispatch();
+      dispatch(show());
       const { data } = await getOrderDetailApi(id);
       data.data.orderDeliveries.sort(
         (a, b) => Number(a.deliveryDate.replaceAll('-', '')) - Number(b.deliveryDate.replaceAll('-', ''))
