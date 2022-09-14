@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MainTab from '@components/Home/MainTab';
-import { textH3, homePadding, theme, FlexWrapWrapper } from '@styles/theme';
+import { homePadding, theme, FlexWrapWrapper } from '@styles/theme';
 import { TextH5B, TextH3B } from '@components/Shared/Text';
 import { Item } from '@components/Item';
 import { useDispatch } from 'react-redux';
@@ -122,11 +122,11 @@ const Home = () => {
                       layout="responsive"
                       alt="홈 기획전 이미지"
                     />
-                    <SliderWrapper slidesPerView={'auto'} spaceBetween={25} speed={500}>
+                    <SliderWrapper slidesPerView={'auto'} spaceBetween={16} speed={500}>
                       {item?.exhibition.menus?.map((item: IMenus, index: number) => {
                         if (index > 9) return;
                         return (
-                          <SwiperSlide className="swiper-slide" key={index}>
+                          <SwiperSlide key={index}>
                             <Item item={item} isHorizontal />
                           </SwiperSlide>
                         );
@@ -182,10 +182,10 @@ const FlexSpace = styled.div`
 `;
 
 const SliderWrapper = styled(Swiper)`
-  width: auto;
+  width: 100%;
   padding: 24px 24px 0 24px;
   .swiper-slide {
-    width: 120px;
+    width: 132px;
   }
 `;
 
