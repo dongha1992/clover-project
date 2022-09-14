@@ -12,6 +12,7 @@ import { ISubsActiveDate } from '@model/index';
 import { getSubscriptionApi } from '@api/menu';
 import { SubsCalendarContainer } from '@components/Calendar/subscription/style';
 import useCalendarTitleContent from '@hooks/subscription/useCalendarTitleContent';
+import { hide, show } from '@store/loading';
 
 dayjs.locale('ko');
 interface IProps {
@@ -55,7 +56,9 @@ const SubsCalendar = ({
   const today = dayjs().format('YYYY-MM-DD');
   const [value, setValue] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>(new Date(today));
-  const [maxDate, setMaxDate] = useState<Date>(new Date(subsActiveDates[subsActiveDates.length - 1]?.deliveryDate));
+  const [maxDate, setMaxDate] = useState<Date>(
+    subsActiveDates && new Date(subsActiveDates[subsActiveDates.length - 1]?.deliveryDate)
+  );
 
   useEffect(() => {
     if (router.pathname === '/subscription/register') {
@@ -123,6 +126,7 @@ const SubsCalendar = ({
         subscriptionPeriod: subsPeriod!,
         deliveryStartDate: date,
       };
+      dispatch(show());
       const { data } = await getSubscriptionApi(params);
 
       return data.data.menuTables;
@@ -152,7 +156,9 @@ const SubsCalendar = ({
         dispatch(SET_SUBS_CALENDAR_SELECT_MENU(data[0]));
         dispatch(SET_SUBS_ORDER_MENUS(data));
       },
-      onSettled: () => {},
+      onSettled: () => {
+        dispatch(hide());
+      },
       onError: () => {
         console.log('error');
       },
