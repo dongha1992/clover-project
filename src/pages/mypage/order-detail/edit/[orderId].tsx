@@ -45,6 +45,7 @@ import { SubsDeliveryChangeSheet } from '@components/BottomSheet/SubsSheet';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import { userForm } from '@store/user';
+import { hide } from '@store/loading';
 
 /* TODO: 서버/store 값 state에서 통일되게 관리, spot 주소쪽 */
 interface IProps {
@@ -135,6 +136,9 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
         name: tempEditSpot?.name ? tempEditSpot.name : orderDetail?.spotName,
         spotPickup: tempEditSpot?.spotPickup ? tempEditSpot.spotPickup : orderDetail?.spotPickupName,
       });
+    },
+    onSettled: () => {
+      dispatch(hide());
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,

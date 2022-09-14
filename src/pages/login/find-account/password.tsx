@@ -59,6 +59,8 @@ const FindPasswordPage = () => {
   };
 
   const getHelpPassword = async () => {
+    if (!isAllValid) return;
+    setErrorMessage('');
     if (phoneRef.current && emailRef.current) {
       const tel = phoneRef.current?.value.toString();
       const email = emailRef.current?.value;
@@ -116,7 +118,7 @@ const FindPasswordPage = () => {
         {errorMessage && <Validation>{errorMessage}</Validation>}
       </InputWrapper>
       <BtnWrapper onClick={getHelpPassword}>
-        <Button disabled={!isAllValid} height="100%" borderRadius="0">
+        <Button disabled2={!isAllValid} height="100%" borderRadius="0">
           요청하기
         </Button>
       </BtnWrapper>
