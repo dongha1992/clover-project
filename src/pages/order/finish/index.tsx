@@ -262,8 +262,7 @@ const OrderFinishPage = () => {
   }, [router.isReady]);
 
   if (!orderDetail) {
-    dispatch(show());
-    return;
+    return <></>;
   }
 
   const {
