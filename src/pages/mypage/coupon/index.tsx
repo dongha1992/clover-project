@@ -139,9 +139,7 @@ const Container = styled.div`
   ${homePadding}
 `;
 
-const Wrapper = styled.div`
-  padding: 0 24px;
-`;
+const Wrapper = styled.div``;
 
 const EmptyContainer = styled.div`
   height: 80vh;
