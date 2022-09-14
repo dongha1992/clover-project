@@ -58,6 +58,7 @@ const DeliverInfoPage = () => {
   const router = useRouter();
 
   let { destinationId, isSubscription, subsDeliveryType, selected, deliveryType } = router.query;
+  const isSubs = isSubscription === 'true';
 
   const { isTimerTooltip } = useSelector(orderForm);
 
@@ -102,12 +103,12 @@ const DeliverInfoPage = () => {
 
   const goToFindAddress = () => {
     if (userSelectDeliveryType === 'spot') {
-      if (isSubscription) {
+      if (isSubs) {
         router.replace({
           pathname: '/spot/search/result',
           query: {
             subsDeliveryType: userSelectDeliveryType.toUpperCase(),
-            isSubscription: true,
+            isSubscription: isSubs,
             isDelivery: true,
             menuId,
           },
@@ -119,12 +120,12 @@ const DeliverInfoPage = () => {
         });
       }
     } else {
-      if (isSubscription) {
+      if (isSubs) {
         router.replace({
           pathname: '/destination/search',
           query: {
             subsDeliveryType: userSelectDeliveryType.toUpperCase(),
-            isSubscription: true,
+            isSubscription: isSubs,
             menuId,
           },
         });
@@ -189,7 +190,7 @@ const DeliverInfoPage = () => {
       dispatch(INIT_DESTINATION_TYPE());
       dispatch(INIT_AVAILABLE_DESTINATION());
 
-      if (isSubscription) {
+      if (isSubs) {
         if (isSpot) {
           const reqBody = {
             name: tempDestination?.name!,
@@ -239,8 +240,8 @@ const DeliverInfoPage = () => {
               dispatch(INIT_TEMP_DESTINATION());
               dispatch(INIT_DESTINATION_TYPE());
               dispatch(INIT_AVAILABLE_DESTINATION());
-              if (isSubscription) {
-                router.push({
+              if (isSubs) {
+                router.replace({
                   pathname: '/subscription/set-info',
                   query: { subsDeliveryType: subsDeliveryType, menuId },
                 });
@@ -249,8 +250,8 @@ const DeliverInfoPage = () => {
               }
             }
           } catch (error) {
-            if (isSubscription) {
-              router.push({
+            if (isSubs) {
+              router.replace({
                 pathname: '/subscription/set-info',
                 query: { subsDeliveryType: subsDeliveryType, menuId },
               });
@@ -335,7 +336,7 @@ const DeliverInfoPage = () => {
             dispatch(INIT_TEMP_DESTINATION());
             dispatch(INIT_DESTINATION_TYPE());
             dispatch(INIT_AVAILABLE_DESTINATION());
-            if (isSubscription) {
+            if (isSubs) {
               router.push({
                 pathname: '/subscription/set-info',
                 query: { subsDeliveryType: subsDeliveryType, menuId },
@@ -444,7 +445,7 @@ const DeliverInfoPage = () => {
   const userSelectDeliveryTypeHelper = () => {
     // 배송지 검색 페이지에서 배송 방법 변경 버튼
     if (userDeliveryType && !deliveryType) {
-      if (isSubscription) {
+      if (isSubs) {
         // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
         if (subsDeliveryType === 'SPOT') {
           setUserSelectDeliveryType('spot');
@@ -522,7 +523,7 @@ const DeliverInfoPage = () => {
 
       // 최근 주문 이력이 있는지
     } else if (!userTempDestination && recentOrderDelivery && hasRecentOrder) {
-      if (!isSubscription) {
+      if (!isSubs) {
         setUserSelectDeliveryType(recentOrderDelivery.delivery.toLowerCase());
         setIsMaindestination(true);
       }
@@ -531,12 +532,12 @@ const DeliverInfoPage = () => {
   }, [userTempDestination, recentOrderDelivery, userDestination]);
 
   useEffect(() => {
-    if (isSubscription) {
+    if (isSubs) {
       // 정기구독 스팟 상품으로 들어왔을 때 스팟 체크
       if (subsDeliveryType === 'SPOT') {
         setUserSelectDeliveryType('spot');
       } else if (['PARCEL', 'MORNING'].includes(subsDeliveryType as string)) {
-        if (selected === 'Y') {
+        if (selected === 'Y' || !selected) {
           console.log('here by tayler 528');
           setUserSelectDeliveryType((subsDeliveryType as string).toLowerCase());
         }
@@ -546,7 +547,7 @@ const DeliverInfoPage = () => {
         setUserSelectDeliveryType((deliveryType as string).toLowerCase());
       }
     }
-  }, [isSubscription, subsDeliveryType, deliveryType]);
+  }, [isSubs, subsDeliveryType, deliveryType]);
 
   useEffect(() => {
     // 배송방법 선택 시 기본 배송지 api 조회
@@ -598,10 +599,8 @@ const DeliverInfoPage = () => {
                             )}
                           </RowLeft>
 
-                          {!isSubscription && deliveryTypeWithTooltip === item.value && tooltipRender()}
-                          {!isSubscription && isTimerTooltip && item.name === timerDevlieryType && (
-                            <CheckTimerByDelivery />
-                          )}
+                          {!isSubs && deliveryTypeWithTooltip === item.value && tooltipRender()}
+                          {!isSubs && isTimerTooltip && item.name === timerDevlieryType && <CheckTimerByDelivery />}
                         </FlexBetween>
                         <Body>
                           <TextB3R color={theme.greyScale45}>{item.description}</TextB3R>
@@ -614,7 +613,7 @@ const DeliverInfoPage = () => {
               })}
             </>
           )}
-          {!isSubscription && <BorderLine height={1} margin="24px 0" />}
+          {!isSubs && <BorderLine height={1} margin="24px 0" />}
           {subsDeliveryType !== 'SPOT' && (
             <>
               <TextH5B padding="0 0 16px 0" color={theme.greyScale65}>
@@ -623,10 +622,10 @@ const DeliverInfoPage = () => {
               {DELIVERY_METHOD['delivery'].map((item: any, index: number) => {
                 // 구독하기로 들어오면 퀵배송은 제외하고 출력
 
-                if (isSubscription && item.name === '퀵배송') {
+                if (isSubs && item.name === '퀵배송') {
                   return;
                 } else {
-                  if (isSubscription && !menuDetail?.subscriptionDeliveries.includes(item.value.toUpperCase())) return;
+                  if (isSubs && !menuDetail?.subscriptionDeliveries.includes(item.value.toUpperCase())) return;
                 }
 
                 const isSelected = userSelectDeliveryType === item.value;
@@ -647,10 +646,8 @@ const DeliverInfoPage = () => {
                               </Tag>
                             )}
                           </RowLeft>
-                          {!isSubscription && deliveryTypeWithTooltip === item.value && tooltipRender()}
-                          {!isSubscription && isTimerTooltip && item.name === timerDevlieryType && (
-                            <CheckTimerByDelivery />
-                          )}
+                          {!isSubs && deliveryTypeWithTooltip === item.value && tooltipRender()}
+                          {!isSubs && isTimerTooltip && item.name === timerDevlieryType && <CheckTimerByDelivery />}
                         </FlexBetween>
                         <Body>
                           <TextB3R color={theme.greyScale45}>{item.description}</TextB3R>
