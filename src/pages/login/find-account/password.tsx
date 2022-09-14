@@ -1,14 +1,13 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import { TextB2R } from '@components/Shared/Text';
-import { fixedBottom } from '@styles/theme';
+import { TextB2R, TextH5B } from '@components/Shared/Text';
+import { fixedBottom, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { EMAIL_REGX } from '@pages/signup/email-password';
 import Validation from '@components/Pages/User/Validation';
 import { userHelpPassword } from '@api/user';
-import router from 'next/router';
 import { SET_ALERT } from '@store/alert';
 import { useDispatch } from 'react-redux';
 
@@ -35,8 +34,10 @@ const FindPasswordPage = () => {
 
       if (emailValidCheck) {
         setEmailValid({ ...emailValid, isValid: true });
+        setErrorMessage('');
       } else {
         setEmailValid({ ...emailValid, isValid: false });
+        setErrorMessage('이메일 형식이 올바르지 않습니다.');
       }
     }
   };
@@ -49,13 +50,17 @@ const FindPasswordPage = () => {
 
       if (phoneValidCheck) {
         setPhoneValid({ ...phoneValid, isValid: true });
+        setErrorMessage('');
       } else {
         setPhoneValid({ ...phoneValid, isValid: false });
+        setErrorMessage('휴대폰 번호를 정확히 입력해 주세요.');
       }
     }
   };
 
   const getHelpPassword = async () => {
+    if (!isAllValid) return;
+    setErrorMessage('');
     if (phoneRef.current && emailRef.current) {
       const tel = phoneRef.current?.value.toString();
       const email = emailRef.current?.value;
@@ -95,16 +100,17 @@ const FindPasswordPage = () => {
       <TextB2R>아이디와 등록된 휴대폰 번호를 입력해 주시면 </TextB2R>
       <TextB2R>문자로 임시 비밀번호를 보내드립니다.</TextB2R>
       <InputWrapper>
+        <TextH5B padding="0 0 8px 0">이메일</TextH5B>
         <TextInput
           placeholder="이메일 입력"
           ref={emailRef}
           eventHandler={emailInputHandler}
           keyPressHandler={handleKeyPress}
         />
+        <TextH5B padding="24px 0 8px 0">휴대폰 번호</TextH5B>
         <TextInput
           inputType="number"
           placeholder="휴대폰 번호 입력 (-제외)"
-          margin="8px 0 0 0"
           ref={phoneRef}
           eventHandler={phoneInputHandler}
           keyPressHandler={handleKeyPress}
@@ -112,7 +118,7 @@ const FindPasswordPage = () => {
         {errorMessage && <Validation>{errorMessage}</Validation>}
       </InputWrapper>
       <BtnWrapper onClick={getHelpPassword}>
-        <Button disabled={!isAllValid} height="100%" borderRadius="0">
+        <Button disabled2={!isAllValid} height="100%" borderRadius="0">
           요청하기
         </Button>
       </BtnWrapper>

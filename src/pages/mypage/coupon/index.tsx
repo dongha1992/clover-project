@@ -15,8 +15,6 @@ import { SET_ALERT } from '@store/alert';
 import { show, hide } from '@store/loading';
 
 const CouponManagementPage = () => {
-  const [selectedCoupon, setSelectedCoupon] = useState<ICoupon>();
-
   const codeRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -85,10 +83,6 @@ const CouponManagementPage = () => {
     }
   );
 
-  const selectCouponHandler = (coupon: ICoupon): void => {
-    setSelectedCoupon(coupon);
-  };
-
   if (isLoading) {
     return <div></div>;
   }
@@ -120,13 +114,7 @@ const CouponManagementPage = () => {
           <FlexCol>
             <TextH5B padding="16px 0 24px 0"> 보유 쿠폰 {coupons?.length}장</TextH5B>
             {coupons?.map((coupon: ICoupon, index: number) => (
-              <MypageCouponItem
-                coupon={coupon}
-                key={index}
-                selectCouponHandler={selectCouponHandler}
-                isSelected={selectedCoupon?.id === coupon.id}
-                isMypage
-              />
+              <MypageCouponItem coupon={coupon} key={index} isMypage />
             ))}
           </FlexCol>
         </Wrapper>
@@ -139,9 +127,7 @@ const Container = styled.div`
   ${homePadding}
 `;
 
-const Wrapper = styled.div`
-  padding: 0 24px;
-`;
+const Wrapper = styled.div``;
 
 const EmptyContainer = styled.div`
   height: 80vh;
