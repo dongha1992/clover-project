@@ -11,11 +11,17 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { BtnWrapper } from '..';
+import { useDispatch } from 'react-redux';
+import { hide } from '@store/loading';
 
 const SubOrderCancelCompletePage = () => {
   const router = useRouter();
   const [detailId, setDetailId] = useState<any>();
+  const dispatch = useDispatch();
   const { data: orderDetail, isLoading } = useGetOrderDetail(['getOrderDetail', 'subscription', detailId], detailId!, {
+    onSettled: () => {
+      dispatch(hide());
+    },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
     enabled: !!detailId,

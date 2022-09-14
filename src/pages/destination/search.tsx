@@ -84,7 +84,7 @@ const DestinationSearchPage = () => {
     } else {
       dispatch(SET_TEMP_DESTINATION(destination));
       if (isSubscription) {
-        router.push({
+        router.replace({
           pathname: '/cart/delivery-info',
           query: { subsDeliveryType, isSubscription: true, destinationId: destination.id, menuId },
         });
@@ -107,7 +107,7 @@ const DestinationSearchPage = () => {
     } else {
       dispatch(SET_LOCATION_TEMP(address));
       if (isSubscription) {
-        router.push({
+        router.replace({
           pathname: '/destination/destination-detail',
           query: { subsDeliveryType, isSubscription: true, menuId },
         });

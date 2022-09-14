@@ -151,7 +151,7 @@ const DestinationDetailPage = () => {
             });
 
             if (isSubscription) {
-              router.push({
+              router.replace({
                 pathname: '/subscription/set-info',
                 query: { subsDeliveryType: subsDeliveryType, menuId },
               });
@@ -161,7 +161,7 @@ const DestinationDetailPage = () => {
           }
         } catch (error) {
           if (isSubscription) {
-            router.push({
+            router.replace({
               pathname: '/subscription/set-info',
               query: { subsDeliveryType: subsDeliveryType, menuId },
             });
@@ -173,7 +173,7 @@ const DestinationDetailPage = () => {
         dispatch(SET_DESTINATION_TYPE(destinationDeliveryType));
         dispatch(INIT_LOCATION_TEMP());
         if (isSubscription) {
-          router.push({
+          router.replace({
             pathname: '/cart/delivery-info',
             query: { subsDeliveryType, isSubscription: true, menuId },
           });
