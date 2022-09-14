@@ -262,7 +262,7 @@ const OrderFinishPage = () => {
   }, [router.isReady]);
 
   if (!orderDetail) {
-    dispatch(show());
+    return <></>;
   }
 
   const {
@@ -290,15 +290,6 @@ const OrderFinishPage = () => {
   const { dayFormatter } = getCustomDate(deliveryDate);
   const isSpot = delivery === 'SPOT';
   const isSubOrder = orderDetail?.orderDeliveries[0]!.type === 'SUB';
-
-  const getTotalPrice = () => {
-    return (
-      menuAmount -
-      (menuDiscount + eventDiscount + deliveryFeeDiscount + coupon + point) +
-      optionAmount * optionQuantity +
-      deliveryFee
-    );
-  };
 
   return (
     <Container>
