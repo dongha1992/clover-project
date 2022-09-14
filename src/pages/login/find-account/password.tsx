@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
 import { TextB2R, TextH5B } from '@components/Shared/Text';
-import { fixedBottom } from '@styles/theme';
+import { fixedBottom, theme } from '@styles/theme';
 import { Button } from '@components/Shared/Button';
 import { PHONE_REGX } from '@pages/signup/auth';
 import { EMAIL_REGX } from '@pages/signup/email-password';
@@ -34,8 +34,10 @@ const FindPasswordPage = () => {
 
       if (emailValidCheck) {
         setEmailValid({ ...emailValid, isValid: true });
+        setErrorMessage('');
       } else {
         setEmailValid({ ...emailValid, isValid: false });
+        setErrorMessage('이메일 형식이 올바르지 않습니다.');
       }
     }
   };
@@ -48,8 +50,10 @@ const FindPasswordPage = () => {
 
       if (phoneValidCheck) {
         setPhoneValid({ ...phoneValid, isValid: true });
+        setErrorMessage('');
       } else {
         setPhoneValid({ ...phoneValid, isValid: false });
+        setErrorMessage('휴대폰 번호를 정확히 입력해 주세요.');
       }
     }
   };
