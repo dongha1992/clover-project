@@ -23,11 +23,11 @@ export const useGetOrders = (key: QueryKey, params: IGetOrderRequest, options?: 
     options
   );
 
-export const useGetOrderDetail = (key: QueryKey, id: number, options?: UseQueryOptions<any>) =>
+export const useGetOrderDetail = (key: QueryKey, id: number, options?: UseQueryOptions<any>) => {
+  const dispatch = useDispatch();
   useQuery(
     key,
     async () => {
-      const dispatch = useDispatch();
       dispatch(show());
       const { data } = await getOrderDetailApi(id);
       data.data.orderDeliveries.sort(
@@ -37,6 +37,7 @@ export const useGetOrderDetail = (key: QueryKey, id: number, options?: UseQueryO
     },
     options
   );
+};
 
 export const useDeleteOrderCancelPreview = (key: QueryKey, id: number, options?: UseQueryOptions<any>) =>
   useQuery(
