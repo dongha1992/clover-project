@@ -51,8 +51,10 @@ const FindEmailPage = () => {
 
       if (phoneValidCheck) {
         setPhoneValid({ ...phoneValid, isValid: true });
+        setErrorMessage('');
       } else {
         setPhoneValid({ ...phoneValid, isValid: false });
+        setErrorMessage('휴대폰 번호를 정확히 입력해 주세요.');
       }
     }
   };

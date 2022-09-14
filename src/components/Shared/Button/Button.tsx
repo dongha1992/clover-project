@@ -61,7 +61,7 @@ export const Container = styled(TextH5B)<IButtonProps>`
       return css`
         border: 1px solid ${theme.greyScale6};
         color: ${theme.greyScale25};
-        background-color: ${theme.white};
+        background-color: ${theme.greyScale6};
       `;
     } else if (border) {
       return css`

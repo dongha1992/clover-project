@@ -173,7 +173,7 @@ const SignupOptionalPage = () => {
     if (!signupUser.email) {
       router.replace('/signup');
     }
-  }, [signupUser]);
+  }, []);
 
   useEffect(() => {
     setIsValidBirthDay(getValidBirthday(birthDayObj));
