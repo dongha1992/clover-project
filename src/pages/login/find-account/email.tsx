@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TextInput from '@components/Shared/TextInput';
-import { TextB2R, TextB3R } from '@components/Shared/Text';
+import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
 import { fixedBottom, theme } from '@styles/theme';
 import Validation from '@components/Pages/User/Validation';
 import { PHONE_REGX, NAME_REGX } from '@pages/signup/auth';
@@ -97,10 +97,11 @@ const FindEmailPage = () => {
       <TextB2R>등록된 휴대폰 번호를 입력해 주시면</TextB2R>
       <TextB2R>해당 번호로 이메일 주소를 보내드립니다.</TextB2R>
       <InputWrapper>
+        <TextH5B padding="0 0 8px 0">이름</TextH5B>
         <TextInput placeholder="이름" ref={nameRef} eventHandler={nameInputHandler} keyPressHandler={handleKeyPress} />
+        <TextH5B padding="24px 0 8px 0">휴대폰 번호</TextH5B>
         <TextInput
           placeholder="휴대폰 번호 입력 (-제외)"
-          margin="8px 0 0 0"
           ref={phoneRef}
           inputType="number"
           eventHandler={phoneInputHandler}
