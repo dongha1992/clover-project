@@ -37,7 +37,7 @@ export const userSignup = (data: ISignupUser): Promise<AxiosResponse<ISignupResp
 };
 
 export const userSecessionApi = <params>(data: params): Promise<AxiosResponse<ISecessionResponse>> => {
-  return Api.delete('/user/v1/users', { data });
+  return Api.delete('/user/v1/leave', { data });
 };
 
 export const userProfile = (): Promise<AxiosResponse<any>> => {
