@@ -343,7 +343,7 @@ const SpotRecentPickupList = ({ item, hasCart }: IProps): ReactElement => {
           query: { isSpot: true, isDelivery: true },
         });
       } else if (isDelivery && isSubs) {
-        router.push({
+        router.replace({
           pathname: `/spot/detail/${item?.spotPickup?.spotId}`,
           query: {
             isSpot: true,

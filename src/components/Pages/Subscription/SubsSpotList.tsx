@@ -49,11 +49,12 @@ export const TitleBox = styled.div`
   }
 `;
 export const ListBox = styled.div`
+  padding-left: 24px;
 `;
 
 export const SubsList = styled(Swiper)`
   width: 100%;
-  padding: 0 24px;
+  padding-right: 24px;
   > div {
     margin-right: 16px;
     margin-bottom: 0;

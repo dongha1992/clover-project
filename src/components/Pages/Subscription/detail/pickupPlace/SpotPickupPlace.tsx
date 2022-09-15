@@ -1,4 +1,5 @@
 import { TextB2R, TextB3R, TextH5B } from '@components/Shared/Text';
+import { DELIVERY_TIME_MAP, DELIVERY_TYPE_MAP } from '@constants/order';
 import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexRow } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
@@ -18,7 +19,7 @@ const SpotPickupPlace = ({ address, spotName, spotPickupName, delivery, delivery
       <FlexBetween padding="0 0 16px">
         <TextH5B>배송방법</TextH5B>
         <TextB2R>
-          {delivery} {deliveryDetail}
+          {DELIVERY_TYPE_MAP[delivery]} {DELIVERY_TIME_MAP[deliveryDetail]}
         </TextB2R>
       </FlexBetween>
       <FlexBetweenStart padding="0 0 24px">
