@@ -11,6 +11,7 @@ export interface IButtonProps {
   onKeyPress?: React.MouseEventHandler<HTMLElement>;
   filled?: boolean;
   disabled?: boolean;
+  disabled2?: boolean;
   loading?: boolean;
   width?: string;
   height?: string;
@@ -56,12 +57,18 @@ export const Container = styled(TextH5B)<IButtonProps>`
   cursor: ${(props) => (props.pointer ? 'pointer' : 'static')};
   font-weight: ${(props) => (props.fontWeight ? props.fontWeight : 700)};
 
-  ${({ disabled, border, borderGrey15 }) => {
+  ${({ disabled, disabled2, border, borderGrey15 }) => {
     if (disabled) {
       return css`
         border: 1px solid ${theme.greyScale6};
         color: ${theme.greyScale25};
         background-color: ${theme.white};
+      `;
+    } else if (disabled2) {
+      return css`
+        border: 1px solid ${theme.greyScale6};
+        color: ${theme.greyScale25};
+        background-color: ${theme.greyScale6};
       `;
     } else if (border) {
       return css`
