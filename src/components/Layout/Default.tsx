@@ -26,7 +26,6 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
   const toast = useSelector(toastSelector);
   const imageViewerState = useSelector(imageViewerSelector);
   const loadingState = useSelector((state: AppState) => state.loading);
-  const { isMobile } = useSelector(commonSelector);
 
   // set 1vh for all devices
   useEffect(() => {
@@ -42,7 +41,7 @@ const DefaultLayout = ({ children, bottom }: IDefaultLayoutProps) => {
 
   return (
     <>
-      {!isMobile && <BackgroundImg />}
+      <BackgroundImg />
       <Container>
         <Center>
           {alert && (
@@ -94,6 +93,9 @@ const BackgroundImg = styled.div`
   position: fixed;
   width: 100%;
   height: 100%;
+  ${({ theme }) => theme.desktop`  
+    display: none;
+  `}
 `;
 
 const Container = styled.div`

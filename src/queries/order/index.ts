@@ -38,7 +38,6 @@ export const useGetOrderDetail = (key: QueryKey, id: number, options?: UseQueryO
     options
   );
 };
-
 export const useDeleteOrderCancelPreview = (key: QueryKey, id: number, options?: UseQueryOptions<any>) =>
   useQuery(
     key,

@@ -20,7 +20,7 @@ const Overlay = styled.div`
   display: flex;
   text-align: center;
   font-size: 1.2em;
-  z-index: 99999;
+  z-index: 99999999;
   justify-content: center;
   align-items: center;
   overflow: hidden;
