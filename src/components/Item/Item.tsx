@@ -196,7 +196,7 @@ const Item = ({ item, isHorizontal }: TProps) => {
     } else if (isOpenSoon) {
       return <Badge message={`${checkIsBeforeThanLaunchAt}시 오픈`} />;
     } else if (!isReopen && badgeMessage) {
-      return <Badge message={badgeMap[badgeMessage]} />;
+      return <Badge message={badgeMessage} />;
     } else {
       return;
     }

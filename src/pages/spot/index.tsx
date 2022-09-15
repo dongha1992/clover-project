@@ -229,7 +229,7 @@ const SpotPage = () => {
         <TextH5B color={theme.white}>프코스팟 신청할래요</TextH5B>
       </RegistrationsCTAWrapper>
       {isLoginSuccess && (
-        <TopCTASlider className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
+        <TopCTASlider className="swiper-container" slidesPerView={'auto'} spaceBetween={16} speed={500}>
           {
             /* 청한 프코스팟 알림카드 - 참여인원 5명 미만 일때 */
             info?.trialSpotRegistration?.trialUserCount! < 5 && (
@@ -275,7 +275,7 @@ const SpotPage = () => {
         popularSpotList?.spots?.length! > 0 && newSpotList?.spots?.length! > 0 ? (
           <>
             <TextH2B padding="24px 24px 24px 24px">{popularSpotList?.title}</TextH2B>
-            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={700}>
+            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={16} speed={700}>
               {popularSpotList?.spots.map((list, idx) => {
                 return (
                   <SwiperSlide className="swiper-slide" key={idx}>
@@ -285,7 +285,7 @@ const SpotPage = () => {
               })}
             </SpotsSlider>
             <TextH2B padding="49px 24px 24px 24px">{newSpotList?.title}</TextH2B>
-            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
+            <SpotsSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={16} speed={500}>
               {newSpotList?.spots.map((list, idx) => {
                 return (
                   <SwiperSlide className="swiper-slide" key={idx}>
@@ -338,7 +338,7 @@ const SpotPage = () => {
         eventSpotList?.spots?.length! > 0 && (
           <>
             <TextH2B padding="0 24px 24px 24px">{eventSpotList?.title}</TextH2B>
-            <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
+            <EventSlider className="swiper-container" slidesPerView={'auto'} spaceBetween={16} speed={500}>
               {eventSpotList?.spots.map((list, idx) => {
                 return (
                   <SwiperSlide className="swiper-slide" key={idx}>
@@ -435,7 +435,7 @@ const Container = styled.main`
 `;
 
 const TopCTASlider = styled(Swiper)`
-  padding: 0 24px 0 24px;
+  padding: 0 24px;
   .swiper-slide {
     width: 100%;
   }
@@ -445,7 +445,7 @@ const SpotsSlider = styled(Swiper)`
   width: auto;
   padding: 0 24px;
   .swiper-slide {
-    width: 120px;
+    width: 132px;
   }
 `;
 
