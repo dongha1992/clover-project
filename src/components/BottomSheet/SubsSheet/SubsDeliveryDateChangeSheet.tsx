@@ -7,6 +7,7 @@ import { useToast } from '@hooks/useToast';
 import { IOrderDetail } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { INIT_BOTTOM_SHEET } from '@store/bottomSheet';
+import { hide } from '@store/loading';
 import { SET_SUBS_MANAGE, subscriptionForm } from '@store/subscription';
 import { fixedBottom, FlexRow, theme } from '@styles/theme';
 import { dateN, getFormatDate, SVGIcon } from '@utils/common';
@@ -53,6 +54,9 @@ const SubsDeliveryDateChangeSheet = ({ item }: IProps) => {
         }
       });
       setDeliveryComplete(completeArr);
+    },
+    onSettled: () => {
+      dispatch(hide());
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,

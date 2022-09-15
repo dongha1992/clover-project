@@ -1,5 +1,5 @@
 import { TextB2R, TextH5B } from '@components/Shared/Text';
-import { ACCESS_METHOD_VALUE } from '@constants/order';
+import { ACCESS_METHOD_VALUE, DELIVERY_TYPE_MAP } from '@constants/order';
 import { FlexBetween, FlexBetweenStart, FlexColEnd, FlexRow } from '@styles/theme';
 import { SVGIcon } from '@utils/common';
 import styled from 'styled-components';
@@ -25,7 +25,7 @@ const MorningPickupPlace = ({
     <Container>
       <FlexBetween padding="0 0 16px">
         <TextH5B>배송방법</TextH5B>
-        <TextB2R>{delivery}</TextB2R>
+        <TextB2R>{DELIVERY_TYPE_MAP[delivery]}</TextB2R>
       </FlexBetween>
       <FlexBetweenStart padding="0 0 16px">
         <TextH5B>배송지</TextH5B>

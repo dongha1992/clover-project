@@ -53,10 +53,12 @@ interface IProps {
   destinationId: number;
   isSubs: boolean;
   deliveryDate: string;
+  isSubscription: string;
 }
 
-const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDate }: IProps) => {
+const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubscription, deliveryDate }: IProps) => {
   const router = useRouter();
+  const isSubs = isSubscription === 'true';
 
   const { userAccessMethod } = useSelector(commonSelector);
   const { tempEditDestination, tempEditSpot, tempOrderInfo } = useSelector(mypageSelector);
@@ -339,7 +341,7 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
       goToDeliverySearch();
     }
   };
-  // TODO : lastdeliverydate 추가 전체 회차 변경하는부분 체크
+  // TODO : lastdeliverydate 추가 전체 회차 변경하는부분 체크 (deliveryDate,lastDeliveryDate,pickupDays 전체 회차 변경시 스팟 운영종료 예정 체크)
   const goToDeliverySearch = () => {
     if (isSpot) {
       router.replace({
@@ -356,7 +358,12 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
     } else {
       router.replace({
         pathname: '/destination/search',
-        query: { orderId, destinationId, deliveryType: orderDetail?.delivery },
+        query: {
+          orderId,
+          destinationId,
+          isSubscription: isSubs,
+          deliveryType: orderDetail?.delivery,
+        },
       });
       dispatch(SET_USER_DELIVERY_TYPE(orderDetail?.delivery.toLowerCase()!));
     }
@@ -555,7 +562,9 @@ const OrderDetailAddressEditPage = ({ orderId, destinationId, isSubs, deliveryDa
   );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+  padding-bottom: 56px;
+`;
 
 const Wrapper = styled.div`
   padding-top: 24px;
@@ -594,12 +603,12 @@ const BtnWrapper = styled.div`
 
 export async function getServerSideProps(context: any) {
   const { orderId, destinationId, isSubscription, deliveryDate } = context.query;
-  const isSubs = isSubscription === 'true';
+
   return {
     props: {
       orderId: Number(orderId),
       destinationId: Number(destinationId),
-      isSubscription: isSubs,
+      isSubscription: String(isSubscription),
       deliveryDate: String(deliveryDate),
     },
   };

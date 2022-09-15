@@ -19,6 +19,7 @@ import MenuPriceBox from '../payment/MenuPriceBox';
 import DeliveryInfoGuidBox from './GuideBox/DeliveryInfoGuidBox';
 import DietGuideBox from './GuideBox/DietGuideBox';
 import { MorningPickupPlace, ParcelPickupPlace, SpotPickupPlace } from './pickupPlace';
+import { hide } from '@store/loading';
 
 interface IProps {
   item: any;
@@ -29,6 +30,9 @@ const SubsDetailOrderBox = ({ item, orderId }: IProps) => {
   const [toggleState, setToggleState] = useState(true);
   const dispatch = useDispatch();
   const { data: orderDetail, isLoading } = useGetOrderDetail(['getOrderDetail', 'subscription', orderId], orderId!, {
+    onSettled: () => {
+      dispatch(hide());
+    },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     enabled: !!orderId,
