@@ -4,9 +4,11 @@ import { Button } from '@components/Shared/Button';
 import { TextB2R, TextB3R, TextH2B, TextH5B } from '@components/Shared/Text';
 import { IOrderDetail, IResponse } from '@model/index';
 import { useDeleteOrderCancel, useGetOrderDetail } from '@queries/order';
+import { hide } from '@store/loading';
 import { theme } from '@styles/theme';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { BtnWrapper } from '../cancel';
 
@@ -14,6 +16,7 @@ const SubOrderCancelPage = () => {
   const router = useRouter();
   const [detailId, setDetailId] = useState<number>();
   const [subDeliveries, setSubDeliveries] = useState([]);
+  const dispatch = useDispatch();
 
   const { mutate: deleteOrderCancel } = useDeleteOrderCancel(['deleteOrderCancel'], {
     onError: (error: IResponse | any) => {
@@ -40,6 +43,9 @@ const SubOrderCancelPage = () => {
         }
         setSubDeliveries(arr);
       });
+    },
+    onSettled: () => {
+      dispatch(hide());
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,

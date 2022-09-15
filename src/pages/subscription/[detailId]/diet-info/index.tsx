@@ -2,10 +2,12 @@ import EntireDietList from '@components/Pages/Subscription/detail/EntireDietList
 import { TextB2R } from '@components/Shared/Text';
 import { periodMapper } from '@constants/subscription';
 import { IOrderDetail } from '@model/index';
+import { hide } from '@store/loading';
 import { theme } from '@styles/theme';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useGetOrderDetail } from 'src/queries/order';
 import styled from 'styled-components';
 
@@ -13,6 +15,7 @@ const DietInfoPage = () => {
   const router = useRouter();
   const [detailId, setDetailId] = useState<number>();
   const [deliveryDay, setDeliveryDay] = useState<any>();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (router.isReady) {
@@ -27,6 +30,9 @@ const DietInfoPage = () => {
         pickupDayObj.add(dayjs(o.deliveryDate).format('dd'));
       });
       setDeliveryDay(Array.from(pickupDayObj));
+    },
+    onSettled: () => {
+      dispatch(hide());
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,

@@ -343,9 +343,11 @@ const MenuDetailPage: NextPageWithLayout = () => {
     };
   }, []);
 
-  if (!isLoading && !bannerLoading && !bestReviewLoading && !reviewImagesLoading) {
-    dispatch(hide());
-  }
+  useEffect(() => {
+    if (!isLoading && !bannerLoading && !bestReviewLoading && !reviewImagesLoading) {
+      dispatch(hide());
+    }
+  }, [bannerLoading, bestReviewLoading, dispatch, isLoading, reviewImagesLoading]);
 
   return (
     <Container>

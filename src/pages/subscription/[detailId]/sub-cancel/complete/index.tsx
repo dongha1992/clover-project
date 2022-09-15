@@ -6,8 +6,10 @@ import BorderLine from '@components/Shared/BorderLine';
 import { Button } from '@components/Shared/Button';
 import { IOrderDetail } from '@model/index';
 import { useGetOrderDetail } from '@queries/order';
+import { hide } from '@store/loading';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { BtnWrapper } from '../../cancel';
 
@@ -15,6 +17,7 @@ const SubOrderCancelCompletePage = () => {
   const router = useRouter();
   const [detailId, setDetailId] = useState<number>();
   const [subDeliveries, setSubDeliveries] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setDetailId(Number(router.query.detailId));
@@ -33,6 +36,9 @@ const SubOrderCancelCompletePage = () => {
         }
         setSubDeliveries(arr);
       });
+    },
+    onSettled: () => {
+      dispatch(hide());
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
