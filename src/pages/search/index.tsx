@@ -106,7 +106,7 @@ const SearchPage = () => {
     <Container>
       <SearchBarWrapper>
         <label className="textLabel">
-          {keyword.length === 0 && <span className="textPlaceholde">도로명, 건물명 또는 지번으로 검색</span>}
+          {keyword.length === 0 && <span className="textPlaceholde">원하시는 상품을 검색해보세요.</span>}
           <TextInput
             inputType="text"
             svg="searchIcon"
@@ -140,19 +140,8 @@ const SearchPage = () => {
         </CategoryWrapper>
         <BorderLine padding="0 24px" />
         <MdRecommendationWrapper>
-          <FlexBetween>
-            <TextH3B padding="24px 0">MD 추천</TextH3B>
-            <TextH6B
-              textDecoration="underline"
-              color={theme.greyScale65}
-              padding="0 24px 0 0"
-              onClick={goToMore}
-              pointer
-            >
-              더보기
-            </TextH6B>
-          </FlexBetween>
-          <SliderWrapper className="swiper-container" slidesPerView={'auto'} spaceBetween={25} speed={500}>
+          <TextH3B padding="0 0 0 24px">MD 추천</TextH3B>
+          <SliderWrapper className="swiper-container" slidesPerView={'auto'} spaceBetween={16} speed={500}>
             {mdMenus?.map((item, index) => {
               if (index > 9) return;
               return (
@@ -172,8 +161,9 @@ const Container = styled.main``;
 
 const SliderWrapper = styled(Swiper)`
   width: auto;
+  padding: 24px 24px 0 24px;
   .swiper-slide {
-    width: 120px;
+    width: 132px;
   }
 `;
 
@@ -215,8 +205,16 @@ const CatetoryList = styled.div`
 const DefaultSearchContainer = styled.div``;
 
 const MdRecommendationWrapper = styled.section`
+  width: 100%;
+  padding: 24px 0;
   margin-bottom: 48px;
-  padding: 8px 24px;
 `;
+
+const FlexSpace = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 0 24px 24px 24px;
+`;
+
 
 export default SearchPage;
