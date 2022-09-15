@@ -278,7 +278,7 @@ const DeliverInfoPage = () => {
               })
             );
           }
-          router.push({
+          router.replace({
             pathname: '/subscription/set-info',
             query: { subsDeliveryType: subsDeliveryType, menuId },
           });
@@ -337,7 +337,7 @@ const DeliverInfoPage = () => {
             dispatch(INIT_DESTINATION_TYPE());
             dispatch(INIT_AVAILABLE_DESTINATION());
             if (isSubs) {
-              router.push({
+              router.replace({
                 pathname: '/subscription/set-info',
                 query: { subsDeliveryType: subsDeliveryType, menuId },
               });
