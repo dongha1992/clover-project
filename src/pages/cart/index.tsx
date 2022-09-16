@@ -1594,7 +1594,7 @@ const CartPage = () => {
         {me && orderedMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
-              <TextH3B padding="36px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
+              <TextH3B padding="24px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
               <ScrollHorizonListGroup className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
                 {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
                   if (index > 9) return;
@@ -1794,7 +1794,7 @@ const ScrollHorizonListGroup = styled(Swiper)`
 `;
 
 const TotalPriceWrapper = styled.div`
-  margin-top: 12px;
+  margin-top: 48px;
   padding: 24px;
   background-color: ${theme.greyScale3};
   display: flex;
