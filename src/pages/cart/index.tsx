@@ -1280,7 +1280,7 @@ const CartPage = () => {
   };
 
   const getCartList = async () => {
-    if (!selectedDeliveryDay && !userDeliveryType) {
+    if (!selectedDeliveryDay && !userDeliveryType && me) {
       try {
         const { data } = await getCartsApi(undefined);
 
