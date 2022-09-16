@@ -1,11 +1,13 @@
 import { TextB2R } from '@components/Shared/Text';
 import { Obj } from '@model/index';
 import { usePostNotiCheck } from '@queries/notification';
-import { theme } from '@styles/theme';
+import { ScrollHorizonList, theme } from '@styles/theme';
 import dynamic from 'next/dynamic';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 const NotiAll = dynamic(() => import('@components/Pages/Mypage/Noti/NotiAll'));
 const NotiOrder = dynamic(() => import('@components/Pages/Mypage/Noti/NotiOrder'));
@@ -96,21 +98,23 @@ const NotiPage = () => {
   return (
     <Container ref={parentRef}>
       <FilterWrapper>
-        <FilterList>
-          {filterList.map((elem) => (
-            <FilterItem
-              key={elem.id}
-              className={`${elem.selected ? 'on' : ''}`}
-              onClick={() => {
-                filterHandler(elem);
-              }}
-            >
-              <TextB2R whiteSpace="nowrap" color={elem.selected ? '#fff' : '#242424'}>
-                {elem.name}
-              </TextB2R>
-            </FilterItem>
-          ))}
-        </FilterList>
+        <ScrollHorizonList>
+          <FilterList slidesPerView={'auto'} spaceBetween={8}>
+            {filterList.map((elem, index) => (
+              <SwiperSlide key={index}>
+                <FilterItem
+                  key={elem.id}
+                  className={`${elem.selected ? 'on' : ''}`}
+                  onClick={() => {
+                    filterHandler(elem);
+                  }}
+                >
+                  <TextB2R color={elem.selected ? '#fff' : '#242424'}>{elem.name}</TextB2R>
+                </FilterItem>
+              </SwiperSlide>
+            ))}
+          </FilterList>
+        </ScrollHorizonList>
       </FilterWrapper>
       {selected === 'ALL' && <NotiAll parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />}
       {selected === 'ORDER' && <NotiOrder parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />}
@@ -136,20 +140,18 @@ const Container = styled.div`
   height: calc(100vh - 128px);
 `;
 const FilterWrapper = styled.article`
+  padding: 16px 24px 18px 24px;
+`;
+const FilterList = styled(Swiper)`
   width: 100%;
-  padding-left: 24px;
-  padding-right: 24px;
+  .swiper-slide {
+    width: auto;
+  }
 `;
-const FilterList = styled.ul`
-  padding-top: 16px;
-  padding-bottom: 18px;
-  display: flex;
-  overflow-x: scroll;
-`;
-const FilterItem = styled.li`
+
+const FilterItem = styled.div`
   border: 1px solid #242424;
   padding: 8px 16px;
-  margin-right: 8px;
   border-radius: 40px;
   cursor: pointer;
   &.on {
@@ -158,9 +160,6 @@ const FilterItem = styled.li`
     div {
       font-weight: bold;
     }
-  }
-  &:last-of-type {
-    margin-right: 0;
   }
 `;
 export const NotiList = styled.ul`
