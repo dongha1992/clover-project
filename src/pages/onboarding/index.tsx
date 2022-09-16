@@ -162,7 +162,7 @@ const OnBoarding: NextPage = () => {
           } else if (error.code === 2104) {
             dispatch(SET_ALERT({ alertMessage: '애플 회원 정보를 찾을 수 없습니다.' }));
           } else {
-            dispatch(SET_ALERT({ alertMessage: `${error.message}` }));
+            console.log(error.mesaage);
           }
         }
       }
