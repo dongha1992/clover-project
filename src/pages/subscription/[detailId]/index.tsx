@@ -309,6 +309,8 @@ const SubsDetailPage = () => {
         subscriptionDiscountRates={orderDetail?.subscriptionDiscountRates}
         grade={me?.grade}
         coupon={orderDetail?.coupon}
+        accumulatedPoint={orderDetail?.accumulatedPoint}
+        expectedPoint={orderDetail?.expectedPoint}
       />
       {orderDetail?.subscriptionPeriod === 'UNLIMITED' &&
       orderDetail?.isSubscribing &&
@@ -334,31 +336,6 @@ const SubsDetailPage = () => {
               refundCoupon={orderDetail?.refundCoupon}
               refundPayAmount={orderDetail?.refundPayAmount}
             />
-            <FlexEnd margin="16px 0 0 0">
-              <Badge>
-                <TextH7B>{me?.grade?.name!}</TextH7B>
-              </Badge>
-              <TextB3R>
-                구매 시
-                <b>
-                  {' '}
-                  {getFormatPrice(
-                    String(
-                      calculatePoint({
-                        rate: me?.grade.benefit.accumulationRate! * 100,
-                        total:
-                          orderDetail?.menuAmount +
-                          optionsPrice.option1.price +
-                          optionsPrice.option2.price +
-                          (orderDetail?.deliveryFee - orderDetail?.deliveryFeeDiscount) -
-                          orderDetail?.menuDiscount,
-                      })
-                    )
-                  )}
-                  P 적립 취소 예정
-                </b>
-              </TextB3R>
-            </FlexEnd>
           </RefundInfoContainer>
         </>
       )}
