@@ -27,7 +27,7 @@ const DefaultHeader = ({ title }: TProps) => {
   const oauth = router.pathname === '/oauth';
   const totalReview = router.pathname === '/menu/[menuId]/review/total';
   const totalPhotoReview = router.pathname === '/menu/[menuId]/review/photo';
-  const reviewDetail = '/menu/[menuId]/review/[contentId]';
+  const reviewDetail = router.pathname === '/menu/[menuId]/review/[contentId]';
   const finishOrder = router.pathname === '/order/finish';
   const orderDetail = router.pathname === '/mypage/order-detail/[id]';
   const subsCancel = router.pathname === '/subscription/[detailId]/cancel/complete';
@@ -62,15 +62,6 @@ const DefaultHeader = ({ title }: TProps) => {
       );
     } else if (loginPage) {
       router.replace('/onboarding');
-    } else if (cartDelivery) {
-      if (!isSubscription) {
-        // router.replace('/cart');
-        router.back();
-      } else {
-        router.replace({ pathname: '/subscription/set-info', query: router.query });
-      }
-    } else if (subsInfo) {
-      router.back();
     } else if (subsDetail) {
       returnPath ? router.replace('/subscription') : router.back();
     } else if (orderDetail) {
