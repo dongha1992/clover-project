@@ -97,7 +97,7 @@ const SecessionPage = () => {
         )}
       </Section>
       <BorderLine height={8} />
-      <Section>
+      <Section className="section2">
         <TextH5B padding="24px 0 16px">탈퇴 시 유의사항을 확인해주세요.</TextH5B>
         <ExplainContainer>
           <ExplainBox>
@@ -151,6 +151,9 @@ const Section = styled.section`
   padding: 0 24px;
   &.section1 {
     padding-bottom: 16px;
+  }
+  &.section2 {
+    padding-bottom: 56px;
   }
 `;
 

@@ -1280,7 +1280,7 @@ const CartPage = () => {
   };
 
   const getCartList = async () => {
-    if (!selectedDeliveryDay && !userDeliveryType) {
+    if (!selectedDeliveryDay && !userDeliveryType && me) {
       try {
         const { data } = await getCartsApi(undefined);
 
@@ -1792,7 +1792,7 @@ const ScrollHorizonListGroup = styled(Swiper)`
 `;
 
 const TotalPriceWrapper = styled.div`
-  margin-top: 12px;
+  margin-top: 48px;
   padding: 24px;
   background-color: ${theme.greyScale3};
   display: flex;
