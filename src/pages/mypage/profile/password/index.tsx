@@ -58,7 +58,7 @@ const ChangePasswordPage = () => {
       const oldPassword = oldPasswordRef.current?.value;
       const password = newPasswordRef.current?.value;
 
-      const passwordLengthCheck = oldPassword.length > 7 && oldPassword.length < 21;
+      const passwordLengthCheck = oldPassword.length > 3 && oldPassword.length < 21;
 
       if (!passwordLengthCheck) {
         setOldPasswordLengthValidation({
@@ -225,7 +225,7 @@ const ChangePasswordPage = () => {
                 keyPressHandler={handleKeyPress}
               />
               {oldPasswordLengthValidation.isValid && <SVGIcon name="confirmCheck" />}
-              {!oldPasswordLengthValidation.isValid && <Validation>{oldPasswordLengthValidation.message}</Validation>}
+              {/* {!oldPasswordLengthValidation.isValid && <Validation>{oldPasswordLengthValidation.message}</Validation>} */}
             </OldPasswordWrapper>
           )}
         </FlexCol>

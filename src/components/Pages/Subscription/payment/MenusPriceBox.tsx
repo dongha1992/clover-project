@@ -181,7 +181,7 @@ const MenusPriceBox = ({
                 <b>결제 금액의 {grade.benefit.accumulationRate! * 100}% 적립</b>
               ) : (
                 <b>
-                  {accumulatedPoint !== 0 && `${getFormatPrice(String(accumulatedPoint))}P 적립 완료`}
+                  {accumulatedPoint !== 0 && `총 ${getFormatPrice(String(accumulatedPoint))}P 적립 완료`}
                   {accumulatedPoint !== 0 && expectedPoint !== 0 && ' / '}
                   {expectedPoint !== 0 && `${getFormatPrice(String(expectedPoint))}P 적립 예정`}
                 </b>
