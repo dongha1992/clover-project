@@ -90,7 +90,7 @@ const CouponManagementPage = () => {
   if (coupons?.length === 0) {
     return (
       <>
-        <FlexRow padding="24px 0 0 0">
+        <FlexRow padding="24px">
           <TextInput placeholder="쿠폰 코드를 입력해주세요." ref={codeRef} />
           <Button width="30%" margin="0 0 0 8px">
             등록하기
