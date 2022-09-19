@@ -25,7 +25,7 @@ const PasswordConfirmPage = () => {
     if (passwordRef.current) {
       const password = passwordRef.current?.value.toString();
 
-      const passwordVaildCheck = password.length > 7 && password.length < 20;
+      const passwordVaildCheck = password.length > 3 && password.length < 20;
 
       if (passwordVaildCheck) {
         setIsValid(true);
@@ -36,7 +36,7 @@ const PasswordConfirmPage = () => {
   };
 
   const getConfirmPassword = async () => {
-    if (passwordRef.current) {
+    if (passwordRef.current && isValid) {
       const password = passwordRef.current.value.toString();
       try {
         const { data } = await userConfirmPassword({ password });
