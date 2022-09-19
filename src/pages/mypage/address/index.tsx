@@ -80,8 +80,8 @@ const AddressManagementPage = () => {
 
   return (
     <Container>
-      <FixedTab scroll={isScroll}>
-        <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
+      <FixedTab>
+        <TabList shadowValue={'-20px'} tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
       </FixedTab>
       {filteredList?.length! > 0 ? (
         <Wrapper>
@@ -116,16 +116,8 @@ const AddressManagementPage = () => {
 
 const Container = styled.div``;
 
-const FixedTab = styled.div<{ scroll: boolean }>`
+const FixedTab = styled.div`
   ${fixedTab};
-
-  ${({ scroll }) => {
-    if (scroll) {
-      return css`
-        box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
-      `;
-    }
-  }}
 `;
 
 const Wrapper = styled.div`

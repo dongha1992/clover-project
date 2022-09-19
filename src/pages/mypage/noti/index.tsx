@@ -1,13 +1,12 @@
 import { TextB2R } from '@components/Shared/Text';
 import { Obj } from '@model/index';
 import { usePostNotiCheck } from '@queries/notification';
-import { ScrollHorizonList, theme } from '@styles/theme';
+import { theme } from '@styles/theme';
 import dynamic from 'next/dynamic';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import styled from 'styled-components';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
+import styled, { css } from 'styled-components';
+import useScrollCheck from '@hooks/useScrollCheck';
 
 const NotiAll = dynamic(() => import('@components/Pages/Mypage/Noti/NotiAll'));
 const NotiOrder = dynamic(() => import('@components/Pages/Mypage/Noti/NotiOrder'));
@@ -27,6 +26,7 @@ export const NOTI_MAP: Obj = {
 };
 
 const NotiPage = () => {
+  const isScroll = useScrollCheck();
   const queryClient = useQueryClient();
   const parentRef = useRef<any>();
   const [selected, setSelected] = useState('ALL');
@@ -97,24 +97,22 @@ const NotiPage = () => {
 
   return (
     <Container ref={parentRef}>
-      <FilterWrapper>
-        <ScrollHorizonList>
-          <FilterList slidesPerView={'auto'} spaceBetween={8}>
-            {filterList.map((elem, index) => (
-              <SwiperSlide key={index}>
-                <FilterItem
-                  key={elem.id}
-                  className={`${elem.selected ? 'on' : ''}`}
-                  onClick={() => {
-                    filterHandler(elem);
-                  }}
-                >
-                  <TextB2R color={elem.selected ? '#fff' : '#242424'}>{elem.name}</TextB2R>
-                </FilterItem>
-              </SwiperSlide>
-            ))}
-          </FilterList>
-        </ScrollHorizonList>
+      <FilterWrapper scroll={isScroll}>
+        <FilterList>
+          {filterList.map((elem) => (
+            <FilterItem
+              key={elem.id}
+              className={`${elem.selected ? 'on' : ''}`}
+              onClick={() => {
+                filterHandler(elem);
+              }}
+            >
+              <TextB2R whiteSpace="nowrap" color={elem.selected ? '#fff' : '#242424'}>
+                {elem.name}
+              </TextB2R>
+            </FilterItem>
+          ))}
+        </FilterList>
       </FilterWrapper>
       {selected === 'ALL' && <NotiAll parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />}
       {selected === 'ORDER' && <NotiOrder parentRef={parentRef} postNotiChek={postNotiChek} setIsData={setIsData} />}
@@ -139,19 +137,39 @@ const NotiPage = () => {
 const Container = styled.div`
   height: calc(100vh - 128px);
 `;
-const FilterWrapper = styled.article`
-  padding: 16px 24px 18px 24px;
-`;
-const FilterList = styled(Swiper)`
+const FilterWrapper = styled.article<{ scroll: boolean }>`
   width: 100%;
-  .swiper-slide {
-    width: auto;
-  }
-`;
+  padding-left: 24px;
+  padding-right: 24px;
+  ${({ scroll }) => {
+    if (scroll) {
+      return css`
+        &::after{
+          content: '';
+          display: block;
+          position: absolute;
+          right: 0;
+          left: 0px;
+          bottom: -20px;
+          height: 20px;
+          background-size: 30px auto;
+          background-image: url("data:image/svg+xml,%3Csvg width='45' height='30' viewBox='0 0 45 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='45' height='30' fill='url(%23paint0_linear_1899_3133)'/%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear_1899_3133' x1='22.5' y1='0' x2='22.5' y2='16.5' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-opacity='0.2'/%3E%3Cstop offset='0.135417' stop-opacity='0.1'/%3E%3Cstop offset='0.369792' stop-opacity='0.0326087'/%3E%3Cstop offset='0.581127' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E%0A");
+        }
+      `;
+    }
+  }}
 
-const FilterItem = styled.div`
+`;
+const FilterList = styled.ul`
+  padding-top: 16px;
+  padding-bottom: 18px;
+  display: flex;
+  overflow-x: scroll;
+`;
+const FilterItem = styled.li`
   border: 1px solid #242424;
   padding: 8px 16px;
+  margin-right: 8px;
   border-radius: 40px;
   cursor: pointer;
   &.on {
@@ -160,6 +178,9 @@ const FilterItem = styled.div`
     div {
       font-weight: bold;
     }
+  }
+  &:last-of-type {
+    margin-right: 0;
   }
 `;
 export const NotiList = styled.ul`

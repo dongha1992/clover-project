@@ -147,7 +147,7 @@ const Header = () => {
     switch (true) {
       case ['/category/[category]'].includes(currentPath):
         return (
-          <Container scroll={scroll}>
+          <Container>
             <CategorySubHeader title={title} />
           </Container>
         );
@@ -170,28 +170,28 @@ const Header = () => {
 
       case ['/mypage/noti'].includes(currentPath): {
         return (
-          <Container scroll={scroll}>
+          <Container>
             <NotiHeader />
           </Container>
         );
       }
 
       case [
-        '/menu/[menuId]/detail/product',
-        '/menu/[menuId]/detail/nutrition',
-        '/menu/[menuId]/detail/delivery',
         '/login/find-account/email',
         '/login/find-account/password',
         '/mypage/dib/general',
         '/mypage/dib/subscription',
+        '/menu/[menuId]/detail/product',
+        '/menu/[menuId]/detail/nutrition',
+        '/menu/[menuId]/detail/delivery',
       ].includes(currentPath): {
         return (
-          <Container scroll={scroll}>
+          <Container>
             <TabHeader title={title} />
           </Container>
         );
       }
-
+      
       case [
         '/search',
         '/search/result',
@@ -271,6 +271,7 @@ const Header = () => {
           </Container>
         );
       }
+      
       case ['/onboarding'].includes(currentPath): {
         return null;
       }
@@ -292,29 +293,40 @@ const Container = styled.div<{ scroll?: boolean }>`
   width: 100%;
   max-width: ${breakpoints.mobile}px;
   position: fixed;
+  left: calc(50%);
   top: 0;
   right: 0;
   z-index: 998;
   height: 56px;
-  left: calc(50%);
   background-color: white;
 
   ${({ scroll }) => {
     if (scroll) {
       return css`
-        //box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
-        filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
-      `;
+      ${({ theme }) => theme.mobile`
+        margin: 0 auto;
+        left: 0px;
+      `};
+        &::after{
+          content: '';
+          display: block;
+          position: absolute;
+          right: 0;
+          left: 0px;
+          bottom: -20px;
+          height: 20px;
+          background-size: 30px auto;
+          background-image: url("data:image/svg+xml,%3Csvg width='45' height='30' viewBox='0 0 45 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='45' height='30' fill='url(%23paint0_linear_1899_3133)'/%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear_1899_3133' x1='22.5' y1='0' x2='22.5' y2='16.5' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-opacity='0.2'/%3E%3Cstop offset='0.135417' stop-opacity='0.1'/%3E%3Cstop offset='0.369792' stop-opacity='0.0326087'/%3E%3Cstop offset='0.581127' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E%0A");
+          ${({ theme }) => theme.mobile`
+            margin: 0 auto;
+            left: 0;
+          `};
+        }
+     `;
     }
   }};
 
   ${({ theme }) => theme.desktop`
-    margin: 0 auto;
-    left: 0px;
-
-  `};
-
-  ${({ theme }) => theme.mobile`
     margin: 0 auto;
     left: 0px;
   `};
