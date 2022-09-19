@@ -11,6 +11,7 @@ import { destinationForm } from '@store/destination';
 import { pipe, filter, map, toArray } from '@fxts/core';
 import { getFormatTime } from '@utils/destination/getFormatTime';
 import { IGetOrderListResponse, ISubOrderDelivery } from '@model/index';
+import { ItemInfo } from '@components/Pages/Mypage/OrderDelivery';
 
 let WEEKS: Obj = {
   0: '일',
@@ -44,6 +45,8 @@ interface ICalendar {
   goToSubDeliverySheet?: (id: number) => void;
   lunchOrDinner?: ILunchOrDinner[];
   isSheet?: boolean;
+  isSpotAvailable?: boolean;
+  pickupType?: string;
 }
 
 const Calendar = ({
@@ -54,6 +57,8 @@ const Calendar = ({
   isSheet,
   goToSubDeliverySheet,
   lunchOrDinner,
+  isSpotAvailable,
+  pickupType,
 }: ICalendar) => {
   const { userDeliveryType } = useSelector(destinationForm);
 
@@ -63,6 +68,9 @@ const Calendar = ({
   const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
 
   const selectedDay = sessionStorage.getItem('selectedDay');
+  const isLocker = pickupType === 'GS_LOCKER' || pickupType === 'KORAIL_LOCKER';
+  const { currentTime, days: day } = getCustomDate();
+  const isWeekend = ['금', '토', '일'].includes(day);
 
   const initCalendar = () => {
     const { years, months, dates } = getCustomDate();
@@ -116,6 +124,7 @@ const Calendar = ({
 
   const formatDisabledDate = (dateList: IDateObj[]): string[] => {
     // 배송에 따른 기본 휴무일
+
     const isQuickAndSpot = ['spot', 'quick'].includes(userDeliveryType!);
     const isParcelAndMorning = ['parcel', 'morning'].includes(userDeliveryType!);
     const quickAndSpotDisabled = ['토', '일'];
@@ -128,10 +137,10 @@ const Calendar = ({
 
     // 새벽/택배 17:00 이후 주문 마감
 
-    const { currentTime } = getCustomDate();
     const today = new Date().getDate();
     const nextDay = new Date().getDate() + 1;
 
+    const isBeforeLunch = currentTime < 9.29;
     const isFinishLunch = currentTime >= 9.29;
     const isFinishDinner = currentTime >= 10.59;
     const isFinishParcelAndMorning = currentTime >= 16.59;
@@ -140,6 +149,26 @@ const Calendar = ({
 
     try {
       switch (true) {
+        case isQuickAndSpot && isLocker: {
+          tempDisabledDate = pipe(
+            dateList,
+            filter(({ dayKor, date }: IDateObj) => {
+              if (!isWeekend) {
+                return (
+                  quickAndSpotDisabled.includes(dayKor) ||
+                  date === today ||
+                  (isBeforeLunch && date === nextDay) ||
+                  (isFinishLunch && date === nextDay)
+                );
+              } else {
+                return quickAndSpotDisabled.includes(dayKor) || (isFinishDinner && date === today);
+              }
+            }),
+            map(({ value }: IDateObj) => value),
+            toArray
+          );
+          break;
+        }
         case isQuickAndSpot:
           {
             tempDisabledDate = pipe(
@@ -178,10 +207,20 @@ const Calendar = ({
 
   const checkActiveDates = (dateList: IDateObj[], firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
+
+    const isOpenNextMonday = isWeekend && isLocker;
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
-    const firstActiveDate = filteredActiveDates[0]?.value;
+    const firstActiveDate = !isSpotAvailable ? '' : filteredActiveDates[0]?.value;
     const isDisabledDate = mergedDisabledDate.includes(selectedDay!);
+    let totalDisabledDates = !isSpotAvailable
+      ? [...mergedDisabledDate, ...filteredActiveDates.map((item) => item.value)]
+      : mergedDisabledDate;
+
+    if (isOpenNextMonday) {
+      const restDates = dateList.filter((item, index) => index > 7);
+      totalDisabledDates = [...totalDisabledDates, ...restDates.map((item) => item.value)];
+    }
 
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
     if (!isSheet) {
@@ -189,8 +228,9 @@ const Calendar = ({
       // 배송 타입 변경 후 선택 날짜가 배송 불가일 때
       changeDeliveryDate({ value: isDisabledDate ? firstActiveDate : defaultActiveDate, isChanged: isDisabledDate });
     }
+
     checkHasSubInActiveDates(dateList, mergedDisabledDate);
-    setCustomDisabledDate(mergedDisabledDate);
+    setCustomDisabledDate(totalDisabledDates);
     // 첫 번째 주에 배송 가능 날이 2일 이상인 경우
     checkShowMoreWeek(filteredActiveDates);
   };
@@ -234,58 +274,60 @@ const Calendar = ({
     );
   };
 
-  const RenderCalendar = React.memo(({ isShowMoreWeek }: { isShowMoreWeek: boolean }): JSX.Element => {
-    const { years, months, dates } = getCustomDate();
+  const RenderCalendar = React.memo(
+    ({ isShowMoreWeek, isSpotAvailable }: { isShowMoreWeek: boolean; isSpotAvailable?: boolean }): JSX.Element => {
+      const { years, months, dates } = getCustomDate();
 
-    const renderWeeks = () => {
-      const weeks: string[] = [];
-      for (let i = 0; i < ONE_WEEK; i++) {
-        const _week = new Date(years, months, dates + i).getDay();
-        if (WEEKS[_week]) {
-          weeks.push(WEEKS[_week]);
+      const renderWeeks = () => {
+        const weeks: string[] = [];
+        for (let i = 0; i < ONE_WEEK; i++) {
+          const _week = new Date(years, months, dates + i).getDay();
+          if (WEEKS[_week]) {
+            weeks.push(WEEKS[_week]);
+          }
         }
-      }
-      return weeks;
-    };
+        return weeks;
+      };
 
-    return (
-      <Wrapper>
-        <Header>
-          {renderWeeks().map((week, index) => {
-            return (
-              <TextH5B color={theme.greyScale45} key={index}>
-                {week}
-              </TextH5B>
-            );
-          })}
-        </Header>
-        <Body>
-          {dateList.map((dateObj, index) => {
-            const selectedDay = selectedDeliveryDay === dateObj.value;
+      return (
+        <Wrapper>
+          <Header>
+            {renderWeeks().map((week, index) => {
+              return (
+                <TextH5B color={theme.greyScale45} key={index}>
+                  {week}
+                </TextH5B>
+              );
+            })}
+          </Header>
+          <Body>
+            {dateList.map((dateObj, index) => {
+              const selectedDay = !isSpotAvailable ? false : selectedDeliveryDay === dateObj.value;
 
-            if (!isShowMoreWeek) {
-              if (index > LIMIT_DAYS) {
-                return;
+              if (!isShowMoreWeek) {
+                if (index > LIMIT_DAYS) {
+                  return;
+                }
               }
-            }
 
-            return (
-              <Days
-                handler={clickDayHandler}
-                value={dateObj.value}
-                day={dateObj.date}
-                key={index}
-                selectedDay={selectedDay}
-                index={index}
-                disabledDates={customDisabledDate}
-                otherDeliveryInfo={subOrderDeliveryInActiveDates}
-              />
-            );
-          })}
-        </Body>
-      </Wrapper>
-    );
-  });
+              return (
+                <Days
+                  handler={clickDayHandler}
+                  value={dateObj.value}
+                  day={dateObj.date}
+                  key={index}
+                  selectedDay={selectedDay}
+                  index={index}
+                  disabledDates={customDisabledDate}
+                  otherDeliveryInfo={subOrderDeliveryInActiveDates}
+                />
+              );
+            })}
+          </Body>
+        </Wrapper>
+      );
+    }
+  );
 
   RenderCalendar.displayName = 'RenderCalendar';
 
@@ -300,7 +342,7 @@ const Calendar = ({
   return (
     <FlexCol>
       <CalendarContainer isSheet={isSheet}>
-        <RenderCalendar isShowMoreWeek={isShowMoreWeek} />
+        <RenderCalendar isShowMoreWeek={isShowMoreWeek} isSpotAvailable={isSpotAvailable} />
       </CalendarContainer>
       {subOrderDeliveryInActiveDates.length > 0 && (
         <FlexRow padding="16px 0 0 0">
