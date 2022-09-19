@@ -1577,7 +1577,7 @@ const CartPage = () => {
         {me && likeMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
-              <TextH3B padding="12px 0 24px 0">{me?.nickname}님이 찜한 상품이에요</TextH3B>
+              <TextH3B padding="12px 24px 24px 24px">{me?.nickname}님이 찜한 상품이에요</TextH3B>
               <ScrollHorizonListGroup className="swiper-container" slidesPerView={'auto'} spaceBetween={16} speed={500}>
                 {likeMenusList?.map((item: IMenus, index: number) => {
                   if (index > 9) return;
@@ -1594,7 +1594,7 @@ const CartPage = () => {
         {me && orderedMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
-              <TextH3B padding="24px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
+              <TextH3B padding="36px 24px 24px 24px">이전에 구매한 상품들은 어떠세요?</TextH3B>
               <ScrollHorizonListGroup className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
                 {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
                   if (index > 9) return;
@@ -1772,9 +1772,7 @@ const BtnWrapper = styled.div`
 `;
 
 const CartInfoContainer = styled.div``;
-const MenuListContainer = styled.div`
-  ${homePadding}
-`;
+const MenuListContainer = styled.div``;
 const MenuListWarpper = styled.div`
   width: 100%;
   display: flex;
@@ -1785,7 +1783,7 @@ const MenuListHeader = styled.div``;
 
 const ScrollHorizonListGroup = styled(Swiper)`
   width: 100%;
-
+  padding: 0 24px;
   cursor: pointer;
   .swiper-slide {
     max-width: 130px;
