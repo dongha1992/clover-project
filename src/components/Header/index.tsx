@@ -300,10 +300,19 @@ const Container = styled.div<{ scroll?: boolean }>`
   height: 56px;
   background-color: white;
 
+  ${({ theme }) => theme.desktop`
+    margin: 0 auto;
+    left: 0px;
+  `};
+
   ${({ scroll }) => {
     if (scroll) {
       return css`
       ${({ theme }) => theme.mobile`
+        margin: 0 auto;
+        left: 0px;
+      `};
+      ${({ theme }) => theme.desktop`
         margin: 0 auto;
         left: 0px;
       `};
@@ -325,11 +334,6 @@ const Container = styled.div<{ scroll?: boolean }>`
      `;
     }
   }};
-
-  ${({ theme }) => theme.desktop`
-    margin: 0 auto;
-    left: 0px;
-  `};
 `;
 
 export default React.memo(Header);
