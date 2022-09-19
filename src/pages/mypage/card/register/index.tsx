@@ -461,14 +461,14 @@ const CardRegisterPage = () => {
         <TextInput ref={nicknameRef} placeholder="카드별명" />
       </OtherNameOfCardWrapper>
       <FlexRow>
-        <Checkbox isSelected={isMainCard} onChange={selectMainCardHandler} />
+        <Checkbox isSelected={isMainCard} onChange={selectMainCardHandler} className="checkBox" />
         <TextB2R padding="4px 0 0 8px" pointer onClick={selectMainCardHandler}>
           대표카드로 설정합니다.
         </TextB2R>
       </FlexRow>
       <BorderLine height={1} margin="24px 0" />
       <FlexRow>
-        <Checkbox isSelected={isTermCheck} onChange={selectTermHandler} />
+        <Checkbox isSelected={isTermCheck} onChange={selectTermHandler} className="checkBox" />
         <FlexRow padding="4px 4px 0 8px">
           <TextB2R onClick={selectTermHandler} pointer>
             이용 약관에 동의합니다.
@@ -496,6 +496,9 @@ const CardRegisterPage = () => {
 const Container = styled.div`
   ${homePadding}
   margin-bottom: 104px;
+  .checkBox {
+    margin-top: 5px;
+  }
 `;
 
 const SelectCardTypeWrapper = styled.div`
