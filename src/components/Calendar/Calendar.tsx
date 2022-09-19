@@ -153,7 +153,7 @@ const Calendar = ({
           tempDisabledDate = pipe(
             dateList,
             filter(({ dayKor, date }: IDateObj) => {
-              if (!isWeekend) {
+              if (isWeekend) {
                 return (
                   quickAndSpotDisabled.includes(dayKor) ||
                   date === today ||
