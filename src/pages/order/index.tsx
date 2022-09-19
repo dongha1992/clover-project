@@ -874,7 +874,7 @@ const OrderPage = () => {
         }
       }
     }
-    ga.setEvent({action: 'purchase'});
+    ga.setEvent({ action: 'purchase' });
     dispatch(SET_USER_ORDER_INFO({ ...userInputObj, selectedOrderMethod }));
   };
 
@@ -1535,7 +1535,7 @@ const OrderPage = () => {
 
 const Container = styled.div`
   .checkBox {
-    margin-bottom: 2px;
+    margin-top: 2px;
   }
 `;
 const OrderItemsWrapper = styled.div`

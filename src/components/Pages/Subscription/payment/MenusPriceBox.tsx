@@ -29,6 +29,8 @@ interface IProps {
   subscriptionDiscountRates: number[];
   grade: any;
   coupon?: number;
+  accumulatedPoint?: number;
+  expectedPoint?: number;
 }
 
 const MenusPriceBox = ({
@@ -46,6 +48,8 @@ const MenusPriceBox = ({
   subscriptionDiscountRates,
   grade,
   coupon,
+  accumulatedPoint,
+  expectedPoint,
 }: IProps) => {
   const dispatch = useDispatch();
 
@@ -166,27 +170,29 @@ const MenusPriceBox = ({
           원
         </TextH4B>
       </FlexBetween>
-      <FlexEnd>
-        <Badge>
-          <TextH7B>{grade?.name!}</TextH7B>
-        </Badge>
-        <TextB3R>
-          구매 시
-          <b>
-            {getFormatPrice(
-              String(
-                calculatePoint({
-                  rate: grade.benefit.accumulationRate! * 100,
-                  total: disposable
-                    ? menuPrice + menuOption1?.price + menuOption2?.price + deliveryPrice - menuDiscount
-                    : menuPrice + deliveryPrice - menuDiscount,
-                })
-              )
-            )}
-            P ({grade.benefit.accumulationRate! * 100}%) 적립 예정
-          </b>
-        </TextB3R>
-      </FlexEnd>
+      {(accumulatedPoint !== 0 || expectedPoint !== 0) && (
+        <>
+          <FlexEnd>
+            <Badge>
+              <TextH7B>{grade?.name!}</TextH7B>
+            </Badge>
+            <TextB3R>
+              {type !== 'management' ? (
+                <b>결제 금액의 {grade.benefit.accumulationRate! * 100}% 적립</b>
+              ) : (
+                <b>
+                  {accumulatedPoint !== 0 && `총 ${getFormatPrice(String(accumulatedPoint))}P 적립 완료`}
+                  {accumulatedPoint !== 0 && expectedPoint !== 0 && ' / '}
+                  {expectedPoint !== 0 && `${getFormatPrice(String(expectedPoint))}P 적립 예정`}
+                </b>
+              )}
+            </TextB3R>
+          </FlexEnd>
+          <FlexEnd>
+            <TextB3R color={theme.greyScale65}>(매 회차 배송완료 후 적립)</TextB3R>
+          </FlexEnd>
+        </>
+      )}
     </MenuPriceContainer>
   );
 };
