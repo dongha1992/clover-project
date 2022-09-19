@@ -81,7 +81,7 @@ const LoginPage = () => {
 
         if (data.code === 200) {
           // 로그인 성공 GA이벤트
-          ga.setEvent({action: 'login'});
+          ga.setEvent({ action: 'login' });
 
           const userTokenObj = data.data;
           if (userTokenObj?.tmpPasswordUsed) {
@@ -120,7 +120,7 @@ const LoginPage = () => {
               router.push(`${returnPath}`);
               return;
             }
-          };
+          }
         }
       } catch (error) {
         console.error(error);
@@ -157,7 +157,7 @@ const LoginPage = () => {
       </BtnWrapper>
       <FlexCenter>
         <TextB2R color={theme.greyScale75} onClick={goToFindEmail} pointer>
-          아이디(이메일) 찾기
+          이메일 찾기
         </TextB2R>
         <Col />
         <TextB2R color={theme.greyScale75} onClick={goToFindPassword} pointer>

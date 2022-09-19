@@ -10,8 +10,8 @@ import {
 } from '@model/index';
 
 interface IProps {
-  delivery: string;
-  deliveryDate: string;
+  delivery?: string | null;
+  deliveryDate?: string | null;
   spotId?: number | null;
 }
 
