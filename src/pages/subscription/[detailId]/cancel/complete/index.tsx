@@ -34,7 +34,7 @@ const SubOrderCancelCompletePage = () => {
   }, [router.isReady, router.query.detailId]);
 
   const goToSubscriptionDetail = () => {
-    router.push(`/subscription/${detailId}`);
+    router.replace(`/subscription/${detailId}`);
   };
 
   return (
