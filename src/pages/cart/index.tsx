@@ -295,6 +295,7 @@ const CartPage = () => {
       onSuccess: async (data) => {
         if (userDeliveryType === Object.keys(data)[0]) {
           const availability = Object.values(data)[0];
+
           if (!availability) {
             dispatch(
               SET_ALERT({
@@ -1042,7 +1043,7 @@ const CartPage = () => {
     if (!destinationObj.destinationId) return;
     if (isSpot && (isLoadingPickup || !pickUpAvailability)) return;
 
-    if (isValidDestination) {
+    if (!isValidDestination) {
       dispatch(
         SET_ALERT({
           alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
