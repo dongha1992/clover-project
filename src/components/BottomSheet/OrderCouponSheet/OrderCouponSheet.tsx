@@ -24,26 +24,25 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (selectedCoupon) setUseSelectedCoupon(selectedCoupon);
+    if (selectedCoupon) setUseSelectedCoupon({ ...selectedCoupon, isSelected: true });
   }, []);
 
   const goToOrder = () => {
     dispatch(INIT_BOTTOM_SHEET());
     dispatch(SET_USER_SELECT_COUPON(useSelectedCoupon!));
-    if (useSelectedCoupon === selectedCoupon) {
-      dispatch(INIT_COUPON());
-    } else {
+
+    if (useSelectedCoupon?.isSelected) {
       dispatch(SET_USER_SELECT_COUPON(useSelectedCoupon!));
+    } else {
+      dispatch(INIT_COUPON());
     }
   };
 
   const selectCouponHandler = (coupon: ICoupon): void => {
-    setUseSelectedCoupon(coupon);
-
-    if (useSelectedCoupon === selectedCoupon) {
-      setUseSelectedCoupon(null);
+    if (useSelectedCoupon?.isSelected) {
+      setUseSelectedCoupon({ ...coupon, isSelected: false });
     } else {
-      setUseSelectedCoupon(coupon);
+      setUseSelectedCoupon({ ...coupon, isSelected: true });
     }
   };
 
@@ -52,8 +51,6 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
   const closeBottomSheet = () => {
     dispatch(INIT_BOTTOM_SHEET());
   };
-
-  // const isDisabled = useSelectedCoupon !== undefined;
 
   return (
     <Container>
@@ -78,7 +75,7 @@ const OrderCouponSheet = ({ coupons, isOrder }: IProps) => {
               coupon={coupon}
               key={index}
               selectCouponHandler={selectCouponHandler}
-              isSelected={useSelectedCoupon?.id === coupon.id}
+              isSelected={useSelectedCoupon?.isSelected}
             />
           ))}
         </FlexCol>

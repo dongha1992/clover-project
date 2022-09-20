@@ -86,7 +86,7 @@ const CartPage = () => {
   const [isAllChecked, setIsAllchecked] = useState<boolean>(true);
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>(INITIAL_DELIVERY_DETAIL);
   const [isShow, setIsShow] = useState(false);
-  const [isInvalidDestination, setIsInvalidDestination] = useState<boolean>(false);
+  const [isValidDestination, setIsValidDestination] = useState<boolean>(false);
   const [disposableList, setDisposableList] = useState<IDisposable[]>([]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
   const [subOrderDelivery, setSubOrderDeliery] = useState<ISubOrderDelivery[]>([]);
@@ -107,6 +107,7 @@ const CartPage = () => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [holiday, setHoliday] = useState<string[]>([]);
   const [isCheckedEventSpot, setIsCheckedEventSpot] = useState<boolean>(false);
+  const [isSpotAvailable, setIsSpotAvailable] = useState<boolean>(false);
 
   const calendarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -294,15 +295,17 @@ const CartPage = () => {
       onSuccess: async (data) => {
         if (userDeliveryType === Object.keys(data)[0]) {
           const availability = Object.values(data)[0];
+
           if (!availability) {
             dispatch(
               SET_ALERT({
                 alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
               })
             );
-            setIsInvalidDestination(true);
+            setIsValidDestination(false);
           } else {
-            setIsInvalidDestination(false);
+            setIsSpotAvailable(true);
+            setIsValidDestination(true);
           }
         }
       },
@@ -331,12 +334,15 @@ const CartPage = () => {
     {
       onSuccess: async (data) => {
         if (!data) {
+          setIsSpotAvailable(false);
           dispatch(
             SET_ALERT({
               alertMessage: '현재 사용 가능한 보관함이 없어요.\n다른 프코스팟을 이용해 주세요.',
               submitBtnText: '확인',
             })
           );
+        } else {
+          setIsSpotAvailable(true);
         }
       },
       onError: ({ response }: any) => {
@@ -1037,7 +1043,7 @@ const CartPage = () => {
     if (!destinationObj.destinationId) return;
     if (isSpot && (isLoadingPickup || !pickUpAvailability)) return;
 
-    if (isInvalidDestination) {
+    if (!isValidDestination) {
       dispatch(
         SET_ALERT({
           alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
@@ -1297,7 +1303,7 @@ const CartPage = () => {
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
     if (isSpotOrQuick) {
-      const { currentTime, currentDate } = getCustomDate();
+      const { currentTime, currentDate, days: day } = getCustomDate();
       const isFinishLunch = currentTime >= 9.29;
       const isDisabledLunch = isFinishLunch && currentDate === selectedDeliveryDay;
 
@@ -1547,6 +1553,8 @@ const CartPage = () => {
               changeDeliveryDate={changeDeliveryDate}
               goToSubDeliverySheet={goToSubDeliverySheet}
               lunchOrDinner={lunchOrDinner}
+              isSpotAvailable={isSpotAvailable}
+              pickupType={destinationObj.pickupType!}
             />
             {isSpotAndQuick &&
               lunchOrDinner.map((item, index) => {
