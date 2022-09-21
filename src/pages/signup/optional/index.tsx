@@ -79,7 +79,8 @@ const SignupOptionalPage = () => {
         }
       },
       onError: (error: any) => {
-        dispatch(SET_ALERT({ alertMessage: error.message }));
+        const message = error?.message.split(',')[1].split(':')[1];
+        dispatch(SET_ALERT({ alertMessage: message ?? error.message }));
       },
     }
   );

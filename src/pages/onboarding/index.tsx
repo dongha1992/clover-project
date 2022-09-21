@@ -95,13 +95,14 @@ const OnBoarding: NextPage = () => {
 
   const kakaoLoginHandler = () => {
     /* 웹뷰 */
+    recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
+
     if (isApp) {
       window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-sign-kakao' }));
     } else {
       const url =
         location.hostname === 'localhost' ? 'http://localhost:9009/oauth' : `${process.env.SERVICE_URL}/oauth`;
 
-      recommendCode && sessionStorage.setItem('recommendCode', recommendCode as string);
       window.Kakao.Auth.authorize({
         redirectUri: url,
         scope: 'profile,plusfriends,account_email,gender,birthday,birthyear,phone_number',
@@ -193,9 +194,7 @@ const OnBoarding: NextPage = () => {
   };
 
   const goToHomeWithoutLogin = () => {
-    // router.replace(`${returnPath}`, null);
-    // TODO : returnPath를 가지고 onBoarding으로 이동 => 둘러보기 클릭 => returnPath로 이동 => 뒤로가기 클릭시 다시 onBoarding으로 이동
-    router.push('/');
+    router.push(`${returnPath}`);
   };
 
   const renderLastLoginTag = (): JSX.Element => {
@@ -271,6 +270,7 @@ const Container = styled.main`
   z-index: 100;
   height: calc(100vh - 56px);
   align-items: center;
+  padding-bottom: 32px;
 
   ${({ theme }) => theme.desktop`
     margin: 0 auto;
@@ -297,6 +297,7 @@ const Wrapper = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   width: 100%;
   height: 100%;
   z-index: 101;
@@ -310,7 +311,7 @@ const BrandImg = styled.div`
 
 const ButtonWrapper = styled.div`
   position: relative;
-  padding: 8px 32px 32px 32px;
+  padding: 8px 32px 0 32px;
   width: 100%;
   display: flex;
   flex-direction: column;
