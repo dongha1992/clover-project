@@ -2344,6 +2344,7 @@ export interface ICoupon {
   value: number;
   canUse: boolean;
   usedValue: number;
+  isSelected?: boolean;
 }
 
 export interface ICouponResponse {

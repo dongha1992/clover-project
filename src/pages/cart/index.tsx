@@ -86,7 +86,7 @@ const CartPage = () => {
   const [isAllChecked, setIsAllchecked] = useState<boolean>(true);
   const [lunchOrDinner, setLunchOrDinner] = useState<ILunchOrDinner[]>(INITIAL_DELIVERY_DETAIL);
   const [isShow, setIsShow] = useState(false);
-  const [isInvalidDestination, setIsInvalidDestination] = useState<boolean>(false);
+  const [isValidDestination, setIsValidDestination] = useState<boolean>(false);
   const [disposableList, setDisposableList] = useState<IDisposable[]>([]);
   const [selectedDeliveryDay, setSelectedDeliveryDay] = useState<string>('');
   const [subOrderDelivery, setSubOrderDeliery] = useState<ISubOrderDelivery[]>([]);
@@ -107,6 +107,7 @@ const CartPage = () => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [holiday, setHoliday] = useState<string[]>([]);
   const [isCheckedEventSpot, setIsCheckedEventSpot] = useState<boolean>(false);
+  const [isSpotAvailable, setIsSpotAvailable] = useState<boolean>(false);
 
   const calendarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -294,15 +295,17 @@ const CartPage = () => {
       onSuccess: async (data) => {
         if (userDeliveryType === Object.keys(data)[0]) {
           const availability = Object.values(data)[0];
+
           if (!availability) {
             dispatch(
               SET_ALERT({
                 alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
               })
             );
-            setIsInvalidDestination(true);
+            setIsValidDestination(false);
           } else {
-            setIsInvalidDestination(false);
+            setIsSpotAvailable(true);
+            setIsValidDestination(true);
           }
         }
       },
@@ -331,12 +334,15 @@ const CartPage = () => {
     {
       onSuccess: async (data) => {
         if (!data) {
+          setIsSpotAvailable(false);
           dispatch(
             SET_ALERT({
               alertMessage: '현재 사용 가능한 보관함이 없어요.\n다른 프코스팟을 이용해 주세요.',
               submitBtnText: '확인',
             })
           );
+        } else {
+          setIsSpotAvailable(true);
         }
       },
       onError: ({ response }: any) => {
@@ -1037,7 +1043,7 @@ const CartPage = () => {
     if (!destinationObj.destinationId) return;
     if (isSpot && (isLoadingPickup || !pickUpAvailability)) return;
 
-    if (isInvalidDestination) {
+    if (!isValidDestination) {
       dispatch(
         SET_ALERT({
           alertMessage: '현재 주문할 수 없는 배송지예요. 배송지를 변경해 주세요.',
@@ -1297,7 +1303,7 @@ const CartPage = () => {
   useEffect(() => {
     const isSpotOrQuick = ['spot', 'quick'].includes(destinationObj.delivery!);
     if (isSpotOrQuick) {
-      const { currentTime, currentDate } = getCustomDate();
+      const { currentTime, currentDate, days: day } = getCustomDate();
       const isFinishLunch = currentTime >= 9.29;
       const isDisabledLunch = isFinishLunch && currentDate === selectedDeliveryDay;
 
@@ -1547,6 +1553,8 @@ const CartPage = () => {
               changeDeliveryDate={changeDeliveryDate}
               goToSubDeliverySheet={goToSubDeliverySheet}
               lunchOrDinner={lunchOrDinner}
+              isSpotAvailable={isSpotAvailable}
+              pickupType={destinationObj.pickupType!}
             />
             {isSpotAndQuick &&
               lunchOrDinner.map((item, index) => {
@@ -1577,7 +1585,7 @@ const CartPage = () => {
         {me && likeMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
-              <TextH3B padding="12px 0 24px 0">{me?.nickname}님이 찜한 상품이에요</TextH3B>
+              <TextH3B padding="12px 24px 24px 24px">{me?.nickname}님이 찜한 상품이에요</TextH3B>
               <ScrollHorizonListGroup className="swiper-container" slidesPerView={'auto'} spaceBetween={16} speed={500}>
                 {likeMenusList?.map((item: IMenus, index: number) => {
                   if (index > 9) return;
@@ -1594,7 +1602,7 @@ const CartPage = () => {
         {me && orderedMenusList?.length !== 0 && (
           <MenuListWarpper>
             <MenuListHeader>
-              <TextH3B padding="24px 0 24px 0">이전에 구매한 상품들은 어떠세요?</TextH3B>
+              <TextH3B padding="36px 24px 24px 24px">이전에 구매한 상품들은 어떠세요?</TextH3B>
               <ScrollHorizonListGroup className="swiper-container" slidesPerView={'auto'} spaceBetween={15} speed={500}>
                 {orderedMenusList?.map((item: IOrderedMenuDetails, index: number) => {
                   if (index > 9) return;
@@ -1772,9 +1780,7 @@ const BtnWrapper = styled.div`
 `;
 
 const CartInfoContainer = styled.div``;
-const MenuListContainer = styled.div`
-  ${homePadding}
-`;
+const MenuListContainer = styled.div``;
 const MenuListWarpper = styled.div`
   width: 100%;
   display: flex;
@@ -1785,7 +1791,7 @@ const MenuListHeader = styled.div``;
 
 const ScrollHorizonListGroup = styled(Swiper)`
   width: 100%;
-
+  padding: 0 24px;
   cursor: pointer;
   .swiper-slide {
     max-width: 130px;

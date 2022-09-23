@@ -133,8 +133,8 @@ const SpotStatusPage = () => {
 
   return (
     <Container>
-      <FixedTab scroll={isScroll}>
-        <TabList tabList={SPOT_STATUS} onClick={selectTabHandler} selectedTab={selectedTab} />
+      <FixedTab>
+        <TabList shadowValue={'-20px'} tabList={SPOT_STATUS} onClick={selectTabHandler} selectedTab={selectedTab} />
       </FixedTab>
       <ContentWrapper>
         {selectedTab === '/spot/status/list' ? (
@@ -203,16 +203,8 @@ const ContentWrapper = styled.div`
   ${homePadding};
 `;
 
-const FixedTab = styled.div<{ scroll: boolean }>`
+const FixedTab = styled.div`
   ${fixedTab};
-
-  ${({ scroll }) => {
-    if (scroll) {
-      return css`
-        box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
-      `;
-    }
-  }}
 `;
 
 const SpotStatusListWrapper = styled.section`
