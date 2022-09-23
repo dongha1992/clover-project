@@ -611,6 +611,7 @@ const OrderPage = () => {
   const progressPayNice = async (orderData: ICreateOrder) => {
     const orderId = orderData.id;
     if (checkIsAlreadyPaid(orderData)) return;
+    if (checkIsApp({ method: selectedOrderMethod, orderData })) return;
 
     const reqBody = {
       payMethod: selectedOrderMethod,
@@ -640,7 +641,7 @@ const OrderPage = () => {
           inputHidden.setAttribute('value', response[formName]);
         }
 
-        if (isMobile || isApp) {
+        if (isMobile) {
           if (!['EncodeParameters', 'SocketYN', 'UserIP'].includes(formName)) {
             payFormMobile.appendChild(inputHidden);
           }
@@ -649,16 +650,13 @@ const OrderPage = () => {
         }
       }
 
-      if (isMobile || isApp) {
+      if (isMobile) {
         let acsNoIframeInput = document.createElement('input');
         acsNoIframeInput.setAttribute('type', 'hidden');
         acsNoIframeInput.setAttribute('name', 'AcsNoIframe');
         acsNoIframeInput.setAttribute('value', 'Y'); // 변경 불가
         payFormMobile.appendChild(acsNoIframeInput);
         nicepayMobileStart();
-        if (isApp) {
-          webviewPayment();
-        }
         return;
       } else {
         nicepayStart();
@@ -682,6 +680,7 @@ const OrderPage = () => {
     };
 
     if (checkIsAlreadyPaid(orderData)) return;
+    if (checkIsApp({ method: selectedOrderMethod, orderData })) return;
 
     try {
       const { data } = await postPaycoPaymentApi({ orderId, data: reqBody });
@@ -705,6 +704,7 @@ const OrderPage = () => {
     };
 
     if (checkIsAlreadyPaid(orderData)) return;
+    if (checkIsApp({ method: selectedOrderMethod, orderData })) return;
 
     /* TODO: 모바일, 안드로이드 체크  */
 
@@ -716,9 +716,7 @@ const OrderPage = () => {
         value: data.data.tid,
       });
 
-      if (isApp) {
-        window.location.href = data.data.next_redirect_app_url;
-      } else if (isMobile) {
+      if (isMobile) {
         window.location.href = data.data.next_redirect_mobile_url;
       } else {
         window.location.href = data.data.next_redirect_pc_url;
@@ -744,6 +742,7 @@ const OrderPage = () => {
     };
 
     if (checkIsAlreadyPaid(orderData)) return;
+    if (checkIsApp({ method: selectedOrderMethod, orderData })) return;
 
     try {
       const { data } = await postTossPaymentApi({ orderId, data: reqBody });
@@ -876,6 +875,28 @@ const OrderPage = () => {
     }
     ga.setEvent({ action: 'purchase' });
     dispatch(SET_USER_ORDER_INFO({ ...userInputObj, selectedOrderMethod }));
+  };
+
+  const checkIsApp = ({ method, orderData }: { method: any; orderData: any }) => {
+    if (isApp) {
+      openAppPay(method, orderData);
+      return true;
+    }
+    return false;
+  };
+
+  const openAppPay = (payMethod: any, orderData: any) => {
+    localStorage.setItem('payData', JSON.stringify({ orderData, payMethod }));
+
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({
+        cmd: 'webview-payment',
+        data: {
+          returnUrl: `${process.env.SERVICE_URL}/order/order-app`,
+          payMethod,
+        },
+      })
+    );
   };
 
   useEffect(() => {

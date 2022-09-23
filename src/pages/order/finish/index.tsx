@@ -27,6 +27,7 @@ import { SET_ALERT } from '@store/alert';
 import { useGetOrderDetail } from 'src/queries/order';
 import { cartForm } from '@store/cart';
 import { periodMapper } from '@constants/subscription';
+import useIsApp from '@hooks/useIsApp';
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
@@ -41,6 +42,8 @@ const OrderFinishPage = () => {
   const { cartLists } = useSelector(cartForm);
 
   const { pg_token: pgToken, orderId, pg } = router.query;
+
+  const isApp = useIsApp();
 
   const { data: orderDetail } = useGetOrderDetail(['getOrderDetail'], Number(orderId), {
     onSuccess: (data: IOrderDetail) => {
@@ -104,7 +107,13 @@ const OrderFinishPage = () => {
       dispatch(INIT_COUPON());
       removeCookie({ name: 'toss-tid-clover' });
       removeCookie({ name: 'kakao-tid-clover' });
+      console.log('finally');
 
+      if (isApp) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({ cmd: 'webview-payment-success', data: { returnUrl: window.location.href } })
+        );
+      }
       // 장바구니 품절 상품이 있나 확인
       // TODO: 결제 해서 테스트 해봐야함
       // const filteredCartLists: ICartLists[] = cartLists

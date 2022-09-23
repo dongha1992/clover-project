@@ -271,7 +271,7 @@ const Header = () => {
           </Container>
         );
       }
-      case ['/onboarding'].includes(currentPath): {
+      case ['/onboarding', '/order/order-app'].includes(currentPath): {
         return null;
       }
 
