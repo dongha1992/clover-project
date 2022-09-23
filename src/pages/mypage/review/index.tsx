@@ -141,8 +141,8 @@ const ReviewPage = () => {
 
   return (
     <Container ref={ref}>
-      <FixedTab scroll={isScroll}>
-        <TabList tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} countObj={countObj} />
+      <FixedTab>
+        <TabList shadowValue={'-20px'} tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} countObj={countObj} />
       </FixedTab>
       <InfoWrapper>
         <ReviewInfo setIsShow={setIsShow} isShow={isShow} />
@@ -201,16 +201,8 @@ const InfoWrapper = styled.div`
   position: relative;
 `;
 
-const FixedTab = styled.div<{ scroll: boolean }>`
+const FixedTab = styled.div`
   ${fixedTab};
-
-  ${({ scroll }) => {
-    if (scroll) {
-      return css`
-        box-shadow: -1px 9px 16px -4px rgb(0 0 0 / 25%);
-      `;
-    }
-  }}
 `;
 
 const Wrapper = styled.div`
