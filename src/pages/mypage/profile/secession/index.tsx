@@ -13,6 +13,7 @@ import { fixedBottom, FlexRow } from '@styles/theme';
 import { useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useDispatch } from 'react-redux';
+import router from 'next/router';
 import styled from 'styled-components';
 
 const SecessionPage = () => {
@@ -32,6 +33,9 @@ const SecessionPage = () => {
         SET_ALERT({
           alertMessage: '탈퇴가 정상적으로 처리되었습니다.',
           submitBtnText: '확인',
+          onSubmit: () => {
+            router.push('/');
+          },
         })
       );
     },

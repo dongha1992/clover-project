@@ -402,7 +402,9 @@ const SubsSetInfoPage = () => {
     </Container>
   );
 };
-const Container = styled.div``;
+const Container = styled.div`
+  padding-bottom: 56px;
+`;
 
 const DeliveryMethodAndPickupLocation = styled.div`
   display: flex;

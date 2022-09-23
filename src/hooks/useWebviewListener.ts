@@ -1,4 +1,5 @@
 import { putDeviceApi } from '@api/device';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useStore } from 'react-redux';
 import { useAppleLogin, useKakaoLogin } from './auth';
@@ -7,6 +8,7 @@ const useWebviewListener = () => {
   const store: any = useStore();
   const onKaKao = useKakaoLogin();
   const onApple = useAppleLogin();
+  const router = useRouter();
 
   useEffect(() => {
     if (window.ReactNativeWebView) {
@@ -49,6 +51,9 @@ const useWebviewListener = () => {
           JSON.stringify({ cmd: 'webview-login-check', data: !!store.getState().user.me })
         );
         break;
+      case 'rn-replace':
+        router.replace(data.url)
+        break
 
       default:
         break;
