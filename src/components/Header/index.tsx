@@ -191,7 +191,7 @@ const Header = () => {
           </Container>
         );
       }
-      
+
       case [
         '/search',
         '/search/result',
@@ -271,8 +271,7 @@ const Header = () => {
           </Container>
         );
       }
-      
-      case ['/onboarding'].includes(currentPath): {
+      case ['/onboarding', '/order/order-app'].includes(currentPath): {
         return null;
       }
 
@@ -308,15 +307,15 @@ const Container = styled.div<{ scroll?: boolean }>`
   ${({ scroll }) => {
     if (scroll) {
       return css`
-      ${({ theme }) => theme.mobile`
+        ${({ theme }) => theme.mobile`
         margin: 0 auto;
         left: 0px;
       `};
-      ${({ theme }) => theme.desktop`
+        ${({ theme }) => theme.desktop`
         margin: 0 auto;
         left: 0px;
       `};
-        &::after{
+        &::after {
           content: '';
           display: block;
           position: absolute;
@@ -331,7 +330,7 @@ const Container = styled.div<{ scroll?: boolean }>`
             left: 0;
           `};
         }
-     `;
+      `;
     }
   }};
 `;

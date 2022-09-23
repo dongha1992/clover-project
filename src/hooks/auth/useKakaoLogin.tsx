@@ -49,7 +49,8 @@ const useKakaoLogin = () => {
         }
       } else {
       }
-    } catch (error: any) {
+    } catch ({ response }) {
+      const { data: error } = response as any;
       if (error.code === 2010) {
         dispatch(
           SET_ALERT({
