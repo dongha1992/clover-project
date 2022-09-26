@@ -67,7 +67,9 @@ const Calendar = ({
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
   const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
 
-  const selectedDay = sessionStorage.getItem('selectedDay');
+  const selectedDay =
+    sessionStorage.getItem('selectedDay') !== 'undefined' ? sessionStorage.getItem('selectedDay') : null;
+
   const isLocker = pickupType === 'GS_LOCKER' || pickupType === 'KORAIL_LOCKER';
   const { currentTime, days: day } = getCustomDate();
   const isWeekend = ['금', '토', '일'].includes(day);
@@ -211,7 +213,7 @@ const Calendar = ({
     const isOpenNextMonday = isWeekend && isLocker;
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
-    const firstActiveDate = !isSpotAvailable ? '' : filteredActiveDates[0]?.value;
+    const firstActiveDate = filteredActiveDates[0]?.value;
     const isDisabledDate = mergedDisabledDate.includes(selectedDay!);
     let totalDisabledDates = !isSpotAvailable
       ? [...mergedDisabledDate, ...filteredActiveDates.map((item) => item.value)]
@@ -223,8 +225,10 @@ const Calendar = ({
     }
 
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
+
     if (!isSheet) {
-      const defaultActiveDate = selectedDay || firstActiveDate;
+      const defaultActiveDate = selectedDay ?? firstActiveDate;
+
       // 배송 타입 변경 후 선택 날짜가 배송 불가일 때
       changeDeliveryDate({ value: isDisabledDate ? firstActiveDate : defaultActiveDate, isChanged: isDisabledDate });
     }

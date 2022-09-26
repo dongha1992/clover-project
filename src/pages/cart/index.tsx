@@ -283,10 +283,10 @@ const CartPage = () => {
     ['getAvailabilityDestination'],
     async () => {
       const params = {
-        roadAddress: userDestination?.location?.address!,
+        roadAddress: destinationObj?.location?.address!,
         jibunAddress: null,
-        zipCode: userDestination?.location?.zipCode!,
-        delivery: userDeliveryType.toUpperCase() || null,
+        zipCode: destinationObj?.location?.zipCode!,
+        delivery: destinationObj?.delivery?.toUpperCase() || null,
       };
       const { data } = await getAvailabilityDestinationApi(params);
       return data.data;
@@ -304,9 +304,9 @@ const CartPage = () => {
             );
             setIsValidDestination(false);
           } else {
-            setIsSpotAvailable(true);
             setIsValidDestination(true);
           }
+          setIsSpotAvailable(true);
         }
       },
       onError: ({ response }: any) => {
@@ -317,10 +317,10 @@ const CartPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
-      enabled: !!me && !!userDestination,
+      enabled: !!me && !!destinationObj.location,
     }
   );
-
+  console.log(isSpotAvailable);
   const {
     data: pickUpAvailability,
     error,
