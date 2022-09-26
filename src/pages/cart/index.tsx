@@ -107,7 +107,7 @@ const CartPage = () => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [holiday, setHoliday] = useState<string[]>([]);
   const [isCheckedEventSpot, setIsCheckedEventSpot] = useState<boolean>(false);
-  const [isSpotAvailable, setIsSpotAvailable] = useState<boolean>(false);
+  const [isSpotAvailable, setIsSpotAvailable] = useState<boolean>(true);
 
   const calendarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -283,10 +283,10 @@ const CartPage = () => {
     ['getAvailabilityDestination'],
     async () => {
       const params = {
-        roadAddress: userDestination?.location?.address!,
+        roadAddress: destinationObj?.location?.address!,
         jibunAddress: null,
-        zipCode: userDestination?.location?.zipCode!,
-        delivery: userDeliveryType.toUpperCase() || null,
+        zipCode: destinationObj?.location?.zipCode!,
+        delivery: destinationObj?.delivery?.toUpperCase() || null,
       };
       const { data } = await getAvailabilityDestinationApi(params);
       return data.data;
@@ -304,7 +304,6 @@ const CartPage = () => {
             );
             setIsValidDestination(false);
           } else {
-            setIsSpotAvailable(true);
             setIsValidDestination(true);
           }
         }
@@ -317,7 +316,7 @@ const CartPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
-      enabled: !!me && !!userDestination,
+      enabled: !!me && !!destinationObj.location,
     }
   );
 
@@ -341,8 +340,6 @@ const CartPage = () => {
               submitBtnText: '확인',
             })
           );
-        } else {
-          setIsSpotAvailable(true);
         }
       },
       onError: ({ response }: any) => {
