@@ -148,7 +148,7 @@ const CartPage = () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
 
       const obj = {
-        delivery: userDeliveryType?.toUpperCase()! ? userDeliveryType?.toUpperCase()! : null,
+        delivery: userDeliveryType?.toUpperCase()! && selectedDeliveryDay ? userDeliveryType?.toUpperCase()! : null,
         deliveryDate: selectedDeliveryDay ? selectedDeliveryDay : null,
         spotId: isSpot ? destinationObj?.spotId : null,
       };
@@ -162,7 +162,7 @@ const CartPage = () => {
       refetchOnWindowFocus: false,
       cacheTime: 0,
       staleTime: 0,
-      enabled: !!me && !!selectedDeliveryDay,
+      enabled: !!me,
       onSuccess: (data) => {
         try {
           setCartItemList(data.cartMenus);
@@ -1552,7 +1552,7 @@ const CartPage = () => {
               changeDeliveryDate={changeDeliveryDate}
               goToSubDeliverySheet={goToSubDeliverySheet}
               lunchOrDinner={lunchOrDinner}
-              isSpotAvailable={isSpotAvailable}
+              isSpotAvailable={pickUpAvailability}
               pickupType={destinationObj.pickupType!}
             />
             {isSpotAndQuick &&
