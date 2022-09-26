@@ -153,12 +153,14 @@ const Calendar = ({
           tempDisabledDate = pipe(
             dateList,
             filter(({ dayKor, date }: IDateObj) => {
-              if (isWeekend) {
+              const nextMonday = dateList.filter((item) => item.day === 1)[1];
+              console.log(nextMonday.date, 'nextMonday');
+              if (!isWeekend) {
                 return (
                   quickAndSpotDisabled.includes(dayKor) ||
-                  date === today ||
-                  (isBeforeLunch && date === nextDay) ||
-                  (isFinishLunch && date === nextDay)
+                  (isBeforeLunch && date !== today) ||
+                  (isFinishLunch && date !== today) ||
+                  (isFinishDinner && date !== nextMonday.date)
                 );
               } else {
                 return quickAndSpotDisabled.includes(dayKor) || (isFinishDinner && date === today);
@@ -217,14 +219,15 @@ const Calendar = ({
       ? [...mergedDisabledDate, ...filteredActiveDates.map((item) => item.value)]
       : mergedDisabledDate;
 
-    if (isOpenNextMonday) {
-      const restDates = dateList.filter((item, index) => index > 7);
-      totalDisabledDates = [...totalDisabledDates, ...restDates.map((item) => item.value)];
-    }
+    // if (isOpenNextMonday) {
+    //   const restDates = dateList.filter((item, index) => index > 7);
+    //   totalDisabledDates = [...totalDisabledDates, ...restDates.map((item) => item.value)];
+    // }
 
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
     if (!isSheet) {
-      const defaultActiveDate = selectedDay || firstActiveDate;
+      const defaultActiveDate = selectedDay ?? firstActiveDate;
+      console.log(defaultActiveDate, 'defaultActiveDate');
       // 배송 타입 변경 후 선택 날짜가 배송 불가일 때
       changeDeliveryDate({ value: isDisabledDate ? firstActiveDate : defaultActiveDate, isChanged: isDisabledDate });
     }
