@@ -283,10 +283,10 @@ const CartPage = () => {
     ['getAvailabilityDestination'],
     async () => {
       const params = {
-        roadAddress: userDestination?.location?.address!,
+        roadAddress: destinationObj?.location?.address!,
         jibunAddress: null,
-        zipCode: userDestination?.location?.zipCode!,
-        delivery: userDeliveryType.toUpperCase() || null,
+        zipCode: destinationObj?.location?.zipCode!,
+        delivery: destinationObj?.delivery?.toUpperCase() || null,
       };
       const { data } = await getAvailabilityDestinationApi(params);
       return data.data;
@@ -304,9 +304,9 @@ const CartPage = () => {
             );
             setIsValidDestination(false);
           } else {
-            setIsSpotAvailable(true);
             setIsValidDestination(true);
           }
+          setIsSpotAvailable(true);
         }
       },
       onError: ({ response }: any) => {
@@ -317,10 +317,10 @@ const CartPage = () => {
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       cacheTime: 0,
-      enabled: !!me && !!userDestination,
+      enabled: !!me && !!destinationObj.location,
     }
   );
-
+  console.log(isSpotAvailable);
   const {
     data: pickUpAvailability,
     error,
@@ -746,7 +746,7 @@ const CartPage = () => {
   const changeDeliveryDate = ({ value, isChanged }: { value: string; isChanged: boolean }) => {
     const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === value);
 
-    if (value?.length === 0) {
+    if (value.length === 0) {
       dispatch(
         SET_ALERT({
           alertMessage: '선택한 배송지로 가능한 날짜가 없어요. 배송지를 변경해주세요.',

@@ -213,7 +213,7 @@ const Calendar = ({
     const isOpenNextMonday = isWeekend && isLocker;
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
-    const firstActiveDate = !isSpotAvailable ? '' : filteredActiveDates[0]?.value;
+    const firstActiveDate = filteredActiveDates[0]?.value;
     const isDisabledDate = mergedDisabledDate.includes(selectedDay!);
     let totalDisabledDates = !isSpotAvailable
       ? [...mergedDisabledDate, ...filteredActiveDates.map((item) => item.value)]
