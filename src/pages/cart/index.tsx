@@ -107,7 +107,7 @@ const CartPage = () => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [holiday, setHoliday] = useState<string[]>([]);
   const [isCheckedEventSpot, setIsCheckedEventSpot] = useState<boolean>(false);
-  const [isSpotAvailable, setIsSpotAvailable] = useState<boolean>(false);
+  const [isSpotAvailable, setIsSpotAvailable] = useState<boolean>(true);
 
   const calendarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -306,7 +306,6 @@ const CartPage = () => {
           } else {
             setIsValidDestination(true);
           }
-          setIsSpotAvailable(true);
         }
       },
       onError: ({ response }: any) => {
@@ -320,7 +319,7 @@ const CartPage = () => {
       enabled: !!me && !!destinationObj.location,
     }
   );
-  console.log(isSpotAvailable);
+
   const {
     data: pickUpAvailability,
     error,
@@ -341,8 +340,6 @@ const CartPage = () => {
               submitBtnText: '확인',
             })
           );
-        } else {
-          setIsSpotAvailable(true);
         }
       },
       onError: ({ response }: any) => {
