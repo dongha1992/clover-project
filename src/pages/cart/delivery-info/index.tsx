@@ -180,8 +180,8 @@ const DeliverInfoPage = () => {
         SET_DESTINATION({
           ...tempDestination,
           spotId: tempDestination.spotId,
-          spotPickupType: tempDestination?.spotPickup?.type,
-          spotPickupId: tempDestination?.spotPickup?.id,
+          spotPickupType: tempDestination?.spotPickup?.type ?? userDestination?.spotPickupType,
+          spotPickupId: tempDestination?.spotPickup?.id ?? userDestination?.spotPickupId,
         })
       );
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
