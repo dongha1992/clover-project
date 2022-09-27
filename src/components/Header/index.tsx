@@ -85,9 +85,10 @@ const Header = () => {
       '/mypage/profile/secession': '회원탈퇴',
       '/mypage/dib/general': '찜한 상품',
       '/mypage/friend': '친구 초대',
-      '/mypage/review': '후기 작성',
+      '/mypage/review/schedule': '후기 작성',
+      '/mypage/review/completed': '후기 작성',
       '/mypage/review/write/[orderDeliveryId]': '후기 작성',
-      '/mypage/review/edit/[reviewId]': '후기 수정',
+      '/mypage/review/completed/edit/[reviewId]': '후기 수정',
       '/mypage/rank': '회원등급',
       '/mypage/customer-service': '고객센터',
       '/mypage/point': '포인트',
@@ -186,6 +187,8 @@ const Header = () => {
         '/menu/[menuId]/detail/delivery',
         '/mypage/spot/status',
         '/mypage/spot/wish',
+        '/mypage/review/schedule',
+        '/mypage/review/completed',
       ].includes(currentPath): {
         return (
           <Container>
@@ -266,7 +269,7 @@ const Header = () => {
         );
       }
 
-      case ['/mypage/review', '/mypage/address'].includes(currentPath): {
+      case ['/mypage/address'].includes(currentPath): {
         return (
           <Container>
             <DefaultHeader title={title} />

@@ -29,6 +29,15 @@ export const SPOT_MENU = [
   }
 ]
 
+export const REVIEW_MENU = [
+  {
+    id: 1, text: '작성 예정', link: '/mypage/review/schedule', value: 'schedule'
+  },
+  {
+    id: 2, text: '작성 완료', link: '/mypage/review/completed', value: 'completed'
+  }
+]
+
 export const SECESSION_REASON = [
   { id: 0, text: '탈퇴 후 재가입을 하기 위해서' },
   { id: 1, text: '서비스 이용 계획이 없어서' },

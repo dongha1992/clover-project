@@ -57,7 +57,7 @@ const OrderDetailPage = () => {
       return data?.data;
     },
     {
-      onSuccess: (data) => {},
+      onSuccess: data => {},
       onSettled: () => {
         dispatch(hide());
       },
@@ -96,7 +96,7 @@ const OrderDetailPage = () => {
 
   const { mutateAsync: mutateAddCartItem } = useMutation(
     async () => {
-      const reqBody = orderDeliveries?.orderMenus.map((item) => {
+      const reqBody = orderDeliveries?.orderMenus.map(item => {
         return {
           menuId: item.menuId,
           menuDetailId: item.menuDetailId,
@@ -198,7 +198,7 @@ const OrderDetailPage = () => {
   };
 
   const goToReivew = () => {
-    router.push('/mypage/review');
+    router.push('/mypage/review/schedule');
   };
 
   const changeDeliveryInfoHandler = () => {
@@ -517,7 +517,7 @@ const OrderDetailPage = () => {
           <TextH5B>환경부담금 (일회용품)</TextH5B>
           <TextB2R>{getFormatPrice(String(optionAmount))}원</TextB2R>
         </FlexBetween>
-        {orderOptions.map((item) => {
+        {orderOptions.map(item => {
           return (
             <FlexBetween padding="8px 0 0 0" key={item.id}>
               <TextB2R>{item.optionName}</TextB2R>

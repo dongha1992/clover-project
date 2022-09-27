@@ -32,11 +32,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);
 
-  const {
-    data: menuDetail,
-    error: menuError,
-    isLoading: menuDeitalLoading,
-  } = useQuery(
+  const { data: menuDetail, error: menuError, isLoading: menuDeitalLoading } = useQuery(
     'getMenuDetail',
     async () => {
       dispatch(show());
@@ -44,7 +40,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
       return data?.data;
     },
     {
-      onSuccess: (data) => {
+      onSuccess: data => {
         dispatch(SET_MENU_ITEM(data));
       },
       onSettled: () => {
@@ -56,12 +52,19 @@ const TotalReviewPage = ({ menuId }: IProps) => {
     }
   );
 
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status, isLoading } =
-    useInfiniteMenuReviews({
-      id: Number(menuId)!,
-      size: DEFAULT_SIZE,
-      page: 1,
-    });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+    isLoading,
+  } = useInfiniteMenuReviews({
+    id: Number(menuId)!,
+    size: DEFAULT_SIZE,
+    page: 1,
+  });
 
   const { data: reviewsImages, error: reviewsImagesError } = useQuery(
     'getMenuDetailReviewImages',
@@ -73,7 +76,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
     },
 
     {
-      onSuccess: (data) => {},
+      onSuccess: data => {},
       onSettled: () => {
         dispatch(hide());
       },
@@ -145,7 +148,7 @@ const TotalReviewPage = ({ menuId }: IProps) => {
                   })
                 );
               }
-              router.push('/mypage/review');
+              router.push('/mypage/review/schedule');
             }}
           >
             {me ? '후기 작성하기 (최대 300P 적립)' : '로그인 후 후기 작성하기'}

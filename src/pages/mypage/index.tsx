@@ -257,7 +257,7 @@ const MypagePage: NextPageWithLayout = () => {
               showBoard={showBoard}
             />
             <ManageWrapper>
-              <MypageMenu title="후기 작성" link="/mypage/review" />
+              <MypageMenu title="후기 작성" link="/mypage/review/schedule" />
               <MypageMenu title="찜한 상품" link="/mypage/dib/general" hideBorder />
               <BorderLine height={8} />
               <MypageMenu title="프코스팟 관리" link="/mypage/spot/status" />
