@@ -325,7 +325,7 @@ const CartPage = () => {
     error,
     isLoading: isLoadingPickup,
   } = useQuery(
-    'getPickupAvailability',
+    ['getPickupAvailability', destinationObj?.pickupId],
     async () => {
       const { data } = await getPickupAvailabilityApi(destinationObj?.pickupId!);
       return data.data.isAvailability;
@@ -333,6 +333,7 @@ const CartPage = () => {
     {
       onSuccess: async (data) => {
         if (!data) {
+          sessionStorage.removeItem('selectedDay');
           setIsSpotAvailable(false);
           dispatch(
             SET_ALERT({
@@ -344,7 +345,6 @@ const CartPage = () => {
       },
       onError: ({ response }: any) => {
         const { data: error } = response as any;
-
         dispatch(SET_ALERT({ alertMessage: error?.message }));
         return;
       },

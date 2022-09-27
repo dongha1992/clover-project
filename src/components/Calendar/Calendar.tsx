@@ -67,6 +67,7 @@ const Calendar = ({
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
   const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
 
+  const isSpot = userDeliveryType === 'spot';
   const selectedDay =
     sessionStorage.getItem('selectedDay') !== 'undefined' ? sessionStorage.getItem('selectedDay') : null;
 
@@ -148,17 +149,15 @@ const Calendar = ({
     const isFinishParcelAndMorning = currentTime >= 16.59;
 
     let tempDisabledDate: string[] = [];
-    console.log(isSpotAvailable, 'isSpotAvailable');
+
     try {
       switch (true) {
-        case isQuickAndSpot && isLocker: {
+        case isQuickAndSpot && isLocker && isSpotAvailable: {
           tempDisabledDate = pipe(
             dateList,
             filter(({ dayKor, date }: IDateObj) => {
               const nextMonday = dateList.filter((item) => item.day === 1)[1];
-              // if (!isSpotAvailable) {
-              //   return quickAndSpotDisabled.includes(dayKor);
-              // }
+
               if (isWeekend) {
                 return (
                   quickAndSpotDisabled.includes(dayKor) ||
@@ -218,15 +217,18 @@ const Calendar = ({
 
   const checkActiveDates = (dateList: IDateObj[], firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
-    console.log(customDisabledDates, 'customDisabledDates');
 
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
     const firstActiveDate = filteredActiveDates[0]?.value;
     const isDisabledDate = mergedDisabledDate.includes(selectedDay!);
-    const totalDisabledDates = !isSpotAvailable
-      ? [...mergedDisabledDate, ...filteredActiveDates.map((item) => item.value)]
-      : mergedDisabledDate;
+    let totalDisabledDates = [];
+
+    if (isSpot && isLocker && !isSpotAvailable) {
+      totalDisabledDates = [...mergedDisabledDate, ...filteredActiveDates.map((item) => item.value)];
+    } else {
+      totalDisabledDates = mergedDisabledDate;
+    }
 
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
 
@@ -309,7 +311,7 @@ const Calendar = ({
           </Header>
           <Body>
             {dateList.map((dateObj, index) => {
-              const selectedDay = !isSpotAvailable ? false : selectedDeliveryDay === dateObj.value;
+              const selectedDay = isSpot && !isSpotAvailable ? false : selectedDeliveryDay === dateObj.value;
 
               if (!isShowMoreWeek) {
                 if (index > LIMIT_DAYS) {
