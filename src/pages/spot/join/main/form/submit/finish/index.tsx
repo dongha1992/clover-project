@@ -15,88 +15,83 @@ const FinishPage = () => {
   const { spotRegistrationsPostResult } = useSelector(spotSelector);
   const isApp = useIsApp();
 
-  const goToSpotNotice = ():void => {
+  const goToSpotNotice = (): void => {
     router.push('/spot/notice');
   };
 
   const goToSpotStatusDetail = () => {
     router.push({
-      pathname: `/mypage/spot-status/detail/${spotRegistrationsPostResult?.id}`,
+      pathname: `/mypage/spot/status/detail/${spotRegistrationsPostResult?.id}`,
       query: {
         type: type,
         q_share: true,
-      }
+      },
     });
   };
 
   const msgMapper = () => {
-    switch(type){
-      case 'PRIVATE': 
+    switch (type) {
+      case 'PRIVATE':
         return {
           title: '프코스팟 신청이\n완료되었어요!',
-          subTitle: '프코스팟이 오픈되면, 배송비 무료로 2주 동안\n같이 이용할  5명과 마음껏 이용해보세요!',    
-        }
+          subTitle: '프코스팟이 오픈되면, 배송비 무료로 2주 동안\n같이 이용할  5명과 마음껏 이용해보세요!',
+        };
       case 'PUBLIC':
         return {
           title: '내가 자주 가는 장소로\n프코스팟 신청이 완료되었어요',
-          subTitle: '내가 자주 가는 장소로 참여하기가 100회가 되면\n오픈될 확률이 높아져요.',    
-        }
+          subTitle: '내가 자주 가는 장소로 참여하기가 100회가 되면\n오픈될 확률이 높아져요.',
+        };
       case 'OWNER':
         return {
           title: '내 가게 프코스팟\n신청이 완료되었어요.',
-          subTitle: '신청 내용 확인 후 프코매니저가 2~3일 이내 연락드릴거에요!\n조금만 기다려주세요!',    
-        }
+          subTitle: '신청 내용 확인 후 프코매니저가 2~3일 이내 연락드릴거에요!\n조금만 기다려주세요!',
+        };
     }
   };
 
   const openChat = () => {
     if (isApp) {
-      window.ReactNativeWebView.postMessage(
-        JSON.stringify({ cmd: 'webview-permission-microphone-check' }));
-    };
+      window.ReactNativeWebView.postMessage(JSON.stringify({ cmd: 'webview-permission-microphone-check' }));
+    }
     window.ChannelIO('showMessenger');
   };
 
   return (
     <Container>
       <TopWrapper>
-        <TextH2B padding='24px 0 24px 0'>{msgMapper()?.title}</TextH2B>
+        <TextH2B padding="24px 0 24px 0">{msgMapper()?.title}</TextH2B>
         <TextB3R color={theme.greyScale65}>{msgMapper()?.subTitle}</TextB3R>
       </TopWrapper>
       <FinishImgWrapper>
-        <NextImage 
-          src='/images/fcospot/img_fcospot_add_main.png'
-          width='512px'
-          height='287px'
-          alt="프코스팟 신청 완료 페이지 이미지"   
-          className='finish-img'
+        <NextImage
+          src="/images/fcospot/img_fcospot_add_main.png"
+          width="512px"
+          height="287px"
+          alt="프코스팟 신청 완료 페이지 이미지"
+          className="finish-img"
           layout="responsive"
         />
       </FinishImgWrapper>
-      {
-        type !== 'PUBLIC' && (
-          <SpotNoticeWrapper onClick={goToSpotNotice}>
-            <NextImage 
-              src='/images/fcospot/img_banner_fco_info_360_96.png'
-              width='512px'
-              height='131px'
-              alt="프코스팟 신청 완료 페이지 이미지"
-              className='banner-img'
-              layout="responsive"
-            />
-          </SpotNoticeWrapper>
-        )
-      }
-      {
-        type === 'OWNER' && (
-          <ChannelIokWrapper>
-            <TextH5B padding="0 0 16px 0">프코스팟 운영 관련 문의해요</TextH5B>
-            <Button onClick={openChat} pointer backgroundColor={theme.white} color={theme.black} border borderRadius="8">
-              채팅 문의
-            </Button>
-          </ChannelIokWrapper>
-        )
-      }
+      {type !== 'PUBLIC' && (
+        <SpotNoticeWrapper onClick={goToSpotNotice}>
+          <NextImage
+            src="/images/fcospot/img_banner_fco_info_360_96.png"
+            width="512px"
+            height="131px"
+            alt="프코스팟 신청 완료 페이지 이미지"
+            className="banner-img"
+            layout="responsive"
+          />
+        </SpotNoticeWrapper>
+      )}
+      {type === 'OWNER' && (
+        <ChannelIokWrapper>
+          <TextH5B padding="0 0 16px 0">프코스팟 운영 관련 문의해요</TextH5B>
+          <Button onClick={openChat} pointer backgroundColor={theme.white} color={theme.black} border borderRadius="8">
+            채팅 문의
+          </Button>
+        </ChannelIokWrapper>
+      )}
       <FixedButton onClick={goToSpotStatusDetail}>
         <Button borderRadius="0" padding="10px 0 0 0">
           신청 현황 확인하기
@@ -121,8 +116,8 @@ const FinishImgWrapper = styled.div`
   width: 100%;
   height: 100%;
   padding: 48px 0;
-  .finish-img{
-    height:auto !important;
+  .finish-img {
+    height: auto !important;
   }
 `;
 
@@ -130,8 +125,8 @@ const SpotNoticeWrapper = styled.div`
   width: 100%;
   height: 100%;
   cursor: pointer;
-  .banner-img{
-    height:auto !important;
+  .banner-img {
+    height: auto !important;
   }
 `;
 

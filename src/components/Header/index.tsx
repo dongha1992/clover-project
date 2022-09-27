@@ -120,11 +120,11 @@ const Header = () => {
       '/spot/join/main/form/submit/finish': '신청하기',
       '/destination/search': '배송지 검색',
       '/destination/destination-detail': '배송지 검색',
-      '/spot/status': '스팟 관리',
       '/spot/location': '주소 검색',
       '/spot/location/address': '주소 검색',
       '/spot/notice': '프코스팟 안내',
-      '/mypage/spot-status': '프코스팟 관리',
+      '/mypage/spot/status': '프코스팟 관리',
+      '/mypage/spot/wish': '프코스팟 관리',
       '/subscription/information': '구독 안내',
       '/subscription/products': '정기구독',
       '/subscription/set-info': '구독하기',
@@ -184,6 +184,8 @@ const Header = () => {
         '/menu/[menuId]/detail/product',
         '/menu/[menuId]/detail/nutrition',
         '/menu/[menuId]/detail/delivery',
+        '/mypage/spot/status',
+        '/mypage/spot/wish',
       ].includes(currentPath): {
         return (
           <Container>
@@ -256,7 +258,7 @@ const Header = () => {
         );
       }
 
-      case ['/mypage/spot-status/detail/[id]'].includes(currentPath): {
+      case ['/mypage/spot/status/detail/[id]'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <SpotStatusDetailHeader />
@@ -264,7 +266,7 @@ const Header = () => {
         );
       }
 
-      case ['/mypage/spot-status', '/mypage/review', '/mypage/address'].includes(currentPath): {
+      case ['/mypage/review', '/mypage/address'].includes(currentPath): {
         return (
           <Container>
             <DefaultHeader title={title} />
