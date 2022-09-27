@@ -148,7 +148,7 @@ const CartPage = () => {
       const isSpot = userDeliveryType?.toUpperCase() === 'SPOT';
 
       const obj = {
-        delivery: userDeliveryType?.toUpperCase()! ? userDeliveryType?.toUpperCase()! : null,
+        delivery: userDeliveryType?.toUpperCase()! && selectedDeliveryDay ? userDeliveryType?.toUpperCase()! : null,
         deliveryDate: selectedDeliveryDay ? selectedDeliveryDay : null,
         spotId: isSpot ? destinationObj?.spotId : null,
       };
@@ -162,7 +162,7 @@ const CartPage = () => {
       refetchOnWindowFocus: false,
       cacheTime: 0,
       staleTime: 0,
-      enabled: !!me && !!selectedDeliveryDay,
+      enabled: !!me,
       onSuccess: (data) => {
         try {
           setCartItemList(data.cartMenus);
@@ -325,7 +325,7 @@ const CartPage = () => {
     error,
     isLoading: isLoadingPickup,
   } = useQuery(
-    'getPickupAvailability',
+    ['getPickupAvailability', destinationObj?.pickupId],
     async () => {
       const { data } = await getPickupAvailabilityApi(destinationObj?.pickupId!);
       return data.data.isAvailability;
@@ -333,6 +333,7 @@ const CartPage = () => {
     {
       onSuccess: async (data) => {
         if (!data) {
+          sessionStorage.removeItem('selectedDay');
           setIsSpotAvailable(false);
           dispatch(
             SET_ALERT({
@@ -344,7 +345,6 @@ const CartPage = () => {
       },
       onError: ({ response }: any) => {
         const { data: error } = response as any;
-
         dispatch(SET_ALERT({ alertMessage: error?.message }));
         return;
       },
@@ -743,7 +743,7 @@ const CartPage = () => {
   const changeDeliveryDate = ({ value, isChanged }: { value: string; isChanged: boolean }) => {
     const canSubDelivery = subOrderDelivery.find((item) => item.deliveryDate === value);
 
-    if (value.length === 0) {
+    if (value?.length === 0) {
       dispatch(
         SET_ALERT({
           alertMessage: '선택한 배송지로 가능한 날짜가 없어요. 배송지를 변경해주세요.',
@@ -1537,11 +1537,13 @@ const CartPage = () => {
                 <TextH3B padding="2px 4px 0 0">{isSpot ? '픽업날짜' : '배송일'}</TextH3B>
                 <SVGIcon name="questionMark" />
               </FlexRow>
-              {deliveryTimeInfoRenderer({
-                selectedDeliveryDay,
-                selectedTime: lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.time!,
-                delivery: destinationObj.delivery,
-              })}
+
+              {selectedDeliveryDay !== 'undefined' &&
+                deliveryTimeInfoRenderer({
+                  selectedDeliveryDay,
+                  selectedTime: lunchOrDinner && lunchOrDinner.find((item: ILunchOrDinner) => item?.isSelected)?.time!,
+                  delivery: destinationObj.delivery,
+                })}
             </FlexBetween>
             <Calendar
               disabledDates={holiday}
@@ -1550,7 +1552,7 @@ const CartPage = () => {
               changeDeliveryDate={changeDeliveryDate}
               goToSubDeliverySheet={goToSubDeliverySheet}
               lunchOrDinner={lunchOrDinner}
-              isSpotAvailable={isSpotAvailable}
+              isSpotAvailable={pickUpAvailability}
               pickupType={destinationObj.pickupType!}
             />
             {isSpotAndQuick &&
