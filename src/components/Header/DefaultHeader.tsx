@@ -39,7 +39,8 @@ const DefaultHeader = ({ title }: TProps) => {
   const cardEdit = router.pathname === '/mypage/card';
   const reviewSchedulePage = router.pathname === '/mypage/review/schedule';
   const reviewCompletedPage = router.pathname === '/mypage/review/completed';
-  const addressPage = router.pathname === '/mypage/address';
+  const addressPickupPage = router.pathname === '/mypage/address/pickup';
+  const addressDeliveryPage = router.pathname === '/mypage/address/delivery';
   const cartDelivery = router.pathname === '/cart/delivery-info';
   const destinationSearch = router.pathname === '/destination/search';
   const cart = router.pathname === '/cart';
@@ -72,12 +73,15 @@ const DefaultHeader = ({ title }: TProps) => {
         router.back();
       }
     } else if (addressEdit) {
-      router.replace({ pathname: '/mypage/address', query: { isSpot: router.query.spotPickupId ? 'true' : 'false' } });
+      router.replace({
+        pathname: router.query.spotPickupId ? '/mypage/address/pickup' : '/mypage/address/delivery',
+        query: { isSpot: router.query.spotPickupId ? 'true' : 'false' },
+      });
     } else if (reviewEdit) {
       router.replace({ pathname: '/mypage/review/completed' });
     } else if (cardEdit) {
       isOrder ? router.back() : router.push({ pathname: '/mypage' });
-    } else if (addressPage) {
+    } else if (addressPickupPage || addressDeliveryPage) {
       isSpot ? router.replace({ pathname: '/mypage' }) : router.back();
     } else if (cart) {
       sessionStorage.removeItem('checkedMenus');

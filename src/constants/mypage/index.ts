@@ -27,7 +27,7 @@ export const SPOT_MENU = [
   {
     id: 2, text: '찜한 프코스팟', link: '/mypage/spot/wish', value: 'wish'
   }
-]
+];
 
 export const REVIEW_MENU = [
   {
@@ -35,6 +35,15 @@ export const REVIEW_MENU = [
   },
   {
     id: 2, text: '작성 완료', link: '/mypage/review/completed', value: 'completed'
+  }
+];
+
+export const ADDRESS_MENU = [
+  {
+    id: 1, text: '픽업', link: '/mypage/address/pickup', value: 'pickup'
+  },
+  {
+    id: 2, text: '배송', link: '/mypage/address/delivery', value: 'delivery'
   }
 ]
 

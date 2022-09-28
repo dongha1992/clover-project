@@ -92,7 +92,8 @@ const Header = () => {
       '/mypage/rank': '회원등급',
       '/mypage/customer-service': '고객센터',
       '/mypage/point': '포인트',
-      '/mypage/address': '배송지 관리',
+      '/mypage/address/pickup': '배송지 관리',
+      '/mypage/address/delivery': '배송지 관리',
       '/mypage/address/edit/[id]': '수정',
       '/mypage/coupon': '쿠폰',
       '/mypage/term': '약관 및 정책',
@@ -189,6 +190,8 @@ const Header = () => {
         '/mypage/spot/wish',
         '/mypage/review/schedule',
         '/mypage/review/completed',
+        '/mypage/address/pickup',
+        '/mypage/address/delivery',
       ].includes(currentPath): {
         return (
           <Container>
@@ -269,13 +272,6 @@ const Header = () => {
         );
       }
 
-      case ['/mypage/address'].includes(currentPath): {
-        return (
-          <Container>
-            <DefaultHeader title={title} />
-          </Container>
-        );
-      }
       case ['/onboarding', '/order/order-app'].includes(currentPath): {
         return null;
       }

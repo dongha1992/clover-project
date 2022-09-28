@@ -6,13 +6,15 @@ import router from 'next/router';
 import { IParamsSpots } from '@model/index';
 import { useQuery } from 'react-query';
 import { getSpotsWishList } from '@api/spot';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { deleteSpotLike } from '@api/spot';
 import { TextB2R } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
+import { show, hide } from '@store/loading';
 
 const SpotWishListPage = () => {
+  const dispatch = useDispatch();
   const { spotsPosition } = useSelector(spotSelector);
   const [items, setItems] = useState<boolean>(false);
 
@@ -25,6 +27,7 @@ const SpotWishListPage = () => {
   const { data: wishList } = useQuery(
     ['spotList', spotsPosition],
     async () => {
+      dispatch(show());
       const params: IParamsSpots = {
         latitude: latitude,
         longitude: longitude,
@@ -34,7 +37,13 @@ const SpotWishListPage = () => {
       const response = await getSpotsWishList(params);
       return response.data.data;
     },
-    { refetchOnMount: true, refetchOnWindowFocus: false }
+    {
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const handlerDislike = async (e: any, id: number) => {

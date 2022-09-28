@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { MENU_DETAIL_INFORMATION } from '@constants/menu';
 import { FIND_ACCOUNT } from '@constants/login';
-import { DIB_MENU, SPOT_MENU, REVIEW_MENU } from '@constants/mypage';
+import { DIB_MENU, SPOT_MENU, REVIEW_MENU, ADDRESS_MENU } from '@constants/mypage';
 import dynamic from 'next/dynamic';
 import { breakpoints } from '@utils/common/getMediaQuery';
 import { TextH4B } from '@components/Shared/Text';
@@ -58,6 +58,7 @@ const TabHeader = ({ title }: TProps) => {
     '찜한 상품': DIB_MENU,
     '프코스팟 관리': SPOT_MENU,
     '후기 작성': REVIEW_MENU,
+    '배송지 관리': ADDRESS_MENU,
   };
 
   const FIND_ACCOUNT_LIST = title && mapper[title];

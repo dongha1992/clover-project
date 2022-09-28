@@ -4,65 +4,39 @@ import { SpotStatusList } from '@components/Pages/Mypage/Spot';
 import { homePadding, theme } from '@styles/theme';
 import { IGetDestinationsRequest, IGetRegistrationStatus } from '@model/index';
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { spotSelector } from '@store/spot';
 import { getSpotsRegistrationStatus, getSpotInfo } from '@api/spot';
 import { TextB2R } from '@components/Shared/Text';
 import { Button } from '@components/Shared/Button';
 import { useRouter } from 'next/router';
+import { show, hide } from '@store/loading';
 
 const SpotStatusListPage = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const { spotsPosition } = useSelector(spotSelector);
-  const [statusList, setStatusList] = useState<IGetRegistrationStatus[]>([]);
-  const [isLastPage, setIsLastPage] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight;
-      const scrollTop = document.documentElement.scrollTop;
-      const clientHeight = document.documentElement.clientHeight;
-
-      if (Math.round(scrollTop + clientHeight) >= scrollHeight && !isLastPage) {
-        // 페이지 끝에 도달하면 page 파라미터 값에 +1 주고, 데이터 받아온다.
-        setPage(page + 1);
-      }
-    };
-    // scroll event listener 등록
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      // scroll event listener 해제
-      window.removeEventListener('scroll', handleScroll);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusList.length > 0]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  useEffect(() => {
-    getSpotRegistrationList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
 
   // 스팟 신청 목록 조회 api
-  const getSpotRegistrationList = async () => {
-    const params: IGetDestinationsRequest = {
-      page: page,
-      size: 10,
-    };
-    try {
-      const { data } = await getSpotsRegistrationStatus(params);
-      const list = data.data.spotRegistrations;
-      const lastPage = data.data.pagination.totalPage;
-      setStatusList(prevList => [...prevList, ...list]);
-      setIsLastPage(page === lastPage);
-    } catch (e) {
-      console.error(e);
+  const { data: statusList } = useQuery(
+    ['spotStatusList'],
+    async () => {
+      dispatch(show());
+      const params: IGetDestinationsRequest = {
+        page: 1,
+        size: 100,
+      };
+      const response = await getSpotsRegistrationStatus(params);
+      return response.data.data.spotRegistrations;
+    },
+    {
+      onSettled: () => {
+        dispatch(hide());
+      },
+      refetchOnMount: true,
+      refetchOnWindowFocus: false,
     }
-  };
+  );
 
   // 스팟 정보 조회 api
   const { data: getInfo } = useQuery(
@@ -80,7 +54,7 @@ const SpotStatusListPage = () => {
 
   return (
     <Container>
-      {statusList.length! > 0 ? (
+      {statusList?.length! > 0 ? (
         <SpotStatusListWrapper>
           {statusList?.map((item, idx) => {
             return <SpotStatusList item={item} key={idx} getInfo={getInfo} />;
