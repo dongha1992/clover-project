@@ -84,6 +84,9 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout): JSX.Element => {
   }
 
   useEffect(() => {
+    if (sessionStorage.getItem('selectedDay')) {
+      sessionStorage.removeItem('selectedDay');
+    }
     router.events.on('routeChangeStart', routerEvent);
 
     return () => router.events.off('routeChangeStart', routerEvent);

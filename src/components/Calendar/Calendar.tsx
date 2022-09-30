@@ -67,7 +67,10 @@ const Calendar = ({
   const [customDisabledDate, setCustomDisabledDate] = useState<string[]>([]);
   const [subOrderDeliveryInActiveDates, setSubDeliveryInActiveDates] = useState<ISubOrderDelivery[]>([]);
 
-  const selectedDay = sessionStorage.getItem('selectedDay');
+  const isSpot = userDeliveryType === 'spot';
+  const selectedDay =
+    sessionStorage.getItem('selectedDay') !== 'undefined' ? sessionStorage.getItem('selectedDay') : null;
+
   const isLocker = pickupType === 'GS_LOCKER' || pickupType === 'KORAIL_LOCKER';
   const { currentTime, days: day } = getCustomDate();
   const isWeekend = ['금', '토', '일'].includes(day);
@@ -141,7 +144,7 @@ const Calendar = ({
     const nextDay = new Date().getDate() + 1;
 
     const isBeforeLunch = currentTime < 9.29;
-    const isFinishLunch = currentTime >= 9.29;
+    const isFinishLunch = currentTime >= 9.29 && currentTime < 10.59;
     const isFinishDinner = currentTime >= 10.59;
     const isFinishParcelAndMorning = currentTime >= 16.59;
 
@@ -149,19 +152,26 @@ const Calendar = ({
 
     try {
       switch (true) {
-        case isQuickAndSpot && isLocker: {
+        case isQuickAndSpot && isLocker && isSpotAvailable: {
           tempDisabledDate = pipe(
             dateList,
             filter(({ dayKor, date }: IDateObj) => {
+              const nextMonday = dateList.filter((item) => item.day === 1)[1];
+
               if (isWeekend) {
                 return (
                   quickAndSpotDisabled.includes(dayKor) ||
-                  date === today ||
-                  (isBeforeLunch && date === nextDay) ||
-                  (isFinishLunch && date === nextDay)
+                  (isBeforeLunch && date !== today) ||
+                  (isFinishLunch && date !== today) ||
+                  (isFinishDinner && date !== nextMonday.date)
                 );
               } else {
-                return quickAndSpotDisabled.includes(dayKor) || (isFinishDinner && date === today);
+                return (
+                  quickAndSpotDisabled.includes(dayKor) ||
+                  (isBeforeLunch && date !== today && date !== nextDay) ||
+                  (isFinishLunch && date !== today && date !== nextDay) ||
+                  (isFinishDinner && date !== nextDay)
+                );
               }
             }),
             map(({ value }: IDateObj) => value),
@@ -208,23 +218,22 @@ const Calendar = ({
   const checkActiveDates = (dateList: IDateObj[], firstWeek: IDateObj[], customDisabledDates: string[] = []) => {
     // 서버에서 받은 disabledDates와 배송 타입별 customDisabledDates 합침
 
-    const isOpenNextMonday = isWeekend && isLocker;
     const mergedDisabledDate = [...disabledDates, ...customDisabledDates]?.sort();
     const filteredActiveDates = firstWeek.filter((week: any) => !mergedDisabledDate.includes(week.value));
-    const firstActiveDate = !isSpotAvailable ? '' : filteredActiveDates[0]?.value;
+    const firstActiveDate = filteredActiveDates[0]?.value;
     const isDisabledDate = mergedDisabledDate.includes(selectedDay!);
-    let totalDisabledDates = !isSpotAvailable
-      ? [...mergedDisabledDate, ...filteredActiveDates.map((item) => item.value)]
-      : mergedDisabledDate;
+    let totalDisabledDates = [];
 
-    if (isOpenNextMonday) {
-      const restDates = dateList.filter((item, index) => index > 7);
-      totalDisabledDates = [...totalDisabledDates, ...restDates.map((item) => item.value)];
+    if (isSpot && isLocker && !isSpotAvailable) {
+      totalDisabledDates = [...mergedDisabledDate, ...filteredActiveDates.map((item) => item.value)];
+    } else {
+      totalDisabledDates = mergedDisabledDate;
     }
 
     /* 배송일 변경에서는 selectedDeliveryDay 주고 있음 */
+
     if (!isSheet) {
-      const defaultActiveDate = selectedDay || firstActiveDate;
+      const defaultActiveDate = selectedDay ?? firstActiveDate;
       // 배송 타입 변경 후 선택 날짜가 배송 불가일 때
       changeDeliveryDate({ value: isDisabledDate ? firstActiveDate : defaultActiveDate, isChanged: isDisabledDate });
     }
@@ -302,7 +311,7 @@ const Calendar = ({
           </Header>
           <Body>
             {dateList.map((dateObj, index) => {
-              const selectedDay = !isSpotAvailable ? false : selectedDeliveryDay === dateObj.value;
+              const selectedDay = isSpot && !isSpotAvailable ? false : selectedDeliveryDay === dateObj.value;
 
               if (!isShowMoreWeek) {
                 if (index > LIMIT_DAYS) {

@@ -101,7 +101,7 @@ const CategoryPage = () => {
   };
 
   const groupByMenu = (list: IMenus[], key: string) => {
-    return list.reduce((obj: Obj, menu: any) => {
+    return list?.reduce((obj: Obj, menu: any) => {
       let group = menu[key];
 
       if (group === 'SUBSCRIPTION') {

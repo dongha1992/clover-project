@@ -176,12 +176,14 @@ const DeliverInfoPage = () => {
     // 기본배송지거나 최근이력에서 가져오면 서버에 post 안 하고 바로 장바구니로
 
     if (destinationId || isMainDestination) {
+      const spotPickupType = tempDestination?.spotPickup?.type ?? userDestination?.spotPickupType;
+      const spotPickupId = tempDestination?.spotPickup?.id ?? userDestination?.spotPickupId;
       dispatch(
         SET_DESTINATION({
           ...tempDestination,
           spotId: tempDestination.spotId,
-          spotPickupType: tempDestination?.spotPickup?.type,
-          spotPickupId: tempDestination?.spotPickup?.id,
+          spotPickupType: isSpot ? spotPickupType : null,
+          spotPickupId: isSpot ? spotPickupId : null,
         })
       );
       dispatch(SET_USER_DELIVERY_TYPE(tempDestination?.delivery?.toLowerCase()!));
@@ -288,6 +290,7 @@ const DeliverInfoPage = () => {
       }
     } else {
       if (tempDestination) {
+        const spotPickupId = tempDestination?.spotPickupId ?? userDestination?.spotPickupId;
         const reqBody = {
           name: tempDestination?.name!,
           delivery: userSelectDeliveryType ? userSelectDeliveryType.toUpperCase() : userDeliveryType.toUpperCase(),
@@ -301,7 +304,7 @@ const DeliverInfoPage = () => {
             zipCode: tempDestination?.location?.zipCode!,
             dong: tempDestination?.location?.dong!,
           },
-          spotPickupId: tempDestination?.spotPickupId ?? userDestination?.spotPickupId,
+          spotPickupId: isSpot ? spotPickupId : null,
         };
 
         try {
