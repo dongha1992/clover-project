@@ -52,8 +52,8 @@ const useWebviewListener = () => {
         );
         break;
       case 'rn-replace':
-        router.replace(data.url)
-        break
+        router.replace(data);
+        break;
 
       default:
         break;

@@ -2,21 +2,23 @@ import { postKakaoPaymentApi, postNicePaymnetApi, postPaycoPaymentApi, postTossP
 import { ICreateOrder, IGetNicePaymentResponse, Obj } from '@model/index';
 import { SET_ALERT } from '@store/alert';
 import { SET_IS_LOADING } from '@store/common';
-import { getCookie, setCookie } from '@utils/common';
+import { setCookie } from '@utils/common';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 const OrderAppPage = () => {
   const dispatch = useDispatch();
-  const [payMethod, setPayMethod] = useState();
+  const router = useRouter();
 
   useEffect(() => {
-    processOrder();
-  }, []);
+    if (router.isReady) {
+      processOrder();
+    }
+  }, [router.isReady]);
 
   const processOrder = async () => {
     const { payMethod, orderData } = JSON.parse(localStorage.getItem('payData') as string);
-    setPayMethod(payMethod);
 
     switch (payMethod) {
       case 'NICE_CARD' || 'NICE_BANK':
@@ -39,7 +41,7 @@ const OrderAppPage = () => {
     const orderId = orderData.id;
     const reqBody = {
       payMethod,
-      successUrl: `${process.env.SERVICE_URL}/order/finish?orderId=${orderId}&pg=toss`,
+      successUrl: `${process.env.SERVICE_URL}/order/finish?orderId=${orderId}`,
       failureUrl: `${process.env.SERVICE_URL}/order/order-app-fail`,
     };
     try {
