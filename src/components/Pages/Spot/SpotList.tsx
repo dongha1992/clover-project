@@ -187,7 +187,7 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
       const { data } = await postSpotRegistrationsRecruiting(id);
       if (data.code === 200) {
         router.push({
-          pathname: `/mypage/spot-status/detail/${id}`,
+          pathname: `/mypage/spot/status/detail/${id}`,
           query: { recruited: true },
         });
       }
@@ -208,21 +208,21 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                 <TextH7B padding="2px 2px 0 2px" color={theme.white}>{`${list?.userCount}명 이용중`}</TextH7B>
               </Tag>
               <ImageWrapper>
-                {list.isTrial || list.images.length < 0  ? (
-                  <NextImage 
-                    src='/images/fcospot/img_fcospot_empty.png'
+                {list.isTrial || list.images.length < 0 ? (
+                  <NextImage
+                    src="/images/fcospot/img_fcospot_empty.png"
                     alt="프코스팟 매장이미지"
                     width={132}
                     height={132}
                     layout="responsive"
                   />
                 ) : (
-                  <Image 
+                  <Image
                     src={list.images[0].url}
                     alt="프코스팟 매장이미지"
                     width={132}
                     height={132}
-                    className='fcospot-img'
+                    className="fcospot-img"
                     layout="responsive"
                   />
                 )}
@@ -232,15 +232,13 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
               <TextB2R margin="8px 0 0 0" color={theme.black} textHideMultiline textHidelineNum={1}>
                 {list?.name}
               </TextB2R>
-              {
-                // 유저 위치정보 있을때 노출
-                userLocationLen && (
-                  <TextH6B color={theme.greyScale65}>
-                    {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
-                  </TextH6B>
-                )
-              }
-              <LikeWrapper type="normal" onClick={(e) => onClickLike(e)}>
+              {// 유저 위치정보 있을때 노출
+              userLocationLen && (
+                <TextH6B color={theme.greyScale65}>
+                  {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
+                </TextH6B>
+              )}
+              <LikeWrapper type="normal" onClick={e => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed18' : 'likeBorderGray'} />
                 <TextB3R>{list?.likeCount}</TextB3R>
               </LikeWrapper>
@@ -252,25 +250,25 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
         return (
           <Container type="event" onClick={goToDetail}>
             <StorImgWrapper>
-              <LikeWrapper type="event" onClick={(e) => onClickLike(e)}>
+              <LikeWrapper type="event" onClick={e => onClickLike(e)}>
                 <SVGIcon name={list.liked ? 'likeRed' : 'whiteHeart24'} />
               </LikeWrapper>
               <ImageWrapper>
-                {list.isTrial || list.images.length < 0  ? (
-                  <NextImage 
-                    src='/images/fcospot/img_fcospot_empty.png'
+                {list.isTrial || list.images.length < 0 ? (
+                  <NextImage
+                    src="/images/fcospot/img_fcospot_empty.png"
                     alt="프코스팟 매장이미지"
                     width={132}
                     height={132}
                     layout="responsive"
                   />
                 ) : (
-                  <Image 
+                  <Image
                     src={list.images[0].url}
                     alt="프코스팟 매장이미지"
                     width={132}
                     height={132}
-                    className='fcospot-img'
+                    className="fcospot-img"
                     layout="responsive"
                   />
                 )}
@@ -284,14 +282,12 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
                 </TextH6B>
               </div>
               <ButtonWrapper>
-                {
-                  // 유저 위치정보 있을때 노출
-                  userLocationLen && (
-                    <TextH6B color={theme.greyScale65}>
-                      {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
-                    </TextH6B>
-                  )
-                }
+                {// 유저 위치정보 있을때 노출
+                userLocationLen && (
+                  <TextH6B color={theme.greyScale65}>
+                    {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
+                  </TextH6B>
+                )}
                 <Button
                   backgroundColor={theme.white}
                   color={theme.black}
@@ -312,16 +308,20 @@ const SpotList = ({ list, type }: IProps): ReactElement => {
           <Container type="trial">
             <LocationInfoWrapper type="trial">
               <FlexCol>
-                <TextH5B margin="0 0 4px 0" textHideMultiline textHidelineNum={1}>{list.placeName}</TextH5B>
-                <TextB3R margin="0 0 4px 0" textHideMultiline textHidelineNum={1}>{`${list.location?.address} ${list.location?.addressDetail}`}</TextB3R>
-                {
-                  // 유저 위치정보 있을때 노출
-                  userLocationLen && (
-                    <TextH6B margin="0 0 8px 0" color={theme.greyScale65}>
-                      {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
-                    </TextH6B>
-                  )
-                }
+                <TextH5B margin="0 0 4px 0" textHideMultiline textHidelineNum={1}>
+                  {list.placeName}
+                </TextH5B>
+                <TextB3R
+                  margin="0 0 4px 0"
+                  textHideMultiline
+                  textHidelineNum={1}
+                >{`${list.location?.address} ${list.location?.addressDetail}`}</TextB3R>
+                {// 유저 위치정보 있을때 노출
+                userLocationLen && (
+                  <TextH6B margin="0 0 8px 0" color={theme.greyScale65}>
+                    {`${getSpotDistanceUnit(list?.distance).distance}${getSpotDistanceUnit(list?.distance).unit}`}
+                  </TextH6B>
+                )}
                 <FlexRow margin="0 0 16px 0">
                   <SVGIcon name="people" />
                   <TextH6B
@@ -407,7 +407,7 @@ const Tag = styled.span`
 
 const ImageWrapper = styled.div`
   width: 132px;
-  heigth: 132px; 
+  heigth: 132px;
   border: 1px solid ${theme.greyScale6};
   border-radius: 8px;
   .fcospot-img {

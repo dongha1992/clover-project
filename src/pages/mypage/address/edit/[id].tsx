@@ -73,12 +73,12 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
       return data.data;
     },
     {
-      onSuccess: (data) => {
+      onSuccess: data => {
         setSelectedAddress(data);
 
         const userAccessMethodMap = pipe(
           ACCESS_METHOD,
-          indexBy((item) => item.value)
+          indexBy(item => item.value)
         );
 
         setDeliveryEditObj({
@@ -114,7 +114,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
       return data.data.spotPickups;
     },
     {
-      onSuccess: (data) => {
+      onSuccess: data => {
         dispatch(SET_BOTTOM_SHEET({ content: <PickupSheet pickupInfo={data!} isMypage /> }));
       },
       enabled: false,
@@ -162,7 +162,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
             submitBtnText: '확인',
             onSubmit: () => {
               router.push({
-                pathname: '/mypage/address',
+                pathname: '/mypage/address/delivery',
                 query: { isSpot: spotPickupId ? 'true' : 'false' },
               });
             },
@@ -174,7 +174,7 @@ const AddressEditPage = ({ id, spotPickupId }: IProps) => {
   );
 
   const checkSamePerson = () => {
-    setIsSamePerson((prev) => !prev);
+    setIsSamePerson(prev => !prev);
   };
 
   const checkDefaultSpot = () => {

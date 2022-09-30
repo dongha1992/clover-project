@@ -1,37 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import styled, { css } from 'styled-components';
-import { TabList } from '@components/Shared/TabList';
+import React from 'react';
+import styled from 'styled-components';
 import { PickupItem } from '@components/Pages/Mypage/Address';
 import router from 'next/router';
-import { DeliveryItem } from '@components/Pages/Mypage/Address';
 import { getDestinationsApi } from '@api/destination';
 import { IDestinationsResponse } from '@model/index';
-import { fixedTab, flexCenter } from '@styles/theme';
+import { flexCenter } from '@styles/theme';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { SET_DESTINATION, SET_USER_DELIVERY_TYPE } from '@store/destination';
-import useScrollCheck from '@hooks/useScrollCheck';
 import { userForm } from '@store/user';
 import { show, hide } from '@store/loading';
 
-const TAB_LIST = [
-  { id: 1, text: '픽업', value: 'pickup', link: '/pickup' },
-  { id: 2, text: '배송', value: 'delivery', link: '/delivery' },
-];
-
-const AddressManagementPage = () => {
+const AddressPickupPage = () => {
   const { isSpot } = router.query;
-  const [selectedTab, setSelectedTab] = useState('/pickup');
-  const isScroll = useScrollCheck();
 
   const dispatch = useDispatch();
   const { me } = useSelector(userForm);
 
   const { data: filteredList, isLoading } = useQuery<IDestinationsResponse[]>(
-    ['getDestinationList', selectedTab],
+    ['getDestinationList'],
     async () => {
       dispatch(show());
-      const isSpot = selectedTab === '/pickup';
 
       const params = {
         page: 1,
@@ -51,10 +40,6 @@ const AddressManagementPage = () => {
     }
   );
 
-  const selectTabHandler = (tabItem: any) => {
-    setSelectedTab(tabItem.link);
-  };
-
   // 스팟 주문하기 - 주문관리 스팟 픽업 주문하기
   const goToCart = (item: IDestinationsResponse) => {
     dispatch(SET_DESTINATION({ ...item, closedDate: item.spotPickup?.spot.closedDate }));
@@ -62,50 +47,24 @@ const AddressManagementPage = () => {
     router.push('/cart');
   };
 
-  const goToEdit = (id: number) => {
-    router.push(`/mypage/address/edit/${id}`);
-  };
-
   const goToSpotEdit = ({ id, spotPickupId }: { id: number; spotPickupId: number }) => {
     router.push({ pathname: `/mypage/address/edit/${id}`, query: { spotPickupId } });
   };
 
-  useEffect(() => {
-    setSelectedTab(isSpot === 'true' ? '/pickup' : '/delivery');
-  }, [router.isReady]);
-
-  if (isLoading) {
-    return <div></div>;
-  }
-
   return (
     <Container>
-      <FixedTab>
-        <TabList shadowValue={'-20px'} tabList={TAB_LIST} onClick={selectTabHandler} selectedTab={selectedTab} />
-      </FixedTab>
       {filteredList?.length! > 0 ? (
         <Wrapper>
-          {selectedTab === '/pickup'
-            ? filteredList?.map((item: any, index: number) => (
-                <PickupItem
-                  key={index}
-                  item={item}
-                  goToCart={goToCart}
-                  goToEdit={goToSpotEdit}
-                  name={me?.name!}
-                  tel={me?.tel!}
-                />
-              ))
-            : filteredList?.map((item: IDestinationsResponse, index: number) => (
-                <DeliveryItem
-                  key={index}
-                  item={item}
-                  goToCart={goToCart}
-                  goToEdit={goToEdit}
-                  name={me?.name!}
-                  tel={me?.tel!}
-                />
-              ))}
+          {filteredList?.map((item: any, index: number) => (
+            <PickupItem
+              key={index}
+              item={item}
+              goToCart={goToCart}
+              goToEdit={goToSpotEdit}
+              name={me?.name!}
+              tel={me?.tel!}
+            />
+          ))}
         </Wrapper>
       ) : (
         <EmptyContainer>등록된 주소가 없어요</EmptyContainer>
@@ -113,12 +72,7 @@ const AddressManagementPage = () => {
     </Container>
   );
 };
-
 const Container = styled.div``;
-
-const FixedTab = styled.div`
-  ${fixedTab};
-`;
 
 const Wrapper = styled.div`
   padding: 74px 0 24px 0px;
@@ -132,4 +86,4 @@ const EmptyContainer = styled.div`
   flex-direction: column;
 `;
 
-export default AddressManagementPage;
+export default AddressPickupPage;

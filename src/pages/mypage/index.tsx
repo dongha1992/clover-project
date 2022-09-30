@@ -77,7 +77,7 @@ const MypagePage: NextPageWithLayout = () => {
     ['getSubscriptionOrders'],
     { days: 365, page: 1, size: 100, type: 'SUBSCRIPTION' },
     {
-      onSuccess: async (data) => {
+      onSuccess: async data => {
         const orders = await data.orders
           .sort((a: IGetOrders, b: IGetOrders) => {
             if (a.subscriptionRound! > b.subscriptionRound!) return -1;
@@ -257,11 +257,11 @@ const MypagePage: NextPageWithLayout = () => {
               showBoard={showBoard}
             />
             <ManageWrapper>
-              <MypageMenu title="후기 작성" link="/mypage/review" />
+              <MypageMenu title="후기 작성" link="/mypage/review/schedule" />
               <MypageMenu title="찜한 상품" link="/mypage/dib/general" hideBorder />
               <BorderLine height={8} />
-              <MypageMenu title="프코스팟 관리" link="/mypage/spot-status" />
-              <MypageMenu title="배송지 관리" link="/mypage/address" />
+              <MypageMenu title="프코스팟 관리" link="/mypage/spot/status" />
+              <MypageMenu title="배송지 관리" link="/mypage/address/delivery" />
               <MypageMenu title="결제 관리" link="/mypage/card" />
               <MypageMenu title="친구 초대" link="/mypage/friend" count={friendInvitation?.joinCount} />
               <ImageWrapper>

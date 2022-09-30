@@ -85,13 +85,15 @@ const Header = () => {
       '/mypage/profile/secession': '회원탈퇴',
       '/mypage/dib/general': '찜한 상품',
       '/mypage/friend': '친구 초대',
-      '/mypage/review': '후기 작성',
+      '/mypage/review/schedule': '후기 작성',
+      '/mypage/review/completed': '후기 작성',
       '/mypage/review/write/[orderDeliveryId]': '후기 작성',
-      '/mypage/review/edit/[reviewId]': '후기 수정',
+      '/mypage/review/completed/edit/[reviewId]': '후기 수정',
       '/mypage/rank': '회원등급',
       '/mypage/customer-service': '고객센터',
       '/mypage/point': '포인트',
-      '/mypage/address': '배송지 관리',
+      '/mypage/address/pickup': '배송지 관리',
+      '/mypage/address/delivery': '배송지 관리',
       '/mypage/address/edit/[id]': '수정',
       '/mypage/coupon': '쿠폰',
       '/mypage/term': '약관 및 정책',
@@ -120,11 +122,11 @@ const Header = () => {
       '/spot/join/main/form/submit/finish': '신청하기',
       '/destination/search': '배송지 검색',
       '/destination/destination-detail': '배송지 검색',
-      '/spot/status': '스팟 관리',
       '/spot/location': '주소 검색',
       '/spot/location/address': '주소 검색',
       '/spot/notice': '프코스팟 안내',
-      '/mypage/spot-status': '프코스팟 관리',
+      '/mypage/spot/status': '프코스팟 관리',
+      '/mypage/spot/wish': '프코스팟 관리',
       '/subscription/information': '구독 안내',
       '/subscription/products': '정기구독',
       '/subscription/set-info': '구독하기',
@@ -184,6 +186,12 @@ const Header = () => {
         '/menu/[menuId]/detail/product',
         '/menu/[menuId]/detail/nutrition',
         '/menu/[menuId]/detail/delivery',
+        '/mypage/spot/status',
+        '/mypage/spot/wish',
+        '/mypage/review/schedule',
+        '/mypage/review/completed',
+        '/mypage/address/pickup',
+        '/mypage/address/delivery',
       ].includes(currentPath): {
         return (
           <Container>
@@ -256,7 +264,7 @@ const Header = () => {
         );
       }
 
-      case ['/mypage/spot-status/detail/[id]'].includes(currentPath): {
+      case ['/mypage/spot/status/detail/[id]'].includes(currentPath): {
         return (
           <Container scroll={scroll}>
             <SpotStatusDetailHeader />
@@ -264,13 +272,6 @@ const Header = () => {
         );
       }
 
-      case ['/mypage/spot-status', '/mypage/review', '/mypage/address'].includes(currentPath): {
-        return (
-          <Container>
-            <DefaultHeader title={title} />
-          </Container>
-        );
-      }
       case ['/onboarding', '/order/order-app'].includes(currentPath): {
         return null;
       }

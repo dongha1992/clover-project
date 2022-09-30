@@ -35,10 +35,12 @@ const DefaultHeader = ({ title }: TProps) => {
   const subsSubCancel = router.pathname === '/subscription/[detailId]/sub-cancel/complete';
   const subsInfo = router.pathname === '/subscription/set-info';
   const addressEdit = router.pathname === '/mypage/address/edit/[id]';
-  const reviewEdit = router.pathname === '/mypage/review/edit/[reviewId]';
+  const reviewEdit = router.pathname === '/mypage/review/completed/edit/[reviewId]';
   const cardEdit = router.pathname === '/mypage/card';
-  const reviewPage = router.pathname === '/mypage/review';
-  const addressPage = router.pathname === '/mypage/address';
+  const reviewSchedulePage = router.pathname === '/mypage/review/schedule';
+  const reviewCompletedPage = router.pathname === '/mypage/review/completed';
+  const addressPickupPage = router.pathname === '/mypage/address/pickup';
+  const addressDeliveryPage = router.pathname === '/mypage/address/delivery';
   const cartDelivery = router.pathname === '/cart/delivery-info';
   const destinationSearch = router.pathname === '/destination/search';
   const cart = router.pathname === '/cart';
@@ -71,18 +73,21 @@ const DefaultHeader = ({ title }: TProps) => {
         router.back();
       }
     } else if (addressEdit) {
-      router.replace({ pathname: '/mypage/address', query: { isSpot: router.query.spotPickupId ? 'true' : 'false' } });
+      router.replace({
+        pathname: router.query.spotPickupId ? '/mypage/address/pickup' : '/mypage/address/delivery',
+        query: { isSpot: router.query.spotPickupId ? 'true' : 'false' },
+      });
     } else if (reviewEdit) {
-      router.replace({ pathname: '/mypage/review', query: { tab: '/completed' } });
+      router.replace({ pathname: '/mypage/review/completed' });
     } else if (cardEdit) {
       isOrder ? router.back() : router.push({ pathname: '/mypage' });
-    } else if (addressPage) {
+    } else if (addressPickupPage || addressDeliveryPage) {
       isSpot ? router.replace({ pathname: '/mypage' }) : router.back();
     } else if (cart) {
       sessionStorage.removeItem('checkedMenus');
       sessionStorage.removeItem('selectedDay');
       router.back();
-    } else if (totalReview || totalPhotoReview || reviewPage || reviewDetail) {
+    } else if (totalReview || totalPhotoReview || reviewSchedulePage || reviewCompletedPage || reviewDetail) {
       tab === 'review' ? router.replace({ pathname: `/menu/${router.query.menuId}`, query: { tab } }) : router.back();
     } else {
       router.back();
