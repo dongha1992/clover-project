@@ -12,7 +12,7 @@ import { ILocation, IOrderDetail } from '@model/index';
 import { postTossApproveApi, postKakaoApproveApi } from '@api/order';
 import { getCookie, getFormatDate, removeCookie } from '@utils/common';
 import { useDispatch, useSelector } from 'react-redux';
-import { INIT_ACCESS_METHOD, SET_IS_LOADING } from '@store/common';
+import { commonSelector, INIT_ACCESS_METHOD, SET_IS_LOADING } from '@store/common';
 import { SubsOrderItem } from '@components/Pages/Subscription/payment';
 import { subscriptionForm } from '@store/subscription';
 import { INIT_ORDER, INIT_CARD, INIT_USER_ORDER_INFO } from '@store/order';
@@ -27,15 +27,18 @@ import { SET_ALERT } from '@store/alert';
 import { useGetOrderDetail } from 'src/queries/order';
 import { cartForm } from '@store/cart';
 import { periodMapper } from '@constants/subscription';
-import useIsApp from '@hooks/useIsApp';
+import { useQueryClient } from 'react-query';
 
 /* TODO: deliveryDateRenderer, cancelOrderInfoRenderer 컴포넌트로 분리 */
 
 const OrderFinishPage = () => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { subsInfo } = useSelector(subscriptionForm);
-  const [isPaymentSuccess, setIsPaymentSuccess] = useState<boolean>(false);
+  const { isApp } = useSelector(commonSelector);
   const [pickupDay, setPickupDay] = useState<unknown[]>([]);
+  const [orderDetail, setOrderDetail] = useState<IOrderDetail | undefined>();
+  const [appFinish, setAppFinish] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -43,10 +46,9 @@ const OrderFinishPage = () => {
 
   const { pg_token: pgToken, orderId, pg } = router.query;
 
-  const isApp = useIsApp();
-
-  const { data: orderDetail } = useGetOrderDetail(['getOrderDetail'], Number(orderId), {
+  useGetOrderDetail(['getOrderDetail'], Number(orderId), {
     onSuccess: (data: IOrderDetail) => {
+      setOrderDetail(data);
       let pickupDayObj = new Set();
       data.orderDeliveries.forEach((item) => {
         pickupDayObj.add(dayjs(item.deliveryDate).format('dd'));
@@ -58,7 +60,7 @@ const OrderFinishPage = () => {
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
-    enabled: !!isPaymentSuccess,
+    enabled: !!orderId,
   });
 
   const checkPg = async () => {
@@ -71,7 +73,6 @@ const OrderFinishPage = () => {
           const { data } = await postKakaoApproveApi({ orderId: Number(orderId), data: reqBody });
 
           if (data.code === 200) {
-            setIsPaymentSuccess(true);
             removeCookie({ name: 'kakao-tid-clover' });
           }
         } else {
@@ -84,14 +85,11 @@ const OrderFinishPage = () => {
           const { data } = await postTossApproveApi({ orderId: Number(orderId), data: reqBody });
 
           if (data.code === 200) {
-            setIsPaymentSuccess(true);
             removeCookie({ name: 'toss-tid-clover' });
           }
         } else {
           // 토스 페이 에러
         }
-      } else {
-        setIsPaymentSuccess(true);
       }
     } catch (error: any) {
       if (error.code === 1206) {
@@ -107,12 +105,13 @@ const OrderFinishPage = () => {
       dispatch(INIT_COUPON());
       removeCookie({ name: 'toss-tid-clover' });
       removeCookie({ name: 'kakao-tid-clover' });
-      console.log('finally');
+      queryClient.refetchQueries(['getOrderDetail']);
 
       if (isApp) {
         window.ReactNativeWebView.postMessage(
           JSON.stringify({ cmd: 'webview-payment-success', data: { returnUrl: window.location.href } })
         );
+        setAppFinish(true);
       }
       // 장바구니 품절 상품이 있나 확인
       // TODO: 결제 해서 테스트 해봐야함
@@ -133,7 +132,7 @@ const OrderFinishPage = () => {
   };
 
   const goToShopping = () => {
-    if (orderDetail.type === 'SUBSCRIPTION') {
+    if (orderDetail?.type === 'SUBSCRIPTION') {
       router.push('/subscription');
     } else {
       router.push('/');
@@ -301,126 +300,128 @@ const OrderFinishPage = () => {
   const isSubOrder = orderDetail?.orderDeliveries[0]!.type === 'SUB';
 
   return (
-    <Container>
-      <PlaceInfoWrapper>
-        <div className="title">
-          {type === 'SUBSCRIPTION' ? (
-            <TextH2B color={theme.brandColor}>
-              {DELIVERY_TYPE_MAP[delivery]} -{' '}
-              {subscriptionPeriod === 'UNLIMITED' ? '정기구독' : `${periodMapper[subscriptionPeriod]} 구독`}
-            </TextH2B>
-          ) : (
-            <TextH2B color={theme.brandColor}>{isSubOrder ? '함께배송' : DELIVERY_TYPE_MAP[delivery]}</TextH2B>
-          )}
+    (!isApp || (isApp && appFinish)) && (
+      <Container>
+        <PlaceInfoWrapper>
+          <div className="title">
+            {type === 'SUBSCRIPTION' ? (
+              <TextH2B color={theme.brandColor}>
+                {DELIVERY_TYPE_MAP[delivery]} -{' '}
+                {subscriptionPeriod === 'UNLIMITED' ? '정기구독' : `${periodMapper[subscriptionPeriod!]} 구독`}
+              </TextH2B>
+            ) : (
+              <TextH2B color={theme.brandColor}>{isSubOrder ? '함께배송' : DELIVERY_TYPE_MAP[delivery]}</TextH2B>
+            )}
 
-          {orderDetail && delivery === 'SPOT' ? (
-            <TextH2B>{DELIVERY_TIME_MAP[deliveryDetail]}주문이 완료되었습니다.</TextH2B>
-          ) : (
-            <TextH2B>주문이 완료되었습니다.</TextH2B>
-          )}
-        </div>
-        <div className="discription">
-          <CancelOrderInfoBox
-            delivery={orderDetail?.delivery}
-            deliveryDetail={orderDetail?.deliveryDetail}
-            orderType={orderDetail?.type}
-            color={theme.greyScale65}
-          />
-        </div>
-      </PlaceInfoWrapper>
-      <BorderLine height={8} />
-      <OrderItemsWrapper>
-        <FlexBetween>
-          <TextH4B>주문상품</TextH4B>
-        </FlexBetween>
-        <SingleOrderItemWrapper>
-          {type === 'SUBSCRIPTION' ? (
-            <SubsOrderItem
-              deliveryType={delivery}
-              deliveryDetail={deliveryDetail}
-              subscriptionPeriod={subscriptionPeriod!}
-              name={name}
-              menuImage={subsInfo?.menuImage!}
-              price={menuAmount}
+            {orderDetail && delivery === 'SPOT' ? (
+              <TextH2B>{DELIVERY_TIME_MAP[deliveryDetail]}주문이 완료되었습니다.</TextH2B>
+            ) : (
+              <TextH2B>주문이 완료되었습니다.</TextH2B>
+            )}
+          </div>
+          <div className="discription">
+            <CancelOrderInfoBox
+              delivery={orderDetail?.delivery}
+              deliveryDetail={orderDetail?.deliveryDetail}
+              orderType={orderDetail?.type}
+              color={theme.greyScale65}
             />
-          ) : (
-            <FinishOrderItem menu={orderDetail} payAmount={payAmount} />
-          )}
-        </SingleOrderItemWrapper>
-      </OrderItemsWrapper>
-      <BorderLine height={8} />
-      {type === 'SUBSCRIPTION' ? (
-        <SubsInfoWrapper>
-          <TextH4B padding="0 0 24px">구독정보</TextH4B>
-          <FlexBetweenStart padding="0 0 16px">
-            <TextH5B>구독기간</TextH5B>
-            <FlexColEnd>
-              <TextB2R>정기구독 {subscriptionRound}회차</TextB2R>
-              <TextB3R color="#717171">
-                {getFormatDate(orderDeliveries[0].deliveryDate)} ~{' '}
-                {getFormatDate(orderDeliveries[orderDeliveries.length - 1].deliveryDate)}
-              </TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          <FlexBetweenStart padding="0 0 16px">
-            <TextH5B>구독 시작일시</TextH5B>
-            <FlexColEnd>
-              <TextB2R>
-                {getFormatDate(orderDeliveries[0].deliveryDate)} {orderDeliveries[0].deliveryStartTime}-
-                {orderDeliveries[0].deliveryEndTime}
-              </TextB2R>
-              <TextB3R color="#717171" className="textRight">
-                예정보다 빠르게 배송될 수 있습니다.{`\n`}(배송 후 문자 안내)
-              </TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          <FlexBetweenStart>
-            <TextH5B>배송주기</TextH5B>
-            <FlexColEnd>
-              <TextB2R>
-                주 {pickupDay.length}회 / {pickupDay?.join('·')}
-              </TextB2R>
-              <TextB3R color="#717171">공휴일, 배송휴무일 제외</TextB3R>
-            </FlexColEnd>
-          </FlexBetweenStart>
-          {isSpot && (
-            <FlexBetweenStart padding="16px 0 0">
-              <TextH5B>픽업장소</TextH5B>
+          </div>
+        </PlaceInfoWrapper>
+        <BorderLine height={8} />
+        <OrderItemsWrapper>
+          <FlexBetween>
+            <TextH4B>주문상품</TextH4B>
+          </FlexBetween>
+          <SingleOrderItemWrapper>
+            {type === 'SUBSCRIPTION' ? (
+              <SubsOrderItem
+                deliveryType={delivery}
+                deliveryDetail={deliveryDetail}
+                subscriptionPeriod={subscriptionPeriod!}
+                name={name}
+                menuImage={subsInfo?.menuImage!}
+                price={menuAmount}
+              />
+            ) : (
+              <FinishOrderItem menu={orderDetail} payAmount={payAmount} />
+            )}
+          </SingleOrderItemWrapper>
+        </OrderItemsWrapper>
+        <BorderLine height={8} />
+        {type === 'SUBSCRIPTION' ? (
+          <SubsInfoWrapper>
+            <TextH4B padding="0 0 24px">구독정보</TextH4B>
+            <FlexBetweenStart padding="0 0 16px">
+              <TextH5B>구독기간</TextH5B>
               <FlexColEnd>
-                <TextB2R>
-                  {spotName} - {spotPickupName}
-                </TextB2R>
-                <TextB3R color="#717171">{location.address}</TextB3R>
+                <TextB2R>정기구독 {subscriptionRound}회차</TextB2R>
+                <TextB3R color="#717171">
+                  {getFormatDate(orderDeliveries[0].deliveryDate)} ~{' '}
+                  {getFormatDate(orderDeliveries[orderDeliveries.length - 1].deliveryDate)}
+                </TextB3R>
               </FlexColEnd>
             </FlexBetweenStart>
-          )}
-        </SubsInfoWrapper>
-      ) : (
-        <DevlieryInfoWrapper>
-          <FlexBetween>
-            <TextH4B>배송정보</TextH4B>
-          </FlexBetween>
-          <FlexCol padding="24px 0">
-            {deliveryDateRenderer({
-              location,
-              delivery,
-              deliveryDetail,
-              dayFormatter,
-              spotName,
-              spotPickupName,
-              deliveryEndTime,
-              deliveryStartTime,
-            })}
-          </FlexCol>
-        </DevlieryInfoWrapper>
-      )}
-      <ButtonGroup
-        rightButtonHandler={goToShopping}
-        leftButtonHandler={goToOrderDetail}
-        rightText="쇼핑 계속하기"
-        leftText={type === 'SUBSCRIPTION' ? '구독 상세보기' : '주문 상세보기'}
-      />
-    </Container>
+            <FlexBetweenStart padding="0 0 16px">
+              <TextH5B>구독 시작일시</TextH5B>
+              <FlexColEnd>
+                <TextB2R>
+                  {getFormatDate(orderDeliveries[0].deliveryDate)} {orderDeliveries[0].deliveryStartTime}-
+                  {orderDeliveries[0].deliveryEndTime}
+                </TextB2R>
+                <TextB3R color="#717171" className="textRight">
+                  예정보다 빠르게 배송될 수 있습니다.{`\n`}(배송 후 문자 안내)
+                </TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            <FlexBetweenStart>
+              <TextH5B>배송주기</TextH5B>
+              <FlexColEnd>
+                <TextB2R>
+                  주 {pickupDay.length}회 / {pickupDay?.join('·')}
+                </TextB2R>
+                <TextB3R color="#717171">공휴일, 배송휴무일 제외</TextB3R>
+              </FlexColEnd>
+            </FlexBetweenStart>
+            {isSpot && (
+              <FlexBetweenStart padding="16px 0 0">
+                <TextH5B>픽업장소</TextH5B>
+                <FlexColEnd>
+                  <TextB2R>
+                    {spotName} - {spotPickupName}
+                  </TextB2R>
+                  <TextB3R color="#717171">{location.address}</TextB3R>
+                </FlexColEnd>
+              </FlexBetweenStart>
+            )}
+          </SubsInfoWrapper>
+        ) : (
+          <DevlieryInfoWrapper>
+            <FlexBetween>
+              <TextH4B>배송정보</TextH4B>
+            </FlexBetween>
+            <FlexCol padding="24px 0">
+              {deliveryDateRenderer({
+                location,
+                delivery,
+                deliveryDetail,
+                dayFormatter,
+                spotName,
+                spotPickupName,
+                deliveryEndTime,
+                deliveryStartTime,
+              })}
+            </FlexCol>
+          </DevlieryInfoWrapper>
+        )}
+        <ButtonGroup
+          rightButtonHandler={goToShopping}
+          leftButtonHandler={goToOrderDetail}
+          rightText="쇼핑 계속하기"
+          leftText={type === 'SUBSCRIPTION' ? '구독 상세보기' : '주문 상세보기'}
+        />
+      </Container>
+    )
   );
 };
 
@@ -450,7 +451,7 @@ const DevlieryInfoWrapper = styled.div`
 `;
 
 const SubsInfoWrapper = styled.div`
-  padding: 24px;
+  padding: 22px 24px 104px 24px;
   .textRight {
     text-align: right;
   }

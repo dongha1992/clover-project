@@ -37,6 +37,7 @@ export interface IGetCookie {
 
 export interface IRemoveCookie {
   name: string;
+  option?: CookieSetOptions;
 }
 
 export interface ILayoutChildren {
@@ -1476,7 +1477,7 @@ export interface IGetSubOrdersResponse {
   };
 }
 
-export interface IOrderPayment {}
+export interface IOrderPayment { }
 
 export interface IOrderDetail {
   type: string;
@@ -2495,14 +2496,14 @@ export interface ISubscribeInfo {
   deliveryDay: string[] | null;
   menuId: number | null;
   menuDetails:
-    | {
-        id: number;
-        name: string;
-        price: number;
-        discountPrice: number;
-        main: boolean;
-      }[]
-    | null;
+  | {
+    id: number;
+    name: string;
+    price: number;
+    discountPrice: number;
+    main: boolean;
+  }[]
+  | null;
   menuImage: string | null;
   datePeriod: string[] | null;
   subscriptionDiscountRates: number[] | null;

@@ -7,6 +7,6 @@ const setCookie = ({ name, value, option }: ISetCookie) => cookies.set(name, val
 
 const getCookie = ({ name }: IGetCookie) => cookies.get(name);
 
-const removeCookie = ({ name }: IRemoveCookie) => cookies.remove(name);
+const removeCookie = ({ name, option }: IRemoveCookie) => cookies.remove(name, { path: '/', ...option });
 
 export { setCookie, getCookie, removeCookie };

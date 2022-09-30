@@ -9,6 +9,7 @@ export interface IViewer {
 interface IState {
   imagesForViewer: IViewer;
   isMobile: boolean;
+  isApp: boolean | null;
   isLoading: boolean;
   loginType: string;
   versionOfTerm: number;
@@ -20,6 +21,7 @@ interface IState {
 const INITIAL_STATE: IState = {
   imagesForViewer: { images: [], index: 0 },
   isMobile: false,
+  isApp: null,
   isLoading: false,
   loginType: 'NONMEMBER',
   versionOfTerm: 2,
@@ -35,6 +37,10 @@ export const commonSlice = createSlice({
     SET_IS_MOBILE: (state: any, { payload }: PayloadAction<boolean>) => {
       state.isMobile = payload;
     },
+    SET_IS_APP: (state: any, { payload }: PayloadAction<boolean>) => {
+      state.isApp = payload
+    }
+    ,
     SET_IS_LOADING: (state: any, { payload }: PayloadAction<boolean>) => {
       state.isLoading = payload;
     },
@@ -61,6 +67,7 @@ export const commonSlice = createSlice({
 
 export const {
   SET_IS_MOBILE,
+  SET_IS_APP,
   SET_IS_LOADING,
   SET_LOGIN_TYPE,
   SET_VERSION_OF_TERM,
