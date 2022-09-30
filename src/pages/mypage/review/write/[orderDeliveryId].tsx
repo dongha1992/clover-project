@@ -100,7 +100,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
           SET_ALERT({
             children: <FinishReview />,
             alertMessage: `소중한 후기에 \n 감사한 마음을 드려요!`,
-            onSubmit: () => router.replace('/mypage/review?tab=/completed'),
+            onSubmit: () => router.replace('/mypage/review/completed'),
             submitBtnText: '확인',
           })
         );
@@ -141,7 +141,7 @@ const WriteReviewPage = ({ menuId, orderDeliveryId, menuDetailId, orderType, del
   };
 
   const uploadSuccessHandler = (url: string) => {
-    setReviewImages((imageList) => [...imageList, url]);
+    setReviewImages(imageList => [...imageList, url]);
   };
 
   const removePreviewImgHandler = (index: number) => {

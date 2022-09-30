@@ -37,8 +37,8 @@ const SubscriptionDibPage = () => {
   if (isLoading) return <div>...로딩중</div>;
   return (
     <MypageLikeMenusContainer>
-      {likeMenus.length !== 0 ? (
-        likeMenus.map((item: any, index: number) => <SubsItem item={item} key={index} />)
+      {likeMenus?.length !== 0 ? (
+        likeMenus?.map((item: any, index: number) => <SubsItem item={item} key={index} />)
       ) : (
         <div className="buttonBox">
           <TextB2R padding="0 0 24px">찜한 구독 상품이 없어요 😭</TextB2R>

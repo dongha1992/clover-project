@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import { IPatchReviewRequest } from '@model/index';
 import Image from '@components/Shared/Image';
 import { INIT_MENU_IMAGE } from '@store/review';
-import { NickName } from '../write/[orderDeliveryId]';
+import { NickName } from '../../write/[orderDeliveryId]';
 import { getLimitDateOfReview } from '@utils/menu';
 import { ReviewImagePreview, ReviewImageUpload } from '@components/Pages/Review';
 import { hide, show } from '@store/loading';
@@ -84,7 +84,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
             alertMessage: `후기 수정이 완료되었습니다.`,
             submitBtnText: '확인',
             onSubmit: () => {
-              router.replace('/mypage/review?tab=/completed');
+              router.replace('/mypage/review/completed');
             },
           })
         );
@@ -158,7 +158,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   };
 
   const uploadSuccessHandler = (url: string) => {
-    setReviewImages((imageList) => [...imageList, url]);
+    setReviewImages(imageList => [...imageList, url]);
   };
 
   const removePreviewImgHandler = (index: number) => {
@@ -199,7 +199,7 @@ const EditReviewPage = ({ reviewId, menuId, menuImage }: IProp) => {
   useEffect(() => {
     if (selectedReviewDetail) {
       const images = selectedReviewDetail.menuReview?.images || [];
-      setReviewImages(images.map((img) => img.url));
+      setReviewImages(images.map(img => img.url));
       setRating(selectedReviewDetail.menuReview.rating);
     }
   }, [selectedReviewDetail]);

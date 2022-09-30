@@ -112,7 +112,7 @@ const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
       return;
     }
     router.push({
-      pathname: `/mypage/spot-status/detail/${id}`,
+      pathname: `/mypage/spot/status/detail/${id}`,
       query: {
         type: type,
       },
@@ -172,16 +172,10 @@ const SpotStatusList = ({ item, getInfo }: IProps): ReactElement => {
           !item?.canRetrial &&
           Number(loginUserId) === item.userId && (
             <ShareUrl linkUrl={spotLink} title="프코스팟 신청 공유 링크">
-              <Button
-                border
-                color={theme.black}
-                backgroundColor={theme.white}
-                margin="16px 0 0 0"
-              >
+              <Button border color={theme.black} backgroundColor={theme.white} margin="16px 0 0 0">
                 오픈 참여 공유하고 포인트 받기
               </Button>
             </ShareUrl>
-
           )}
         {item?.type === 'PRIVATE' && item?.step === 'TRIAL' && item?.canRetrial && (
           <Button

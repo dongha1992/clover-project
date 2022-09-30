@@ -20,6 +20,33 @@ export const DIB_MENU = [
   },
 ];
 
+export const SPOT_MENU = [
+  {
+    id: 1, text: '신청 현황', link: '/mypage/spot/status', value: 'status'
+  },
+  {
+    id: 2, text: '찜한 프코스팟', link: '/mypage/spot/wish', value: 'wish'
+  }
+];
+
+export const REVIEW_MENU = [
+  {
+    id: 1, text: '작성 예정', link: '/mypage/review/schedule', value: 'schedule'
+  },
+  {
+    id: 2, text: '작성 완료', link: '/mypage/review/completed', value: 'completed'
+  }
+];
+
+export const ADDRESS_MENU = [
+  {
+    id: 1, text: '픽업', link: '/mypage/address/pickup', value: 'pickup'
+  },
+  {
+    id: 2, text: '배송', link: '/mypage/address/delivery', value: 'delivery'
+  }
+]
+
 export const SECESSION_REASON = [
   { id: 0, text: '탈퇴 후 재가입을 하기 위해서' },
   { id: 1, text: '서비스 이용 계획이 없어서' },
